@@ -1,0 +1,108 @@
+﻿@using AgroFichasApi.Models
+
+@{
+    Layout = null;
+    List<APILogItem> itemsFile = (List<APILogItem>)ViewData["APILog"];
+    string fileName = (string)ViewData["FileName"];
+    string lineNumber = (string)ViewData["Line"];
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Show Details</title>
+    <style type="text/css">
+        #form, #json {
+            font-family:Consolas;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Details for @fileName on line number @lineNumber</h1>
+        @foreach(var item in itemsFile)
+        {
+            <table>
+                <tbody>
+                    <tr>
+                        <td><strong>Log Date</strong></td>
+                        <td>: @item.logDate</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Method</strong></td>
+                        <td>: @item.method</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Token</strong></td>
+                        <td>: @item.token</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DeviceID</strong></td>
+                        <td>: @item.deviceID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CID</strong></td>
+                        <td>: @item.userID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Full Name</strong></td>
+                        <td>: @item.userName</td>
+                    </tr>
+                    <tr>
+                        <td><strong>IP</strong></td>
+                        <td>: @item.ip</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Status</strong></td>
+                        <td>: @item.status</td>
+                    </tr>
+                    <tr>
+                        <td><strong>API Key</strong></td>
+                        <td>: @item.apiKey</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Error File</strong></td>
+                        <td>: @item.errorFile</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h1>Form Values</h1>
+            <div id="form">
+                @(new MvcHtmlString(item.formValues.Replace("&", "<br />")))
+                @{
+                    string lat = "";
+                    string lon = "";
+                    foreach (string pair in item.formValues.Split('&'))
+                    {
+                        var data = pair.Split('=');
+                        if (data.Length == 2 && data[0] == "lat")
+                        {
+                            lat = data[1];
+                        }
+                        if (data.Length == 2 && data[0] == "lon")
+                        {
+                            lon = data[1];
+                        }
+                        
+                    }
+                    if (lat != "" && lon != "")
+                    {
+                        <div><a href="http://maps.google.com/?q=@(lat),@(lon)" target="_blank">Position: @(lat + ", " + lon)</a></div>   
+                    }
+                }
+            </div>
+            <h1>JSON Response</h1>
+            <div id="json">
+                @item.jsonResponse
+            </div>
+            
+            <h1>XmlRequest</h1>
+            if (item.xmlFile != "") {
+                @APILog.ReadingXmlRequest(item.logDate.ToString("yyyy-MM"), item.xmlFile)
+                <p><a href="@Url.Content("~/LogViewer/GetXmlRequest?Folder="+item.logDate.ToString("yyyy-MM")+"&File="+item.xmlFile.Replace(".xml", ""))">@item.xmlFile.Replace(".xml", "")</a></p>
+            }   
+        }
+    </div>
+</body>
+</html>

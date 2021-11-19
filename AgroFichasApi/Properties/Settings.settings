@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="AgroFichasApi.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="MaxLogAge" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="LogQueueSize" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="ApiUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost/AgroFichasApi</Value>
+    </Setting>
+    <Setting Name="APILogDirectory" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\Clientes\Agrotop\AgroFichas\webdata\log\api\</Value>
+    </Setting>
+    <Setting Name="WebsiteUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost/AgroFichasWeb</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

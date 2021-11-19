@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Packing List</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #envoltura {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 1200px;
+        }
+
+        #cabecera {
+            width: 1200px;
+        }
+
+            #cabecera #logo {
+                text-align: left;
+            }
+
+            #cabecera #fecha-emision {
+                text-align: right;
+            }
+
+            #cabecera td {
+                width: 50%;
+            }
+
+        #cuerpo {
+            width: 1200px;
+        }
+
+            #cuerpo #titulo-certificado {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-lista-empaque {
+                width: 1200px;
+            }
+
+                #cuerpo #cuerpo-lista-empaque #lista-empaque {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-lista-empaque #lista-empaque td {
+                        border: 1px solid;
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        width: 200px;
+                    }
+
+                    #cuerpo #cuerpo-lista-empaque #lista-empaque #lista-empaque-subtabla1 {
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        display: block;
+                        margin-left: auto;
+                        margin-right: auto;
+                        padding: 0;
+                        position: relative;
+                        width: 400px;
+                    }
+
+                        #cuerpo #cuerpo-lista-empaque #lista-empaque #lista-empaque-subtabla1 td {
+                            border: none;
+                            padding: 1px;
+                        }
+
+                    #cuerpo #cuerpo-lista-empaque #lista-empaque #lista-empaque-subtabla2 {
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        display: block;
+                        margin-left: auto;
+                        margin-right: auto;
+                        padding: 0;
+                        position: relative;
+                        width: 400px;
+                    }
+
+                        #cuerpo #cuerpo-lista-empaque #lista-empaque #lista-empaque-subtabla2 td {
+                            border: none;
+                            padding: 1px;
+                        }
+
+                    #cuerpo #cuerpo-lista-empaque #lista-empaque #lista-empaque-subtabla3 {
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        display: block;
+                        margin-left: auto;
+                        margin-right: auto;
+                        padding: 0;
+                        position: relative;
+                        width: 200px;
+                    }
+
+                        #cuerpo #cuerpo-lista-empaque #lista-empaque #lista-empaque-subtabla3 td {
+                            border: none;
+                            padding: 1px;
+                        }
+
+            #cuerpo #titulo-contenedores {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-contenedores {
+                /*min-width: 700px;*/
+                width: 1000px;
+            }
+
+                #cuerpo #cuerpo-contenedores #contenedores {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    /*min-width: 700px;*/
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-contenedores #contenedores thead th, 
+                    #cuerpo #cuerpo-contenedores #contenedores tfoot td {
+                        background-color: lightgray;
+                        border: 1px solid black;
+                        font-size: 14px;
+                        padding: 3px;
+                        text-transform: uppercase
+                    }
+
+                    #cuerpo #cuerpo-contenedores #contenedores td {
+                        border: 1px solid black;
+                        font-size: 12px;
+						text-align: center;
+                    }
+
+                    #cuerpo #cuerpo-contenedores #contenedores tfoot .ultima-linea {
+                        background-color: white;
+                    }
+
+        #pie-de-pagina {
+            height: 50px;
+            text-align: center;
+            width: 1200px;
+        }
+
+        .text-align-left {
+            text-align: left;
+        }
+
+        .text-align-center {
+            text-align: center;
+        }
+
+        .text-align-right {
+            text-align: right;
+        }
+
+        .text-align-justify {
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+    <table id="envoltura">
+        <tr>
+            <td>
+                <table id="cabecera">
+                    <tr>
+                        <td id="logo">
+                            <img src="http://sys.empresasagrotop.cl/Content/images/Avenatop.png" />
+                        </td>
+                        <td id="fecha-emision">
+                            <span>Chile, ***FECHA***</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="cuerpo">
+                    <tr>
+                        <td id="titulo-certificado">
+                            <h1>
+                                PACKING LIST
+                            </h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-lista-empaque">
+                            <table id="lista-empaque" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td>
+                                        <table id="lista-empaque-subtabla1" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td><strong>Shipper</strong></td>
+                                                <td>: ***EMB***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Consignee</strong></td>
+                                                <td>: ***CSG***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Shipping Line</strong></td>
+                                                <td>: ***NAV***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Booking Nº</strong></td>
+                                                <td>: ***RSV***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Containers</strong></td>
+                                                <td>: ***CNT***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Commercial Invoice</strong></td>
+                                                <td>: ***FACT***</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table id="lista-empaque-subtabla2" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td><strong>Port Of Loading</strong></td>
+                                                <td>: ***PTOEMB***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Port Of Discharge</strong></td>
+                                                <td>: ***PTODST***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Vessel</strong></td>
+                                                <td>: ***BCO***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>DUS</strong></td>
+                                                <td>: ***DUS***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Net Weight</strong></td>
+                                                <td>: ***PSONET***</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Gross Weight</strong></td>
+                                                <td>: ***PSOBRT***</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table id="lista-empaque-subtabla3" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td class="text-align-center">
+                                                    <h2>LOT Nº ***LOTE***</h2>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="titulo-contenedores">
+                            <h2>CONTAINERS</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-contenedores">
+                            <table id="contenedores">
+                                ***CONTENEDORES***
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="pie-de-pagina">
+                    <tr>
+                        <td>
+                            <p><strong>Avenatop SpA &copy;***AÑO***</strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

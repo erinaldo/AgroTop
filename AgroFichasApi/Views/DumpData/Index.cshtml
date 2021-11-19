@@ -1,0 +1,130 @@
+﻿@using AgroFichasApi.Models
+@using System.Data.Linq
+
+@{
+    ViewBag.Title = "Data Dump";
+    var agricultores = (IOrderedQueryable<Agricultor>)ViewData["agricultores"];
+}
+
+<h2>AgroFichas</h2>
+<table border="1">
+<tr>
+</tr>
+@foreach (var agricultor in agricultores)
+{
+    <tr>
+        <td><b>@agricultor.Nombre</b></td>
+        <td colspan="3"><b>Predios</b></td>
+    </tr>
+    if (agricultor.Predio.Count == 0)
+    {
+        <tr>
+            <td colspan="10">No hay predios</td>
+        </tr>
+    }
+    foreach (var predio in agricultor.Predio)
+    {
+        <tr valign="top">
+            <td></td>
+            <td>@predio.Nombre<br /><i>@predio.Comuna.Nombre</i></td>
+            <td><b>Potreros</b>
+                @if (predio.Potrero.Count == 0)
+                {
+                    <p>No hay potreros</p>
+                }
+                <table>
+                @foreach (var potrero in predio.Potrero)
+                {
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>@potrero.Nombre<br /><i>@potrero.Superficie há</i></td>
+                </tr>
+                }
+                </table>
+            </td>
+            <td><b>Siembras</b>
+                @if (predio.Siembra.Count == 0)
+                {
+                    <p>No hay siembras</p>
+                }
+                <table>
+                @foreach (var siembra in predio.Siembra)
+                {
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <b>@siembra.Variedad.Cultivo.Nombre &gt; @siembra.Variedad.Nombre, @siembra.Temporada.Nombre</b><br />
+                        @siembra.FechaSiembra.ToShortDateString(), @siembra.Dosis kg<br />
+                        @siembra.TipoSiembra.Nombre<br />Anterior: @siembra.Cultivo.Nombre<br />
+                        @foreach (var ps in siembra.SiembraPotrero)
+                        {
+                            @ps.Potrero.Nombre<text>,</text>   
+                        } 
+
+                    </td>
+                </tr>
+                }
+                </table>
+            </td>
+            <td><b>Fichas</b>
+                @if (predio.Ficha.Count == 0)
+                {
+                    <p>No hay fichas</p>
+                }
+                <table>
+                @foreach (var ficha in predio.Ficha)
+                {
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <b>@ficha.Fecha.ToString("dd MMM") &gt; @ficha.TipoFicha.Nombre, @ficha.Temporada.Nombre</b><br />
+                        @ficha.Observaciones<br />
+                        @foreach (var ps in ficha.FichaPotrero)
+                        {
+                            @ps.Potrero.Nombre<text>,</text>   
+                        } 
+                        <br />Recomendaciones:
+                        <ul>
+                        @foreach (var rec in ficha.Recomendacion)
+                        {    
+                            <li>@rec.Quimico.TipoRecomendacion.Nombre &gt; @rec.Quimico.Nombre<br /> 
+                                @if (rec.Quimico.IdTipoRecomendacion != 3)
+                                {
+                                    @rec.Dosis.ToString("#,###0.####") @rec.UM.Nombre<br />
+                                }
+                                else
+                                {
+                                    <text>N   :</text>@rec.FerN.ToString("#,##0.####") <text>, </text>
+                                    <text>P2O5:</text>@rec.FerP2O5.ToString("#,##0.####")<text>, </text>
+                                    <text>KO2 :</text>@rec.FerKO2.ToString("#,##0.####")<text>, </text>
+                                    <text>MgO :</text>@rec.FerMgO.ToString("#,##0.####")<text>, </text>
+                                    <text>S   :</text>@rec.FerS.ToString("#,##0.####")<text>, </text>
+                                    <text>B   :</text>@rec.FerB.ToString("#,##0.####")<text>, </text>
+                                    <text>Zn  :</text>@rec.FerZn.ToString("#,##0.####")<text>, </text>
+                                    <text>CaO :</text>@rec.FerCaO.ToString("#,##0.####")
+                                }
+                                @if (rec.FechaAplicacion.HasValue) {
+                                    <text>Aplicar</text> @rec.FechaAplicacion.Value.ToString("dd MMM yyyy");
+                                }
+
+                            </li>
+                        }  
+                        </ul>
+
+                    </td>
+                </tr>
+                }
+                </table>
+            </td>
+        </tr>
+    }
+}
+</table>
+
+@if (Request.QueryString["p"] != null && Request.QueryString["p"] != "")
+{
+    <text>Hash:</text> @Utils.EncryptPassword(Request.QueryString["p"]);
+}

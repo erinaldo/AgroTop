@@ -1,0 +1,474 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>CERTIFICATE OF ANALYSIS</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #envoltura {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 990px;
+        }
+
+        #cabecera {
+            width: 990px;
+        }
+
+            #cabecera #logo {
+                text-align: left;
+            }
+
+            #cabecera #fecha-emision {
+                text-align: right;
+            }
+
+            #cabecera td {
+                width: 50%;
+            }
+
+        #cuerpo {
+            width: 990px;
+        }
+
+            #cuerpo #titulo-certificado {
+                text-align: center;
+            }
+
+            #cuerpo #descripcion-certificado {
+                padding: 20px;
+                text-align: justify;
+            }
+
+            #cuerpo #titulo-resume {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-resume {
+                width: 800px;
+            }
+
+                #cuerpo #cuerpo-resume #resume {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 800px;
+                }
+
+                    #cuerpo #cuerpo-resume #resume .titulo {
+                        border: 1px solid black;
+                        font-weight: bold;
+                        padding: 5px;
+                    }
+
+                    #cuerpo #cuerpo-resume #resume .dato {
+                        border: 1px solid black;
+                        padding: 5px;
+                        word-break: break-all;
+                    }
+
+            #cuerpo #titulo-sensory-physicochemical-characteristics {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-sensory-physicochemical-characteristics {
+                width: 1000px;
+            }
+
+                #cuerpo #cuerpo-sensory-physicochemical-characteristics #sensory-physicochemical-characteristics {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-sensory-physicochemical-characteristics #sensory-physicochemical-characteristics th,
+                    #cuerpo #cuerpo-sensory-physicochemical-characteristics #sensory-physicochemical-characteristics td {
+                        border: 1px solid black;
+                    }
+
+                    #cuerpo #cuerpo-sensory-physicochemical-characteristics #sensory-physicochemical-characteristics tbody td {
+                        font-size: small;
+                    }
+
+            #cuerpo #titulo-microbiological-characteristics {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-microbiological-characteristics {
+                width: 1000px;
+            }
+
+                #cuerpo #cuerpo-microbiological-characteristics .microbiological-characteristics {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    margin-left: auto;
+                    margin-right: auto;
+                    margin-bottom: 20px;
+                    position: relative;
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-microbiological-characteristics .microbiological-characteristics th,
+                    #cuerpo #cuerpo-microbiological-characteristics .microbiological-characteristics td {
+                        border: 1px solid black;
+                    }
+
+                    #cuerpo #cuerpo-microbiological-characteristics .microbiological-characteristics tbody td {
+                        font-size: small;
+                    }
+
+            #cuerpo #titulo-nutritional-chemical-characteristics {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-nutritional-chemical-characteristics {
+                width: 1000px;
+            }
+
+                #cuerpo #cuerpo-nutritional-chemical-characteristics #nutritional-chemical-characteristics {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-nutritional-chemical-characteristics #nutritional-chemical-characteristics th,
+                    #cuerpo #cuerpo-nutritional-chemical-characteristics #nutritional-chemical-characteristics td {
+                        border: 1px solid black;
+                    }
+
+                    #cuerpo #cuerpo-nutritional-chemical-characteristics #nutritional-chemical-characteristics tbody td {
+                        font-size: small;
+                    }
+
+            #cuerpo #cuerpo-personal-responsable {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-personal-responsable #personal-responsable {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 800px;
+                }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable tbody th, #cuerpo #cuerpo-personal-responsable #personal-responsable tbody td {
+                        padding-top: 100px;
+                        text-align: center;
+                        width: 400px;
+                    }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable h3 {
+                        border-top: 1px solid black;
+                    }
+
+            #cuerpo #pie-de-pagina-personal-responsable {
+                padding-bottom: 20px;
+            }
+
+        #pie-de-pagina {
+            height: 50px;
+            text-align: center;
+            width: 990px;
+        }
+
+        .header {
+            background-color: lightgray;
+            border: 1px solid black;
+            font-size: 14px;
+            padding: 3px;
+            text-transform: uppercase;
+        }
+
+        .ultima-tabla {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <table id="envoltura">
+        <tr>
+            <td>
+                <table id="cabecera">
+                    <tr>
+                        <td id="logo">
+                            <img src="http://sys.empresasagrotop.cl/Content/images/Avenatop.png" />
+                        </td>
+                        <td id="fecha-emision">
+                            <span>Chile, ***FECHA***</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="cuerpo">
+                    <tr>
+                        <td id="titulo-certificado">
+                            <h1>CERTIFICATE OF ANALYSIS</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="descripcion-certificado">
+                            <strong>Report No.</strong>: ***REPORTNO***<br />
+                            <strong>Report Generated Date</strong>: ***REPORTGENERATEDDATE***<br /><br />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-resume">
+                            <table id="resume">
+                                <tbody>
+                                    <tr>
+                                        <td width="25%" class="titulo">Product</td>
+                                        <td width="25%" class="dato">: ***PRODUCT***</td>
+                                        <td width="25%" class="titulo">Container No.</td>
+                                        <td width="25%" class="dato">: ***CONTAINERNO***</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" class="titulo">Batch No.</td>
+                                        <td width="25%" class="dato">: ***BATCHNO***</td>
+                                        <td width="25%" class="titulo">MFD</td>
+                                        <td width="25%" class="dato">: ***MFD***</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" class="titulo">Expiry Date/Best Before</td>
+                                        <td width="25%" class="dato">: ***EXPIRYDATE***</td>
+                                        <td width="25%" class="titulo">Date of Dispatch</td>
+                                        <td width="25%" class="dato">: ***DATEOFDISPATCH***</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" class="titulo">Quantity</td>
+                                        <td width="25%" class="dato">: ***QUANTITY***</td>
+                                        <td width="25%" class="titulo">No. of Bags</td>
+                                        <td width="25%" class="dato">: ***NOOFBAGS***</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" class="titulo">Commercial Invoice</td>
+                                        <td width="25%" class="dato">: ***COMMERCIALINVOICE***</td>
+                                        <td width="25%" class="titulo">Guide</td>
+                                        <td width="25%" class="dato">: ***GUIDE***</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-sensory-physicochemical-characteristics">
+                            <p><strong>1. Sensory & Physicochemical Characteristics (Day)</strong></p>
+                            ***SENSORYPHYSICOCHEMICALCHARACTERISTICS***
+                            <table id="sensory-physicochemical-characteristics">
+                                <thead>
+                                    <tr>
+                                        <th class="header" rowspan="2" width="10%">No.</th>
+                                        <th class="header" rowspan="2" width="20%">Parameter</th>
+                                        <th class="header" rowspan="2" width="20%">Marico Spec</th>
+                                        <th class="header" colspan="6" width="50%">Test Results (Day)</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="header" align="center">Day 1</th>
+                                        <th class="header" align="center">Day 2</th>
+                                        <th class="header" align="center">Day 3</th>
+                                        <th class="header" align="center">Day 4</th>
+                                        <th class="header" align="center">Day 5</th>
+                                        <th class="header" align="center">Day 6</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td align="center">1.1</td>
+                                        <td>Appearance</td>
+                                        <td>Independent flakes of uniform size</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">1.2</td>
+                                        <td>Odor</td>
+                                        <td>Free from any objectionable odor</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">1.3</td>
+                                        <td>Taste of cooked product</td>
+                                        <td>Comparable to reference</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                        <td align="center">Accepted</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-microbiological-characteristics">
+                            <p><strong>2. Microbiological Characteristics (Once in 6 months)</strong></p>
+                            ***MICROBIOLOGICALCHARACTERISTICS1***
+                            <table class="microbiological-characteristics">
+                                <thead>
+                                    <tr>
+                                        <th class="header" width="10%">No.</th>
+                                        <th class="header" width="30%">Parameter</th>
+                                        <th class="header" width="30%">Spec</th>
+                                        <th class="header" width="30%">Results</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td align="center">2.1</td>
+                                        <td>Total Viable Count (cfu/g)</td>
+                                        <td align="center">Max 10000</td>
+                                        <td align="center">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">2.2</td>
+                                        <td>E. coli (cfu/g)</td>
+                                        <td align="center">Absent</td>
+                                        <td align="center">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">2.3</td>
+                                        <td>Salmonella</td>
+                                        <td align="center">Absent</td>
+                                        <td align="center">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            ***MICROBIOLOGICALCHARACTERISTICS2***
+                            <table class="microbiological-characteristics ultima-tabla">
+                                <thead>
+                                    <tr>
+                                        <th class="header" width="10%">No.</th>
+                                        <th class="header" width="30%">Parameter</th>
+                                        <th class="header" width="30%">Spec</th>
+                                        <th class="header" width="30%">Results</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td align="center">3.1</td>
+                                        <td>Total Viable Count (cfu/g)</td>
+                                        <td align="center">Max 10000</td>
+                                        <td align="center">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">3.2</td>
+                                        <td>E. coli (cfu/g)</td>
+                                        <td align="center">Absent</td>
+                                        <td align="center">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">3.3</td>
+                                        <td>Salmonella</td>
+                                        <td align="center">Absent</td>
+                                        <td align="center">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-nutritional-chemical-characteristics">
+                            <p><strong>3. Nutritional & Chemical Characteristics (Once in 6 months except Protein which is every 20th cont.)</strong></p>
+                            ***NUTRITIONALCHEMICALCHARACTERISTICS***
+                            <table id="nutritional-chemical-characteristics">
+                                <thead>
+                                    <tr>
+                                        <th class="header" width="10%">No.</th>
+                                        <th class="header" width="30%">Parameter</th>
+                                        <th class="header" width="30%">Spec</th>
+                                        <th class="header" width="30%">Results</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td align="center">3.1</td>
+                                        <td>Total Viable Count (cfu/g)</td>
+                                        <td align="center">Max 10000</td>
+                                        <td align="center">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">3.2</td>
+                                        <td>E. coli (cfu/g)</td>
+                                        <td align="center">Absent</td>
+                                        <td align="center">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">3.3</td>
+                                        <td>Salmonella</td>
+                                        <td align="center">Absent</td>
+                                        <td align="center">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-personal-responsable">
+                            <table id="personal-responsable">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <h3>Test Conducted by</h3>
+                                            Lab Chemist<br />
+                                            Avenatop SpA
+                                        </td>
+                                        <td>
+                                            <h3>Test Approved by</h3>
+                                            Senior Lab Chemist / QA Manager<br />
+                                            Avenatop SpA
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td id="pie-de-pagina-personal-responsable"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="pie-de-pagina">
+                    <tr>
+                        <td>
+                            <p><strong>Avenatop SpA &copy;***AÑO***</strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

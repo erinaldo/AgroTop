@@ -1,0 +1,709 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Certificado de Calidad</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #envoltura {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 990px;
+        }
+
+        #cabecera {
+            width: 990px;
+        }
+
+            #cabecera #logo {
+                text-align: left;
+            }
+
+            #cabecera #fecha-emision {
+                text-align: right;
+            }
+
+            #cabecera td {
+                width: 50%;
+            }
+
+        #cuerpo {
+            width: 990px;
+        }
+
+            #cuerpo #titulo-certificado {
+                text-align: center;
+            }
+
+            #cuerpo #descripcion-certificado {
+                padding: 20px;
+                text-align: justify;
+            }
+
+            #cuerpo #titulo-identificacion-lote-analizado {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-identificacion-lote-analizado {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-identificacion-lote-analizado #identificacion-lote-analizado {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 800px;
+                }
+
+                    #cuerpo #cuerpo-identificacion-lote-analizado #identificacion-lote-analizado td {
+                        width: 200px;
+                    }
+
+            #cuerpo #titulo-granulometria {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-granulometria {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-granulometria #granulometria {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 900px;
+                }
+
+                    #cuerpo #cuerpo-granulometria #granulometria th, #cuerpo #cuerpo-granulometria #granulometria td {
+                        width: 180px;
+                    }
+
+                    #cuerpo #cuerpo-granulometria #granulometria td {
+                    }
+
+
+            #cuerpo #granulometria thead,
+            #cuerpo #parametros-pesticidas thead,
+            #cuerpo #parametros-metales-pesados thead,
+            #cuerpo #parametros-micotoxinas thead,
+            #cuerpo #parametros-microbiologicos thead,
+            #cuerpo #parametros-nutricionales thead {
+                vertical-align: top;
+            }
+
+            #cuerpo #pie-de-pagina-granulometria {
+                padding-bottom: 20px;
+            }
+
+            #cuerpo #titulo-caracteristicas-fisicas {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-caracteristicas-fisicas {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-caracteristicas-fisicas #caracteristicas-fisicas {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 800px;
+                }
+
+                    #cuerpo #cuerpo-caracteristicas-fisicas #caracteristicas-fisicas th, #cuerpo #cuerpo-caracteristicas-fisicas #caracteristicas-fisicas td {
+                        width: 400px;
+                    }
+
+            #cuerpo #pie-de-pagina-caracteristicas-fisicas {
+                padding-bottom: 20px;
+            }
+
+            #cuerpo #titulo-parametros-pesticidas {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-parametros-pesticidas {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-parametros-pesticidas #parametros-pesticidas {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 900px;
+                }
+
+                    #cuerpo #cuerpo-parametros-pesticidas #parametros-pesticidas th, #cuerpo #cuerpo-parametros-pesticidas #parametros-pesticidas td {
+                        width: 180px;
+                    }
+
+                    #cuerpo #cuerpo-parametros-pesticidas #parametros-pesticidas td {
+                    }
+
+            #cuerpo #pie-de-pagina-parametros-pesticidas {
+                padding-bottom: 20px;
+            }
+
+            #cuerpo #titulo-parametros-metales-pesados {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-parametros-metales-pesados {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-parametros-metales-pesados #parametros-metales-pesados {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 900px;
+                }
+
+                    #cuerpo #cuerpo-parametros-metales-pesados #parametros-metales-pesados th, #cuerpo #cuerpo-parametros-metales-pesados #parametros-metales-pesados td {
+                        width: 180px;
+                    }
+
+                    #cuerpo #cuerpo-parametros-metales-pesados #parametros-metales-pesados td {
+                    }
+
+            #cuerpo #pie-de-pagina-parametros-metales-pesados {
+                padding-bottom: 20px;
+            }
+
+            #cuerpo #titulo-parametros-micotoxinas {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-parametros-micotoxinas {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-parametros-micotoxinas #parametros-micotoxinas {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 900px;
+                }
+
+                    #cuerpo #cuerpo-parametros-micotoxinas #parametros-micotoxinas th, #cuerpo #cuerpo-parametros-micotoxinas #parametros-micotoxinas td {
+                        width: 180px;
+                    }
+
+                    #cuerpo #cuerpo-parametros-micotoxinas #parametros-micotoxinas td {
+                    }
+
+            #cuerpo #pie-de-pagina-parametros-micotoxinas {
+                padding-bottom: 20px;
+            }
+
+            #cuerpo #titulo-parametros-microbiologicos {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-parametros-microbiologicos {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-parametros-microbiologicos #parametros-microbiologicos {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 900px;
+                }
+
+                    #cuerpo #cuerpo-parametros-microbiologicos #parametros-microbiologicos th, #cuerpo #cuerpo-parametros-microbiologicos #parametros-microbiologicos td {
+                        width: 180px;
+                    }
+
+                    #cuerpo #cuerpo-parametros-microbiologicos #parametros-microbiologicos td {
+                    }
+
+            #cuerpo #pie-de-pagina-parametros-microbiologicos {
+                padding-bottom: 20px;
+            }
+
+            #cuerpo #titulo-parametros-nutricionales {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-parametros-nutricionales {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-parametros-nutricionales #parametros-nutricionales {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 900px;
+                }
+
+                    #cuerpo #cuerpo-parametros-nutricionales #parametros-nutricionales th, #cuerpo #cuerpo-parametros-nutricionales #parametros-nutricionales td {
+                        width: 180px;
+                    }
+
+                    #cuerpo #cuerpo-parametros-nutricionales #parametros-nutricionales td {
+                    }
+
+            #cuerpo #pie-de-pagina-parametros-nutricionales {
+                padding-bottom: 20px;
+            }
+
+            #cuerpo #titulo-metodologia {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-metodologia {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-metodologia #metodologia {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 800px;
+                }
+
+                    #cuerpo #cuerpo-metodologia #metodologia th, #cuerpo #cuerpo-metodologia #metodologia td {
+                        width: 400px;
+                    }
+
+            #cuerpo #pie-de-pagina-metodologia {
+                padding-bottom: 20px;
+            }
+
+            #cuerpo #cuerpo-personal-responsable {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-personal-responsable #personal-responsable {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 800px;
+                }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable tbody th, #cuerpo #cuerpo-personal-responsable #personal-responsable tbody td {
+                        padding-top: 100px;
+                        text-align: center;
+                        width: 400px;
+                    }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable h3 {
+                        border-top: 1px solid black;
+                    }
+
+            #cuerpo #pie-de-pagina-personal-responsable {
+                padding-bottom: 20px;
+            }
+
+        #pie-de-pagina {
+            height: 50px;
+            text-align: center;
+            width: 990px;
+        }
+
+        .text-align-left {
+            text-align: left;
+        }
+
+        .text-align-center {
+            text-align: center;
+        }
+
+        .text-align-right {
+            text-align: right;
+        }
+
+        .text-align-justify {
+            text-align: justify;
+        }
+
+        /*FIX: wkhtmltopdf repeating thead headers overlapping content*/
+        thead, tfoot {
+            display: table-row-group;
+        }
+    </style>
+</head>
+<body>
+    <table id="envoltura">
+        <tr>
+            <td>
+                <table id="cabecera">
+                    <tr>
+                        <td id="logo">
+                            <img src="http://sys.empresasagrotop.cl/Content/images/Avenatop.png" />
+                        </td>
+                        <td id="fecha-emision">
+                            <span>Chile, ***FECHA***</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="cuerpo">
+                    <tr>
+                        <td id="titulo-certificado">
+                            <h1>CERTIFICADO DE CALIDAD Nº ***NO***/***AÑO***</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="descripcion-certificado">
+                            <span><strong>Avenatop SpA</strong>, certifica para el Cliente; <strong>***CONSIG***</strong>, que se ha elaborado <strong>Avena Pelada y Estabilizada</strong> para consumo humano con las siguientes características:</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="titulo-identificacion-lote-analizado">
+                            <h2>Identificación de Lote Analizado</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-identificacion-lote-analizado">
+                            <table id="identificacion-lote-analizado">
+                                <tr>
+                                    <td><strong>Producto</strong></td>
+                                    <td>: ***PROD***</td>
+                                    <td><strong>Código Interno</strong></td>
+                                    <td>: ***FTCOD***</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>N° de Especificación</strong></td>
+                                    <td>: ***FTVER***</td>
+                                    <td><strong>Versión</strong></td>
+                                    <td>: ***FTVER***</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Lote Comercial</strong></td>
+                                    <td>: ***LOTCOM***</td>
+                                    <td><strong>Fecha de Elaboración</strong></td>
+                                    <td>: ***FECELAB***</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Material de Empaque</strong></td>
+                                    <td>: ***MATEMP***</td>
+                                    <td><strong>Código de Proceso</strong></td>
+                                    <td>: ***CODPROC***</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Toneladas</strong></td>
+                                    <td>: ***TON***</td>
+                                    <td><strong>Reserva</strong></td>
+                                    <td>: ***RSRVA***</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>País de Origen</strong></td>
+                                    <td>: ***ORG***</td>
+                                    <td><strong>País de Destino</strong></td>
+                                    <td>: ***DST***</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Embarcador</strong></td>
+                                    <td>: ***EMB***</td>
+                                    <td><strong>Consignatario</strong></td>
+                                    <td>: ***CONSIG***</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>N° de Factura</strong></td>
+                                    <td>: ***FACT***</td>
+                                    <td><strong>Planta Producción</strong></td>
+                                    <td>: ***PLANTAPRO***</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="titulo-granulometria">
+                            <h2>Resultados Físico-Químico</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-granulometria">
+                            <table id="granulometria">
+                                <thead>
+                                    <tr>
+                                        <th class="text-align-left">Parámetro</th>
+                                        <th class="text-align-center">UM</th>
+                                        <th>Resultado Lote</th>
+                                        <th>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="2">Limite Especificación</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Mínimo</th>
+                                                    <th>Máximo</th>
+                                                </tr>
+                                            </table>
+                                        </th>
+                                        <th class="text-align-center">Frecuencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ***GRANULOMETRIA***
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="titulo-caracteristicas-fisicas">
+                            <h2>Características Físicas</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-caracteristicas-fisicas">
+                            <table id="caracteristicas-fisicas">
+                                <tbody>
+                                    <tr>
+                                        <td class="text-align-center"><strong>Inspección Visual</strong>: CUMPLE</td>
+                                        <td class="text-align-center"><strong>Análisis Sensorial</strong>: CUMPLE</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr style="***TITULOPARAMETROSPESTICIDAS***">
+                        <td id="titulo-parametros-pesticidas">
+                            <h2>Parámetros Pesticidas</h2>
+                        </td>
+                    </tr>
+                    <tr style="***CUERPOPARAMETROSPESTICIDAS***">
+                        <td id="cuerpo-parametros-pesticidas">
+                            <table id="parametros-pesticidas">
+                                <thead>
+                                    <tr>
+                                        <th class="text-align-left">Parámetro</th>
+                                        <th class="text-align-center">UM</th>
+                                        <th>Resultado Lote</th>
+                                        <th>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="2">Limite Especificación</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Mínimo</th>
+                                                    <th>Máximo</th>
+                                                </tr>
+                                            </table>
+                                        </th>
+                                        <th class="text-align-center">Frecuencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ***PARAMETROSPESTICIDAS***
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr style="***TITULOPARAMETROSMETALESPESADOS***">
+                        <td id="titulo-parametros-metales-pesados">
+                            <h2>Parámetros Metales Pesados</h2>
+                        </td>
+                    </tr>
+                    <tr style="***CUERPOPARAMETROSMETALESPESADOS***">
+                        <td id="cuerpo-parametros-metales-pesados">
+                            <table id="parametros-metales-pesados">
+                                <thead>
+                                    <tr>
+                                        <th class="text-align-left">Parámetro</th>
+                                        <th class="text-align-center">UM</th>
+                                        <th>Resultado Lote</th>
+                                        <th>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="2">Limite Especificación</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Mínimo</th>
+                                                    <th>Máximo</th>
+                                                </tr>
+                                            </table>
+                                        </th>
+                                        <th class="text-align-center">Frecuencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ***PARAMETROSMETALESPESADOS***
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr style="***TITULOPARAMETROSMICOTOXINAS***">
+                        <td id="titulo-parametros-micotoxinas">
+                            <h2>Parámetros Micotoxinas</h2>
+                        </td>
+                    </tr>
+                    <tr style="***CUERPOPARAMETROSMICOTOXINAS***">
+                        <td id="cuerpo-parametros-micotoxinas">
+                            <table id="parametros-micotoxinas">
+                                <thead>
+                                    <tr>
+                                        <th class="text-align-left">Parámetro</th>
+                                        <th class="text-align-center">UM</th>
+                                        <th>Resultado Lote</th>
+                                        <th>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="2">Limite Especificación</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Mínimo</th>
+                                                    <th>Máximo</th>
+                                                </tr>
+                                            </table>
+                                        </th>
+                                        <th class="text-align-center">Frecuencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ***PARAMETROSMICOTOXINAS***
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr style="***TITULOPARAMETROSMICROBIOLOGICOS***">
+                        <td id="titulo-parametros-microbiologicos">
+                            <h2>Parámetros Microbiológicos</h2>
+                        </td>
+                    </tr>
+                    <tr style="***CUERPOPARAMETROSMICROBIOLOGICOS***">
+                        <td id="cuerpo-parametros-microbiologicos">
+                            <table id="parametros-microbiologicos">
+                                <thead>
+                                    <tr>
+                                        <th class="text-align-left">Parámetro</th>
+                                        <th class="text-align-center">UM</th>
+                                        <th>Resultado Lote</th>
+                                        <th>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="2">Limite Especificación</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Mínimo</th>
+                                                    <th>Máximo</th>
+                                                </tr>
+                                            </table>
+                                        </th>
+                                        <th class="text-align-center">Frecuencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ***PARAMETROSMICROBIOLOGICOS***
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr style="***TITULOPARAMETROSNUTRICIONALES***">
+                        <td id="titulo-parametros-nutricionales">
+                            <h2>Parámetros Nutricionales</h2>
+                        </td>
+                    </tr>
+                    <tr style="***CUERPOPARAMETROSNUTRICIONALES***">
+                        <td id="cuerpo-parametros-nutricionales">
+                            <table id="parametros-nutricionales">
+                                <thead>
+                                    <tr>
+                                        <th class="text-align-left">Parámetro</th>
+                                        <th class="text-align-center">UM</th>
+                                        <th>Resultado Lote</th>
+                                        <th>
+                                            <table>
+                                                <tr>
+                                                    <th colspan="2">Limite Especificación</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Mínimo</th>
+                                                    <th>Máximo</th>
+                                                </tr>
+                                            </table>
+                                        </th>
+                                        <th class="text-align-center">Frecuencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ***PARAMETROSNUTRICIONALES***
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr style="***TITULOMETODOLOGIA***">
+                        <td id="titulo-metodologia">
+                            <h2>Metodología</h2>
+                        </td>
+                    </tr>
+                    <tr style="***CUERPOMETODOLOGIA***">
+                        <td id="cuerpo-metodologia">
+                            <table id="metodologia">
+                                <tbody>
+                                    ***METODOLOGIA***
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td id="pie-de-pagina-metodologia"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-personal-responsable">
+                            <table id="personal-responsable">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <img src="http://sys.empresasagrotop.cl/Content/images/firma_hector_puerta.png" />
+                                            <h3>***RESPONSABLE***</h3>
+                                            Gerente Operaciones<br />
+                                            Empresas Agrotop
+                                        </td>
+                                        <td>
+                                            <img src="http://sys.empresasagrotop.cl/Content/images/firma_richard_lobo.png" />
+                                            <h3>Richard Lobo</h3>
+                                            Jefe Gestión de Calidad<br />
+                                            Empresas Agrotop
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td id="pie-de-pagina-personal-responsable"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="pie-de-pagina">
+                    <tr>
+                        <td>
+                            <p><strong>Avenatop SpA &copy;***AÑO***</strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,24 @@
+﻿@{
+    Layout = null;
+    List<String> files = (List<String>) ViewData["DirectoryFiles"];
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Show Log</title>
+    <style type="text/css">
+        
+        
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Log</h1>
+        @foreach (var file in files) {
+            <a href="@Url.Content("~/LogViewer/ShowFile?File="+file)">@file</a><br />
+        }
+    </div>
+</body>
+</html>

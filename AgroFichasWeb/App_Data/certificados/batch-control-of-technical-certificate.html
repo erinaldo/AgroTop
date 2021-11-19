@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Batch Control Of Technical Certificate</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #envoltura {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 1400px;
+        }
+
+        #cabecera {
+            width: 1400px;
+        }
+
+            #cabecera #logo {
+                text-align: left;
+            }
+
+            #cabecera #fecha-emision {
+                text-align: right;
+            }
+
+            #cabecera td {
+                width: 50%;
+            }
+
+        #cuerpo {
+            width: 1400px;
+        }
+
+            #cuerpo #titulo-certificado {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-batch-control-technical-certificate {
+                width: 1400px;
+            }
+
+                #cuerpo #cuerpo-batch-control-technical-certificate #batch-control-technical-certificate {
+                    border: 1px solid black;
+                    border-spacing: 0;
+                    border-collapse: separate;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-batch-control-technical-certificate #batch-control-technical-certificate .titulo {
+                        background-color: lightgray;
+                        border: 1px solid black;
+                        font-size: 14px;
+                        font-weight: bold;
+                        padding: 3px;
+                        text-transform: uppercase;
+                    }
+
+                    #cuerpo #cuerpo-batch-control-technical-certificate #batch-control-technical-certificate td {
+                        border: 1px solid black;
+                        font-size: 12px;
+                        word-break: break-word;
+                    }
+
+            #cuerpo #titulo-analisis-sobre-100-grs {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-analisis-sobre-100-grs {
+                width: 1400px;
+            }
+
+                #cuerpo #cuerpo-analisis-sobre-100-grs .analisis-sobre-100-grs {
+                    border-spacing: 0;
+                    border-collapse: separate;
+                    margin-left: auto;
+                    margin-right: auto;
+                    margin-bottom: 20px;
+                    position: relative;
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-analisis-sobre-100-grs .analisis-sobre-100-grs th, #cuerpo #cuerpo-analisis-sobre-100-grs .analisis-sobre-100-grs thead td {
+                        background-color: lightgray;
+                        border: 1px solid black;
+                        font-size: 12px;
+                        padding: 3px;
+                        text-transform: uppercase;
+                    }
+
+                    #cuerpo #cuerpo-analisis-sobre-100-grs .analisis-sobre-100-grs th, #cuerpo #cuerpo-analisis-sobre-100-grs .analisis-sobre-100-grs tbody td {
+                        border: 1px solid;
+                        font-size: 12px;
+                        text-align: center;
+                    }
+
+            #cuerpo #cuerpo-personal-responsable {
+                width: 1400px;
+            }
+
+                #cuerpo #cuerpo-personal-responsable #personal-responsable {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 400px;
+                }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable tbody th, #cuerpo #cuerpo-personal-responsable #personal-responsable tbody td {
+                        padding-top: 0px;
+                        text-align: center;
+                        width: 400px;
+                    }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable h3 {
+                        border-top: 1px solid black;
+                    }
+
+            #cuerpo #pie-de-pagina-personal-responsable {
+                padding-bottom: 20px;
+                text-align: center;
+            }
+
+        #pie-de-pagina {
+            height: 50px;
+            text-align: center;
+            width: 1400px;
+        }
+
+        /*FIX: wkhtmltopdf repeating thead headers overlapping content*/
+        thead, tfoot {
+            display: table-row-group;
+        }
+    </style>
+</head>
+<body>
+    <table id="envoltura">
+        <tr>
+            <td>
+                <table id="cabecera">
+                    <tr>
+                        <td id="logo">
+                            <img src="http://sys.empresasagrotop.cl/Content/images/Avenatop.png" />
+                        </td>
+                        <td id="fecha-emision">
+                            <span>Chile, ***FECHA***</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="cuerpo">
+                    <tr>
+                        <td id="titulo-certificado">
+                            <h1>
+                                BATCH CONTROL OF TECHNICAL CERTIFICATE<br />Nº ***NO***/***AÑO***
+                            </h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-batch-control-technical-certificate">
+                            <table id="batch-control-technical-certificate">
+                                <tr>
+                                    <td width="25%" class="titulo">Customer Code</td>
+                                    <td width="25%" class="dato">: ***CUSTOMERCODE***</td>
+                                    <td width="25%" class="titulo">Booking Nº</td>
+                                    <td width="25%" class="dato">: ***BOOKING***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Version Specification</td>
+                                    <td width="25%" class="dato">: ***VERSIONSPECIFICATION***</td>
+                                    <td width="25%" class="titulo">Shipping Line/Vessel</td>
+                                    <td width="25%" class="dato">: ***SHIPPINGLINE***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Customer Name</td>
+                                    <td width="25%" class="dato">: ***CUSTOMERNAME***</td>
+                                    <td width="25%" class="titulo">Lot</td>
+                                    <td width="25%" class="dato">: ***LOT***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Container</td>
+                                    <td width="25%" class="dato">: ***CONTAINER***</td>
+                                    <td width="25%" class="titulo">Production Date</td>
+                                    <td width="25%" class="dato">: ***PRODUCTIONDATE***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Amount of Product</td>
+                                    <td width="25%" class="dato">: ***AMOUNTOFPRODUCT***</td>
+                                    <td width="25%" class="titulo">Process Code</td>
+                                    <td width="25%" class="dato">: ***PROCESSCODE***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Certified Ton</td>
+                                    <td width="25%" class="dato">: ***CERTIFIEDTON***</td>
+                                    <td width="25%" class="titulo">Presentation</td>
+                                    <td width="25%" class="dato">: ***PRESENTATION***</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="titulo-analisis-sobre-100-grs">
+                            <h2>
+                                ANALYSIS ON 100 GRS. ***PRODUCTO***
+                            </h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-analisis-sobre-100-grs">
+                            ***ANALYSISON100GRSQUICKOAT***
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <table id="cuerpo">
+        <tr>
+            <td id="cuerpo-personal-responsable">
+                <table id="personal-responsable">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img src="http://sys.empresasagrotop.cl/Content/images/firma_richard_lobo.png" />
+                                <h3>Richard Lobo</h3>
+                                Jefe Gestión de Calidad<br />
+                                Empresas Agrotop
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td id="pie-de-pagina-personal-responsable"><p><strong>Avenatop SpA &copy;***AÑO***</strong></p></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

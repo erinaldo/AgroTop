@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>CERTIFICATE OF ANALYSIS</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #envoltura {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 990px;
+        }
+
+        #cabecera {
+            width: 990px;
+        }
+
+            #cabecera #logo {
+                text-align: left;
+            }
+
+            #cabecera #fecha-emision {
+                text-align: right;
+            }
+
+            #cabecera td {
+                width: 50%;
+            }
+
+        #cuerpo {
+            width: 990px;
+        }
+
+            #cuerpo #titulo-certificado {
+                text-align: center;
+            }
+
+            #cuerpo #descripcion-certificado {
+                padding: 20px;
+                text-align: justify;
+            }
+
+            #cuerpo #titulo-resume {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-resume {
+                width: 800px;
+            }
+
+                #cuerpo #cuerpo-resume #resume {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 800px;
+                }
+
+                    #cuerpo #cuerpo-resume #resume .titulo {
+                        border: 1px solid black;
+                        font-weight: bold;
+                        padding: 5px;
+                    }
+
+                    #cuerpo #cuerpo-resume #resume .dato {
+                        border: 1px solid black;
+                        padding: 5px;
+                        word-break: break-all;
+                    }
+
+            #cuerpo .titulo-parametros-resultados {
+                text-align: center;
+            }
+
+            #cuerpo .parametros {
+                width: 990px;
+            }
+
+                #cuerpo .parametros .resultados {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 990px;
+                }
+
+                    #cuerpo .parametros .resultados th,
+                    #cuerpo .parametros .resultados td {
+                        border: 1px solid black;
+                    }
+
+                    #cuerpo .parametros .resultados tbody td {
+                        font-size: small;
+                    }
+
+            #cuerpo #cuerpo-personal-responsable {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-personal-responsable #personal-responsable {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 800px;
+                }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable tbody th, #cuerpo #cuerpo-personal-responsable #personal-responsable tbody td {
+                        padding-top: 100px;
+                        text-align: center;
+                        width: 400px;
+                    }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable h3 {
+                        border-top: 1px solid black;
+                    }
+
+            #cuerpo #pie-de-pagina-personal-responsable {
+                padding-bottom: 20px;
+            }
+
+        #pie-de-pagina {
+            height: 50px;
+            text-align: center;
+            width: 990px;
+        }
+
+        .header {
+            background-color: lightgray;
+            border: 1px solid black;
+            font-size: 14px;
+            padding: 3px;
+            text-transform: uppercase;
+        }
+
+        .ultima-tabla {
+            margin-bottom: 0;
+        }
+
+        /*FIX: wkhtmltopdf repeating thead headers overlapping content*/
+        thead, tfoot {
+            display: table-row-group;
+        }
+    </style>
+</head>
+<body>
+    <table id="envoltura">
+        <tr>
+            <td>
+                <table id="cabecera">
+                    <tr>
+                        <td id="logo">
+                            <img src="http://sys.empresasagrotop.cl/Content/images/Avenatop.png" />
+                        </td>
+                        <td id="fecha-emision">
+                            <span>Chile, ***FECHA***</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="cuerpo">
+                    <tr>
+                        <td id="titulo-certificado">
+                            <h1>CERTIFICATE OF ANALYSIS</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="descripcion-certificado">
+                            <strong>Report No.</strong>: ***REPORTNO***<br />
+                            <strong>Report Generated Date</strong>: ***REPORTGENERATEDDATE***<br /><br />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-resume">
+                            <table id="resume">
+                                <tbody>
+                                    <tr>
+                                        <td width="25%" class="titulo">Product</td>
+                                        <td width="25%" class="dato">: ***PRODUCT***</td>
+                                        <td width="25%" class="titulo">Container No.</td>
+                                        <td width="25%" class="dato">: ***CONTAINERNO***</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" class="titulo">Batch No.</td>
+                                        <td width="25%" class="dato">: ***BATCHNO***</td>
+                                        <td width="25%" class="titulo">MFD</td>
+                                        <td width="25%" class="dato">: ***MFD***</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" class="titulo">Expiry Date/Best Before</td>
+                                        <td width="25%" class="dato">: ***EXPIRYDATE***</td>
+                                        <td width="25%" class="titulo">Date of Dispatch</td>
+                                        <td width="25%" class="dato">: ***DATEOFDISPATCH***</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" class="titulo">Quantity</td>
+                                        <td width="25%" class="dato">: ***QUANTITY***</td>
+                                        <td width="25%" class="titulo">No. of Bags</td>
+                                        <td width="25%" class="dato">: ***NOOFBAGS***</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" class="titulo">Commercial Invoice</td>
+                                        <td width="25%" class="dato">: ***COMMERCIALINVOICE***</td>
+                                        <td width="25%" class="titulo">Guide</td>
+                                        <td width="25%" class="dato">: ***GUIDE***</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="parametros">
+                            <p><strong>Sensory & Physicochemical Characteristics (Day)</strong></p>
+                            ***SENSORYPHYSICOCHEMICALCHARACTERISTICS***
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="parametros">
+                            <p><strong>Pesticides Characteristics</strong></p>
+                            ***PESTICIDESCHARACTERISTICS***
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="parametros">
+                            <p><strong>Heavy Metals Characteristics</strong></p>
+                            ***HEAVYMETALSCHARACTERISTICS***
+                        </td>
+                    </tr>
+					<tr>
+                        <td class="parametros">
+                            <p><strong>Mycotoxins Characteristics</strong></p>
+                            ***MYCOTOXINSCHARACTERISTICS***
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="parametros">
+                            <p><strong>Microbiological Characteristics (Once in 6 months)</strong></p>
+                            ***MICROBIOLOGICALCHARACTERISTICS***
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="parametros">
+                            <p><strong>Nutritional & Chemical Characteristics (Once in 6 months except protein which is every 20th cont.)</strong></p>
+                            ***NUTRITIONALCHEMICALCHARACTERISTICS***
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-personal-responsable">
+                            <table id="personal-responsable">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <h3>Test Conducted by</h3>
+                                            Lab Chemist<br />
+                                            Avenatop SpA
+                                        </td>
+                                        <td>
+                                            <h3>Test Approved by</h3>
+                                            Senior Lab Chemist / QA Manager<br />
+                                            Avenatop SpA
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td id="pie-de-pagina-personal-responsable"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="pie-de-pagina">
+                    <tr>
+                        <td>
+                            <p><strong>Avenatop SpA &copy;***AÑO***</strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

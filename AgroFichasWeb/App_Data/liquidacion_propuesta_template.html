@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body style="font-family:Arial, Helvetica, sans-serif;font-size:14px;text-align:center;">
+    <div style="margin-left:auto;margin-right:auto;width:1000px;padding:16px;">
+        <div style="margin-left:auto;margin-right:auto;float: left;width:auto;">
+            <img src="C:\Microsoft OneDrive\Proyectos\Empresas Agrotop\Desarrollos\Agrotop.AgroFichas.API\AgroFichasWeb\App_Data\granotop.png" />
+        </div>
+        <div style="margin-left:auto;margin-right:auto;float: right;width:auto;">
+            <em>Módulo de Transporte y Logística</em>
+        </div>
+        <div style="margin-left:auto;margin-right:auto;width:400px;">
+            <h1>Propuesta de Liquidación</h1>
+        </div>
+        <div style="text-align:left;">
+            <div style="display:block;margin-bottom:10px;text-align:right;">
+                <span style="font-size:24px;font-weight:bold;">#***NUMERODELIQUIDACION***</span>
+            </div>
+            <table style="margin-bottom:30px;width:600px;" border="1" cellpadding="3" cellspacing="0">
+                <tr>
+                    <td style="font-weight:bold;width:180px;">Razón Social</td>
+                    <td style="text-align:center;width:420px;">***RAZONSOCIAL***</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;width:180px;">RUT</td>
+                    <td style="text-align:center;width:420px;">***RUT***</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;width:180px;">Fecha emisión</td>
+                    <td style="text-align:center;width:420px;">***FECHAEMISION***</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;width:180px;">Empresa</td>
+                    <td style="text-align:center;width:420px;">***EMPRESA***</td>
+                </tr>
+            </table>
+
+            <div id="pedidos" style="display:block;margin-left:auto;margin-bottom:30px;margin-right:auto;width:1000px;">
+                <table border="1" cellpadding="3" cellspacing="0" width="1000">
+                    <tr>
+                        <td style="font-weight: bold;">Producto</td>
+                        <td style="font-weight: bold;">N° Guía</td>
+                        <td style="font-weight: bold;">Salida</td>
+                        <td style="font-weight: bold;">Destino</td>
+                        <td style="font-weight: bold;">Pesaje Salida</td>
+                        <td style="font-weight: bold;">Pesaje Llegada</td>
+                        <td style="font-weight: bold;">Tol.</td>
+                        <td style="font-weight: bold;">DIF</td>
+                        <td style="font-weight: bold;">Merma</td>
+                        <td style="font-weight: bold;">Valor Unitario</td>
+                        <td style="font-weight: bold;" align="right">Total</td>
+                    </tr>
+                    ***PEDIDOS***
+                    <tr>
+                        <td colspan="9" rowspan="4"></td>
+                        <td style="font-weight:bold;width:100px;">Neto</td>
+                        <td style="font-weight:bold;text-align:right;width:100px;">***NETO***</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;width:100px;">Pronto Pago</td>
+                        <td style="color:red;font-weight:bold;text-align:right;width:100px;">***DSCTOPP***</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;width:100px;">Descuento Pesaje</td>
+                        <td style="color:red;font-weight:bold;text-align:right;width:100px;">***DSCTODP***</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;width:100px;">Total IVA</td>
+                        <td style="font-weight:bold;text-align:right;width:100px;">***IVA***</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"></td>
+                        <td style="font-weight:bold;text-align:right;width:100px;">***TOTALPESAJESALIDA***</td>
+                        <td style="font-weight:bold;text-align:right;width:100px;">***TOTALPESAJELLEGADA***</td>
+                        <td colspan="2"></td>
+                        <td style="font-weight:bold;text-align:right;width:100px;">***TOTALMERMA***</td>
+                        <td style="font-weight:bold;width:100px;">Total Bruto</td>
+                        <td style="font-weight:bold;text-align:right;width:100px;">***TOTAL***</td>
+                    </tr>
+                </table>
+                <div style="clear:both"></div>
+            </div>
+            <table style="margin-bottom:30px;width:600px;" border="1" cellpadding="3" cellspacing="0">
+                <tr>
+                    <td style="font-weight:bold;width:180px;">Pronto Pago</td>
+                    <td style="text-align:center;width:420px;">***PRONTOPAGO***</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;width:180px;">Neto</td>
+                    <td style="text-align:center;width:420px;">***PRONTOPAGONETO***</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;width:180px;">IVA</td>
+                    <td style="text-align:center;width:420px;">***PRONTOPAGOIVA***</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;width:180px;">Total</td>
+                    <td style="text-align:center;width:420px;">***PRONTOPAGOTOTAL***</td>
+                </tr>
+            </table>
+            <table style="margin-bottom:30px;width:600px;" border="1" cellpadding="3" cellspacing="0">
+                <tr>
+                    <td style="font-weight:bold;width:180px;">Descuento Pesaje</td>
+                    <td style="text-align:center;width:420px;">***DIFERENCIAPESAJE***</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;width:180px;">Neto</td>
+                    <td style="text-align:center;width:420px;">***DIFERENCIAPESAJENETO***</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;width:180px;">IVA</td>
+                    <td style="text-align:center;width:420px;">***DIFERENCIAPESAJEIVA***</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:bold;width:180px;">Total</td>
+                    <td style="text-align:center;width:420px;">***DIFERENCIAPESAJETOTAL***</td>
+                </tr>
+            </table>
+            <table style="margin-bottom:30px;width:600px;" border="1" cellpadding="3" cellspacing="0">
+                <tr>
+                    <td><strong><u>OBSERVACIÓN</u></strong></td>
+                </tr>
+                <tr>
+                    <td>***OBSERVACION***</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!--<table>
+        <tr>
+            <td align="center">{0}</td>
+            <td align="center">{1}</td>
+        </tr>
+    </table>-->
+</body>
+</html>

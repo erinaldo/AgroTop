@@ -1,0 +1,17 @@
+﻿@using System.IO
+@{
+    ViewBag.Title = "Uploads";
+    var files = (List<string>)ViewData["files"];
+}
+
+<h2>Uploads</h2>
+
+<table>
+@foreach (var file in files)
+{
+    <tr>
+        <td>@Html.ActionLink(Path.GetFileName(file), "getfile", new { f = Path.GetFileName(file) } )</td>
+    </tr>
+    
+}
+</table>

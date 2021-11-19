@@ -1,0 +1,368 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Control de Groats Por Lote de Certificado de Calidad</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            width: 100%;
+        }
+
+        #envoltura {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 1200px;
+        }
+
+        #cabecera {
+            width: 1200px;
+        }
+
+            #cabecera #logo {
+                text-align: left;
+            }
+
+            #cabecera #fecha-emision {
+                text-align: right;
+            }
+
+            #cabecera td {
+                width: 50%;
+            }
+
+        #cuerpo {
+            width: 1200px;
+        }
+
+            #cuerpo #titulo-certificado {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-identificacion-lote-analizado {
+                width: 1200px;
+            }
+
+                #cuerpo #cuerpo-identificacion-lote-analizado #identificacion-lote-analizado {
+                    border: 1px solid black;
+                    border-spacing: 0;
+                    border-collapse: separate;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-identificacion-lote-analizado #identificacion-lote-analizado .titulo {
+                        background-color: lightgray;
+                        border: 1px solid black;
+                        font-size: 14px;
+                        font-weight: bold;
+                        padding: 3px;
+                        text-transform: uppercase;
+                    }
+
+                    #cuerpo #cuerpo-identificacion-lote-analizado #identificacion-lote-analizado td {
+                        border: 1px solid black;
+                        font-size: 12px;
+                        word-break: break-word;
+                    }
+
+            #cuerpo #titulo-analisis-sobre-100-grs {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-analisis-sobre-100-grs {
+                width: 1200px;
+            }
+
+                #cuerpo #cuerpo-analisis-sobre-100-grs #analisis-sobre-100-grs {
+                    border-spacing: 0;
+                    border-collapse: separate;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-analisis-sobre-100-grs #analisis-sobre-100-grs th, #cuerpo #cuerpo-analisis-sobre-100-grs #analisis-sobre-100-grs thead td {
+                        background-color: lightgray;
+                        border: 1px solid black;
+                        font-size: 12px;
+                        padding: 3px;
+                        text-transform: uppercase;
+                    }
+
+                    #cuerpo #cuerpo-analisis-sobre-100-grs #analisis-sobre-100-grs th, #cuerpo #cuerpo-analisis-sobre-100-grs #analisis-sobre-100-grs tbody td {
+                        border: 1px solid;
+                        font-size: 12px;
+                        text-align: center;
+                    }
+
+            #cuerpo #cuerpo-personal-responsable {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-personal-responsable #personal-responsable {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 400px;
+                }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable tbody th, #cuerpo #cuerpo-personal-responsable #personal-responsable tbody td {
+                        padding-top: 100px;
+                        text-align: center;
+                        width: 400px;
+                    }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable h3 {
+                        border-top: 1px solid black;
+                    }
+
+            #cuerpo #pie-de-pagina-personal-responsable {
+                padding-bottom: 20px;
+            }
+
+        #pie-de-pagina {
+            height: 50px;
+            text-align: center;
+            width: 1200px;
+        }
+
+        .text-align-left {
+            text-align: left;
+        }
+
+        .text-align-center {
+            text-align: center;
+        }
+
+        .text-align-right {
+            text-align: right;
+        }
+
+        .text-align-justify {
+            text-align: justify;
+        }
+
+        /*FIX: wkhtmltopdf repeating thead headers overlapping content*/
+        thead, tfoot {
+            display: table-row-group;
+        }
+    </style>
+</head>
+<body>
+    <!--<table id="envoltura">
+        <tr>
+            <td>
+                <table id="cabecera">
+                    <tr>
+                        <td id="logo">
+                            <img src="http://sys.empresasagrotop.cl/Content/images/Avenatop.png" />
+                        </td>
+                        <td id="fecha-emision">
+                            <span>Chile, ***FECHA***</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="cuerpo">
+                    <tr>
+                        <td id="titulo-certificado">
+                            <h1>
+                                CONTROL DE GROATS POR LOTE DE CERTIFICADO DE CALIDAD Nº ***NO***/***AÑO***
+                            </h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-identificacion-lote-analizado">
+                            <table id="identificacion-lote-analizado">
+                                <tr>
+                                    <td width="25%" class="titulo">Código de Cliente</td>
+                                    <td width="25%" class="dato">: ***CODCLI***</td>
+                                    <td width="25%" class="titulo">Reserva</td>
+                                    <td width="25%" class="dato">: ***RSV***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Versión</td>
+                                    <td width="25%" class="dato">: ***VER***</td>
+                                    <td width="25%" class="titulo">Naviera</td>
+                                    <td width="25%" class="dato">: ***NAV***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Nombre del Cliente</td>
+                                    <td width="25%" class="dato">: ***NOMCLI***</td>
+                                    <td width="25%" class="titulo">Lote Comercial</td>
+                                    <td width="25%" class="dato">: ***LOTCOM***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Nº de Contenedores</td>
+                                    <td width="25%" class="dato">: ***NOCONT***</td>
+                                    <td width="25%" class="titulo">Fecha de Producción</td>
+                                    <td width="25%" class="dato">: ***FECPRO***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Cantidad de Producto</td>
+                                    <td width="25%" class="dato">: ***CNTPRO***</td>
+                                    <td width="25%" class="titulo">Código de Proceso</td>
+                                    <td width="25%" class="dato">: ***CODPRO***</td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" class="titulo">Toneladas Certificadas</td>
+                                    <td width="25%" class="dato">: ***TNCERT***</td>
+                                    <td width="25%" class="titulo">Presentación</td>
+                                    <td width="25%" class="dato">: ***PST***</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="titulo-analisis-sobre-100-grs">
+                            <h2>ANÁLISIS SOBRE 100 GRS.</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-analisis-sobre-100-grs">
+                            <table id="analisis-sobre-100-grs">
+                                ***ANALISISSOBRE100GRS***
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="pie-de-pagina">
+                    <tr>
+                        <td>
+                            <p><strong>Avenatop SpA &copy;***AÑO***</strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>-->
+    <table id="cabecera">
+        <tr>
+            <td id="logo">
+                <img src="http://sys.empresasagrotop.cl/Content/images/Avenatop.png" />
+            </td>
+            <td id="fecha-emision">
+                <span>Chile, ***FECHA***</span>
+            </td>
+        </tr>
+    </table>
+    <table id="cuerpo">
+        <tr>
+            <td id="titulo-certificado">
+                <h1>
+                    CONTROL DE GROATS POR LOTE DE CERTIFICADO DE CALIDAD Nº ***NO***/***AÑO***
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <td id="cuerpo-identificacion-lote-analizado">
+                <table id="identificacion-lote-analizado">
+                    <tr>
+                        <td width="25%" class="titulo">Código de Cliente</td>
+                        <td width="25%" class="dato">: ***CODCLI***</td>
+                        <td width="25%" class="titulo">Reserva</td>
+                        <td width="25%" class="dato">: ***RSV***</td>
+                    </tr>
+                    <tr>
+                        <td width="25%" class="titulo">Versión</td>
+                        <td width="25%" class="dato">: ***VER***</td>
+                        <td width="25%" class="titulo">Naviera</td>
+                        <td width="25%" class="dato">: ***NAV***</td>
+                    </tr>
+                    <tr>
+                        <td width="25%" class="titulo">Nombre del Cliente</td>
+                        <td width="25%" class="dato">: ***NOMCLI***</td>
+                        <td width="25%" class="titulo">Lote Comercial</td>
+                        <td width="25%" class="dato">: ***LOTCOM***</td>
+                    </tr>
+                    <tr>
+                        <td width="25%" class="titulo">Nº de Contenedores</td>
+                        <td width="25%" class="dato">: ***NOCONT***</td>
+                        <td width="25%" class="titulo">Fecha de Producción</td>
+                        <td width="25%" class="dato">: ***FECPRO***</td>
+                    </tr>
+                    <tr>
+                        <td width="25%" class="titulo">Cantidad de Producto</td>
+                        <td width="25%" class="dato">: ***CNTPRO***</td>
+                        <td width="25%" class="titulo">Código de Proceso</td>
+                        <td width="25%" class="dato">: ***CODPRO***</td>
+                    </tr>
+                    <tr>
+                        <td width="25%" class="titulo">Toneladas Certificadas</td>
+                        <td width="25%" class="dato">: ***TNCERT***</td>
+                        <td width="25%" class="titulo">Presentación</td>
+                        <td width="25%" class="dato">: ***PST***</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td id="titulo-analisis-sobre-100-grs">
+                <h2>ANÁLISIS SOBRE 100 GRS.</h2>
+            </td>
+        </tr>
+        <tr>
+            <td id="cuerpo-analisis-sobre-100-grs">
+                <table id="analisis-sobre-100-grs">
+                    ***ANALISISSOBRE100GRS***
+                </table>
+            </td>
+        </tr>
+    </table>
+	   <table id="cuerpo" style="page-break-before: always;">
+	   			<tr>
+                        <td id="cuerpo-personal-responsable">
+                            <table id="personal-responsable">
+                                <tbody>
+                                    <tr>
+                                        <td>
+											<img src="http://sys.empresasagrotop.cl/Content/images/firma_richard_lobo.png" />
+                                            <h3>Richard Lobo</h3>
+                                            Jefe Gestión de Calidad<br />
+                                            Empresas Agrotop
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td id="pie-de-pagina-personal-responsable"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                    </tr>
+	   </table>
+    <table id="pie-de-pagina">
+        <tr>
+            <td>
+                <p><strong>Avenatop SpA &copy;***AÑO***</strong></p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

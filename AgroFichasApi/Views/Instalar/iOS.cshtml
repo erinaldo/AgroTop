@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "iOS";
+
+    string clientVer = ViewData["clientVer"].ToString();
+    string version = ViewData["version"].ToString();
+    string lnk = ViewData["url"].ToString().Replace("redir", "download");
+}
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+    <style>
+        li {
+        
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .actual {
+            background-color: green;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+        .update {
+            background-color: yellow;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+        }
+    </style>
+    <h2>Instalar AgroFichas iOS v@(version)</h2>
+
+    @if (clientVer == version)
+    {
+      <div class="actual">Ya cuenta con la versión más actualizada</div>
+    }
+    else 
+    {
+        <div class="update">Hay una actualización disponible</div>
+    }
+
+    <ul>
+        <li>1. <a href="~/content/apps/AgroFichas_1.mobileprovision">Instalar Perfil</a></li>
+        <li>2 .<a href="itms-services://?action=download-manifest&amp;url=@(Url.Encode(lnk))">Instalar Aplicación</a></li>
+                        itms-services://?action=download-manifest&url=itms-services://?action=download-manifest&url=https://$MY_PLIST_URL.plist
+    </ul>
+
+
+    @(lnk)
+
+</body>
+</html>

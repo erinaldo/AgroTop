@@ -1,0 +1,27 @@
+﻿@{
+    Layout = null;
+    bool result = (bool)ViewData["result"];
+    string msg = ViewData["msg"].ToString();
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Enviar Ficha</title>
+</head>
+<body>
+    <div>
+       @if (result)
+       {
+           <h1 style="color: green">La ficha fue enviada con éxito</h1>
+       }
+       else
+       {
+           <h1 style="color: red">Ocurrió un error al intentar enviar la ficha</h1>
+           <p>@msg</p>
+       }
+    </div>
+</body>
+</html>

@@ -1,0 +1,353 @@
+public partial class rpt_OPR_ProduccionTurnoResult
+{
+
+	private int _IdRegistroTurno;
+
+	private string _Proceso;
+
+	private decimal _Meta;
+
+	private decimal _Produccion;
+
+	private decimal _Cumplimiento;
+
+	private decimal _Rendimiento;
+
+	private int _DetencionMin;
+
+	private decimal _Productividad;
+
+	private decimal _Eficiencia;
+
+	public rpt_OPR_ProduccionTurnoResult()
+	{
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IdRegistroTurno", DbType = "Int NOT NULL")]
+	public int IdRegistroTurno
+	{
+		get
+		{
+			return this._IdRegistroTurno;
+		}
+		set
+		{
+			if ((this._IdRegistroTurno != value))
+			{
+				this._IdRegistroTurno = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Proceso", DbType = "VarChar(50) NOT NULL", CanBeNull = false)]
+	public string Proceso
+	{
+		get
+		{
+			return this._Proceso;
+		}
+		set
+		{
+			if ((this._Proceso != value))
+			{
+				this._Proceso = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Meta", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Meta
+	{
+		get
+		{
+			return this._Meta;
+		}
+		set
+		{
+			if ((this._Meta != value))
+			{
+				this._Meta = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Produccion", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Produccion
+	{
+		get
+		{
+			return this._Produccion;
+		}
+		set
+		{
+			if ((this._Produccion != value))
+			{
+				this._Produccion = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Cumplimiento", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Cumplimiento
+	{
+		get
+		{
+			return this._Cumplimiento;
+		}
+		set
+		{
+			if ((this._Cumplimiento != value))
+			{
+				this._Cumplimiento = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Rendimiento", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Rendimiento
+	{
+		get
+		{
+			return this._Rendimiento;
+		}
+		set
+		{
+			if ((this._Rendimiento != value))
+			{
+				this._Rendimiento = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_DetencionMin", DbType = "Int NOT NULL")]
+	public int DetencionMin
+	{
+		get
+		{
+			return this._DetencionMin;
+		}
+		set
+		{
+			if ((this._DetencionMin != value))
+			{
+				this._DetencionMin = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Productividad", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Productividad
+	{
+		get
+		{
+			return this._Productividad;
+		}
+		set
+		{
+			if ((this._Productividad != value))
+			{
+				this._Productividad = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Eficiencia", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Eficiencia
+	{
+		get
+		{
+			return this._Eficiencia;
+		}
+		set
+		{
+			if ((this._Eficiencia != value))
+			{
+				this._Eficiencia = value;
+			}
+		}
+	}
+}
+
+public partial class rpt_OPR_ProduccionTurnoEstabilizadoResult
+{
+
+	private int _IdRegistroTurno;
+
+	private decimal _ConsumoMP;
+
+	private decimal _FlujoProm;
+
+	private decimal _Produccion;
+
+	private decimal _Cascara;
+
+	private decimal _Rendimiento;
+
+	private decimal _DetencionMin;
+
+	private decimal _Productividad;
+
+	private decimal _Eficiencia;
+
+	public rpt_OPR_ProduccionTurnoEstabilizadoResult()
+	{
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IdRegistroTurno", DbType = "Int NOT NULL")]
+	public int IdRegistroTurno
+	{
+		get
+		{
+			return this._IdRegistroTurno;
+		}
+		set
+		{
+			if ((this._IdRegistroTurno != value))
+			{
+				this._IdRegistroTurno = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ConsumoMP", DbType = "DECIMAL(14,2) NOT NULL", CanBeNull = false)]
+	public decimal ConsumoMP
+	{
+		get
+		{
+			return this._ConsumoMP;
+		}
+		set
+		{
+			if ((this._ConsumoMP != value))
+			{
+				this._ConsumoMP = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_FlujoProm", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal FlujoProm
+	{
+		get
+		{
+			return this._FlujoProm;
+		}
+		set
+		{
+			if ((this._FlujoProm != value))
+			{
+				this._FlujoProm = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Produccion", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Produccion
+	{
+		get
+		{
+			return this._Produccion;
+		}
+		set
+		{
+			if ((this._Produccion != value))
+			{
+				this._Produccion = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Cascara", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Cascara
+	{
+		get
+		{
+			return this._Cascara;
+		}
+		set
+		{
+			if ((this._Cascara != value))
+			{
+				this._Cascara = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Rendimiento", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Rendimiento
+	{
+		get
+		{
+			return this._Rendimiento;
+		}
+		set
+		{
+			if ((this._Rendimiento != value))
+			{
+				this._Rendimiento = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_DetencionMin", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal DetencionMin
+	{
+		get
+		{
+			return this._DetencionMin;
+		}
+		set
+		{
+			if ((this._DetencionMin != value))
+			{
+				this._DetencionMin = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Productividad", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Productividad
+	{
+		get
+		{
+			return this._Productividad;
+		}
+		set
+		{
+			if ((this._Productividad != value))
+			{
+				this._Productividad = value;
+			}
+		}
+	}
+
+	[global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Eficiencia", DbType = "DECIMAL(14,2) NOT NULL")]
+	public decimal Eficiencia
+	{
+		get
+		{
+			return this._Eficiencia;
+		}
+		set
+		{
+			if ((this._Eficiencia != value))
+			{
+				this._Eficiencia = value;
+			}
+		}
+	}
+}
+
+[global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.rpt_OPR_ProduccionTurno")]
+public ISingleResult<rpt_OPR_ProduccionTurnoResult> rpt_OPR_ProduccionTurno([global::System.Data.Linq.Mapping.ParameterAttribute(Name = "IdRegistroTurno", DbType = "Int")] System.Nullable<int> idRegistroTurno, [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "HorasTurno", DbType = "Int")] System.Nullable<int> horasTurno)
+{
+	IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idRegistroTurno, horasTurno);
+	return ((ISingleResult<rpt_OPR_ProduccionTurnoResult>)(result.ReturnValue));
+}
+
+[global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.rpt_OPR_ProduccionTurnoEstabilizado")]
+public ISingleResult<rpt_OPR_ProduccionTurnoEstabilizadoResult> rpt_OPR_ProduccionTurnoEstabilizado([global::System.Data.Linq.Mapping.ParameterAttribute(Name = "IdRegistroTurno", DbType = "Int")] System.Nullable<int> idRegistroTurno, [global::System.Data.Linq.Mapping.ParameterAttribute(Name = "HorasTurno", DbType = "Int")] System.Nullable<int> horasTurno)
+{
+	IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), idRegistroTurno, horasTurno);
+	return ((ISingleResult<rpt_OPR_ProduccionTurnoEstabilizadoResult>)(result.ReturnValue));
+}

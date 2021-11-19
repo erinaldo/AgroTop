@@ -1,0 +1,32 @@
+﻿@{
+    Layout = null;
+    string exceptionFile = (string)ViewData["APILog"];
+    string fileName = (string)ViewData["FileName"];
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Show Exception</title>
+    <style type="text/css">
+        #code {
+            font-family:Consolas;
+        }
+        #comeback {
+            text-align:center;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>@fileName</h1>
+    </div>
+    <div id="code">
+        @exceptionFile
+    </div>
+    <div id="comeback">
+
+    </div>
+</body>
+</html>
