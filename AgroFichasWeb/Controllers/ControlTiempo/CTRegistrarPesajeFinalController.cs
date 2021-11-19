@@ -59,7 +59,7 @@ namespace AgroFichasWeb.Controllers.ControlTiempo
         }
         #endregion 
 
-        #region registrar
+        #region registrarPesoFinal
         public ActionResult Registrar(int id)
         {
             CheckPermisoAndRedirect(234);
