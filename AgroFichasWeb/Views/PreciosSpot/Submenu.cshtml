@@ -1,0 +1,11 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var cultivos = (List<Cultivo>)ViewData["cultivos"];
+}    
+    <ul>
+        @foreach (var cultivo in cultivos)
+        {
+            <li><a href="@Url.Content("~/preciosspot?cultivo=" + cultivo.IdCultivo)">@cultivo.Nombre</a></li>
+        }
+    </ul>
+    <div style="clear:both;"></div>

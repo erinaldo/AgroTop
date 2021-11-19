@@ -1,0 +1,43 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model LOG_Merma
+
+@{
+    ViewBag.NombreSeccion = "Valores Merma";
+    if (Model.IdCultivo == 0)
+    {
+        ViewBag.Title = "Crear Valor Merma";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Valor Merma";
+    }
+    var selectList = (IEnumerable<SelectListItem>)ViewData["cultivosList"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Cultivo</label>
+            @Html.DropDownList("IdCultivo", selectList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdCultivo", " ")
+        </p>
+        <p>
+            <label for="Titulo">Precio</label>
+            @Html.TextBox("Precio", Model.Precio, new { @class = "heavy std" })
+            @Html.ValidationMessage("Precio", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar este Valor Merma" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

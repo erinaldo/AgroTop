@@ -1,0 +1,95 @@
+﻿@using AgroFichasWeb.Models
+@model List<rptl_InformeMermasChoferesPorTransportistaResult>
+@{
+    ViewBag.Title = "Informe Mermas Choferes por Transportista";
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+
+    DateTime? fechaDesde = null;
+    DateTime? fechaHasta = null;
+    int? origen = null;
+    int? destino = null;
+    int? idChofer = null;
+    int? idTransportista = null;
+    var dc = new AgroFichasDBDataContext();
+    if (ViewData["origen"] != null)
+    {
+        origen = (int?)ViewData["origen"];
+    }
+    if (ViewData["destino"] != null)
+    {
+        destino = (int?)ViewData["destino"];
+    }
+    if (ViewData["idChofer"] != null)
+    {
+        idChofer = (int?)ViewData["idChofer"];
+    }
+    if (ViewData["idTransportista"] != null)
+    {
+        idTransportista = (int?)ViewData["idTransportista"];
+    }
+    if (ViewData["fechaDesde"] != null)
+    {
+        fechaDesde = (DateTime?)ViewData["fechaDesde"];
+    }
+    if (ViewData["fechaHasta"] != null)
+    {
+        fechaHasta = (DateTime?)ViewData["fechaHasta"];
+    }
+}
+
+@section filter {
+    <style>
+        input[type="text"] {
+            width:150px;
+        }
+
+        select {
+            width:155px;
+        }
+    </style>
+
+    @using (Html.BeginForm())
+    {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TransportistaSelector")</td>
+                <td>@Html.Partial("FechaDesdeSelector")</td>
+                <td>@Html.Partial("FechaHastaSelector")</td>
+                <td>@Html.Partial("TramoSelector")</td>
+                <td>@Html.Partial("ChoferSelector")</td>
+                <td><input type="hidden" name="run" value="1" /></td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+}
+
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptEncabezadoListado">RUT</td>
+        <td class="RptEncabezadoListado">Chofer</td>
+        <td class="RptEncabezadoListado">Kgs. Salida</td>
+        <td class="RptEncabezadoListado">Kgs. Llegada</td>
+        <td class="RptEncabezadoListado">Diferecia</td>
+        <td class="RptEncabezadoListado">Diferecia (con Tolerancia)</td>
+        <td class="RptEncabezadoListado">% Diferecia</td>
+        <td class="RptEncabezadoListado">% Diferecia (con Tolerancia)</td>
+        <td class="RptEncabezadoListado">% Sobre el Total</td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        var totalesTransportados = dc.rptl_ObtenerTotalesTransportados(fechaDesde, fechaHasta, origen, destino, idChofer, idTransportista);
+        <tr class="RptItemListado" valign="top">
+            <td>@item.RUT</td>
+            <td>@item.Nombre</td>
+            <td>@item.KgsSalida.Value.ToString("N0")</td>
+            <td>@item.KgsLlegada.Value.ToString("N0")</td>
+            <td>@item.Diferencia</td>
+            <td>@item.DiferenciaConTolerancia</td>
+            <td>@(string.Format("{0}%", item.PorcentajeDiferencia.Value.ToString("N3")))</td>
+            <td>@(string.Format("{0}%", item.PorcentajeDiferenciaConTolerancia.Value.ToString("N3")))</td>
+            <td>@(string.Format("{0}%", ((item.Diferencia / totalesTransportados.First().KgsLlegada) * 100).Value.ToString("N3")))</td>
+        </tr>
+    }
+</table>

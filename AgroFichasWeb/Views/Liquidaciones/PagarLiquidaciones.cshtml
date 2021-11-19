@@ -1,0 +1,170 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Liquidaciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model PagarLiquidacionesViewModel
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "Pagar Liquidaciones " + temporada.Nombre;
+
+
+    var puedeAnular = SYS_User.Current().HasPermiso(50);
+
+    var dc = new AgroFichasDBDataContext();
+    List<KeyValuePair<int, string>> cultivos = new List<KeyValuePair<int, string>>();
+}
+
+@section headSection {
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm("pagarliquidaciones", "liquidaciones", FormMethod.Post, new { id = "frm" }))
+{
+    <fieldset class="dataForm">
+        <p>
+            <label>Empresa</label>
+            @Html.Partial("EmpresaSelector")
+        </p>
+        <p>
+            <label>Temporada</label>
+            @Html.Partial("TemporadaSelector")
+        </p>
+        <div class="p">
+            <label>Liquidaciones</label>
+            <table class="sublist2" style="margin-bottom: 10px; display: inline-block; width: 770px;">
+                <thead>
+                    <tr>
+                        <td class="label"><input type="checkbox" id="chkSelectAll" /></td>
+                        <td class="label small">Nro</td>
+                        <td class="label small">Fecha</td>
+                        <td class="label small">Nombre</td>
+                        <td class="label small">Empresa</td>
+                        <td class="label small">Cultivo</td>
+                        <td class="label small">Ingresos</td>
+                        <td class="label small">Descuentos</td>
+                        <td class="label small">Saldo</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items != null)
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            var keyI = "Items[" + item.IdLiquidacion + "].";
+                            <tr valign="top">
+                                <td>
+                                    @Html.CheckBox(keyI + "Seleccionado", item.Seleccionado, new { @class = "exportchk" })
+                                </td>
+                                <td class="small">
+                                    @item.IdLiquidacion
+                                    @Html.Hidden("Items.Index", item.IdLiquidacion)
+                                    @Html.Hidden(keyI + "IdLiquidacion", item.IdLiquidacion)
+                                </td>
+                                <td class="small">@item.Liquidacion.FechaHoraCreacion.ToString("dd/MM/yy")</td>
+                                <td class="small">@item.Liquidacion.Agricultor.Nombre</td>
+                                <td class="small">@item.Liquidacion.Empresa.Nombre</td>
+                                <td class="small">
+                                    @if (item.Liquidacion.PrecioIngreso.Count > 0 || item.Liquidacion.PrecioIngresoNulo.Count > 0)
+                                    {
+                                        <table style="border-collapse: collapse;">
+                                            @foreach (var precio in item.Liquidacion.PrecioIngreso.OrderBy(pi => pi.PrecioUnidad).ThenBy(pi => pi.IdProcesoIngreso))
+                                            {
+                                                cultivos.Add(new KeyValuePair<int, string>(precio.ProcesoIngreso.CultivoContrato.IdCultivo, precio.ProcesoIngreso.CultivoEmpresa));
+                                            }
+                                            @foreach (var cultivo in cultivos.Distinct())
+                                            {
+                                                <tr>
+                                                    <td align="center" class="cultivo-@cultivo.Key" style="color: white">
+                                                        @cultivo.Value
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @{
+                                                //Reinicializando cultivos
+                                                cultivos = new List<KeyValuePair<int, string>>();
+                                            }
+                                            @foreach (var precio in item.Liquidacion.PrecioIngresoNulo.OrderBy(pi => pi.PrecioUnidad).ThenBy(pi => pi.IdProcesoIngreso))
+                                            {
+                                                var ProcesoIngreso = dc.ProcesoIngreso.SingleOrDefault(pi => pi.IdProcesoIngreso == precio.IdProcesoIngreso);
+                                                if (ProcesoIngreso != null)
+                                                {
+                                                    cultivos.Add(new KeyValuePair<int, string>(precio.CultivoContrato.IdCultivo, ProcesoIngreso.CultivoEmpresa));
+                                                }
+                                            }
+                                            @foreach (var cultivo in cultivos.Distinct())
+                                            {
+                                                <tr>
+                                                    <td align="center" class="cultivo-@cultivo.Key" style="color: white">
+                                                        @cultivo.Value
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @{
+                                                //Reinicializando cultivos
+                                                cultivos = new List<KeyValuePair<int, string>>();
+                                            }
+                                        </table>
+                                    }
+                                </td>
+                                <td class="small">
+                                    @String.Format("{0:#,##0}", item.Liquidacion.TotalPagar)
+                                </td>
+                                <td class="small">
+                                    @Html.ActionLink((item.Liquidacion.TotalDescuentos.HasValue ? String.Format("{0:#,##0}", item.Liquidacion.TotalDescuentos.Value) : "0"), "detalledescuentos", new { id = item.IdLiquidacion }, new { rel = "modal:open" })
+                                </td>
+                                <td class="small">
+                                    @(item.Liquidacion.Saldo.HasValue ? String.Format("{0:#,##0}", item.Liquidacion.Saldo.Value) : "")
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="okcancel">
+            <input type="submit" value="Pagar Liquidaciones Seleccionados" /> o @Html.ActionLink("Cancelar", "index")
+        </p>
+    </fieldset>
+}
+
+<!-- jQuery Modal -->
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />*@
+<script src="~/Scripts/jquery.modal.min.js"></script>
+<link href="~/Scripts/jquery.modal.min.css" rel="stylesheet" />
+
+<script>
+    $(document).ready(function () {
+        $("#chkSelectAll").change(function () {
+            $(".exportchk").prop("checked", $("#chkSelectAll").prop("checked"));
+        });
+
+        $("#idEmpresa").change(function () {
+            var idEmpresa = $("#idEmpresa").val();
+            var idTemporada = $("#idTemporada").val();
+            location.href = '@(new MvcHtmlString(Url.Action("pagarliquidaciones", "liquidaciones", new { idEmpresa = "IDEMPRESA", idTemporada = "IDTEMPORADA" })))'.replace('IDEMPRESA', idEmpresa).replace('IDTEMPORADA', idTemporada);;
+        });
+
+        $("#idTemporada").change(function () {
+            var idEmpresa = $("#idEmpresa").val();
+            var idTemporada = $("#idTemporada").val();
+            location.href = '@(new MvcHtmlString(Url.Action("pagarliquidaciones", "liquidaciones", new { idEmpresa = "IDEMPRESA", idTemporada = "IDTEMPORADA" })))'.replace('IDEMPRESA', idEmpresa).replace('IDTEMPORADA', idTemporada);;
+        });
+    });
+</script>

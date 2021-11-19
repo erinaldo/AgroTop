@@ -1,0 +1,134 @@
+﻿@using AgroFichasWeb.Models
+
+@model ADQ_Documento
+@{
+    ViewBag.Title = "Documentos / Cotizaciones";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVien.cshtml";
+
+    ADQ_SolicitudCompra aDQ_SolicitudCompra = (ADQ_SolicitudCompra)ViewData["aDQ_SolicitudCompra"];
+    string actionName = "";
+    if (Model.IdDocumento == 0)
+    {
+        ViewBag.SubTitle = "Crear Documento";
+        actionName = "Crear";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Documento";
+        actionName = "Editar";
+    }
+}
+
+@section VendorCSS
+{
+
+}
+@section VendorScripts
+{
+    <script src="~/Content/vien/js/vendor/ckeditor5-build-classic/ckeditor.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+
+            @if (Model.IdDocumento != 0)
+            {
+                @:$("#EditarArchivo").val(false);
+            }
+            else
+            {
+                @:$("#EditarArchivo").val(true);
+            }
+        });
+
+        $('.zoom-gallery').magnificPopup({
+            delegate: 'a',
+            type: 'image',
+            closeOnContentClick: false,
+            closeBtnInside: false,
+            mainClass: 'mfp-with-zoom mfp-img-mobile',
+            image: {
+                verticalFit: true
+            },
+            gallery: {
+                enabled: true
+            },
+            zoom: {
+                enabled: true,
+                duration: 300, // don't foget to change the duration also in CSS
+                opener: function (element) {
+                    return element.find('img');
+                }
+            }
+        });
+
+        function Eliminar(IdDoc) {
+            $("#cal-Doc-" + IdDoc + "").remove();
+            $("#cal-DocFile-" + IdDoc + "").show();
+            $("#EditarArchivo").val(true);
+        }
+    </script>
+}
+<div class="nav justify-content-center">
+    @using (Html.BeginForm(actionName, "ADQDocumentos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="card mb-4">
+            <div class="card-body ">
+                <div class="form-row" style="@(Model.IdDocumento != 0 ? "display: none;" : "")" id="cal-DocFile-@Model.IdDocumento">
+                    <div class="form-group col-md-6">
+                        <label for="IdEmpresa">Documento*</label>
+                        @Html.TextBox("PostedFile", Model.PostedFile, new { type = "file" })
+                        @Html.Hidden("EditarArchivo", Model.EditarArchivo, new { id = "EditarArchivo" })
+                        @Html.ValidationMessage("PostedFile")
+                    </div>
+                </div>
+                @if (Model.IdDocumento != 0)
+                {
+                    <div class="form-group" id="cal-Doc-@Model.IdDocumento">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label">Archivo <span class="required">*</span></label>
+                                <div class="col-sm-3">
+                                    <table id="datatable" class="table" style="margin-bottom: 0;">
+                                        <thead>
+                                            <tr>
+                                                <th>Documento</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="zoom-gallery">
+                                                        @Html.Raw(Model.GetArchivo())
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="button" class="btn btn-danger btn-xs remove-item" id="btnEliminar" value="Eliminar" onclick="Eliminar(@Model.IdDocumento)" />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    @Html.ValidationMessage("PostedFile")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <hr class="my-4">
+                <div class="form-group">
+                    <label for="Observacion">Observación</label>
+                    @Html.TextArea("Observacion", Model.Observacion, new { id = "ckEditorClassic" })
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary d-block mt-3">Registrar Documento</button>
+        </div>
+        @Html.Hidden("IdDoc", Model.IdDocumento)
+        @Html.Hidden("IdSolicitud", Model.IdSolicitud)
+        @Html.Hidden("NombreArchivo", Model.NombreArchivo)
+    }
+</div>

@@ -1,0 +1,132 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_FT
+
+@{
+    ViewBag.Title = "Fichas Técnicas";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdFichaTecnica == 0)
+    {
+        ViewBag.SubTitle = "Crear Ficha Técnica - Paso 1";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Ficha Técnica";
+    }
+}
+@section CustomScripts
+{
+    <script>
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="', '', '">', 'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        function DeleteProductos() {
+            $("#IdSubproducto option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Producto)', '</option>');
+            $("#IdSubproducto").html(options.join(''));
+        }
+
+        function GetProductos() {
+            var id = $('#IdProducto').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdSubproducto'));
+            }
+            $.getJSON(uri + '/FamiliaProductos/GetProductosCascada?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                        return;
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdProducto, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#IdSubproducto").html(options.join(''));
+
+                        var idSubproducto = '@(Model.IdSubproducto == 0 ? "" : Model.IdSubproducto.ToString())';
+                        if (!$.isEmptyObject(idSubproducto)) {
+                            $("#IdSubproducto").val(idSubproducto);
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdProducto").change(function () {
+            DeleteProductos();
+            GetProductos();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm("CrearPaso1", "CALFichasTecnicas", FormMethod.Post))
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Familia de Productos <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdProducto", Model.GetProductos(Model.IdProducto), "(Seleccione Familia de Productos)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdProducto")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdSubproducto", new List<SelectListItem>(), "(Seleccione Producto)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdSubproducto")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Siguiente" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

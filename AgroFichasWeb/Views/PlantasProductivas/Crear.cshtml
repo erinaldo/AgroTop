@@ -1,0 +1,91 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model PlantaProduccion
+
+@{
+    ViewBag.NombreSeccion = "Planta de Producción";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+    if (Model.IdPlantaProduccion == 0)
+    {
+        ViewBag.Title = "Crear Planta de Producción";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Planta de Producción";
+    }
+    var selectList = (IEnumerable<SelectListItem>)ViewData["comunasList"];
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+}
+
+@*@section submenuSection {
+        @Html.Partial("Submenu")
+    }*@
+
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.Title</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Productiva <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "50" })
+                                            @Html.ValidationMessage("Nombre", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Comuna <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdComuna", selectList, "-- Seleccione --", new { @class = "heavy std" })
+                                            @Html.ValidationMessage("IdComuna", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Guardar" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

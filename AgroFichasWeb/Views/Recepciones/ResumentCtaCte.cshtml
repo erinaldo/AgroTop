@@ -1,0 +1,90 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+@using AgroFichasWeb.AppLayer.Extensions 
+
+@model ResumenCtaCteViewModel
+@{
+    var totalIngresos = 0M;
+    var volumenIngresos = 0M;
+    var totalDescuentos = 0M;
+    var hayDescuentos = false;
+}       
+        <p><small>(*) Ingreso no cerrado aún. Se valorizó utilizando precio spot.</small></p>
+        <table class="procesoIngreso">
+        <tr>
+            <td><b>Ingreso</b></td>
+            <td><b>Fecha</b></td>
+            <td><b>Variedad</b></td>
+            <td align="right"><b>Standard (KG)</b></td>
+            <td align="right"><b>Valor (CLP)</b></td>
+        </tr>
+        @foreach (var item in Model.IngresosValorizados)
+        {
+            if (item.Valor.HasValue)
+            {
+                totalIngresos += item.Valor.Value;
+            }
+            if (item.ProcesoIngreso.PesoNormal.HasValue)
+            {
+                volumenIngresos += item.ProcesoIngreso.PesoNormal.Value;
+            }   
+            <tr>
+                <td>@item.ProcesoIngreso.IdProcesoIngreso</td>
+                <td>@item.ProcesoIngreso.FechaHoraLlegada.Value.ToString("dd/MM")</td>
+                <td>@item.ProcesoIngreso.CultivoContrato.Cultivo.Nombre @item.ProcesoIngreso.Variedad.Nombre</td>
+                <td align="right">
+                    @(item.UsaSpot ? "* ": "")
+                    @(item.ProcesoIngreso.PesoNormal.HasValue ? item.ProcesoIngreso.PesoNormal.Value.ToString("#,##0") : item.ProcesoIngreso.EstadoProcesoIngreso.Nombre)
+                </td>
+                <td align="right">@(item.Valor.HasValue ? item.Valor.Value.ToString("#,##0") : "Indeterminado")</td>
+            </tr>
+        }
+        <tr>
+            <td><b>Descuento</b></td>
+            <td><b>Fecha</b></td>
+            <td colspan="2"><b>Institución</b></td>
+            <td align="right"><b>Monto</b></td>
+        </tr>
+        @foreach (var item in Model.Descuentos)
+        {
+            hayDescuentos = true;
+            totalDescuentos += item.Monto;
+            <tr>
+                <td>@item.TipoDescuento.Nombre</td>
+                <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                <td colspan="2">@item.Institucion</td>
+                <td align="right">@item.Monto.ToString("#,##0")</td>
+            </tr>
+        }
+        @foreach (var item in Model.SaldosCtaCte)
+        {
+            hayDescuentos = true;
+            totalDescuentos += item.MontoTotal.Value;
+            <tr>
+                <td>Saldo Cte Cte</td>
+                <td></td>
+                <td colspan="2">@item.Empresa.Nombre</td>
+                <td align="right">@item.MontoTotal.Value.ToString("#,##0")</td>
+            </tr>
+        }
+        @if (!hayDescuentos)
+        {
+            <tr>
+                <td colspan="5" align="center"><i>No hay descuentos</i></td>
+            </tr>
+        }
+        <tr>
+            <td colspan="4" align="right"><b>Total Recepciones</b></td>
+            <td align="right"><b>@totalIngresos.ToString("#,##0")</b></td>
+        </tr>
+        <tr>
+            <td colspan="4" align="right"><b>Total Descuentos</b></td>
+            <td align="right"><b>@totalDescuentos.ToString("#,##0")</b></td>
+        </tr>
+        <tr>
+            <td colspan="4" align="right"><b>Saldo a Favor Agricultor</b></td>
+            <td align="right"><b>@((totalIngresos - totalDescuentos).ToString("#,##0"))</b></td>
+        </tr>
+        </table>
+
+        

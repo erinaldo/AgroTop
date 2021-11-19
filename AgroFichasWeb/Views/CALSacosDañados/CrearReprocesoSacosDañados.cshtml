@@ -1,0 +1,276 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@model CAL_ReprocesoSacosDañados
+@{
+    ViewBag.Title = "Sacos Dañados";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    if (Model.IdReprocesoSacosDañados == 0)
+    {
+        ViewBag.SubTitle = "Crear Reproceso de Sacos Dañados";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Reproceso de Sacos Dañados";
+    }
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $("#IdOrdenProduccionReproceso").change(function () {
+            DeleteProductos();
+            GetProductos();
+        });
+
+        $("#IdProducto").change(function () {
+            DeleteSacosDañados();
+            GetSacosDañados();
+            $("#TotalSacosDañados").val('');
+        });
+
+
+        $("#IdPlanta").change(function () {
+            DeleteLoteComercial();
+            GetLoteComercial();
+        });
+
+        $("#SacosDañados").change(function () {
+           var sum = 0;
+           var texto;
+           var list = new Array();
+           $('#SacosDañados :selected').each(function () {
+               sum += Number($(this).attr('data-bruto'));
+               texto = $(this).text();
+               list.push(texto);
+           });
+           var parseado = sum.toString().split('').reverse().join('').replace(/\d{3}(?=\d)/g, function (miles) { return miles + '.'; })
+           $("#TotalSacosDañados").val(parseado.toString().split('').reverse().join(''));
+       });
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function DeleteProductos() {
+            $("#IdDetalleOrdenProduccion option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Producto)', '</option>');
+            $("#IdDetalleOrdenProduccion").html(options.join(''));
+        }
+
+        function DeleteSacosDañados() {
+            $("#SacosDañados option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Sacos Dañados)', '</option>');
+            $("#SacosDañados").html(options.join(''));
+        }
+
+        function GetProductos() {
+            var id = $('#IdOrdenProduccionReproceso').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdDetalleOrdenProduccion'));
+            }
+            $.getJSON(uri + '/OrdenProduccion/GetProductosConDetalle?id=' + id)
+                .done(function (result) {
+                    var options = [];
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                        DeleteProductos();
+                    }
+                    else {
+                        options.push('<option value="','', '">','(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="', result[i].IdDetalleOrdenProduccion, '">', result[i].Nombre, '</option>');
+                        }
+                        $("#IdDetalleOrdenProduccion").html(options.join(''));
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetSacosDañados() {
+            var idProducto = $('#IdProducto').val();
+            var idOrdenProduccion = $('#IdOrdenProduccion').val();
+            if (!jQuery.isEmptyObject(idProducto)) {
+                SetCargando($('#SacosDañados'));
+            }
+            $.getJSON(uri + '/SacosDañados/GetSacosDañados?IdProducto=' + idProducto + '&IdOrdenProduccion=' + idOrdenProduccion)
+                .done(function (result) {
+                    var options = [];
+                    if (result.length == 0) {
+                        alert("No hay sacos dañados disponibles");
+                        DeleteSacosDañados();
+                    }
+                    else {
+                        options.push('<option value="">(Seleccione Sacos Dañados)</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="'+result[i].IdPale+','+result[i].SacosDañados+'" data-bruto="'+result[i].SacosDañados+'">PLT_'+result[i].IdPale+': '+result[i].SacosDañados+' '+(result[i].SacosDañados === 1 ? "Dañado" : "Dañados")+'</option>');
+                        }
+                        $("#SacosDañados").html(options.join(''));
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetLoteComercial() {
+            var id = $('#IdPlanta').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdOrdenProduccionReproceso'));
+            }
+            $.getJSON(uri + '/OrdenProduccion/GetLotesBySacosDanados?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay lotes disponibles");
+                        DeleteLoteComercial();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Lote Comercial)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdOrdenProduccion, '">',
+                                result[i].LoteComercial, '</option>');
+                        }
+                        $("#IdOrdenProduccionReproceso").html(options.join(''));
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function DeleteLoteComercial() {
+            $("#IdOrdenProduccionReproceso option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Lote Comercial)', '</option>');
+            $("#IdOrdenProduccionReproceso").html(options.join(''));
+        }
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="', '', '">', 'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+    </script>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle N° @Model.GetLote(Model.IdOrdenProduccionOrigen).LoteComercial</h2>
+            </header>
+            @using (Html.BeginForm((Model.IdReprocesoSacosDañados == 0 ? "CrearReprocesoSacosDañados" : "EditarReprocesoSacosDañados"), "CALSacosDañados", FormMethod.Post))
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Familia de Productos <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdProducto", Model.GetProductosDañados(Model.IdOrdenProduccionOrigen), "(Seleccione Producto)", new { @class = "form-control", data_plugin_selectTwo = "", id = "IdProducto" })
+                                        @Html.ValidationMessage("IdProducto")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Sacos Dañados <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.ListBox("SacosDañados", Model.GetSacosDañados(Model.IdDetalleOrdenProduccion), new { @class = "form-control select2 select2-multiple populate", multiple = "multiple", data_placeholder = "Seleccionar...", data_plugin_selecttwo = "", id = "SacosDañados" })
+                                        @Html.ValidationMessage("SacosDañados")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label"><span class="required"></span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("TotalSacosDañados", Model.TotalSacosDañados, new { @class = "form-control input-lg", placeholder = "TOTAL SACOS DAÑADOS", @readonly = "readonly", data_parsley_id = "13", id = "TotalSacosDañados" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Planta productiva<span class="required"></span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdPlanta", Model.GetPlantasProductivas(),new { @class = "form-control"})
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Lote Comercial <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdOrdenProduccionReproceso", new List<SelectListItem>(), "(Seleccione Lote Comercial)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdOrdenProduccionReproceso")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdDetalleOrdenProduccion", new List<SelectListItem>(), "(Seleccione Producto)", new { @class = "form-control", data_plugin_selectTwo = "" })
+                                        @Html.ValidationMessage("IdDetalleOrdenProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar Reproceso" />
+                        </div>
+                    </div>
+                </footer>
+                @Html.Hidden("IdOrdenProduccion", Model.IdOrdenProduccionOrigen)
+                @Html.Hidden("IdDetalleOrdenProduccion", Model.IdDetalleOrdenProduccion)
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

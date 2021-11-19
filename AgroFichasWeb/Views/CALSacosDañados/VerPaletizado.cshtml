@@ -1,0 +1,100 @@
+﻿@using AgroFichasWeb.Models
+@model List<CAL_ReprocesoSacosDañadosPalletsDetalle>
+@{
+    ViewBag.Title = "Sacos Dañados";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var reprocesoSacosDañadosPallets = (CAL_ReprocesoSacosDañadosPallets)ViewData["reprocesoSacosDañadosPallets"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Ver Paletizado #@reprocesoSacosDañadosPallets.IdReprocesoSacosDañadosPallets</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Origen</th>
+                    <th>Destino</th>
+                    <th>Cnt. Cargada</th>
+                    <th>Cnt. Máxima</th>
+                    <th>Cnt. Disponible</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdReprocesoSacosDañadosPallets</td>
+                        <td>@item.CAL_ReprocesoSacosDañadosPallets.CAL_Pale.IdPale<br />@item.CAL_ReprocesoSacosDañadosPallets.CAL_Pale.CodigoInterno</td>
+                        <td>@item.CAL_Pale.IdPale<br />@item.CAL_Pale.CodigoInterno</td>
+                        <td>@item.CntCargada</td>
+                        <td>@item.CntMax</td>
+                        <td>@item.CntDisponible</td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

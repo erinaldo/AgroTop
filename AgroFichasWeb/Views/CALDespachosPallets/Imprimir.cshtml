@@ -1,0 +1,156 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_DespachoPale
+@{
+    ViewBag.Title = string.Format("Despacho Carga Pallet N° {0}", Model.IdDespachoPale);
+    Layout = "~/Views/Shared/_ResponsiveLayoutPrint.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+    CAL_DetalleOrdenProduccion detalleOrdenProduccion = (CAL_DetalleOrdenProduccion)ViewData["detalleOrdenProduccion"];
+    CAL_FT cAL_FT = (CAL_FT)ViewData["cAL_FT"];
+    CAL_FTControlVersion cAL_FTControlVersion = (CAL_FTControlVersion)ViewData["cAL_FTControlVersion"];
+    List<CAL_FTParametroAnalisis> cAL_FTParametroAnalisList = (List<CAL_FTParametroAnalisis>)ViewData["cAL_FTParametroAnalisList"];
+    List<CAL_AnalisisPaleTest> analisisPaleTestList = (List<CAL_AnalisisPaleTest>)ViewData["analisisPaleTestList"];
+    CAL_AnalisisPale analisisPale = (CAL_AnalisisPale)ViewData["analisisPale"];
+}
+@section VendorCSS
+{
+    <!-- Invoice Print Style -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/stylesheets/invoice-print.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        window.print();
+        //window.close();
+    </script>
+}
+
+<div class="invoice">
+    <header class="clearfix">
+        <div class="row">
+            <div class="col-sm-6 mt-md">
+                <h2 class="h2 mb-sm text-dark text-weight-bold">
+                    DESPACHO OP <span style="font-family: Consolas">@ordenProduccion.LoteComercial</span>
+                </h2>
+            </div>
+            <div class="col-sm-6 text-right mt-md mb-md">
+                <address class="ib mr-xlg">
+                </address>
+                <div class="ib"></div>
+            </div>
+        </div>
+    </header>
+    <header class="clearfix">
+        <div class="bill-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bill-to">
+                        <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">ANTECEDENTES PRELIMINARES:</h3>
+                        <div class="text-left">
+                            <table class="table h5 text-dark" style="border: none">
+                                <tbody>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">PRODUCTO:</span></td>
+                                        <td class="text-left"><span class="value">@detalleOrdenProduccion.CAL_Subproducto.Nombre</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">ESPESOR:</span></td>
+                                        <td class="text-left">
+                                            <span class="value">
+                                                @if (detalleOrdenProduccion.IdEspesorProducto.HasValue)
+                                                {
+                                                    @:@string.Format("{0:N2}-{1:N2} mm", detalleOrdenProduccion.CAL_EspesorProducto.Min, detalleOrdenProduccion.CAL_EspesorProducto.Max)
+                                                }
+                                                else
+                                                {
+                                                    @:(No tiene Espesor)
+                                                }
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">FICHA TÉCNICA:</span></td>
+                                        <td class="text-left"><span class="value">@cAL_FT.Codigo</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">VERSIÓN:</span></td>
+                                        <td class="text-left"><span class="value">@cAL_FTControlVersion.Version</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">CLIENTE:</span></td>
+                                        <td class="text-left"><span class="value">@ordenProduccion.GetCliente(ordenProduccion.IdCliente).RazonSocial</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">PAÍS:</span></td>
+                                        <td class="text-left"><span class="value">@ordenProduccion.GetPais(ordenProduccion.PaisCodigo).PaisNombreLocal</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="bill-info" style="margin-top: 20px;">
+        <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">CARGA</h3>
+        <div class="text-left">
+            <table class="table h5 text-dark" style="border: none">
+                <thead>
+                    <tr>
+                        <th>CONTENEDOR</th>
+                        <th>RESERVA</th>
+                        <th>PALLET</th>
+                        <th>FECHA ETIQUETADO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="b-top-none">
+                        <td class="text-left"><span class="value">@Model.CAL_RITContenedor.NContenedor</span></td>
+                        <td class="text-left"><span class="value">@ordenProduccion.NumeroViaje</span></td>
+                        <td class="text-left"><span class="value">@Model.IdPale</span></td>
+                        <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yyyy}", analisisPale.FechaEtiquetado)</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="bill-info" style="margin-top: 20px;">
+        <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS</h3>
+        <div class="text-left">
+            <table class="table h5 text-dark" style="border: none">
+                <thead>
+                    <tr>
+                        <th>Analista</th>
+                        <th colspan="2">Parámetro</th>
+                        <th>Mínimo</th>
+                        <th>Máximo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="b-top-none">
+                        <td>@Model.GetAnalista(Model.UserIns).FullName</td>
+                    </tr>
+                    @foreach (CAL_FTParametroAnalisis cAL_FTParametroAnalis in cAL_FTParametroAnalisList)
+                    {
+                <tr class="b-top-none">
+                    <td></td>
+                    <td colspan="2"><span class="text-dark text-weight-semibold">@cAL_FTParametroAnalis.CAL_ParametroAnalisis.Nombre.ToUpper() (@cAL_FTParametroAnalis.CAL_ParametroAnalisis.UM.ToUpper()):</span></td>
+                    <td>@Formatter.Format(cAL_FTParametroAnalis.MinValidValue.Value, cAL_FTParametroAnalis.CAL_ParametroAnalisis.UM, cAL_FTParametroAnalis.CAL_ParametroAnalisis.FormatString, cAL_FTParametroAnalis.CAL_ParametroAnalisis.IdParametroAnalisis)</td>
+                    <td>@Formatter.Format(cAL_FTParametroAnalis.MaxValidValue.Value, cAL_FTParametroAnalis.CAL_ParametroAnalisis.UM, cAL_FTParametroAnalis.CAL_ParametroAnalisis.FormatString, cAL_FTParametroAnalis.CAL_ParametroAnalisis.IdParametroAnalisis)</td>
+                    <td class="text-left"><span class="value @(analisisPaleTestList.SingleOrDefault(X => X.IdParametroAnalisis == cAL_FTParametroAnalis.IdParametroAnalisis).ValidValue.Value ? "cal-ValidValue" : "cal-NoValidValue")">@(analisisPaleTestList.SingleOrDefault(X => X.IdParametroAnalisis == cAL_FTParametroAnalis.IdParametroAnalisis) != null ? analisisPaleTestList.SingleOrDefault(X => X.IdParametroAnalisis == cAL_FTParametroAnalis.IdParametroAnalisis).Value : 0)</span></td>
+                </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

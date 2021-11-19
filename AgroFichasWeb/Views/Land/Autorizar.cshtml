@@ -1,0 +1,85 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+
+@model AutorizarViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "Autorizar Ingreso";
+    
+    var msg = ViewData["msg"].ToString();
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <style>
+        label {
+            font-weight: bold;
+        }
+        table.procesoIngreso {
+            width: 100%;
+        }
+        .command {
+            text-align: center;
+            margin: 10px;
+        }
+        .error {
+            color: red; 
+            font-weight: bold;
+        }
+    </style>
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+</head>
+<body>
+    <div>
+        <h2>@ViewBag.Title</h2>
+        @if (msg == "")
+        {
+            @Html.Partial("~/Views/Recepciones/Ingreso.cshtml", Model.ProcesoIngreso)
+            foreach (var resumen in Model.Resumenes)
+            {
+                <h2>Resumen de Cuenta Corriente @resumen.Agricultor.Nombre @(resumen.Agricultor.IdAgricultor != Model.ProcesoIngreso.IdAgricultor ? "(Relacionado)" : "")</h2>
+                @Html.Partial("~/Views/Recepciones/ResumentCtaCte.cshtml", resumen)
+            }            
+            <div class="command">
+                @if (Model.ProcesoIngreso.IdEstado == 5)
+                {
+                    using (Html.BeginForm("autorizar2", "land", FormMethod.Post, new { id = "frm" }))
+                    {
+                        @Html.Hidden("h", ViewData["token"]); 
+                        @Html.Hidden("Autorizado", Model.Autorizado)
+                        <input type="button" id="btnAutorizar" value="Autorizar Ingreso" style="background-color: green; color: white;" /> 
+                        <input type="button" id="btnRechazar" value="Rechazar Ingreso" style="background-color: red; color: white;" /> 
+                    }
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $("#btnAutorizar").click(function () {
+                                setAutorizado('true');
+                            });
+                            $("#btnRechazar").click(function () {
+                                setAutorizado('false');
+                            });
+                        });
+
+                        function setAutorizado(autorizado) {
+                            $("#Autorizado").val(autorizado);
+                            $('#frm')[0].submit();
+                        }
+                    </script>                       
+                }
+                else
+                {
+                    <div class="error">No es posible autorizar el ingreso porque su estado es @Model.ProcesoIngreso.EstadoProcesoIngreso.Nombre</div>
+                }
+            </div>
+        }
+        else 
+        {
+            <div class="error">@msg</div>
+        }
+    </div>
+</body>
+</html>
+

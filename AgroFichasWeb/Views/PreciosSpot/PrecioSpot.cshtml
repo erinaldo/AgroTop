@@ -1,0 +1,83 @@
+﻿
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.ViewModels.Configuracion.PrecioSpotViewModel
+
+@{
+    ViewBag.NombreSeccion = "Precios Spot";
+    if (Model.IsNew) {
+        ViewBag.Title = "Crear Precio Spot de " + Model.Cultivo.Nombre;
+    }
+    else {
+        ViewBag.Title = "Editar Precio Spot de " + Model.Cultivo.Nombre;
+    }
+
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery.ui.datepicker-es.js"></script>
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm())
+    {
+
+        @Html.Hidden("IdCultivo", Model.IdCultivo)
+        @Html.Hidden("IsNew", Model.IsNew)
+        <fieldset class="dataForm">
+        <p>
+            <label>Fecha</label>
+            @Html.TextBox("Fecha", String.Format("{0:dd/MM/yyyy}", Model.Fecha), new { @class = "datebox" })
+            @Html.ValidationMessage("Fecha", ".")
+        </p>
+
+
+            <div class="p">
+                <table id="bondes-table" class="sublist2" style="margin-bottom: 10px; display: inline-block; width: 700px">
+                        <tr>
+                            <td><b>Sucursal</b></td>
+                            <td align="right"><b>CLP / Kg</b></td>
+                            <td align="right"><b>USD / Kg</b></td>
+                        </tr>
+
+                        @foreach (var item in Model.Precios.OrderBy(i => i.Nombre))
+                        {
+                            <tr>
+                                <td nowrap="nowrap" valign="top">
+                                    @item.Nombre
+                                    @Html.Hidden("Precios.Index", item.Index)
+                                    @Html.Hidden(String.Format("Precios[{0}].Index", item.Index), item.Index)
+                                    @Html.Hidden(String.Format("Precios[{0}].IdSucursal", item.Index), item.IdSucursal)
+                                    @Html.Hidden(String.Format("Precios[{0}].Nombre", item.Index), item.Nombre)
+                                </td>
+                                <td>@Html.TextBox(String.Format("Precios[{0}].ValorCLP", item.Index), item.ValorCLP, new { style = "text-align:right" })</td>
+                                <td>@Html.TextBox(String.Format("Precios[{0}].ValorUSD", item.Index), item.ValorUSD, new { style = "text-align:right" })</td>
+                            </tr>
+                        }
+                </table>
+            </div>
+            <p class="okcancel">
+                <input type="submit" value="Guardar Estos Precios" /> o @Html.ActionLink("Cancelar", "Index", new { cultivo = Model.IdCultivo })  
+            </p>
+        </fieldset>
+
+    }
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $.datepicker.setDefaults($.datepicker.regional["es"]);
+            $("#Fecha").datepicker({ showOn: 'button', buttonImage: '@Url.Content("~/Content/images/calendar.gif") ', buttonImageOnly: true });
+        });
+
+    </script>   

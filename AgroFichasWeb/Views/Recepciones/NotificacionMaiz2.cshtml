@@ -1,0 +1,49 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+
+@model NotificarMaizViewModel
+@{
+   
+    ViewBag.NombreSeccion = "Notificar Ingreso Maíz " + Model.ProcesoIngreso.Temporada.Nombre;
+    ViewBag.Title = "Detalle Ingreso";
+
+}
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm("NotificacionMaiz2", "recepciones", (RouteValueDictionary)ViewData["indexRouteValues"], FormMethod.Post, new { id = "frm" }))
+    {
+        @Html.Hidden("IdProcesoIngreso", Model.IdProcesoIngreso)
+        @*@Html.Hidden("Autorizado", Model.Autorizado)*@
+        
+        <fieldset class="dataForm">
+            @Html.Partial("IngresoAnalistas", Model.ProcesoIngreso)
+
+            @*@foreach (var resumen in Model.Resumenes)
+            {
+                <h2>Resumen de Cuenta Corriente @resumen.Agricultor.Nombre @(resumen.Agricultor.IdAgricultor != Model.ProcesoIngreso.IdAgricultor ? "(Relacionado)" : "")</h2>
+                @Html.Partial("ResumentCtaCte", resumen)
+            }*@
+            <p class="okcancel">
+                <input type="button" id="btnNotificar" value="Notificar Ingreso" style="background-color: green; color: white;" /> 
+                @*<input type="button" id="btnRechazar" value="Rechazar Ingreso" style="background-color: red; color: white;" />*@ 
+                o @Html.ActionLink("Cancelar", "notificacionmaiz1", (RouteValueDictionary)ViewData["indexRouteValues"])
+            </p>
+        </fieldset>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#btnNotificar").click(function () {
+                    setAutorizado('true');
+                });
+                $("#btnRechazar").click(function () {
+                    setAutorizado('false');
+                });
+            });
+
+            function setAutorizado(autorizado) {
+                $("#Autorizado").val(autorizado);
+                $('#frm')[0].submit();
+            }
+        </script>   
+    }

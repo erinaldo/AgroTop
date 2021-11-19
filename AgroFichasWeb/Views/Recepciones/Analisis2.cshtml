@@ -1,0 +1,203 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+
+@model AnalisisViewModel
+@{
+
+    ViewBag.NombreSeccion = "Registrar Análisis " + Model.ProcesoIngreso.Temporada.Nombre;
+    ViewBag.Title = "Ingresar Datos";
+
+    var bodegas = (from bo in Model.Bodegas
+                   select new SelectListItem { Value = bo.IdBodega.ToString(), Text = bo.Nombre, Selected = bo.IdBodega == Model.IdBodega }).Distinct();
+
+    var variedades = (from va in Model.Variedades
+                      select new SelectListItem { Value = va.IdVariedad.ToString(), Text = va.Cultivo.Nombre + " " + va.Nombre, Selected = va.IdVariedad == Model.IdVariedad }).ToList();
+
+    variedades.Add(new SelectListItem { Value = "0", Text = "(Desconocido)", Selected = Model.IdVariedad  == 0});
+
+    decimal? aux;
+    string nombreParametro;
+}
+
+
+    <h2>@ViewBag.Title</h2>
+    
+    <form action="@Url.Action("analisis2", "recepciones", (RouteValueDictionary)ViewData["indexRouteValues"])#formPos" method="post">
+        @Html.Hidden("IdProcesoIngreso", Model.IdProcesoIngreso)
+        <fieldset class="dataForm">
+            @Html.Partial("IngresoAnalistas", Model.ProcesoIngreso)
+            <a name="formPos">&nbsp;</a>
+            @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+            <p>
+                <label>Variedad</label>
+                @Html.DropDownList("IdVariedad",  variedades  , new { @class = "std" }) 
+                @Html.ValidationMessage("IdVariedad", ".")  
+            </p>
+            @if (Model.ValoresAnalisis != null) 
+            {
+                int i = 0;
+                foreach (var valor in Model.ValoresAnalisis.OrderBy(a => a.Orden))
+                {
+                <p>
+                    <label>@valor.Nombre<br /><span style="color:red">@(valor.Requerido && !valor.CanBeDelayed() ? "*" : "")</span></label>
+                    @if (valor.IsSelectList())
+                    {
+                        @Html.DropDownList("ValoresAnalisis[" + i.ToString() + "].Valor", valor.GetSelectList(), new { @class = "std" })
+                    }
+                    else
+                    {
+
+                        //aux = valor.Valor > 0 ? valor.Valor : 0;
+                        nombreParametro = valor.Nombre;
+                        switch (nombreParametro)
+                        {
+                            case "Impurezas Gruesas":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control impurezas", onkeyup = "sumarImpurezas();" })
+                                @valor.UM
+                                break;
+                            case "Impurezas Finas":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control impurezas", onkeyup = "sumarImpurezas();" })
+                                @valor.UM
+                                break;
+                            case "Otros Granos Trigo, Triticale, Cebada":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control otrosGranos", onkeyup = "sumarOtrosGranos();" })
+                                @valor.UM
+                                break;
+                            case "Otros Granos Semillas Negras":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control otrosGranos", onkeyup = "sumarOtrosGranos();" })
+                                @valor.UM
+                                break;
+                            @*case "Otros Granos Avenillas":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control otrosGranos", onkeyup = "sumarOtrosGranos();" })
+                                @valor.UM
+                                break;*@
+                            case "Otros Granos General":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control otrosGranos", onkeyup = "sumarOtrosGranos();" })
+                                @valor.UM
+                                break;
+                            case "Granos Manchados":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control granosDanados", onkeyup = "sumarGranosDanados();" })
+                                @valor.UM
+                                break;
+                            case "Granos Germinados":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control granosDanados", onkeyup = "sumarGranosDanados();" })
+                                @valor.UM
+                                break;
+                            case "Granos Enfermos":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control granosDanados", onkeyup = "sumarGranosDanados();" })
+                                @valor.UM
+                                break;
+                            case "Granos Verdes":
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor, new { @class = "form-control granosDanados", onkeyup = "sumarGranosDanados();" })
+                                @valor.UM
+                                break;
+                            default:
+                                @Html.TextBox("ValoresAnalisis[" + i.ToString() + "].Valor", valor.Valor)
+                                @valor.UM
+                                break;
+                        }
+
+
+                    }
+                    @Html.ValidationMessage("ValoresAnalisis[" + i.ToString() + "].Valor", ".")
+
+                    @Html.Hidden("ValoresAnalisis[" + i.ToString() + "].IdParametroAnalisis", valor.IdParametroAnalisis)
+                    @Html.Hidden("ValoresAnalisis[" + i.ToString() + "].Nombre", valor.Nombre)
+                    @Html.Hidden("ValoresAnalisis[" + i.ToString() + "].UM", valor.UM)
+                    @Html.Hidden("ValoresAnalisis[" + i.ToString() + "].Orden", valor.Orden)
+                    @Html.Hidden("ValoresAnalisis[" + i.ToString() + "].Requerido", valor.Requerido)
+                    @Html.Hidden("ValoresAnalisis[" + i.ToString() + "].IdSucursal", valor.IdSucursal)
+                </p>
+                    i++;
+                }
+            }
+            <p>
+                <label>Observaciones</label>
+                @Html.TextArea("ObservacionesAnalisis", Model.ObservacionesAnalisis, new { @class = "std", rows = 5 })
+            </p>
+            <p>
+                <label>Bodega</label>
+                @Html.DropDownList("IdBodega", bodegas, new { @class = "std" })
+                @Html.ValidationMessage("IdBodega", ".")
+            </p>
+            <p>
+                <label>Enviar a Secador</label>
+                @Html.CheckBox("Secador", Model.Secador)
+            </p>
+            <p>
+                <label>PIN</label>
+                @Html.Password("Pin", "", new { autocomplete = "off" })
+                @Html.ValidationMessage("Pin", ".")
+            </p>
+            <p class="okcancel">
+                <input type="submit" value="Registrar Análisis" /> o @Html.ActionLink("Cancelar", "analisis1", (RouteValueDictionary)ViewData["indexRouteValues"])
+            </p>
+        </fieldset>
+
+        <script type="text/javascript">
+
+        </script>
+        <script>
+            function sumarImpurezas() {
+
+                var total = 0;
+
+                $(".impurezas").each(function () {
+
+                    if (isNaN(parseFloat($(this).val()))) {
+
+                        total += 0;
+
+                    } else {
+
+                        total += parseFloat($(this).val());
+                    }
+                });
+               // var promedio = (total / 10).toFixed(2);
+                //alert(total);
+                document.getElementById('ValoresAnalisis_0__Valor').value = total.toFixed(2);
+            }
+
+            function sumarOtrosGranos() {
+
+                var total = 0;
+
+                $(".otrosGranos").each(function () {
+
+                    if (isNaN(parseFloat($(this).val()))) {
+
+                        total += 0;
+
+                    } else {
+
+                        total += parseFloat($(this).val());
+                    }
+                });
+                // var promedio = (total / 10).toFixed(2);
+                //alert(total);
+                document.getElementById('ValoresAnalisis_11__Valor').value = total;
+            }
+
+            function sumarGranosDanados() {
+
+                var total = 0;
+
+                $(".granosDanados").each(function () {
+
+                    if (isNaN(parseFloat($(this).val()))) {
+
+                        total += 0;
+
+                    } else {
+
+                        total += parseFloat($(this).val());
+                    }
+                });
+                // var promedio = (total / 10).toFixed(2);
+                //alert(total);
+                document.getElementById('ValoresAnalisis_4__Valor').value = total;
+            }
+
+
+        </script>
+    </form>

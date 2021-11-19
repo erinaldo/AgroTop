@@ -1,0 +1,10 @@
+﻿<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(219))
+    {
+        <li><a href="@Url.Content("~/materiales/crear")">Crear Material</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(218))
+    {
+        <li><a href="@Url.Content("~/materiales")">Ver Materiales</a></li>
+    }
+</ul>

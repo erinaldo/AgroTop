@@ -1,0 +1,59 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model Sucursal
+
+@{
+    ViewBag.NombreSeccion = "Sucursales";
+    if (Model.IdSucursal == 0)
+    {
+        ViewBag.Title = "Crear Sucursal";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Sucursal";
+    }
+    var selectList = (IEnumerable<SelectListItem>)ViewData["comunasList"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Nombre</label>
+            @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "50" })
+            @Html.ValidationMessage("Nombre", " ")
+        </p>
+        <p>
+            <label for="Titulo">Comuna</label>
+            @Html.DropDownList("IdComuna", selectList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdComuna", " ")
+        </p>
+        <p>
+            <label for="Titulo">Código SAP Oleotop</label>
+            @Html.TextArea("IDOleotop", Model.IDOleotop, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">Código SAP Avenatop</label>
+            @Html.TextArea("IDAvenatop", Model.IDAvenatop, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">Código SAP Granotop</label>
+            @Html.TextArea("IDGranotop", Model.IDGranotop, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">Código SAP Saprosem</label>
+            @Html.TextArea("IDSaprosem", Model.IDSaprosem, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar esta Sucursal" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

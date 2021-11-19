@@ -1,0 +1,523 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model Agricultor
+
+@{
+    ViewBag.NombreSeccion = "Agricultores";
+    if (Model.IdAgricultor == 0)
+    {
+        ViewBag.Title = "Crear Agricultor";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Agricultor";
+    }
+
+    var proveedores = (List<SelectListItem>)ViewData["proveedores"];
+    var relacionados = (List<AgricultorRelacionadoViewModel>)ViewData["relacionados"];
+    var cuentas = (List<CuentaBancariaViewModel>)ViewData["cuentas"];
+
+    var finder = new AgriculorFinderViewModel()
+    {
+        SearchType = AgriculorSearchType.ParaRelacionado,
+        IdAgricultorArgument = Model.IdAgricultor
+    };
+
+    var padre = Model.RelacionadoPadre();
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery.ui.datepicker-es.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Nombre</label>
+            @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "100" })
+            @Html.ValidationMessage("Nombre", ".")
+        </p>
+        <p>
+            <label for="Rut">Rut</label>
+            @Html.Hidden("IsNew", Model.IsNew)
+            @Html.TextBox("Rut", Model.Rut, new { @class = "std" })
+            @Html.ValidationMessage("Rut", ".")
+        </p>
+        <p>
+            <label for="Rut">Rut Rep. Legal</label>
+            @Html.TextBox("RutRepresentate", Model.RutRepresentate, new { @class = "std" })
+        </p>
+        <p>
+            <label for="Titulo">Nombre Rep. Legal</label>
+            @Html.TextBox("NombreRepresentate", Model.NombreRepresentate, new { @class = "heavy std", maxlength = "100" })
+        </p>
+        <p>
+            <label for="IdRegion">Región</label>
+            @Html.DropDownList("IdRegion", Model.GetRegiones(Model.IdRegion), "Seleccione Región", new { @class = "std" })
+        </p>
+        <p>
+            <label for="IdProvincia">Provincia</label>
+            @Html.DropDownList("IdProvincia", Model.GetProvincia(Model.IdProvincia), "Seleccione Provincia", new { @class = "std" })
+        </p>
+        <p>
+            <label for="IdComuna">Comuna</label>
+            @Html.DropDownList("IdComuna", new List<SelectListItem>(), "Seleccione Comuna", new { @class = "std" })
+        </p>
+        <p>
+            <label for="Direccion">Dirección</label>
+            @Html.TextBox("Direccion", Model.Direccion, new { @class = "std" })
+        </p>
+        <p>
+            <label for="DireccionPredio">Dirección Predio</label>
+            @Html.TextBox("DireccionPredio", Model.DireccionPredio, new { @class = "std" })
+        </p>
+        <p>
+            <label for="RolAvaluo">Rol de Avalúo</label>
+            @Html.TextBox("RolAvaluo", Model.RolAvaluo, new { @class = "std" })
+        </p>
+        <p>
+            <label for="InscripcionFS">Inscripción de la Propiedad FS</label>
+            @Html.TextBox("InscripcionFS", Model.InscripcionFS, new { @class = "std" })
+        </p>
+        <p>
+            <label for="InscripcionNum">Inscripción de la Propiedad N°</label>
+            @Html.TextBox("InscripcionNum", Model.InscripcionNum, new { @class = "std" })
+        </p>
+        <p>
+            <label for="InscripcionAno">Inscripción de la Propiedad Fecha</label>
+            @Html.TextBox("InscripcionAno", String.Format("{0:dd/MM/yyyy}", Model.InscripcionAno), new { @class = "datebox" })
+        </p>
+        <p>
+            <label for="CoberturaSeguro">Cobertura Seguro</label>
+            @Html.CheckBox("CoberturaSeguro", Model.CoberturaSeguro)
+        </p>
+        <p>
+            <label for="IdTituloExplotacion">Título Habilitante a la Explotación</label>
+            @Html.DropDownList("IdTituloExplotacion", Model.GetTituloExplotacion(Model.IdTituloExplotacion), "Seleccione Título Explotación", new { @class = "std" })
+        </p>
+        <p>
+            <label for="Fecha">Email</label>
+            @Html.TextBox("Email", Model.Email, new { @class = "std" })
+            @Html.ValidationMessage("Email", ".")
+        </p>
+        <p>
+            <label for="Fuente">Fono 1</label>
+            @Html.TextBox("Fono1", Model.Fono1, new { @class = "std" })
+            @Html.ValidationMessage("Fono1", ".")
+        </p>
+        <p>
+            <label for="Fuente">Fono 2</label>
+            @Html.TextBox("Fono2", Model.Fono2, new { @class = "std" })
+            @Html.ValidationMessage("Fono2", ".")
+        </p>
+        <p>
+            <label for="Fuente">Proveedor</label>
+            @Html.DropDownListFor(m => m.IdProveedor, proveedores, new { @class = "std" })
+        </p>
+        @if (Model.IsNew)
+        {
+            <p>
+                <label for="Password">Contraseña Inicial</label>
+                @Html.TextBox("Password")
+                @Html.ValidationMessage("Password", "*")
+                <i>El cliente deberá cambiarla la primera vez que ingrese.</i>
+            </p>
+        }
+        else
+        {
+            <p>
+                <label for="Password">Nueva Contraseña Inicial</label>
+                @Html.TextBox("SubmitedPassword")
+                @Html.ValidationMessage("SubmitedPassword", "*")
+                <i>Dejar en blanco para mantener la contraseña actual.</i>
+            </p>
+        }
+        <p>
+            <label for="EnPortada">Habilitado</label>
+            @Html.CheckBox("Habilitado", Model.Habilitado)   Permitir el uso de este Agricultor
+            @Html.ValidationMessage("Habilitado", ".")
+        </p>
+        <div class="p">
+            <label>Ruts Relacionados</label>
+            @if (padre != null)
+            {
+                <div style="display: inline-block">
+                    Este Agricultor está relacionado con @padre.Rut @padre.Nombre
+                </div>
+            }
+            <table id="relTable" class="sublist2" style="margin-bottom: 10px; display: inline-block">
+                <tbody>
+                    @if (padre == null)
+                    {
+                        <tr>
+                            <td colspan="2">
+                                <a href="#" id="lnkAddRut" class="command">Agregar rut relacionado</a>
+                                @Html.Partial("~/Views/Controls/AgricultorFinder.cshtml", finder)
+
+                                <script type="text/javascript">
+                                    $(document).ready(function () {
+                                        $("#lnkAddRut").click(function () {
+                                            agsSelectAgricultor();
+                                            return false;
+                                        });
+                                    });
+
+                                    function agsCallback(id, rut, nombre) {
+                                        agregarRel(id, rut, nombre);
+                                    }
+
+
+                                </script>
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var hijo in relacionados.OrderBy(r => r.Nombre))
+                    {
+                        var itemClass = String.Format("relItem-{0}", hijo.IdAgricultor);
+                        @Html.Hidden("Relacionados.Index", hijo.IdAgricultor, new { @class = "relIndex " + itemClass })
+                        @Html.Hidden(String.Format("Relacionados[{0}].IdAgricultor", hijo.IdAgricultor), hijo.IdAgricultor, new { @class = itemClass })
+                        @Html.Hidden(String.Format("Relacionados[{0}].Rut", hijo.IdAgricultor), hijo.Rut, new { @class = itemClass })
+                        @Html.Hidden(String.Format("Relacionados[{0}].Nombre", hijo.IdAgricultor), hijo.Nombre, new { @class = itemClass })
+                    }
+                </tbody>
+            </table>
+            <script type="text/javascript">
+                 $(document).ready(function () {
+                     $.datepicker.setDefaults($.datepicker.regional["es"]);
+                     $("#InscripcionAno").datepicker({ changeYear: true,showOn: 'button', buttonImage: '@Url.Content("~/Content/images/calendar.gif") ', buttonImageOnly: true });
+                 });
+            </script>
+            <script>
+                $(document).ready(function () {
+                    renderRelacionados();
+                });
+
+                function renderRelacionados() {
+                    $(".relRow").remove();
+                    $(".relIndex").each(function (ix, element) {
+                        var id = $(this).val();
+                        var rut = $("#Relacionados_" + id + "__Rut").val();
+                        var nom = $("#Relacionados_" + id + "__Nombre").val();
+                        var s = '<tr class="relRow">' +
+                            '<td align="right">' + rut + '</td>' +
+                            '<td>' + nom + '</td>' +
+                            '<td><a href="javascript:quitarRel(' + id + ');" class="command">Quitar</a></td>' +
+                            '</tr>';
+
+                        $("#relTable > tbody:last").append(s);
+                    });
+                }
+
+                function agregarRel(id, rut, nombre) {
+
+                    if ($(".relItem-" + id).length > 0) {
+                        alert('El agricultor ' + rut + ' ' + nombre + ' ya está relacionado');
+                        return;
+                    }
+
+                    var s = '<input class="relIndex relItem-' + id + '" id="Relacionados_Index" name="Relacionados.Index" type="hidden" value="' + id + '" />' +
+                        '<input type="hidden" class="relItem-' + id + '" id="Relacionados_' + id + '__IdAgricultor" name="Relacionados[' + id + '].IdAgricultor" value="' + id + '" />' +
+                        '<input type="hidden" class="relItem-' + id + '" id="Relacionados_' + id + '__Rut"          name="Relacionados[' + id + '].Rut"          value="' + rut + '" />' +
+                        '<input type="hidden" class="relItem-' + id + '" id="Relacionados_' + id + '__Nombre"       name="Relacionados[' + id + '].Nombre"       value="' + nombre + '" />';
+
+                    $("form").first().append(s);
+
+                    renderRelacionados();
+                }
+
+                function quitarRel(id) {
+                    $(".relItem-" + id).remove();
+                    renderRelacionados();
+                }
+            </script>
+        </div>
+        <div class="p">
+            <label>Cuentas Bancarias</label>
+            <table id="culcon-table" class="sublist2" style="margin-bottom: 10px; display: inline-block">
+                <tbody>
+                    <tr>
+                        <td colspan="4">
+                            <a href="#" id="culcon-add" class="command">Agregar Cuenta</a>
+                            @Html.Partial("CuentaBancaria")
+                            <script>
+                                $(document).ready(function () {
+                                    $("#culcon-add").click(function () {
+                                        var newIdCuentaBancaria = parseInt($("#nextCuentaId").val(), 10);
+                                        culconShow({ id: newIdCuentaBancaria, idBanco: 0, idTipoCuentaBancaria: 0, numeroCuenta: '', comentarios: '' });
+                                        $("#nextCuentaId").val(newIdCuentaBancaria + 1);
+                                        return false;
+                                    });
+                                });
+
+                                function culconCallback(cuentaBancaria) {
+                                    agregarCuenta(cuentaBancaria);
+                                };
+
+                            </script>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Banco</b></td>
+                        <td><b>Tipo</b></td>
+                        <td><b>Número</b></td>
+                        <td><b>Comentarios</b></td>
+                    </tr>
+                    @Html.Hidden("nextCuentaId", ViewData["nextCuentaId"])
+                    @foreach (var cuenta in cuentas)
+                    {
+                        var cuentaClass = String.Format("cuenta-{0}", cuenta.IdCuentaBancaria);
+                        @Html.Hidden("Cuentas.Index", cuenta.IdCuentaBancaria, new { @class = "cuentaIndex " + cuentaClass })
+                        @Html.Hidden(String.Format("Cuentas[{0}].IdCuentaBancaria", cuenta.IdCuentaBancaria), cuenta.IdCuentaBancaria, new { @class = cuentaClass })
+                        @Html.Hidden(String.Format("Cuentas[{0}].IdBanco", cuenta.IdCuentaBancaria), cuenta.IdBanco, new { @class = cuentaClass })
+                        @Html.Hidden(String.Format("Cuentas[{0}].IdTipoCuentaBancaria", cuenta.IdCuentaBancaria), cuenta.IdTipoCuentaBancaria, new { @class = cuentaClass })
+                        @Html.Hidden(String.Format("Cuentas[{0}].NumeroCuenta", cuenta.IdCuentaBancaria), cuenta.NumeroCuenta, new { @class = cuentaClass })
+                        @Html.Hidden(String.Format("Cuentas[{0}].Comentarios", cuenta.IdCuentaBancaria), cuenta.Comentarios, new { @class = cuentaClass })
+                        @Html.Hidden(String.Format("Cuentas[{0}].NombreBanco", cuenta.IdCuentaBancaria), cuenta.NombreBanco, new { @class = cuentaClass })
+                        @Html.Hidden(String.Format("Cuentas[{0}].NombreTipoCuentaBancaria", cuenta.IdCuentaBancaria), cuenta.NombreTipoCuentaBancaria, new { @class = cuentaClass })
+                    }
+                </tbody>
+            </table>
+            <script>
+                $(document).ready(function () {
+                    renderCuentas();
+                });
+
+                function renderCuentas() {
+                    $(".cuentaRow").remove();
+                    $(".cuentaIndex").each(function (ix, element) {
+                        var id = $(this).val();
+                        var s = '<tr class="cuentaRow">' +
+                            '<td>' + getCuentaValue(id, "NombreBanco") + '</td>' +
+                            '<td>' + getCuentaValue(id, "NombreTipoCuentaBancaria") + '</td>' +
+                            '<td>' + getCuentaValue(id, "NumeroCuenta") + '</td>' +
+                            '<td>' + getCuentaValue(id, "Comentarios") + '</td>' +
+                            '<td><a href="javascript:editarCuenta(' + id + ');" class="command">Editar</a></td>' +
+                            '<td><a href="javascript:quitarCuenta(' + id + ');" class="command">Quitar</a></td>' +
+                            '</tr>';
+
+                        $("#culcon-table > tbody:last").append(s);
+                    });
+                }
+
+                function agregarCuenta(cuenta) {
+
+                    var id = cuenta.id;
+
+                    if ($(".cuenta-" + id).length == 0) {
+
+                        var s = '<input class="cuentaIndex cuenta-' + id + '" id="Cuenta_Index" name="Cuentas.Index" type="hidden" value="' + id + '" />' +
+                            renderCuenta(id, "IdCuentaBancaria", cuenta.id) +
+                            renderCuenta(id, "IdBanco", cuenta.idBanco) +
+                            renderCuenta(id, "IdTipoCuentaBancaria", cuenta.idTipoCuentaBancaria) +
+                            renderCuenta(id, "NumeroCuenta", cuenta.numeroCuenta) +
+                            renderCuenta(id, "Comentarios", cuenta.comentarios) +
+                            renderCuenta(id, "NombreBanco", cuenta.nombreBanco) +
+                            renderCuenta(id, "NombreTipoCuentaBancaria", cuenta.nombreTipoCuentaBancaria)
+
+                        $("form").first().append(s);
+                    }
+                    else {
+                        setCuentaValue(id, 'IdCuentaBancaria', cuenta.id);
+                        setCuentaValue(id, 'IdBanco', cuenta.idBanco);
+                        setCuentaValue(id, 'IdTipoCuentaBancaria', cuenta.idTipoCuentaBancaria);
+                        setCuentaValue(id, 'NumeroCuenta', cuenta.numeroCuenta);
+                        setCuentaValue(id, 'Comentarios', cuenta.comentarios);
+                        setCuentaValue(id, 'NombreBanco', cuenta.nombreBanco);
+                        setCuentaValue(id, 'NombreTipoCuentaBancaria', cuenta.nombreTipoCuentaBancaria);
+                    }
+
+                    renderCuentas();
+                }
+
+                function editarCuenta(id) {
+                    culconShow({
+                        id: getCuentaValue(id, 'IdCuentaBancaria'),
+                        idBanco: getCuentaValue(id, 'IdBanco'),
+                        idTipoCuentaBancaria: getCuentaValue(id, 'IdTipoCuentaBancaria'),
+                        numeroCuenta: getCuentaValue(id, 'NumeroCuenta'),
+                        comentarios: getCuentaValue(id, 'Comentarios'),
+                    });
+                }
+
+                function quitarCuenta(id) {
+
+                    if (!confirm("¿Está seguto de que desea eliminar esta cuenta?"))
+                        return;
+
+                    $(".cuenta-" + id).remove();
+                    renderCuentas();
+                }
+
+                function renderCuenta(id, field, value) {
+                    return '<input type="hidden" class="cuenta-' + id + '" id="Cuentas_' + id + '__' + field + '" name="Cuentas[' + id + '].' + field + '" value="' + value + '" />';
+                }
+
+                function getCuentaValue(id, field) {
+                    return $('#Cuentas_' + id + '__' + field).val();
+                }
+
+                function setCuentaValue(id, field, value) {
+                    return $('#Cuentas_' + id + '__' + field).val(value);
+                }
+
+                   // Llamado al API de Empresas Agrotop
+
+            var uri = '@ApiRealUrl.GetApiUrl()';
+
+            function SetCargando(element) {
+                var options = [];
+                options.push('<option value="', '', '">', 'Cargando...', '</option>');
+                element.html(options.join(''));
+                }
+
+                $("#IdRegion").change(function () {
+                    GetProvincias();
+                    DeleteComunas()
+                });
+
+                $("#IdProvincia").change(function () {
+                    GetComunas();
+                });
+
+                function DeleteProvincias() {
+                    $("#IdProvincia option").remove();
+                    var options = [];
+                    options.push('<option value="',
+                        '', '">',
+                        '(Seleccione Provincia)', '</option>');
+                    $("#IdProvincia").html(options.join(''));
+                }
+
+                function DeleteComunas() {
+                    $("#IdComuna option").remove();
+                    var options = [];
+                    options.push('<option value="',
+                        '', '">',
+                        '(Seleccione Comuna)', '</option>');
+                    $("#IdComuna").html(options.join(''));
+                }
+
+                $(document).ready(function () {
+                    if ($("#IdRegion").val() != 0) {
+                        DeleteProvincias();
+                        GetProvincias();
+                    }
+                });
+
+                function GetProvincias() {
+                var id = $('#IdRegion').val();
+                if (!jQuery.isEmptyObject(id)) {
+                    SetCargando($('#IdProvincia'));
+                }
+                $.getJSON(uri + '/Agricultores/GetProvincia?id=' + id)
+                .done(function (result) {
+                var options = [];
+
+                if (result.length == 0) {
+                    alert("No hay provincias disponibles");
+                    //DeleteProvincias();
+                }
+                else {
+                    options.push('<option value="','', '">','(Seleccione Provincia)', '</option>');
+                    for (var i = 0; i < result.length; i++) {
+                        options.push('<option value="',result[i].IdProvincia, '">',result[i].Nombre, '</option>');
+                    }
+                    $("#IdProvincia").html(options.join(''));
+
+                    var idProvincia = '@(Model.IdProvincia == 0 ? "" : Model.IdProvincia.ToString())';
+                    if (!$.isEmptyObject(idProvincia)) {
+                        $("#IdProvincia").val(idProvincia);
+                    }
+
+                    if ($("#IdProvincia").val() != 0) {
+                        DeleteComunas();
+                        GetComunas();
+                    }
+                }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+                }
+
+                function GetComunas() {
+                var id = $('#IdProvincia').val();
+                if (!jQuery.isEmptyObject(id)) {
+                    SetCargando($('#IdComuna'));
+                }
+                $.getJSON(uri + '/Agricultores/GetComuna?id=' + id)
+                .done(function (result) {
+                var options = [];
+
+                if (result.length == 0) {
+                    alert("No hay comunas disponibles");
+                    //DeleteComunas();
+                }
+                else {
+                    options.push('<option value="',
+                        '', '">',
+                        '(Seleccione Comuna)', '</option>');
+                    for (var i = 0; i < result.length; i++) {
+                        options.push('<option value="',
+                            result[i].IdComuna, '">',
+                            result[i].Nombre, '</option>');
+                    }
+                    $("#IdComuna").html(options.join(''));
+
+                    var idComuna = '@(Model.IdComuna == 0 ? "" : Model.IdComuna.ToString())';
+                    if (!$.isEmptyObject(idComuna)) {
+                        $("#IdComuna").val(idComuna);
+                    }
+                }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+                }
+
+            </script>
+        </div>
+        <p>
+            <label for="Fuente">Código SAP Oleotop</label>
+            @Html.TextBox("IDOleotop", Model.IDOleotop, new { @class = "std", maxlength = 50 })
+            @Html.ValidationMessage("IDOleotop", ".")
+        </p>
+        <p>
+            <label for="Fuente">Código SAP Avenatop</label>
+            @Html.TextBox("IDAvenatop", Model.IDAvenatop, new { @class = "std", maxlength = 50 })
+            @Html.ValidationMessage("IDAvenatop", ".")
+        </p>
+        <p>
+            <label for="Fuente">Código SAP Granotop</label>
+            @Html.TextBox("IDGranotop", Model.IDGranotop, new { @class = "std", maxlength = 50 })
+            @Html.ValidationMessage("IDGranotop", ".")
+        </p>
+        <p>
+            <label for="Fuente">Código SAP Saprosem</label>
+            @Html.TextBox("IDSaprosem", Model.IDSaprosem, new { @class = "std", maxlength = 50 })
+            @Html.ValidationMessage("IDSaprosem", ".")
+        </p>
+        <p>
+            <label for="Fuente">Código ForceManager</label>
+            @Html.TextBox("IdForceManager", Model.IdForceManager, new { @class = "std", maxlength = 50 })
+            @Html.ValidationMessage("IdForceManager", ".")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar Este Agricultor" /> o @Html.ActionLink("Cancelar", "Index", new { id = Request.QueryString["pageIndex"] ?? "0", key = Request.QueryString["key"] ?? "" })
+        </p>
+    </fieldset>
+}

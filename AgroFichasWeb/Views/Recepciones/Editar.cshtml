@@ -1,0 +1,191 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+@using AgroFichasWeb.ViewModels.Recepciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model EditarProcesoIngresoViewModel
+
+@{
+
+    ViewBag.NombreSeccion = "Recepciones " + Model.ProcesoIngreso.Temporada.Nombre;
+    ViewBag.Title = "Editar Ingreso " + Model.ProcesoIngreso.IdProcesoIngreso;
+    var idTipoServicio = ViewData["idTipoServicio"];
+
+
+    var tiposVehiculo = from tv in Model.TiposVehiculo
+                        select new SelectListItem { Value = tv.IdTipoVehiculo.ToString(), Text = tv.Nombre, Selected = tv.IdTipoVehiculo == Model.IdTipoVehiculo };
+
+    var bodegas = (from bo in Model.Bodegas
+                   select new SelectListItem { Value = bo.IdBodega.ToString(), Text = bo.Nombre, Selected = bo.IdBodega == Model.IdBodega }).ToList();
+    bodegas.Add(new SelectListItem { Value = "0", Text = "(No Asignada)", Selected = Model.IdBodega == 0 });
+    var oSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    var bodegasJSON = oSerializer.Serialize(from p in Model.Bodegas
+                                            select new { IdBodega = p.IdBodega, EsManga = p.EsManga ? 1 : 0 });
+
+    var variedades = (from va in Model.Variedades
+                      select new SelectListItem { Value = va.IdVariedad.ToString(), Text = va.Cultivo.Nombre + " " + va.Nombre, Selected = va.IdVariedad == Model.IdVariedad }).ToList();
+    variedades.Insert(0, new SelectListItem { Value = "0", Text = "(Desconocido)", Selected = Model.IdVariedad == 0 });
+
+    var empresas = (from x in Model.Empresas
+                    select new SelectListItem { Value = x.IdEmpresa.ToString(), Text = x.Nombre, Selected = x.IdEmpresa == Model.IdEmpresa }).ToList();
+
+    var sucursales = (from x in Model.Sucursales
+                      select new SelectListItem { Value = x.IdSucursal.ToString(), Text = x.Nombre, Selected = x.IdSucursal == Model.IdSucursal }).ToList();
+
+    var cultivoContratos = (from x in Model.CultivoContratos
+                            select new SelectListItem { Value = x.IdCultivoContrato.ToString(), Text = x.Nombre, Selected = x.IdCultivoContrato == Model.IdCultivoContrato }).ToList();
+
+    var tiposGuia = from tg in Model.TipoGuias
+                    select new SelectListItem { Value = tg.IdTipoGuia.ToString(), Text = tg.Descripcion, Selected = tg.IdTipoGuia == Model.IdTipoGuia };
+
+    var tipoServicio = new SelectList(
+       new List<SelectListItem>
+       {
+            new SelectListItem { Selected = idTipoServicio.ToString().Equals("1") ? true : false, Text = "Compra", Value = "1"},
+            new SelectListItem { Selected = idTipoServicio.ToString().Equals("2") ? true : false, Text = "A Guarda", Value = "2"}
+       }, "Value", "Text");
+}
+
+@section headSection {
+}
+
+@section submenuSection {
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+
+@using (Html.BeginForm("editar", "recepciones", FormMethod.Post, new { id = "frm" }))
+{
+    @Html.Hidden("IdProcesoIngreso", Model.IdProcesoIngreso)
+
+<fieldset class="dataForm">
+    <p>
+        <label>Fecha Llegada</label>
+        @Model.ProcesoIngreso.FechaHoraLlegada.Value.ToString("dd/MM/yyyy")
+    </p>
+    <p>
+        <label>Nro Ingreso Manual</label>
+        @Html.TextBox("NroIngresoManual", Model.NroIngresoManual, new { @class = "std" })
+        @Html.ValidationMessage("NroIngresoManual", ".")
+    </p>
+    <div class="p">
+        <label>Agricultor</label>
+        @Model.ProcesoIngreso.Agricultor.Rut @Model.ProcesoIngreso.Agricultor.Nombre
+    </div>
+    <p>
+        <label>eMail</label>
+        @Html.TextBox("email", Model.Agricultor.Email, new { maxlength = "50", @class = "std" })
+        @Html.ValidationMessage("eMail", ".")
+    </p>
+    <p>
+        <label>Teléfono 1</label>
+        @Html.TextBox("fono1", Model.Agricultor.Fono1, new { maxlength = "50", @class = "std" })
+        @Html.ValidationMessage("Teléfono", ".")
+    </p>
+    <p>
+        <label>Teléfono 2</label>
+        @Html.TextBox("fono2", Model.Agricultor.Fono2, new { maxlength = "50", @class = "std" })
+        @Html.ValidationMessage("Teléfono", ".")
+    </p>
+    <p>
+        <label>Empresa</label>
+        @Html.DropDownList("IdEmpresa", empresas, new { @class = "std" })
+        @Html.ValidationMessage("IdEmpresa", ".")
+    </p>
+    <p>
+        <label>Sucursal Entrega</label>
+        @Html.DropDownList("IdSucursal", sucursales, new { @class = "std" })
+        @Html.ValidationMessage("IdSucursal", ".")
+    </p>
+    <p>
+        <label>Cultivo</label>
+        @Html.DropDownList("IdCultivoContrato", cultivoContratos, new { @class = "std" })
+        @Html.ValidationMessage("IdCultivoContrato", ".")
+    </p>
+    <p>
+        <label>Variedad</label>
+        @Html.DropDownList("IdVariedad", variedades, new { @class = "std" })
+        @Html.ValidationMessage("IdVariedad", ".")
+    </p>
+    <p>
+        <label>Tipo de Vehículo</label>
+        @Html.DropDownList("IdTipoVehiculo", tiposVehiculo, new { @class = "std" })
+        @Html.ValidationMessage("IdTipoVehiculo", ".")
+    </p>
+    <p>
+        <label>Tipo Guía</label>
+        @Html.DropDownList("IdTipoGuia", tiposGuia, new { @class = "std" })
+        @Html.ValidationMessage("IdTipoGuia", ".")
+    </p>
+    <p>
+        <label>Tipo Servicio</label>
+        @Html.DropDownList("IdTipoServicio", tipoServicio, new { @class = "std" })
+        @Html.ValidationMessage("IdTipoServicio", ".")
+    </p>
+    <p>
+        <label>Número Guía</label>
+        @Html.TextBox("NumeroGuia", Model.NumeroGuia, new { maxlength = "10", @class = "std" })
+        @Html.ValidationMessage("NumeroGuia", ".")
+    </p>
+    <p>
+        <label>Número Guía Propia</label>
+        @Html.TextBox("NroGuiaPropia", Model.NroGuiaPropia, new { maxlength = "10", @class = "std" })
+        @Html.ValidationMessage("NroGuiaPropia", ".")
+    </p>
+    <p>
+        <label>Última Entrega</label>
+        @Html.CheckBox("UltimaEntrega", Model.UltimaEntrega)
+    </p>
+    <p>
+        <label>Liquidación en Dólares</label>
+        @Html.CheckBox("LiquidacionDolar", Model.LiquidacionDolar)
+    </p>
+    <p>
+        <label>Patente</label>
+        @Html.TextBox("Patente", Model.Patente, new { maxlength = "10", @class = "std" })
+        @Html.ValidationMessage("Patente", ".")
+    </p>
+    <p>
+        <label>Chofer</label>
+        @Html.TextBox("Chofer", Model.Chofer, new { maxlength = "50", @class = "std" })
+        @Html.ValidationMessage("Chofer", ".")
+    </p>
+    <p>
+        <label>Bodega</label>
+        @Html.DropDownList("IdBodega", bodegas, new { @class = "std" })
+        @Html.ValidationMessage("IdBodega", ".")
+    </p>
+    <p id="mangaContainer">
+        <label>Número Manga</label>
+        @Html.TextBox("Manga", Model.Manga, new { @class = "std" })
+        @Html.ValidationMessage("PesoFinal", ".")
+    </p>
+    <p>
+        <label>Enviar a Secador</label>
+        @Html.CheckBox("Secador", Model.Secador)
+    </p>
+    <p class="okcancel">
+        <input type="submit" value="Guardar Este Ingreso" /> o @Html.ActionLink("Cancelar", "detalleingreso", new { id = Model.IdProcesoIngreso })
+    </p>
+</fieldset>
+
+    <script type="text/javascript">
+        var bodegas = @(bodegasJSON.ToMvcHtmlString());
+        $(document).ready(function () {
+            $("#IdBodega").change(function () {
+                updateManga();
+            });
+            updateManga();
+        });
+
+        function updateManga() {
+            $("#mangaContainer").hide();
+            var idBodega =$("#IdBodega").val();
+            for (var i = 0; i < bodegas.length; i++)
+                if (bodegas[i].IdBodega == idBodega && bodegas[i].EsManga == "1")
+                    $("#mangaContainer").show();
+        };
+    </script>
+}

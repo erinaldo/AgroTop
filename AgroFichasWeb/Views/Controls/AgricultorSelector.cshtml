@@ -1,0 +1,129 @@
+﻿@using AgroFichasWeb.ViewModels
+@model AgricultorSelectorViewModel
+@{
+
+}
+<style>
+    #ags-label {
+        width: 400px;
+        display: inline-block;
+        border:solid 1px #adadad;
+        padding: 5px;
+    }
+</style>
+<span id="ags-label"></span><input id="ags-select" type="button" value="..." /><input id="ags-delete" type="button" value="X" />
+
+<input type="hidden" id="ags-idAgricultor" />
+<input type="hidden" id="ags-nombre" />
+
+<div id="agsSearchWindow" style="display: none" title="Buscar Agricultor - @(Model.Titulo ?? "")">
+    <div id="agsSearchWindow-Content">
+        <table class="form1" style="width: 100%; text-align: left;">
+        <tr>
+            <td class="label">Buscar:</td>
+            <td><input type="text" id="ags-keyword" style="width: 400px" /></td>
+            <td><input type="button" value="Buscar" id="ags-buscar" /></td>
+            <td></td>
+        </tr>
+        <tr class="title">
+            <td colspan="4">Resultados</td>
+        </tr>
+        <tr valign="top">
+            <td colspan="4">
+                <div  id="ags-results" style="height: 300px; overflow-y:scroll; width: 100%"></div>                        
+            </td>
+        </tr>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        @(new MvcHtmlString(String.Format("agsSetAgricultor({0}, '{1}');", Model.IdAgricultor, Model.Nombre.Replace("'", ""))))
+
+        $("#ags-delete").click(function () {
+            agsClearAgricultor();
+        });
+
+        $("#ags-select").click(function () {
+            agsSelectAgricultor();
+        });
+
+        $("#ags-buscar").click(function () {
+            agsSearchAgricultor();
+        });
+
+    });
+
+    function agsClearAgricultor() {
+        agsSetAgricultor("", '&nbsp;')
+    }
+
+    function agsSetAgricultor(id, nombre) {
+        $("#ags-idAgricultor").val(id);
+        $("#ags-nombre").val(nombre);
+        $("#ags-label").html(nombre);
+        agsCallback(id, nombre);
+    }
+
+    function agsSelectAgricultor() {
+        $("#agsSearchWindow").dialog({
+            width: 600,
+            modal: true,
+            buttons: {
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+                $('#ags-results').html("");
+            }
+        });
+    }
+
+    function agsSearchAgricultor() {
+        $('#ags-results').html('<div class="cargando"></div>');
+        $.ajax({
+            type: "POST",
+            url: "@Url.Content("~/search/AgricultorSelectorSearch")",
+            data: "{keyword: '" + $("#ags-keyword").val() + "'}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                var table = '<table class="form1">';
+
+                if (result.length == 0)
+                    table += "<tr><td><i>No se encontraron resultados</i></td></tr>";
+
+                for (var persona in result) {
+                    var row = "<tr>";
+                    row += '<td nowrap="nowrap">' + result[persona].Rut + '</td>';
+                    row += '<td id="p_' + result[persona].IdAgricultor + '"><a href="javascript:s(' + "'" + result[persona].IdAgricultor + "'" + ')">' + result[persona].Nombre + "</a></td>";
+                    row += "</tr>";
+                    table += row;
+                }
+                table += "</table>";
+                $('#ags-results').html(table);
+            },
+            error: function (req, stat, err) {
+                var msg = '<div style="color:red;">';
+                msg += "Se produjo un error al ejecutar la búsqueda.";
+                msg += "<p>" + req.responseText + "</p>";
+                msg += "<p>" + req.statusText + "</p>";
+                msg += "</div>";
+                $('#ags-results').html(msg);
+            }
+        });
+    }
+
+    function s(id) {
+        var nombre = $("#p_" + id + " > a").text();
+        agsSetAgricultor(id, nombre);
+        $('#agsSearchWindow').dialog('close');
+    }
+
+
+</script>

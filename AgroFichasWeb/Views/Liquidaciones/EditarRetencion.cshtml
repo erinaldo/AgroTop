@@ -1,0 +1,34 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Liquidaciones
+
+@model RetencionViewModel
+@{
+   
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "Editar Retención de Liquidacion";
+
+}
+    <h2>@ViewBag.Title</h2>
+
+    <form action="@Url.Action("editarretencion", "liquidaciones")#formPos" method="post">
+        @Html.Hidden("IdLiquidacion", Model.IdLiquidacion)
+
+        
+        <fieldset class="dataForm">
+            @Html.Partial("Liquidacion", Model.Liquidacion)
+        
+            <a name="formPos">&nbsp;</a>
+            @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+            <p>
+                <label>Retenida</label>
+                @Html.CheckBox("Retenida", Model.Retenida)
+            </p>
+            <p>
+                <label>Motivo Retención</label>
+                @Html.TextArea("RetenidaMemo", Model.RetenidaMemo, new { @class = "std", rows = 5 })
+            </p>
+            <p class="okcancel">
+                <input type="submit" id="btnGO" value="Guardar Cambios" />
+            </p>
+        </fieldset>
+    </form>

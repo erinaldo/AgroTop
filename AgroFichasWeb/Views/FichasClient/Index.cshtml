@@ -1,0 +1,239 @@
+﻿@using AgroFichasWeb.Models
+@model IEnumerable<Agricultor>
+
+@{
+    ViewBag.Title = "AgroFichas";
+    var puedeCrear = true;
+}
+
+@section VendorCSS
+{
+
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+
+@section CustomScripts {
+
+    <script src="@Url.Content("~/Scripts/initDataTable.js")"></script>
+
+    <script>
+        //Create
+        $('#addItem').click(function () {
+            loadItem({
+                Id: 0,
+                Rut: '',
+                Nombre: '',
+                Email: '',
+                Fono1: '',
+                Fono2: ''
+            });
+        });
+
+        //Edit
+        $("#datatable-default tbody").on("click", ".editItem", function (e) {
+
+            e.preventDefault();
+            var idItem = $(this).attr("data-id");
+
+            $("#editButton-" + idItem).hide();
+            $("#editSpinner-" + idItem).show();
+
+            var jqxhr = $.post('@Url.Action("getagricultor")', { id: idItem },
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showDangerPopUp(data.msg);
+                        }
+                        else {
+                            loadItem(data.item);
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showDangerPopUp(parsePostFail(jqXHR, errorThrown));
+                    })
+                    .always(function () {
+                        $("#editButton-" + idItem).show();
+                        $("#editSpinner-" + idItem).hide();
+                    });
+
+            });
+
+            //Load Data
+            function loadItem(item) {
+
+                $("#validationErrors").hide();
+                $("#footerButtons").show();
+                $("#footerSpinner").hide();
+
+
+                $("#id").val(item.Id);
+                $("#rut").val(item.Rut);
+                $("#nombre").val(item.Nombre);
+                $("#email").val(item.Email);
+                $("#fono1").val(item.Fono1);
+                $("#fono2").val(item.Fono2);
+
+                $("#formTitle").html((item.Id== 0 ? "Nuevo" : "Editar") + " Agricultor");
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#modalForm', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            //Save
+            $('.modal-confirm').click(function (e) {
+                e.preventDefault();
+
+                $("#validationErrors").hide();
+                $("#footerButtons").hide();
+                $("#footerSpinner").show();
+
+                var idItem = $("#id").val();
+                var postUrl = idItem == 0 ? '@Url.Action("createagricultor")' : '@Url.Action("editagricultor")';
+
+                var jqxhr = $.post(postUrl, $("#formItem").serialize(),
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showValidationErrors(data.msg, data.errors, "#validationErrors");
+                        }
+                        else {
+                            $.magnificPopup.close();
+
+                            new PNotify({
+                                title: 'Agricultor',
+                                text: data.msg,
+                                type: 'success'
+                            });
+
+                            var table = $('#datatable-default').DataTable();
+
+                            if (idItem != 0)
+                                table.row($("#itemRow-" + idItem)).remove().draw();
+
+                            table.row.add($(data.view)[0]).draw();
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showValidationErrors(parsePostFail(jqXHR, errorThrown), null, "#validationErrors");
+                    })
+                    .always(function () {
+                        $("#footerSpinner").hide();
+                        $("#footerButtons").show();
+                    });
+            });
+
+            //Close
+            $('.modal-dismiss').click(function (e) {
+                e.preventDefault();
+                $.magnificPopup.close();
+            });
+
+    </script>
+}
+
+<section class="panel">
+   < @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+    <header class="panel-heading">
+        <h2 class="panel-title">Agricultores</h2>
+        @if (puedeCrear)
+        {
+            <div class="panel-actions" style="top: 5px">
+                <button type="button" id="addItem" class="mb-xs mt-xs mr-xs btn btn-primary">Crear Agricultor</button>
+            </div>
+        }
+    </header>
+
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable-default">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderBy(e => e.Nombre))
+                {
+                    @Html.Partial("ItemRow", item)
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Modal Form -->
+<div id="modalForm" class="modal-block modal-block-primary mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title" id="formTitle">Titulo</h2>
+        </header>
+        <div class="panel-body">
+            <form id="formItem" class="form-horizontal mb-lg" novalidate="novalidate">
+                <div class="validation-summary-errors" id="validationErrors" style="display: none;">
+
+                </div>
+                <input type="hidden" value="" name="id" id="id" />
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Rut <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="rut" id="rut" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Nombre <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="nombre" id="nombre" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Email <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="email" id="email" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Fono 1 <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="fono1" id="fono1" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Fono 2</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="fono2" id="fono2" class="form-control" required />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-center" id="footerSpinner" style="display: none;">
+                    <img id="spinnerImage" src="~/Content/spinner.svg" height="34" />
+                </div>
+                <div class="col-md-12 text-right" id="footerButtons">
+                    <button class="btn btn-primary modal-confirm">Guardar</button>
+                    <button class="btn btn-default modal-dismiss">Cancelar</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>
+
+@Html.Partial("~/Views/Controls/ModalDanger.cshtml")

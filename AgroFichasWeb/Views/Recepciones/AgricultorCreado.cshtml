@@ -1,0 +1,37 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model Agricultor
+
+@{
+    ViewBag.NombreSeccion = "Recepciones";
+    ViewBag.Title = "El Agricultor fue creado con éxito";
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Nombre</label>
+            @Model.Nombre
+        </p>
+        <p>
+            <label for="Fecha">Rut</label>
+            @Model.Rut
+        </p>
+        <p>
+            <label for="Fono1">Fono 1</label>
+            @Model.Fono1
+        </p>
+        <p>
+            <label for="Fono2">Fono 2</label>
+            @Model.Fono2
+        </p>
+        <p>
+            <label for="Fecha">Email</label>
+            @Model.Email
+        </p>
+    </fieldset>
+

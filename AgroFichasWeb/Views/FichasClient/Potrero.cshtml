@@ -1,0 +1,40 @@
+﻿<!-- Modal Form - Potrero -->
+<div id="modalFormPotrero" class="modal-block modal-block-primary mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title" id="formTitlePotrero">Titulo</h2>
+        </header>
+        <div class="panel-body">
+            <form id="formItemPotrero" class="form-horizontal mb-lg" novalidate="novalidate">
+                <div class="validation-summary-errors" id="validationErrorsPotrero" style="display: none;">
+
+                </div>
+                <input type="hidden" value="" name="idPotrero" id="idPotrero" />
+                <input type="hidden" name="idPredio" value="@Model.IdPredio" />
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Nombre <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="nombre" id="nombre" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Superficie <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="superficie" id="superficie" class="form-control" required />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-center" id="footerSpinnerPotrero" style="display: none;">
+                    <img id="spinnerImagePotrero" src="~/Content/spinner.svg" height="34" />
+                </div>
+                <div class="col-md-12 text-right" id="footerButtonsPotrero">
+                    <button class="btn btn-primary modal-confirmPotrero">Guardar</button>
+                    <button class="btn btn-default modal-dismissPotrero">Cancelar</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>

@@ -1,0 +1,6 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var tramosList = (IEnumerable<SelectListItem>)ViewData["tramosList"];
+}
+
+@Html.DropDownList("tramo", tramosList, "Seleccione Tramo", new { @class = "heavy std" })

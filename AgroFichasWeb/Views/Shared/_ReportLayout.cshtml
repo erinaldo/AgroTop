@@ -1,0 +1,109 @@
+﻿@using AgroFichasWeb.Models
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <style>
+    td.RptEncabezadoSeccion {
+        border-bottom: solid black 1px;
+        font-weight: bold;
+    }
+
+    td.RptLabel {
+        font-weight: bold;
+    }
+
+    td.RptDatosControl {
+        font-size: xx-small;
+        font-style: italic;
+    }
+
+    td.RptEncabezadoListado {
+        font-weight: bold;
+        font-size: 12px;
+        border-bottom: solid 1px black;
+    }
+
+    td.RptEncabezadoListadoGrupo {
+        font-weight: bold;
+        font-size: 12px;
+        border: solid 1px black;
+        background-color: #C7D9E7;
+    }
+
+    td.RptPieListado {
+        font-weight: bold;
+        font-size: 12px;
+        border-top: solid 1px black;
+    }
+
+    td.RptItemListado {
+        font-size: 12px;
+    }
+
+    tr.RptItemListado {
+        font-size: 12px;
+    }
+
+    #filter {
+        width: 900px;
+        margin: 10px auto;
+        padding: 10px 0px;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 12px;
+    }
+
+    #filterbg {
+        background-color: #e5e5e5;
+    }
+
+    @@media print {
+        #filter {
+            display: none;
+        }
+
+        .exportlink {
+            display: none;
+        }
+    }
+
+    a {
+        color: red;
+    }
+</style>
+    @RenderSection("scripts", required: false)
+</head>
+<body>
+    <div id="filterbg">
+        <div id="filter">
+            @RenderSection("filter", required: false)
+        </div>
+    </div>
+    <div>
+        <table align="center" width="900px" border="0">
+        <tr valign="top">
+            <td style="font-size:x-small">Empresas Agrotop</td>
+            <td align="right" style="font-size:xx-small">@SYS_User.Current().UserName<br />@DateTime.Now.ToString("dd/MM/yy HH:mm")</td>
+        </tr>
+        <tr valign="top">
+            <td colspan="2" width="100%" style="border-bottom: solid 3px black; font-family:'Times New Roman', Times, serif; font-size:x-large; font-weight:bold">@ViewBag.Title</td>
+        </tr>
+        <tr>
+            <td colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @RenderBody()
+            </td>
+        </tr>
+        </table>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_ParametroAnalisisProducto
+@{
+    ViewBag.Title = "Parámetros de Análisis";
+    ViewBag.SubTitle = "Asociar Parámetro de Análisis a Producto";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm("Editar", "CALParametrosAnalisisProducto", FormMethod.Post, null))
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdProducto", Model.GetProductos(Model.IdProducto), "(Seleccione Familia de Productos)", new { @class = "form-control", disabled = "disabled" })
+                                        @Html.ValidationMessage("IdProducto")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Párametro de Análisis</label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdParametroAnalisis", Model.GetParametrosAnalisis(Model.IdParametroAnalisis), "(Seleccione Párametro de Análisis)", new { @class = "form-control", disabled = "disabled" })
+                                        @Html.ValidationMessage("IdParametroAnalisis")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Orden</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Orden", Model.Orden, new { @class = "form-control", maxlength = "20" })
+                                        @Html.ValidationMessage("Orden")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @Html.Hidden("IdProducto", Model.IdProducto)
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Editar esta Asociación" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

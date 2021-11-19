@@ -1,0 +1,1363 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.TrazaTop
+@model SolicitudContratoViewModel
+
+@{
+    ViewBag.Title = "Solicitudes de Contratos";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <style>
+        #verificarFICHAS input, #verificarFICHAS select {
+            width: auto !important;
+            height: 34px;
+        }
+    </style>
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 50,
+            "paging": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        $('#verificarCRM').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 10,
+            "paging": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        $('#verificarFICHAS').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 10,
+            "paging": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        var ERRMSG = "No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:";
+        var ERRMSG_GENERIC = "No fue posible procesar su solicitud.";
+
+        // ***** Llenado de Select Lists *****
+
+        function GetRegionesProvinciasComunas(tipo, selector) {
+            var idRegion = $('#IdRegion_FICHAS').val();
+            if (idRegion == "") {
+                LimpiarOptions('IdProvincia_FICHAS', '(Seleccione Provincia)');
+                LimpiarOptions('IdComuna_FICHAS', '(Seleccione Comuna)');
+            }
+
+            switch (tipo) {
+                case "Provincias":
+                    LimpiarOptions('IdComuna_FICHAS', '(Seleccione Comuna)');
+                    GetProvincias(selector, idRegion, null);
+                    break;
+                case "Comunas":
+                    var idProvincia = $('#IdProvincia_FICHAS').val();
+                    GetComunas(selector, idProvincia, null);
+                    break;
+            }
+        }
+
+        function GetRegiones(selector, idRegion) {
+            $.getJSON('@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetRegiones')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        options.push('<option value="', '', '">','(Seleccione Región)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdRegion, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idRegion != null) {
+                            $("#" + selector).val(idRegion);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function GetProvincias(selector, idRegion, idProvincia) {
+            $.getJSON(
+                '@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetProvincias',
+                {
+                    'IdRegion': idRegion
+                }
+            )
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        options.push('<option value="', '', '">','(Seleccione Provincia)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdProvincia, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idProvincia != null) {
+                            $("#" + selector).val(idProvincia);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function GetComunas(selector, idProvincia, idComuna) {
+            $.getJSON(
+                '@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetComunas',
+                {
+                    'IdProvincia': idProvincia
+                }
+            )
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        options.push('<option value="', '', '">','(Seleccione Comuna)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdComuna, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idComuna != null) {
+                            $("#" + selector).val(idComuna);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function GetTituloExplotacion(selector, idTituloExplotacion) {
+            $.getJSON('@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetTituloExplotacion')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        options.push('<option value="', '', '">','(Seleccione Título Habilitante a la Explotación)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdTituloExplotacion, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idTituloExplotacion != null) {
+                            $("#" + selector).val(idTituloExplotacion);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function GetEmpresas(selector, idEmpresa) {
+            $.getJSON('@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetEmpresas')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        options.push('<option value="', '', '">','(Seleccione Empresa)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdEmpresa, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idEmpresa != null) {
+                            $("#" + selector).val(idEmpresa);
+                        }
+                        else {
+                            $("select#" + selector)[0].selectedIndex = 0;
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function GetGastosTransportePara(selector, idGastosTransportePara) {
+            $.getJSON('@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetGastosTransportePara')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        options.push('<option value="', '', '">','(Seleccione Gastos de Transporte Para)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdGastosTransportePara, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idGastosTransportePara != null) {
+                            $("#" + selector).val(idGastosTransportePara);
+                        }
+                        else {
+                            $("select#" + selector)[0].selectedIndex = 0;
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function LimpiarOptions(selector, selectLabel) {
+            $("#" + selector + " option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                selectLabel, '</option>');
+            $("#" + selector).html(options.join(''));
+        }
+
+        // ***** Notificaciones *****
+
+        function NotificarVerificarDatosCRM(IdSolicitudContrato) {
+            if ($("#modalNotificarDatosCRM_" + IdSolicitudContrato).html() == undefined) {
+                var modal = '<div class="modal fade" id="modalNotificarDatosCRM_' + IdSolicitudContrato + '" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Notificar al Asesor</h4></div><div class="modal-body"><div class="form-group"> <label>Mensaje</label><textarea id="CRM_Mensaje_' + IdSolicitudContrato + '" class="form-control" maxlength="50"></textarea></div></div><div class="modal-footer"> <button type="button" onclick="EnviarNotificacionDatosCRM(\'' + IdSolicitudContrato + '\')" class="btn btn-default" data-dismiss="modal">Enviar</button></div></div></div></div>';
+                $("body").append(modal);
+            }
+        }
+
+        function EnviarNotificacionDatosCRM(IdSolicitudContrato) {
+            var data = {
+                Mensaje: $("#CRM_Mensaje_" + IdSolicitudContrato).val(),
+                IdSolicitudContrato: $("#CRM_IdSolicitudContrato_" + IdSolicitudContrato).val(),
+                Tipo: "Datos ForceManager CRM"
+            };
+
+            if (data.Mensaje == null || data.Mensaje == '')
+                alert(ERRMSG + "\r\n" + "Debe escribir un mensaje");
+            else {
+                $('#modalCargando').modal('show');
+                $.when(
+                    $.ajax({
+                        url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/NotificarVerificarDatos',
+                        type: 'POST',
+                        data: data
+                    }).done(function (result) {
+                        var obj = JSON.parse(JSON.stringify(result));
+                        alert(obj.Mensaje);
+                    })
+                ).done(function () {
+                    $('#modalCargando').modal('hide');
+                });
+            }
+        }
+
+        function NotificarVerificarDatosFICHAS(IdSolicitudContrato) {
+            if ($("#modalNotificarDatosFICHAS_" + IdSolicitudContrato).html() == undefined) {
+                var modal = '<div class="modal fade" id="modalNotificarDatosFICHAS_' + IdSolicitudContrato + '" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Notificar al Asesor</h4></div><div class="modal-body"><div class="form-group"> <label>Mensaje</label><textarea id="Mensaje_' + IdSolicitudContrato + '" class="form-control" maxlength="50"></textarea></div></div><div class="modal-footer"> <button type="button" onclick="EnviarNotificacionDatosFICHAS(\'' + IdSolicitudContrato + '\')" class="btn btn-default" data-dismiss="modal">Enviar</button></div></div></div></div>';
+                $("body").append(modal);
+            }
+        }
+
+        function EnviarNotificacionDatosFICHAS(IdSolicitudContrato) {
+            var data = {
+                Mensaje: $("#Mensaje_" + IdSolicitudContrato).val(),
+                IdSolicitudContrato: $("#IdSolicitudContrato_" + IdSolicitudContrato).val(),
+                Tipo: "Datos FICHAS"
+            };
+
+            if (data.Mensaje == null || data.Mensaje == '')
+                alert(ERRMSG + "\r\n" + "Debe escribir un mensaje");
+            else {
+                $('#modalCargando').modal('show');
+                $.when(
+                    $.ajax({
+                        url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/NotificarVerificarDatos',
+                        type: 'POST',
+                        data: data
+                    }).done(function (result) {
+                        var obj = JSON.parse(JSON.stringify(result));
+                        alert(obj.Mensaje);
+                    })
+                ).done(function () {
+                    $('#modalCargando').modal('hide');
+                });
+            }
+        }
+
+        // ***** Verificaciones y Anulaciones *****
+
+        function VerificarDatosCRM(IdSolicitudContrato) {
+            $('#modalCargando').modal('show');
+
+            var data = {
+                IdSolicitudContrato: IdSolicitudContrato,
+                IdEstado: 2,
+                Nombre: 'Verificado',
+            };
+
+            $.when(
+                $.ajax({
+                    url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/SetVerificadoCRM',
+                    type: 'POST',
+                    data: data
+                }).done(function (result) {
+                    var msjFinal = "";
+                    var obj = JSON.parse(JSON.stringify(result));
+                    if (obj.OK) {
+                        msjFinal = obj.Mensaje;
+
+                        //Actualiza Grilla
+                        GetSolicitudesContratosCRM(@HttpContext.Current.Request.Url.AbsoluteUri.Contains("localhost").ToString().ToLower());
+
+                        //Actualiza Grilla
+                        GetSolicitudesContratos();
+                    } else {
+                        msjFinal = ERRMSG + "\r\n";
+                        var objMsj = JSON.parse(obj.Mensaje);
+                        for (var i = 0; i < objMsj.length; i++) {
+                            for (var j = 0; j < objMsj[i].length; j++) {
+                                msjFinal += objMsj[i][j].ErrorMessage + "\r\n";
+                            }
+                        }
+                    }
+
+                    alert(msjFinal);
+                })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+            });
+        }
+
+        function VerificarDatosFICHAS(IdSolicitudContrato) {
+            $('#modalCargando').modal('show');
+            LimpiarCamposAgricultor();
+
+            $.when(
+                $.getJSON(
+                    '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/GetAgricultor',
+                    {
+                        'IdSolicitudContrato': IdSolicitudContrato
+                    }
+                )
+                    .done(function (result) {
+                        if (result.length != 0) {
+                            var data = {
+                                IdAgricultor:        GetValue(result.IdAgricultor),
+                                Rut:                 GetValue(result.Rut),
+                                Nombre:              GetValue(result.Nombre),
+                                RutRepresentate:     GetValue(result.RutRepresentate),
+                                NombreRepresentate:  GetValue(result.NombreRepresentate),
+                                IdRegion:            GetValue(result.IdRegion),
+                                IdProvincia:         GetValue(result.IdProvincia),
+                                IdComuna:            GetValue(result.IdComuna),
+                                Direccion:           GetValue(result.Direccion),
+                                Email:               GetValue(result.Email),
+                                RolAvaluo:           GetValue(result.RolAvaluo),
+                                InscripcionFS:       GetValue(result.InscripcionFS),
+                                InscripcionNum:      GetValue(result.InscripcionNum),
+                                InscripcionAno:      GetValue(result.InscripcionAno),
+                                CoberturaSeguro:     GetValue(result.CoberturaSeguro),
+                                IdTituloExplotacion: GetValue(result.IdTituloExplotacion),
+                                IdSolicitudContrato: GetValue(result.IdSolicitudContrato),
+                            };
+
+                            $("#IdAgricultor_FICHAS").val(data.IdAgricultor);
+                            $("#Rut_FICHAS").val(data.Rut);
+                            $("#Nombre_FICHAS").val(data.Nombre);
+                            $("#RutRepresentate_FICHAS").val(data.RutRepresentate);
+                            $("#NombreRepresentate_FICHAS").val(data.NombreRepresentate);
+                            $("#Direccion_FICHAS").val(data.Direccion);
+                            $("#Email_FICHAS").val(data.Email);
+                            $("#RolAvaluo_FICHAS").val(data.RolAvaluo);
+                            $("#InscripcionFS_FICHAS").val(data.InscripcionFS);
+                            $("#InscripcionNum_FICHAS").val(data.InscripcionNum);
+                            $("#InscripcionAno_FICHAS").val(data.InscripcionAno);
+                            $("#CoberturaSeguro_FICHAS").prop('checked', data.CoberturaSeguro);
+                            $("#IdSolicitudContrato_FICHAS").val(data.IdSolicitudContrato);
+
+                            GetRegiones('IdRegion_FICHAS', data.IdRegion);
+
+                            if (data.IdRegion != null) {
+                                GetProvincias('IdProvincia_FICHAS', data.IdRegion, data.IdProvincia);
+                            }
+
+                            if (data.IdProvincia != null) {
+                                GetComunas('IdComuna_FICHAS', data.IdProvincia, data.IdComuna);
+                            }
+
+                            GetTituloExplotacion('IdTituloExplotacion_FICHAS', data.IdTituloExplotacion);
+
+                            $('#InscripcionAno_FICHAS').datepicker();
+                            if (data.InscripcionAno != "") {
+                                var date = new Date(data.InscripcionAno);
+                                $('#InscripcionAno_FICHAS').val(date.toLocaleDateString("en-US"));
+                            } else {
+                                var date = new Date('@string.Format("{0:yyyy/MM/dd}", DateTime.Now)');
+                                $('#InscripcionAno_FICHAS').val(date.toLocaleDateString("en-US"));
+                            }
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(ERRMSG_GENERIC + "" + err);
+                        alert(ERRMSG_GENERIC + "\r\n" + err);
+                    })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+                $('#modalAgricultor').modal('show');
+            });
+        }
+
+        function ConfirmarDatosFICHAS() {
+            $('#modalCargando').modal('show');
+
+            var data = {
+                IdAgricultor: $("#IdAgricultor_FICHAS").val(),
+                Rut: $("#Rut_FICHAS").val(),
+                Nombre: $("#Nombre_FICHAS").val(),
+                RutRepresentate: $("#RutRepresentate_FICHAS").val(),
+                NombreRepresentate: $("#NombreRepresentate_FICHAS").val(),
+                IdRegion: $("#IdRegion_FICHAS").val(),
+                IdProvincia: $("#IdProvincia_FICHAS").val(),
+                IdComuna: $("#IdComuna_FICHAS").val(),
+                Direccion: $("#Direccion_FICHAS").val(),
+                Email: $("#Email_FICHAS").val(),
+                RolAvaluo: $("#RolAvaluo_FICHAS").val(),
+                InscripcionFS: $("#InscripcionFS_FICHAS").val(),
+                InscripcionNum: $("#InscripcionNum_FICHAS").val(),
+                InscripcionAno: $("#InscripcionAno_FICHAS").val(),
+                CoberturaSeguro: $("#CoberturaSeguro_FICHAS").is(":checked"),
+                IdTituloExplotacion: $("#IdTituloExplotacion_FICHAS").val(),
+                IdSolicitudContrato: $("#IdSolicitudContrato_FICHAS").val(),
+            };
+
+            $.when(
+                $.ajax({
+                    url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/SetAgricultor',
+                    type: 'POST',
+                    data: data
+                }).done(function (result) {
+                    var msjFinal = "";
+                    var obj = JSON.parse(JSON.stringify(result));
+                    if (obj.OK) {
+                        msjFinal = obj.Mensaje;
+                        $('#modalAgricultor').modal('hide');
+
+                        //Actualiza Grilla
+                        GetAgricultores(@HttpContext.Current.Request.Url.AbsoluteUri.Contains("localhost").ToString().ToLower());
+
+                        //Actualiza Grilla
+                        GetSolicitudesContratos(@HttpContext.Current.Request.Url.AbsoluteUri.Contains("localhost").ToString().ToLower());
+                    } else {
+                        msjFinal = ERRMSG + "\r\n";
+                        var objMsj = JSON.parse(obj.Mensaje);
+                        for (var i = 0; i < objMsj.length; i++) {
+                            for (var j = 0; j < objMsj[i].length; j++) {
+                                msjFinal += objMsj[i][j].ErrorMessage + "\r\n";
+                            }
+                        }
+                    }
+
+                    alert(msjFinal);
+                })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+            });
+        }
+
+        function LimpiarCamposAgricultor() {
+            $("#IdAgricultor_FICHAS").val('');
+            $("#Rut_FICHAS").val('');
+            $("#Nombre_FICHAS").val('');
+            $("#RutRepresentate_FICHAS").val('');
+            $("#NombreRepresentate_FICHAS").val('');
+            $("#IdRegion_FICHAS").find('option').remove();
+            $("#IdProvincia_FICHAS").find('option').remove();
+            $("#IdComuna_FICHAS").find('option').remove();
+            $("#Direccion_FICHAS").val('');
+            $("#Email_FICHAS").val('');
+            $("#RolAvaluo_FICHAS").val('');
+            $("#InscripcionFS_FICHAS").val('');
+            $("#InscripcionNum_FICHAS").val('');
+            $("#InscripcionAno_FICHAS").val('');
+            $("#CoberturaSeguro_FICHAS").prop('checked', false);
+            $("#IdTituloExplotacion_FICHAS").find('option').remove();
+            $("#IdSolicitudContrato_FICHAS").val('');
+        }
+
+        function LimpiarCamposContrato() {
+            $("#IdTituloExplotacion_FICHAS").find('option').remove();
+            $("#IdTituloExplotacion_FICHAS").find('option').remove();
+            $("#IdSolicitudContrato_FICHAS").val('');
+        }
+
+        function AnularVerificarDatosCRM(IdSolicitudContrato) {
+            $('#modalCargando').modal('show');
+
+            var data = {
+                IdSolicitudContrato: IdSolicitudContrato,
+                IdEstado: 1,
+                Nombre: 'No Verificado',
+            };
+
+            $.when(
+                $.ajax({
+                    url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/SetVerificadoCRM',
+                    type: 'POST',
+                    data: data
+                }).done(function (result) {
+                    var msjFinal = "";
+                    var obj = JSON.parse(JSON.stringify(result));
+                    if (obj.OK) {
+                        msjFinal = obj.Mensaje;
+                        $('#modalAgricultor').modal('hide');
+
+                        //Actualiza Grilla
+                        GetSolicitudesContratos();
+                    } else {
+                        msjFinal = ERRMSG + "\r\n";
+                        var objMsj = JSON.parse(obj.Mensaje);
+                        for (var i = 0; i < objMsj.length; i++) {
+                            for (var j = 0; j < objMsj[i].length; j++) {
+                                msjFinal += objMsj[i][j].ErrorMessage + "\r\n";
+                            }
+                        }
+                    }
+
+                    alert(msjFinal);
+                })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+            });
+        }
+
+        function AnularVerificarDatosFICHAS(IdSolicitudContrato) {
+            $('#modalCargando').modal('show');
+
+            var data = {
+                IdSolicitudContrato: IdSolicitudContrato,
+                VerificadoFichas: false
+            };
+
+            $.when(
+                $.ajax({
+                    url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/SetVerificadoFichas',
+                    type: 'POST',
+                    data: data
+                }).done(function (result) {
+                    var msjFinal = "";
+                    var obj = JSON.parse(JSON.stringify(result));
+                    if (obj.OK) {
+                        msjFinal = obj.Mensaje;
+                        $('#modalAgricultor').modal('hide');
+
+                        //Actualiza Grilla
+                        GetSolicitudesContratos();
+                    } else {
+                        msjFinal = ERRMSG + "\r\n";
+                        var objMsj = JSON.parse(obj.Mensaje);
+                        for (var i = 0; i < objMsj.length; i++) {
+                            for (var j = 0; j < objMsj[i].length; j++) {
+                                msjFinal += objMsj[i][j].ErrorMessage + "\r\n";
+                            }
+                        }
+                    }
+
+                    alert(msjFinal);
+                })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+            });
+        }
+
+        // ***** Contratos *****
+
+        function CrearContratoPaso1(IdSolicitudContrato) {
+            $('#modalCargando').modal('show');
+            LimpiarCamposContrato();
+
+            $("#IdSolicitudContrato_CrearContrato").val(IdSolicitudContrato);
+
+            $.when(
+                GetEmpresas('IdEmpresa_CrearContrato', null),
+                GetGastosTransportePara('IdGastosTransportePara_CrearContrato', null)
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+                $('#modalCrearContrato').modal('show');
+            });
+        }
+
+        function CrearContratoPaso2() {
+            $('#modalCargando2').modal('show');
+
+            var data = {
+                IdEmpresa: $("#IdEmpresa_CrearContrato").val(),
+                IdGastosTransportePara: $("#IdGastosTransportePara_CrearContrato").val(),
+                NumeroContrato: $("#NumeroContrato_CrearContrato").val(),
+                IdSolicitudContrato: $("#IdSolicitudContrato_CrearContrato").val()
+            };
+
+            if ((data.IdEmpresa == 0 || data.IdEmpresa == null) ||
+                (data.IdGastosTransportePara == 0 || data.IdGastosTransportePara == null) ||
+                (data.NumeroContrato.trim() == "" || data.NumeroContrato == null) ||
+                (data.IdSolicitudContrato == 0 || data.IdSolicitudContrato == null)) {
+                alert(ERRMSG + "\r\n" + "Debe seleccionar todos los datos");
+            } else {
+                $.when(
+                    $.ajax({
+                        url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/SetContrato',
+                        type: 'POST',
+                        data: data
+                    }).done(function (result) {
+                        var msjFinal = "";
+                        var obj = JSON.parse(JSON.stringify(result));
+                        if (obj.OK) {
+                            msjFinal = obj.Mensaje;
+                            $('#modalCrearContrato').modal('hide');
+
+                            //Actualiza Grilla
+                            GetSolicitudesContratos();
+                        } else {
+                            msjFinal = ERRMSG + "\r\n";
+                            var objMsj = JSON.parse(obj.Mensaje);
+                            for (var i = 0; i < objMsj.length; i++) {
+                                for (var j = 0; j < objMsj[i].length; j++) {
+                                    msjFinal += objMsj[i][j].ErrorMessage + "\r\n";
+                                }
+                            }
+                        }
+
+                        alert(msjFinal);
+                    })
+                ).done(function () {
+                    $('#modalCargando2').modal('hide');
+                });
+            }
+        }
+
+        function LimpiarCamposContrato() {
+            $("#IdEmpresa_CrearContrato").find('option').remove();
+            $("#IdGastosTransportePara_CrearContrato").find('option').remove();
+            $("#NumeroContrato_CrearContrato").val('');
+            $("#IdSolicitudContrato_CrearContrato").val('');
+        }
+
+        function AnularContrato(IdSolicitudContrato) {
+            $('#modalCargando').modal('show');
+
+            var data = {
+                IdSolicitudContrato: IdSolicitudContrato
+            };
+
+            $.when(
+                $.ajax({
+                    url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/AnularContrato',
+                    type: 'POST',
+                    data: data
+                }).done(function (result) {
+                    var msjFinal = "";
+                    var obj = JSON.parse(JSON.stringify(result));
+                    if (obj.OK) {
+                        msjFinal = obj.Mensaje;
+
+                        //Actualiza Grilla
+                        GetSolicitudesContratos();
+                    } else {
+                        msjFinal = ERRMSG + "\r\n";
+                        var objMsj = JSON.parse(obj.Mensaje);
+                        for (var i = 0; i < objMsj.length; i++) {
+                            for (var j = 0; j < objMsj[i].length; j++) {
+                                msjFinal += objMsj[i][j].ErrorMessage + "\r\n";
+                            }
+                        }
+                    }
+
+                    alert(msjFinal);
+                })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+            });
+        }
+
+        function CrearPDF(IdSolicitudContrato) {
+            $('#modalCargando').modal('show');
+
+            var data = {
+                IdSolicitudContrato: IdSolicitudContrato
+            };
+
+            $.when(
+                $.ajax({
+                    url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/CrearPDFContrato',
+                    type: 'POST',
+                    data: data
+                }).done(function (result) {
+                    var msjFinal = "";
+                    var obj = JSON.parse(JSON.stringify(result));
+                    if (obj.OK) {
+                        msjFinal = obj.Mensaje;
+
+                        //Actualiza Grilla
+                        GetSolicitudesContratos();
+                    } else {
+                        msjFinal = ERRMSG + "\r\n" + obj.Mensaje;
+
+                        //var objMsj = JSON.parse(obj.Mensaje);
+                        //for (var i = 0; i < objMsj.length; i++) {
+                        //    for (var j = 0; j < objMsj[i].length; j++) {
+                        //        msjFinal += objMsj[i][j].ErrorMessage + "\r\n";
+                        //    }
+                        //}
+                    }
+
+                    alert(msjFinal);
+                })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+            });
+        }
+
+        // ***** Getters API *****
+
+        function GetSolicitudesContratos() {
+            $('#modalCargando2').modal('show');
+
+            var t = $('#datatable').DataTable();
+            t.clear().draw();
+            $.when(
+                $.getJSON(
+                    '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/GetSolicitudesContratos',
+                    {
+                        IdTemporada: $("#IdTemporada").val(),
+                        Key: $("#Key").val(),
+                    }
+                )
+                    .done(function (result) {
+                        if (result.length != 0) {
+                            for (var i = 0; i < result.length; i++) {
+                                var IdSolicitudContrato = result[i].IdSolicitudContrato;
+                                t.row.add([
+                                    '' + result[i].IdSolicitudContrato + '',
+                                    '' + result[i].Rut + '',
+                                    '' + result[i].NombreProveedor + '',
+                                    '' + result[i].Cultivo + '',
+                                    '' + result[i].PrecioCierre + '',
+                                    '' + result[i].ToneladasCierre + '',
+                                    '' + result[i].TipoContrato + '',
+                                    '' + result[i].ComunaOrigen + '',
+                                    '' + result[i].SucursalEntrega + '',
+                                    '' + result[i].Hectareas + '',
+                                    '' + result[i].ToneladasTotales + '',
+                                    '' + (result[i].VerificadoCRM == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                    '' + (result[i].VerificadoFichas == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                    '' + (result[i].ContratoCreado == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                    '' + (result[i].PDFCreado == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                    '<input type="hidden" id="MAIN_IdSolicitudContrato_' + IdSolicitudContrato + '" class="form-control" value="' + IdSolicitudContrato + '" />' +
+                                    @if(Model.Permiso.Actualizar)
+                                    {
+                                        @:(result[i].ContratoCreado == false ? '<button id="#" class="btn btn-warning" onclick="AnularVerificarDatosCRM(\'' + IdSolicitudContrato + '\')" data-toggle="tooltip" data-placement="top" title="Anular CRM"> <i class="fa fa-ban"></i></button>' : '') +
+                                        @:(result[i].ContratoCreado == false ? '<button id="#" class="btn btn-success" onclick="AnularVerificarDatosFICHAS(\'' + IdSolicitudContrato + '\')" data-toggle="tooltip" data-placement="top" title="Anular FICHAS"> <i class="fa fa-ban"></i></button>' : '') +
+                                    }
+
+                                    @if(Model.Permiso.CrearContrato)
+                                    {
+                                        @:(result[i].ContratoCreado == false ? '<button id="#" class="btn btn-tertiary" onclick="CrearContratoPaso1(\'' + IdSolicitudContrato + '\')" data-toggle="tooltip" data-placement="top" title="Crear Contrato" style="background-color:#0088cc;color: white"> <i class="fa fa-magic"></i></button>' : '') +
+                                        @:(result[i].ContratoCreado == true && result[i].PDFCreado == false ? '<button id="#" class="btn btn-tertiary" onclick="CrearPDF(\'' + IdSolicitudContrato + '\')" data-toggle="tooltip" data-placement="top" title="Crear PDF" style="background-color:#0088cc;color: white"> <i class="fa fa-magic"></i></button>' : '') +
+                                    }
+                                    @if(Model.Permiso.VerContrato)
+                                    {
+                                        @:(result[i].ContratoCreado == true ? '<button id="#" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Borrador Contrato" onclick="openInNewTab(\'@Request.Url.GetLeftPart(UriPartial.Authority)/SolicitudesContratos/Previsualizar/' + IdSolicitudContrato + '\');"> <i class="fa fa-eye"></i></button>' : '') +
+                                    }
+                                    @if(Model.Permiso.AnularContrato)
+                                    {
+                                        @:(result[i].ContratoCreado == true ? '<button id="#" class="btn btn-tertiary" onclick="AnularContrato(\'' + IdSolicitudContrato + '\')" data-toggle="tooltip" data-placement="top" title="Anular Contrato" style="background-color:#0088cc;color: white"> <i class="fa fa-ban"></i></button>' : ''),
+                                    }
+                                    else
+                                    {
+                                        @:''
+                                    }
+                                ]).draw(false);
+                            }
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(err);
+                    })
+            ).done(function () {
+                $('#modalCargando2').modal('hide');
+            });
+        }
+
+        function GetSolicitudesContratosCRM(isDevelopment) {
+            $('#modalCargando3').modal('show');
+
+            console.log("isDevelopment = " + isDevelopment);
+
+            var t = $('#verificarCRM').DataTable();
+            t.clear().draw();
+            $.when(
+                $.getJSON(
+                    '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/GetSolicitudesContratosCRM',
+                    {
+                        'IsDevelopment': isDevelopment
+                    }
+                )
+                    .done(function (result) {
+                        if (result.length != 0) {
+                            for (var i = 0; i < result.length; i++) {
+                                var IdSolicitudContrato = result[i].IdSolicitudContrato;
+                                var Variedad = "";
+                                if (result[i].ResponseSolicitudContratoVariedad != null) {
+                                    for (var j = 0; j < result[i].ResponseSolicitudContratoVariedad.length; j++) {
+                                        Variedad += result[i].ResponseSolicitudContratoVariedad[j].Variedad + "<br>";
+                                    }
+                                }
+
+                                t.row.add([
+                                    '' + result[i].IdSolicitudContrato + '',
+                                    '' + result[i].Rut + '',
+                                    '' + result[i].NombreProveedor + '',
+                                    '' + result[i].Cultivo + '',
+                                    '' + Variedad + '',
+                                    '' + result[i].PrecioCierre + '',
+                                    '' + result[i].ToneladasCierre + '',
+                                    '' + result[i].TipoContrato + '',
+                                    '' + result[i].ComunaOrigen + '',
+                                    '' + result[i].SucursalEntrega + '',
+                                    '' + result[i].Hectareas + '',
+                                    '' + result[i].ToneladasTotales + '',
+                                    '' + result[i].Predio + '',
+                                    '' + result[i].NombreAsesor + '',
+                                    '<input type="hidden" id="CRM_IdSolicitudContrato_' + IdSolicitudContrato + '" class="form-control" value="' + IdSolicitudContrato + '" />' +
+                                    @if(Model.Permiso.Actualizar)
+                                    {
+                                        @:'<span data-toggle="modal" data-target="#modalNotificarDatosCRM_' + IdSolicitudContrato + '">' +
+                                        @:'   <button id="btnNotificarVerificarDatosCRM_' + IdSolicitudContrato + '" class="btn btn-default" onclick="NotificarVerificarDatosCRM(\'' + IdSolicitudContrato + '\')" data-toggle="tooltip" data-placement="top" title="Notificar"> <i class="fa fa-envelope"></i></button>' +
+                                        @:'</span>' +
+                                        @:'<button id="#" class="btn btn-default" onclick="VerificarDatosCRM(\'' + IdSolicitudContrato + '\')" data-toggle="tooltip" data-placement="top" title="Verificar"> <i class="fa fa-check-square"></i></button>',
+                                    }
+                                    else
+                                    {
+                                        @:''
+                                    }
+                                ]).draw(false);
+                            }
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(ERRMSG_GENERIC + "" + err);
+                        alert(ERRMSG_GENERIC + "\r\n" + err);
+                    })
+            ).done(function () {
+                $('#modalCargando3').modal('hide');
+            });
+        }
+
+        function GetAgricultores(isDevelopment) {
+            $('#modalCargando4').modal('show');
+
+            var t = $('#verificarFICHAS').DataTable();
+            t.clear().draw();
+            $.when(
+                $.getJSON(
+                    '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/GetAgricultores',
+                    {
+                        'IsDevelopment': isDevelopment
+                    }
+                )
+                    .done(function (result) {
+                        if (result.length != 0) {
+                            for (var i = 0; i < result.length; i++) {
+                                var IdSolicitudContrato = result[i].IdSolicitudContrato;
+                                t.row.add([
+                                    '' + IdSolicitudContrato + '',
+                                    '' + GetValue(result[i].Rut) + '',
+                                    '' + GetValue(result[i].IdAgricultor) + '' + ' ' + '' + GetValue(result[i].Nombre) + '',
+                                    '' + GetValue(result[i].RutRepresentate) + '',
+                                    '' + GetValue(result[i].NombreRepresentate) + '',
+                                    '' + GetValue(result[i].NombreRegion) + '',
+                                    '' + GetValue(result[i].NombreProvincia) + '',
+                                    '' + GetValue(result[i].NombreComuna) + '',
+                                    '' + GetValue(result[i].Direccion) + '',
+                                    '' + GetValue(result[i].Email) + '',
+                                    '' + GetValue(result[i].RolAvaluo) + '',
+                                    '' + GetValue(result[i].InscripcionFS) + '',
+                                    '' + GetValue(result[i].InscripcionNum) + '',
+                                    '' + GetValue(result[i].InscripcionAno) + '',
+                                    '' + (result[i].CoberturaSeguro == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                    '' + GetValue(result[i].NombreTituloExplotacion) + '',
+                                    '<input type="hidden" id="IdSolicitudContrato_' + IdSolicitudContrato + '" class="form-control" value="' + IdSolicitudContrato + '" />' +
+                                    @if(Model.Permiso.Actualizar)
+                                    {
+                                        @:'<span data-toggle="modal" data-target="#modalNotificarDatosFICHAS_' + IdSolicitudContrato + '">' +
+                                        @:    '<button id="btnNotificarVerificarDatosFICHAS_' + IdSolicitudContrato + '" class="btn btn-default" onclick="NotificarVerificarDatosFICHAS(\'' + IdSolicitudContrato + '\')" data-toggle="tooltip" data-placement="top" title="Notificar"> <i class="fa fa-envelope"></i></button>' +
+                                        @:'</span>' +
+                                        @:'<button id="#" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Verificar" onclick="VerificarDatosFICHAS(\'' + IdSolicitudContrato + '\')"> <i class="fa fa-check-square"></i></button>',
+                                    }
+                                    else
+                                    {
+                                        @:''
+                                    }
+                                ]).draw(false);
+                            }
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(err);
+                    })
+            ).done(function () {
+                $('#modalCargando4').modal('hide');
+            });
+        }
+
+        function GetValue(obj) {
+            if (obj != null) {
+                return obj;
+            } else {
+                return "";
+            }
+        }
+
+        function GetValueCheckbox(obj) {
+            if (obj != null) {
+                if (obj) {
+                    return "checked=\"checked\"";
+                } else {
+                    return "";
+                }
+                return obj;
+            } else {
+                return "";
+            }
+        }
+
+        function openInNewTab(url) {
+            var win = window.open(url, '_blank');
+            win.focus();
+        }
+
+        $(document).ready(function () {
+            GetSolicitudesContratos();
+
+            // ***** Listeners *****
+
+            $("#btnVerificarDatosCRM").click(function () {
+                GetSolicitudesContratosCRM(@HttpContext.Current.Request.Url.AbsoluteUri.Contains("localhost").ToString().ToLower());
+            });
+
+            $("#btnVerificarDatosFICHAS").click(function () {
+                GetAgricultores(@HttpContext.Current.Request.Url.AbsoluteUri.Contains("localhost").ToString().ToLower());
+            });
+
+            $("#btnFiltrar").click(function () {
+                GetSolicitudesContratos();
+            });
+        });
+    </script>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtros de Búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <div class="form-inline center">
+                    <div class="form-group">
+                        @Html.DropDownList("IdTemporada", Model.GetTemporadas(), "(Todas las Temporadas)", new { @class = "form-control" })
+                    </div>
+                    <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                    <input type="text" name="Key" id="Key" class="form-control" value="" /> <input id="btnFiltrar" class="btn btn-default" type="submit" value="Filtrar" />
+                    <div class="clearfix visible-xs mb-sm"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Solicitudes de Contratos</h2>
+
+        <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+            <span data-toggle="modal" data-target=".modalCRM_1">
+                <a href="#" class="btn btn-warning" id="btnVerificarDatosCRM"><i class="fa fa-refresh"></i> Verificar Datos CRM</a>
+            </span>
+            <span data-toggle="modal" data-target=".modalFICHAS_1">
+                <a href="#" class="btn btn-success" id="btnVerificarDatosFICHAS"><i class="fa fa-refresh"></i> Verificar Datos FICHAS</a>
+            </span>
+        </div>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Rut</th>
+                    <th>Proveedor</th>
+                    <th>Cultivo</th>
+                    <th>Precio Cierre</th>
+                    <th>Ton. Cierre</th>
+                    <th>Tipo Contrato</th>
+                    <th>Comuna Origen</th>
+                    <th>Sucursal Enterga</th>
+                    <th>Há</th>
+                    <th>Toneladas</th>
+                    <th>Verificada CRM</th>
+                    <th>Verificada FICHAS</th>
+                    <th>Contrato</th>
+                    <th>PDF</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->
+<div id="verificarCRM_1" class="modal fade modalCRM_1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="overflow-y: auto; display: none;">
+    <div class="modal-block modal-header-color modal-block-warning modal-block-full">
+        <section class="panel">
+            <header class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="panel-title">Verificar Datos CRM</h2>
+            </header>
+            <div class="panel-body">
+                <div class="modal-wrapper">
+                    <table class="table table-bordered table-striped mb-none" id="verificarCRM">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Rut</th>
+                                <th>Proveedor</th>
+                                <th>Cultivo</th>
+                                <th>Variedad</th>
+                                <th>Precio Cierre</th>
+                                <th>Ton. Cierre</th>
+                                <th>Tipo Contrato</th>
+                                <th>Comuna Origen</th>
+                                <th>Sucursal Enterga</th>
+                                <th>Há</th>
+                                <th>Toneladas</th>
+                                <th>Predio</th>
+                                <th>Asesor</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </footer>
+        </section>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div id="verificarFICHAS_1" class="modal fade modalFICHAS_1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="overflow-y: auto; display: none;">
+    <div class="modal-block modal-header-color modal-block-success modal-block-full">
+        <section class="panel">
+            <header class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="panel-title">Verificar Datos FICHAS</h2>
+            </header>
+            <div class="panel-body">
+                <div class="modal-wrapper">
+                    <table class="table table-bordered table-striped mb-none" id="verificarFICHAS">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Rut</th>
+                                <th>Proveedor</th>
+                                <th>Rut Representate</th>
+                                <th>Representate</th>
+                                <th>Región</th>
+                                <th>Provincia</th>
+                                <th>Comuna</th>
+                                <th>Domicilio</th>
+                                <th>Email</th>
+                                <th>Rol Avalúo</th>
+                                <th>Inscripción Prop. FS</th>
+                                <th>Inscripción Prop. N°</th>
+                                <th>Inscripción Prop. Fecha</th>
+                                <th>Cobertura Seguro</th>
+                                <th>Título Habilitante a la Explotación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </footer>
+        </section>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalAgricultor" role="dialog" style="overflow-y: auto; display: none;">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Confirmar Datos Agricultor</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Rut</label>
+                    <input type="text" id="Rut_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Proveedor</label>
+                    <input type="text" id="Nombre_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Rut Representate</label>
+                    <input type="text" id="RutRepresentate_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Representate</label>
+                    <input type="text" id="NombreRepresentate_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Región</label>
+                    <select onchange="GetRegionesProvinciasComunas('Provincias', 'IdProvincia_FICHAS', 0)" id="IdRegion_FICHAS" class="form-control" name="IdRegion_FICHAS">
+                        <option value="">(Seleccione Región)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Provincia</label>
+                    <select onchange="GetRegionesProvinciasComunas('Comunas', 'IdComuna_FICHAS', 0)" id="IdProvincia_FICHAS" class="form-control" name="IdProvincia_FICHAS">
+                        <option value="">(Seleccione Provincia)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Comuna</label>
+                    <select id="IdComuna_FICHAS" class="form-control" name="IdComuna_FICHAS">
+                        <option value="">(Seleccione Comuna)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Domicilio</label>
+                    <input type="text" id="Direccion_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" id="Email_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Rol Avalúo</label>
+                    <input type="text" id="RolAvaluo_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Inscripción Prop. FS</label>
+                    <input type="text" id="InscripcionFS_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Inscripción Prop. N°</label>
+                    <input type="text" id="InscripcionNum_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Inscripción Prop. Fecha</label>
+                    <input type="text" id="InscripcionAno_FICHAS" class="form-control" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Cobertura Seguro</label>
+                    <input type="checkbox" id="CoberturaSeguro_FICHAS" value="" />
+                </div>
+                <div class="form-group">
+                    <label>Título Habilitante a la Explotación</label>
+                    <select id="IdTituloExplotacion_FICHAS" class="form-control" name="IdTituloExplotacion_FICHAS"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="IdAgricultor_FICHAS" value="" />
+                <input type="hidden" id="IdSolicitudContrato_FICHAS" value="" />
+                <button type="button" onclick="ConfirmarDatosFICHAS()" class="btn btn-default">Confirmar</button>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalCargando" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <center>
+                    <img src="~/Content/images/Load_Icon.gif" />
+                </center>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalCargando2" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <center>
+                    <img src="~/Content/images/Load_Icon.gif" />
+                </center>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalCargando3" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <center>
+                    <img src="~/Content/images/Load_Icon.gif" />
+                </center>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalCargando4" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <center>
+                    <img src="~/Content/images/Load_Icon.gif" />
+                </center>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalCrearContrato" role="dialog" style="overflow-y: auto; display: none;">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Crear Contrato</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Empresa</label>
+                    <select id="IdEmpresa_CrearContrato" class="form-control" name="IdEmpresa_CrearContrato">
+                        <option value="">(Seleccione Empresa)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Gastos de Transporte Para</label>
+                    <select id="IdGastosTransportePara_CrearContrato" class="form-control" name="IdGastosTransportePara_CrearContrato">
+                        <option value="">(Seleccione Gastos de Transporte Para)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Número Contrato</label>
+                    <input type="text" id="NumeroContrato_CrearContrato" name="NumeroContrato_CrearContrato" class="form-control" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="IdSolicitudContrato_CrearContrato" value="" />
+                <button type="button" onclick="CrearContratoPaso2()" class="btn btn-default">Crear</button>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalNotificar" role="dialog" style="overflow-y: auto; display: none;">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Notificar al Asesor</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Mensaje</label>
+                    <textarea id="" class="form-control" maxlength="50"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="EnviarNotificacion()" class="btn btn-default" data-dismiss="modal">Enviar</button>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+@model AgroFichasWeb.ViewModels.Recepciones.ReStandarizarViewModel
+           
+<h2>Re Estandarizar</h2>
+<table border="1">
+    <tr>
+        <td><b>Nro</b></td>
+        <td><b>Nombre</b></td>
+        <td><b>Estado</b></td>
+        <td align="right"><b>Neto</b></td>
+        <td align="right" colspan="2"><b>Std Original</b></td>
+        <td align="right" colspan="2"><b>Std Nuevo</b></td>
+        <td align="right"><b>Neto Original</b></td>
+        <td align="right"><b>Neto Nuevo</b></td>
+    </tr>
+    @foreach (var item in Model.Items.OrderBy(i => i.ProcesoIngreso.IdProcesoIngreso))
+    {
+        <tr valign="top">
+            <td>@item.ProcesoIngreso.IdProcesoIngreso</td>
+            <td>@item.ProcesoIngreso.Agricultor.Nombre</td>
+            <td>@item.ProcesoIngreso.EstadoProcesoIngreso.Nombre</td>
+            <td align="right">@item.ProcesoIngreso.PesoBruto.Value.ToString("#,##0")</td>
+            <td align="right">@item.Ori_PesoNormal.ToString("#,##0")</td>
+            <td align="right">@((((decimal)item.Ori_PesoNormal / item.ProcesoIngreso.PesoBruto.Value - 1) * 100).ToString("#,##0.00"))</td>
+            <td align="right">@item.ProcesoIngreso.PesoNormal.Value.ToString("#,##0")</td>
+            <td align="right">@((((decimal)item.ProcesoIngreso.PesoNormal.Value / item.ProcesoIngreso.PesoBruto.Value - 1) * 100).ToString("#,##0.00"))</td>
+            <td align="right">
+                @(item.Ori_TotalNeto.HasValue ? item.Ori_TotalNeto.Value.ToString("#,##0.##") : "")
+            </td>
+            <td align="right">
+                @(item.ProcesoIngreso.TotalNetoRecepcion.HasValue ? item.ProcesoIngreso.TotalNetoRecepcion.Value.ToString("#,##0.##") : "")
+            </td>
+        </tr>
+        
+        
+    }
+    <tr>
+        <td></td>
+    </tr>
+</table>

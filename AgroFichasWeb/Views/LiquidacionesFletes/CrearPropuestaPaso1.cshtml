@@ -1,0 +1,45 @@
+﻿@using AgroFichasWeb.ViewModels.Logistica
+@model PropuestaLiquidacionViewModel
+
+@{
+    ViewBag.NombreSeccion = "Liquidaciones de Fletes";
+    ViewBag.Title = "Crear Propuesta de Liquidación";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm("crearpropuestapaso2", "liquidacionesfletes", FormMethod.Post))
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Pronto Pago</label>
+            @Html.CheckBox("ProntoPago", Model.ProntoPago)
+        </p>
+        <p>
+            <label for="Titulo">Observación</label>
+            @Html.TextArea("Observacion", Model.Observacion, new { @class = "heavy std", maxlength = "500" })
+        </p>
+        <p>
+            <label for="Titulo">Material</label>
+            @Html.DropDownList("IdMaterial", Model.MaterialesSelectList, "-- Seleccione Material --", new { @class = "heavy std" })
+        </p>
+        <p>
+            <label for="Titulo">Condición de Pago</label>
+            @Html.TextArea("CondicionPago", Model.CondicionPago, new { @class = "heavy std", maxlength = "200" })
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Crear Propuesta" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+
+    <!-- hidden -->
+    @Html.HiddenFor(model => model.IdRequerimiento)
+    @Html.HiddenFor(model => model.IdTransportista)
+    @Html.HiddenFor(model => model.ValorFlete)
+    @Html.HiddenFor(model => model.PedidosSeleccionadosALiquidarParaHacerLookup)
+}

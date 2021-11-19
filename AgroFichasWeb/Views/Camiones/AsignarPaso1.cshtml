@@ -1,0 +1,72 @@
+﻿@using AgroFichasWeb.ViewModels
+@model AsignarCamionViewModel
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    if (Model.Reasignar)
+    {
+        ViewBag.Title = "Reasignación de Camiones a Planta de Origen Paso 1";
+    }
+    else
+    {
+        ViewBag.Title = "Asignación de Camiones a Planta de Origen Paso 1";
+    }
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    @*<script src="~/Scripts/jquery-ui-1.12.1.js"></script>*@
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/validate.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("~/Views/Requerimientos/Submenu.cshtml")
+}
+
+<h2>@ViewBag.Title</h2>
+@if (!string.IsNullOrEmpty(Model.MsgErr))
+{
+    <div class="validation-summary-errors">
+        Han ocurrido los siguientes errores:
+        <span>@Model.MsgErr</span>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.MsgOk))
+{
+    <div class="validation-summary-oks">
+        @Model.MsgOk
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Origen</label>
+            @Model.Origen
+        </p>
+        <p>
+            <label for="Titulo">Destino</label>
+            @Model.Destino
+        </p>
+        <p>
+            <label for="Titulo">Transportista</label>
+            @Html.Partial("~/Views/Controls/TransportistaSelector.cshtml", new TransportistaSelectorViewModel() { IdTransportista = Model.IdTransportista })
+            @Html.Hidden("IdTransportista", Model.IdTransportista)
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Siguiente" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+
+    @Html.Hidden("IdPedido", Model.IdPedido)
+}
+
+<script type="text/javascript">
+
+    function agsCallback(idAgricultor, nombre) {
+        $("#IdTransportista").val(idAgricultor);
+    }
+
+</script>   

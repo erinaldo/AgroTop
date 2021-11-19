@@ -1,0 +1,140 @@
+﻿@using AgroFichasWeb.Models
+@model List<ADQ_Documento>
+
+@{
+    ViewBag.Title = "Documentos / Cotizaciones";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVien.cshtml";
+
+    ADQ_SolicitudCompra aDQ_SolicitudCompra = (ADQ_SolicitudCompra)ViewData["aDQ_SolicitudCompra"];
+
+}
+@section VendorCSS
+{
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/porto/vendor/magnific-popup/magnific-popup.css")" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Content/vien/font/iconsmind-s/css/iconsminds.css" />
+    <link rel="stylesheet" href="~/Content/vien/font/simple-line-icons/css/simple-line-icons.css" />
+    <link rel="stylesheet" href="~/Content/vien/css/vendor/baguetteBox.min.css" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/magnific-popup/jquery.magnific-popup.js")"></script>
+    <script src="~/Content/vien/js/vendor/baguetteBox.min.js"></script>
+    <script src="~/Content/vien/js/vendor/jquery.barrating.min.js"></script>
+}
+
+@section CustomScripts
+{
+    @foreach (var item in Model)
+    {
+        <script>
+            $("#delete_@item.IdDocumento").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas eliminar este documento?",
+                    text: "ID: " +@item.IdDocumento+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Eliminar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Eliminar", new { id = item.IdSolicitud, IdDocumento = item.IdDocumento })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+        </script>
+    }
+}
+
+<section role="main" class="content-body">
+    @if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+    {
+        <div class="row">
+            @if (!string.IsNullOrEmpty(Request["errMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger rounded">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["errMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Request["okMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success rounded">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["okMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    @section CustomBreadcrumb {
+        @*<li class="breadcrumb-item">
+            <a href="#">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="#">Library</a>
+        </li>*@
+        <li class="breadcrumb-item active" aria-current="page">Solicitud #@aDQ_SolicitudCompra.IdSolicitud</li>
+    }
+    @section CustomButton {
+        <a href="@Url.Action("Crear", "ADQDocumentos", new { id = aDQ_SolicitudCompra.IdSolicitud })" class="btn btn-primary btn-lg top-right-button mr-1">Nuevo Documento <i class="fa fa-plus"></i></a>
+    }
+    <div class="row mb-4">
+        <div class="col-12 data-tables-hide-filter">
+            <div class="card">
+                <div class="card-body">
+
+                    <table class="data-table data-tables-pagination responsive nowrap"
+                           data-order="[[ 0, &quot;desc&quot; ]]">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Doc</th>
+                                <th>Observación</th>
+                                <th style="text-align: center">Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr valign="top">
+                                    <td>@item.IdDocumento</td>
+                                    <td>
+                                        <div class="lightbox">
+                                            @Html.Raw(item.GetArchivo())
+                                        </div>
+                                    </td>
+                                    <td>@Html.Raw(item.Observacion)</td>
+                                    <td style="text-align: center">
+                                        @string.Format("{0:dd/MM/yy}", item.FechaHoraIns)
+                                    </td>
+                                    <td>
+                                        @*<span data-toggle="modal" data-target=".modalInfo_@item.IdSolicitud"><button class="btn btn-info btn-sm mb-1" data-toggle="tooltip" data-placement="top" title="Detalle"> <i class="simple-icon-eye"></i></button></span>
+                                            <button id="@string.Format("dctos_{0}", item.IdSolicitud)" onclick="window.location.href='@Url.Action("Index", "ADQDocumentos", new { id = item.IdSolicitud })'" class="btn btn-primary btn-sm mb-1" data-toggle="tooltip" data-placement="top" title="Documentos"> <i class="simple-icon-folder-alt"></i></button>*@
+                                        <button id="delete_@item.IdDocumento" class="btn btn-danger mb-1" data-toggle="tooltip" data-placement="top" title="Eliminar Documento"> <i class="simple-icon-trash"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

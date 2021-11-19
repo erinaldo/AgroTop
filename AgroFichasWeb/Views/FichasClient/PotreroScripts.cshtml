@@ -1,0 +1,117 @@
+﻿<script>
+ //Potreros
+
+        //Create
+        $('#addItemPotrero').click(function () {
+            loadItemPotrero({
+                Id: 0,
+                Nombre: '',
+                Superficie: 0
+            });
+        });
+
+        //Edit
+        $("#datatable-potrero tbody").on("click", ".editItemPotrero", function (e) {
+
+            e.preventDefault();
+            var idItem = $(this).attr("data-id");
+
+            $("#editButtonPotrero-" + idItem).hide();
+            $("#editSpinnerPotrero-" + idItem).show();
+
+            var jqxhr = $.post('@Url.Action("getpotrero")', { id: idItem },
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showDangerPopUp(data.msg);
+                        }
+                        else {
+                            loadItemPotrero(data.item);
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showDangerPopUp(parsePostFail(jqXHR, errorThrown));
+                    })
+                    .always(function () {
+                        $("#editButtonPotrero-" + idItem).show();
+                        $("#editSpinnerPotrero-" + idItem).hide();
+                    });
+
+            });
+
+            //Load Data
+            function loadItemPotrero(item) {
+
+                $("#validationErrorsPotrero").hide();
+                $("#footerButtonsPotrero").show();
+                $("#footerSpinnerPotrero").hide();
+
+
+                $("#idPotrero").val(item.Id);
+                $("#nombre").val(item.Nombre);
+                $("#superficie").val(item.Superficie);
+
+                $("#formTitlePotrero").html((item.Id== 0 ? "Nuevo" : "Editar") + " Potrero");
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#modalFormPotrero', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            //Save
+            $('.modal-confirmPotrero').click(function (e) {
+                e.preventDefault();
+
+                $("#validationErrorsPotrero").hide();
+                $("#footerButtonsPotrero").hide();
+                $("#footerSpinnerPotrero").show();
+
+                var idItem = $("#idPotrero").val();
+                var postUrl = idItem == 0 ? '@Url.Action("createpotrero")' : '@Url.Action("editpotrero")';
+
+                var jqxhr = $.post(postUrl, $("#formItemPotrero").serialize(),
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showValidationErrors(data.msg, data.errors, "#validationErrorsPotrero");
+                        }
+                        else {
+                            $.magnificPopup.close();
+
+                            new PNotify({
+                                title: 'Potrero',
+                                text: data.msg,
+                                type: 'success'
+                            });
+
+                            if (idItem != 0) {
+                                $("#itemRowPotrero-" + idItem).replaceWith(data.view);
+                            }
+                            else {
+                                $("#datatable-potrero tbody").append(data.view);
+                            }
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showValidationErrors(parsePostFail(jqXHR, errorThrown), null, "#validationErrorsPotrero");
+                    })
+                    .always(function () {
+                        $("#footerSpinnerPotrero").hide();
+                        $("#footerButtonsPotrero").show();
+                    });
+            });
+
+            //Close
+            $('.modal-dismissPotrero').click(function (e) {
+                e.preventDefault();
+                $.magnificPopup.close();
+            });
+
+</script>    

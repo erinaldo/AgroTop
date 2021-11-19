@@ -1,0 +1,6 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var añosList = (IEnumerable<SelectListItem>)ViewData["añosList"];
+}
+
+@Html.DropDownList("año", añosList, "Seleccione Año", new { @class = "heavy std" })

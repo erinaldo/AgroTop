@@ -1,0 +1,160 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.SoftwareCalidad
+@model InformeViewModel
+@{
+    ViewBag.Title = string.Format("{3:dd/MM/yyyy} {0} de {1} a {2}", Model.Turno.CAL_TipoTurno.Descripcion, Model.Turno.InicioTurno, Model.Turno.FinTurno, Model.dateTime);
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <style>
+        #tbl-QRCode {
+            border-spacing: 5px 5px 5px 0;
+            border-collapse: separate;
+        }
+
+            #tbl-QRCode .QRCode {
+                padding: 5px 5px 5px 0;
+            }
+
+            #tbl-QRCode .QRCodeImg {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                position: relative;
+                width: 100px;
+            }
+
+            #tbl-QRCode .QRCodeData {
+                font-family: 'Courier New';
+                font-weight: bold
+            }
+    </style>
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });</script>
+}
+
+<section class="panel">
+    <div class="panel-body">
+        @foreach (CAL_OrdenProduccion ordenProduccion in Model.OrdenesProduccion)
+        {
+            <div class="invoice">
+                <header class="clearfix">
+                    <div class="bill-info">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="bill-to">
+                                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">ORDEN DE PRODUCCIÓN:</h3>
+                                    <div class="text-left">
+                                        <table class="table h5 text-dark" style="border: none">
+                                            <tbody>
+                                                <tr class="b-top-none">
+                                                    <td colspan="2"><span class="text-dark text-weight-semibold">LOTE COMERCIAL:</span></td>
+                                                    <td class="text-left"><span class="value">@ordenProduccion.LoteComercial</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                @foreach (CAL_DetalleOrdenProduccion detalleOrdenProduccion in Model.GetDetalleOrdenProduccion(ordenProduccion.IdOrdenProduccion))
+                {
+                    foreach (CAL_Pale cAL_Pale in Model.Pales.Where(X => X.IdDetalleOrdenProduccion == detalleOrdenProduccion.IdDetalleOrdenProduccion))
+                    {
+                        <div class="bill-info">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="bill-to">
+                                        <h3 class="h3 mt-none mb-sm text-dark text-weight-bold" style="border-bottom: 1px dashed #808080;">PALLET Nº @cAL_Pale.IdPale</h3>
+                                        <div class="text-left">
+                                            <table class="table h5 text-dark" style="border: none">
+                                                <tbody>
+                                                    <tr class="b-top-none">
+                                                        <td colspan="2"><span class="text-dark text-weight-semibold">Nº CORRELATIVO:</span></td>
+                                                        <td class="text-left"><span class="value">@cAL_Pale.IdPale</span></td>
+                                                    </tr>
+                                                    <tr class="b-top-none">
+                                                        <td colspan="2"><span class="text-dark text-weight-semibold">CÓDIGO:</span></td>
+                                                        <td class="text-left"><span class="value">@cAL_Pale.CodigoInterno</span></td>
+                                                    </tr>
+                                                    <tr class="b-top-none">
+                                                        <td colspan="2"><span class="text-dark text-weight-semibold">TIPO:</span></td>
+                                                        <td class="text-left"><span class="value">@cAL_Pale.CAL_TipoPale.Descripcion</span></td>
+                                                    </tr>
+                                                    <tr class="b-top-none">
+                                                        <td colspan="2"><span class="text-dark text-weight-semibold">CANTIDAD PALETIZADA:</span></td>
+                                                        <td class="text-left"><span class="value">@cAL_Pale.CantidadPaletizada sac</span></td>
+                                                    </tr>
+                                                    <tr class="b-top-none">
+                                                        <td colspan="2"><span class="text-dark text-weight-semibold">TURNO:</span></td>
+                                                        <td class="text-left">
+                                                            <span class="value">
+                                                                <span>@string.Format("{0} de {1} a {2} de {3:dd/MM/yyyy}", Model.Turno.CAL_TipoTurno.Descripcion, Model.Turno.InicioTurno, Model.Turno.FinTurno, Model.dateTime)</span>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="b-top-none">
+                                                        <td colspan="2"><span class="text-dark text-weight-semibold">GRUPO DE ENVASADORES:</span></td>
+                                                        <td class="text-left">
+                                                            <div class="value">
+                                                                @if (cAL_Pale.CAL_GrupoEnvasador != null)
+                                                                {
+                                                                    <div><strong>NOMBRE</strong>: @cAL_Pale.CAL_GrupoEnvasador.Nombre</div>
+                                                                    <div><strong>TIPO</strong>: @cAL_Pale.CAL_GrupoEnvasador.CAL_TipoGrupoEnvasador.Descripcion</div>
+                                                                    <div><strong>ENVASADORES</strong>:</div>
+                                                                    <ul>
+                                                                        @foreach (CAL_Envasador envasador in cAL_Pale.CAL_GrupoEnvasador.GetEnvasadores(cAL_Pale.IdGrupoEnvasador.Value))
+                                                                        {
+                                                                            <li>@envasador.GetEnvasador(envasador.UserID).FullName</li>
+                                                                        }
+                                                                    </ul>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <strike>No disponible</strike>
+                                                                }
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="b-top-none">
+                                                        <td colspan="2"><span class="text-dark text-weight-semibold">FECHA DE CREACIÓN:</span></td>
+                                                        <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yyyy HH:mm}", cAL_Pale.FechaHoraIns)</span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+        }
+    </div>
+</section>

@@ -1,0 +1,96 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_GrupoEnvasador
+
+@{
+    ViewBag.Title = "Paletización";
+    ViewBag.SubTitle = string.Format("Registrar Envasadores del Turno {0} de {1} a las {2}", Model.CAL_Turno2.CAL_TipoTurno.Descripcion, Model.CAL_Turno2.InicioTurno, Model.CAL_Turno2.FinTurno);
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    AgroFichasDBDataContext dc = new AgroFichasDBDataContext();
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<!-- start: page -->
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Envasadores <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <p style="margin-top: 7px;"><strong>Internos:</strong></p>
+                                        <ul style="list-style:none; margin: 0; padding: 0 0 0 20px;">
+                                            @foreach (var envasador in Model.GetEnvasadores().Where(X => X.IdSeccion == 8))
+                                            {
+                                                <li><input type="checkbox" name="chkEnvasador" value="@envasador.UserID" /> @envasador.FullName</li>
+                                            }
+                                        </ul>
+                                        <p style="margin-top: 20px;"><strong>Externos:</strong></p>
+                                        <ul style="list-style:none; margin: 0; padding: 0 0 0 20px;">
+                                            @foreach (var envasador in Model.GetEnvasadores().Where(X => X.IdSeccion == 9))
+                                            {
+                                                <li><input type="checkbox" name="chkEnvasador" value="@envasador.UserID" /> @envasador.FullName</li>
+                                            }
+                                        </ul>
+                                        @Html.ValidationMessage("EnvasadoresValidos")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Registrar Envasadores" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

@@ -1,0 +1,269 @@
+﻿@using AgroFichasWeb.Models.Logistica.Utilidades
+@using AgroFichasWeb.ViewModels.Logistica
+
+@model DetalleRequerimientoViewModel
+
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    ViewBag.Title = "Detalle Requerimiento";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="validation-summary-errors">
+        @Model.ErrorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.OKMessage))
+{
+    <div class="validation-summary-oks">
+        @Model.OKMessage
+    </div>
+}
+
+<fieldset class="dataForm">
+    <table class="procesoIngreso">
+        <tbody>
+            <tr>
+                <td style="width:100px;"><label>Empresa</label></td>
+                <td>@Model.Requerimiento.Empresa.Nombre</td>
+            </tr>
+            <tr>
+                <td><label>Movimiento</label></td>
+                <td>@Model.Requerimiento.LOG_TipoMovimiento.Descripcion</td>
+            </tr>
+            <tr>
+                <td><label>Glosa</label></td>
+                <td>@Model.Requerimiento.Glosa</td>
+            </tr>
+            <tr>
+                <td><label>Fecha</label></td>
+                <td>
+                    <span style="display: inline-block">
+                        <strong>Inicio:</strong> @Model.Requerimiento.FechaInicio.ToString("dd/MM/yyyy hh:mm tt")<br />
+                        <strong>Término:</strong> @Model.Requerimiento.FechaVencimiento.ToString("dd/MM/yyyy hh:mm tt")
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td><label>Cantidad Total</label></td>
+                <td>@Model.Requerimiento.CantidadTotalKg.ToString("N0") kg <strong>(@((Model.Requerimiento.CantidadTotalKg / 1000).ToString("N0")) Tn)</strong></td>
+            </tr>
+            <tr>
+                <td><label>Estado</label></td>
+                <td><span class="@CssClasses.GetEstadoRequerimiento(Model.Requerimiento.IdEstado)">@Model.Requerimiento.LOG_EstadoRequerimiento.Descripcion</span></td>
+            </tr>
+            @if (Model.Requerimiento.IdEstado == 1)
+            {
+                <tr>
+                    <td><label></label></td>
+                    <td>@Html.ActionLink("Marcar como Listo para Liquidar", "marcarlistoparaliquidar", new { id = Model.Requerimiento.IdRequerimiento }) <em>(Usar con precaución, favor no dejar pedidos incompletos)</em></td>
+                </tr>
+            }
+            @if (Model.Requerimiento.IdEstado == 2)
+            {
+                <tr>
+                    <td><label></label></td>
+                    <td>@Html.ActionLink("Marcar como Liquidado", "marcarliquidado", new { id = Model.Requerimiento.IdRequerimiento }) <em>(Usar con precaución, favor no dejar pedidos incompletos)</em></td>
+                </tr>
+            }
+            @if (Model.Requerimiento.IdEstado == 1 && Model.MostrarCrear)
+            {
+                <tr>
+                    <td><label></label></td>
+                    <td><a href="@Url.Action("crear", "pedidos", new { id = Model.Requerimiento.IdRequerimiento })">Crear Pedido</a></td>
+                </tr>
+                <tr>
+                    <td><label></label></td>
+                    <td><a href="@Url.Action("crearmultiples", "pedidos", new { id = Model.Requerimiento.IdRequerimiento })">Crear Múltiples Pedidos</a></td>
+                </tr>
+            }
+            <tr>
+                <td><label></label></td>
+                <td>
+                    @using (Html.BeginForm("buscar", "requerimientos", new { id = Model.Requerimiento.IdRequerimiento }, FormMethod.Post))
+                    {
+                        <input type="text" name="keyword" value="@ViewData["keyword"]" /> <input type="submit" value="Buscar" />
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align:top"><label>Pedidos Asignados</label></td>
+                <td>
+                    <table class="smallDataList">
+                        <thead>
+                            <tr>
+                                <th>Núm. Ped.</th>
+                                <th>Núm. Guía</th>
+                                <th>Fecha</th>
+                                <th>Cultivo</th>
+                                <th>Origen</th>
+                                <th>Destino</th>
+                                <th>Transportista</th>
+                                <th>Chofer</th>
+                                <th>Patente</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th align="center" colspan="3">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.PedidosAsignados.Count == 0 && Model.PedidosAsignadosPorBusqueda.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="14" class="norecords">
+                                        No hay pedidos asignados
+                                    </td>
+                                </tr>
+                            }
+                            @foreach (var pedido in Model.PedidosAsignados)
+                            {
+                                var movimiento = LogisticaHelper.GetMovimientoPorPedidoYHabilitado(pedido.IdPedido);
+                                var asignacioncamion = LogisticaHelper.GetCamionAsignado(pedido.IdPedido);
+                                <tr>
+                                    <td><strong>@pedido.IdPedido</strong></td>
+                                    @if (movimiento != null)
+                                    {
+                                        <td>@movimiento.NumeroGuia</td>
+                                    }
+                                    else
+                                    {
+                                        <td>-</td>
+                                    }
+                                    @if (asignacioncamion != null)
+                                    {
+                                        <td>@asignacioncamion.FechaHoraIns.ToString("dd/MM/yy hh:mm")</td>
+                                    }
+                                    else
+                                    {
+                                        <td>-</td>
+                                    }
+                                    <td>@pedido.Cultivo</td>
+                                    <td>@LogisticaHelper.GetSucursal(pedido.IdPedido, LogisticaHelper.Proviene.Origen)</td>
+                                    <td>@LogisticaHelper.GetSucursal(pedido.IdPedido, LogisticaHelper.Proviene.Destino)</td>
+                                    @if (asignacioncamion != null)
+                                    {
+                                        <td>@asignacioncamion.LOG_Camion.LOG_Transportista.Nombre</td>
+                                        <td>@asignacioncamion.LOG_Chofer.Nombre</td>
+                                        <td>@asignacioncamion.LOG_Camion.Patente</td>
+                                        <td>@asignacioncamion.ValorFletePorKgTransportado.ToString("C")</td>
+                                    }
+                                    else
+                                    {
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                    }
+                                    <td class="@CssClasses.GetEstadoPedido(pedido.IdPedido)">@pedido.Estado</td>
+                                    <td align="center">
+                                        <a href="@Url.Action("detalle", "pedidos", new { id = pedido.IdPedido })" class="icon">
+                                            <img src="@Url.Content("~/Content/images/detalle.png")" alt="Ver detalles" height="16" width="16" />
+                                        </a>
+                                    </td>
+                                    @if (Model.MostrarEditar)
+                                    {
+                                        <td align="center">
+                                            @if (Model.Requerimiento.IdEstado == 1 && (movimiento != null && (movimiento.LOG_Pedido.IdEstado != 6 && movimiento.LOG_Pedido.IdEstado != 7)))
+                                            {
+                                                <a href="@Url.Action("editar", "pedidos", new { id = pedido.IdPedido, IdRequerimiento = Model.Requerimiento.IdRequerimiento })" class="icon">
+                                                    <img src="@Url.Content("~/Content/images/editar.png")" alt="Editar" height="16" width="16" />
+                                                </a>
+                                            }
+                                        </td>
+                                    }
+                                    @if (Model.MostrarEliminar)
+                                    {
+                                        <td align="center">
+                                            @if (Model.Requerimiento.IdEstado == 1 && (movimiento != null && (movimiento.LOG_Pedido.IdEstado != 6 && movimiento.LOG_Pedido.IdEstado != 7)))
+                                            {
+                                                <a href="@Url.Action("eliminar", "pedidos", new { id = pedido.IdPedido, IdRequerimiento = Model.Requerimiento.IdRequerimiento })" class="icon">
+                                                    <img src="@Url.Content("~/Content/images/eliminar.png")" alt="Eliminar" height="16" width="16" />
+                                                </a>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                            @foreach (var pedido in Model.PedidosAsignadosPorBusqueda)
+                            {
+                                var movimiento = LogisticaHelper.GetMovimientoPorPedidoYHabilitado(pedido.IdPedido);
+                                var asignacioncamion = LogisticaHelper.GetCamionAsignado(pedido.IdPedido);
+                                <tr>
+                                    <td><strong>@pedido.IdPedido</strong></td>
+                                    @if (movimiento != null)
+                                    {
+                                        <td>@movimiento.NumeroGuia</td>
+                                    }
+                                    else
+                                    {
+                                        <td>-</td>
+                                    }
+                                    @if (asignacioncamion != null)
+                                    {
+                                        <td>@asignacioncamion.FechaHoraIns.ToString("dd/MM/yy hh:mm")</td>
+                                    }
+                                    else
+                                    {
+                                        <td>-</td>
+                                    }
+                                    <td>@pedido.Cultivo</td>
+                                    <td>@LogisticaHelper.GetSucursal(pedido.IdPedido, LogisticaHelper.Proviene.Origen)</td>
+                                    <td>@LogisticaHelper.GetSucursal(pedido.IdPedido, LogisticaHelper.Proviene.Destino)</td>
+                                    @if (asignacioncamion != null)
+                                    {
+                                        <td>@asignacioncamion.LOG_Camion.LOG_Transportista.Nombre</td>
+                                        <td>@asignacioncamion.LOG_Chofer.Nombre</td>
+                                        <td>@asignacioncamion.LOG_Camion.Patente</td>
+                                        <td>@asignacioncamion.ValorFletePorKgTransportado.ToString("C")</td>
+                                    }
+                                    else
+                                    {
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                    }
+                                    <td class="@CssClasses.GetEstadoPedido(pedido.IdPedido)">@pedido.Estado</td>
+                                    <td>
+                                        <a href="@Url.Action("detalle",  "pedidos", new { id = pedido.IdPedido })">
+                                            <img src="@Url.Content("~/Content/images/detalle.png")" alt="Ver detalles" height="16" width="16" />
+                                        </a>
+                                    </td>
+                                    @if (Model.MostrarEditar)
+                                    {
+                                        <td>
+                                            @if (Model.Requerimiento.IdEstado == 1 && (movimiento != null && (movimiento.LOG_Pedido.IdEstado != 6 && movimiento.LOG_Pedido.IdEstado != 7)))
+                                            {
+                                                <a href="@Url.Action("editar", "pedidos", new { id = pedido.IdPedido, IdRequerimiento = Model.Requerimiento.IdRequerimiento })" title="Editar Pedido">
+                                                    <img src="@Url.Content("~/Content/images/editar.png")" alt="Editar" height="16" width="16" />
+                                                </a>
+                                            }
+                                        </td>
+                                    }
+                                    @if (Model.MostrarEliminar)
+                                    {
+                                        <td>
+                                            @if (Model.Requerimiento.IdEstado == 1 && (movimiento != null && (movimiento.LOG_Pedido.IdEstado != 6 && movimiento.LOG_Pedido.IdEstado != 7)))
+                                            {
+                                                <a href="@Url.Action("eliminar", "pedidos", new { id = pedido.IdPedido, IdRequerimiento = Model.Requerimiento.IdRequerimiento })">
+                                                    <img src="@Url.Content("~/Content/images/eliminar.png")" alt="Eliminar" height="16" width="16" />
+                                                </a>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</fieldset>

@@ -1,0 +1,115 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_Producto
+
+@{
+    ViewBag.Title = "Control de Tiempo";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    if (Model.IdProducto == 0)
+    {
+        ViewBag.SubTitle = "Crear Producto";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Producto";
+    }
+
+    var plantas = (List<CTR_ProductoPlanta>)ViewData["PlantasProduccion"];
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Nombre <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Nombre", Model.Nombre, new { @class = "form-control", maxlength = "50" })
+                                            @Html.ValidationMessage("Nombre")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Plantas de Producción <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <ul style="list-style:none; margin: 0; padding: 0">
+                                                @foreach (var planta in plantas.Where(x => x.TienePlanta == true))
+                                                {
+                                                    <li><input type="checkbox" name="chkPlanta" value="@planta.PlantaProduccion.IdPlantaProduccion" @(planta.Tiene ? "checked" : "") /> @planta.PlantaProduccion.Nombre</li>
+                                                }
+                                            </ul>
+                                            @Html.ValidationMessage("EmpresasValidas")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresas <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <ul style="list-style:none; margin: 0; padding: 0">
+                                                @foreach (var empresa in Model.GetEmpresas(Model.IdProducto))
+                                                {
+                                                    <li><input type="checkbox" name="chkEmpresa" value="@empresa.Empresa.IdEmpresa" @(empresa.Tiene ? "checked" : "") /> @empresa.Empresa.Nombre</li>
+                                                }
+                                            </ul>
+                                            @Html.ValidationMessage("EmpresasValidas")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Envases <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <ul style="list-style:none; margin: 0; padding: 0">
+                                                @foreach (var envase in Model.GetEnvases(Model.IdProducto))
+                                                {
+                                                    <li><input type="checkbox" name="chkEnvase" value="@envase.CTR_Envase.IdEnvase" @(envase.Tiene ? "checked" : "") /> @envase.CTR_Envase.Descripcion</li>
+                                                }
+                                            </ul>
+                                            @Html.ValidationMessage("EnvasesValidos")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Guardar este Producto" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

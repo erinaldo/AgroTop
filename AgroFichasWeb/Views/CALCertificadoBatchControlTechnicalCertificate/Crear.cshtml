@@ -1,0 +1,230 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_CertificadoBatchControlTechnicalCertificate
+@{
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    ViewBag.Title = "Batch Control Of Technical Certificate";
+    ViewBag.SubTitle = "Crear Batch Control Of Technical Certificate";
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link href="~/Content/porto/vendor/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/moment/moment.js")"></script>
+    <script src="~/Content/porto/vendor/select2/js/select2.min.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        // Llamado al API de Empresas Agrotop
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="', '', '">', 'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        function DeleteListaEmpaque() {
+            $("#IdLEPallets option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Select Packing List)', '</option>');
+            $("#IdLEPallets").html(options.join(''));
+        }
+
+        function GetListaEmpaque() {
+            var id = $('#IdOrdenProduccion').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdLEPallets'));
+            }
+            $.getJSON(uri + '/OrdenProduccion/GetListaEmpaqueEnvasado?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay listas de empaque disponibles");
+                        DeleteListaEmpaque();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Select Packing List)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdLEPallets, '">',
+                                result[i].Descripcion, '</option>');
+                        }
+                        $("#IdLEPallets").html(options.join(''));
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdOrdenProduccion").change(function () {
+            DeleteListaEmpaque();
+            GetListaEmpaque();
+        });
+
+        @*jQuery.datetimepicker.setLocale('es');
+        jQuery('#AddProductionDate').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", DateTime.Now)',
+            weeks: true,
+            onSelectDate: function (ct, $i) {
+                var arrFechas = $("#ProductionDate").val().split(',').filter(function (elements) { return elements !== '' });
+                arrFechas.push(ct.dateFormat('DD/MM/YY'));
+                if (arrFechas.length > 1) {
+                    var arrSorted = arrFechas.sort(SortByDate);
+                    $("#ProductionDate").val($.unique(arrSorted).toString());
+                }
+                else {
+                    $("#ProductionDate").val(ct.dateFormat('DD/MM/YY'));
+                }
+            }
+        });
+
+        function SortByDate(a, b) {
+            var amyDate = a.split("/");
+            var aNewDate = new Date(amyDate[1] + "," + amyDate[0] + "," + amyDate[2]).getTime();
+            var bmyDate = b.split("/");
+            var bNewDate = new Date(bmyDate[1] + "," + bmyDate[0] + "," + bmyDate[2]).getTime();
+            return ((aNewDate < bNewDate) ? -1 : ((aNewDate > bNewDate) ? 1 : 0));
+        }
+
+        Date.parseDate = function (input, format) {
+            return moment(input, format).toDate();
+        };
+        Date.prototype.dateFormat = function (format) {
+            return moment(this).format(format);
+        };*@
+    </script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Lot <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdOrdenProduccion", Model.GetLotesPallets(Model.IdOrdenProduccion), "(Select Lot)", new { @class = "form-control populate", @data_plugin_selectTwo = "" })
+                                        @Html.ValidationMessage("IdOrdenProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Packing List <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdLEPallets", new List<SelectListItem>(), "(Select Packing List)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdLEPallets")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Certificate Number <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("CertificateNumber", Model.CertificateNumber, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("CertificateNumber")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Production Date <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("ProductionDate", Model.ProductionDate, new { @class = "form-control", maxlength = "250" })
+                                        @Html.ValidationMessage("ProductionDate")
+                                        <a href="#" id="AddProductionDate"><i class="fa fa-plus"></i> Add Production Date</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>*@
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Process Code <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("ProcessCode", Model.ProcessCode, new { @class = "form-control", maxlength = "250" })
+                                        @Html.ValidationMessage("ProcessCode")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Presentation <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Presentation", Model.Presentation, new { @class = "form-control", maxlength = "250" })
+                                        @Html.ValidationMessage("Presentation")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Certificado" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

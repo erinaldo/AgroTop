@@ -1,0 +1,12 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var tipos = (IOrderedQueryable<Cultivo>)ViewData["tipos"];
+}    
+    <ul>
+        @foreach (var tipo in tipos)
+        {
+            <li><a href="@Url.Content("~/cultivos/index?tipo=" + tipo.IdCultivo)">@(tipo.Nombre)</a></li>
+        }
+        
+    </ul>
+    <div style="clear:both;"></div>

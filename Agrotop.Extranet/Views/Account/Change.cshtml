@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "Cambiar Contraseña";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usuario = Agrotop.Extranet.Models.UserState.Current();
+}
+    
+    <div class="titulo1">Cambiar Contraseña</div>
+    <div id="login-Box">
+        <div id="login-Margin">
+            <div id="loginError">
+                @Html.ValidationSummary()
+            </div>
+            <div class="box">
+                <p>Antes de continuar, debe crear una nueva contraseña</p>
+                @using (Html.BeginForm())
+                {
+                    <p>
+                        <label>Nueva Contraseña</label>
+                        @Html.Password("password1", "", new { @class = "caxa" })
+                    </p>                    
+                    <p>
+                        <label>Confirmar Nueva Contraseña</label>
+                        @Html.Password("password2", "", new { @class = "caxa" })
+                    </p>                    
+                    <p>
+                        <input type="submit" value="Crear Nueva Contraseña" class="botonx" />
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="login-Instrucciones" class="genContentText">
+        
+    </div>
+    <div style="clear:both" />

@@ -1,0 +1,28 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model ImportarSaldosCtaCteViewModel
+
+@{
+    ViewBag.NombreSeccion = "Saldos Cuenta Corriente";
+    ViewBag.Title = "Saldos Importados con Éxito";
+}
+
+@section headSection {
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+    <fieldset class="dataForm">
+        <p>
+            La importación finalizó con éxito
+        </p>
+    </fieldset>
+

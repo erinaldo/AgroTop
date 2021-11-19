@@ -1,0 +1,131 @@
+﻿@using AgroFichasWeb.Models
+@model List<CAL_GrupoEnvasador>
+@{
+    ViewBag.Title = "Grupo de Envasadores";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantasProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtros de Búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <div class="form-inline center">
+                    @using (Html.BeginForm("index", "calgruposenvasadores", new { id = 0 }, FormMethod.Get))
+                    {
+                        <div class="form-group">
+                            @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                        </div>
+
+                        <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                        <input class="btn btn-default" type="submit" value="Buscar" />
+                        <div class="clearfix visible-xs mb-sm"></div>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Grupos de Envasadores</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tipo</th>
+                    <th>Nombre</th>
+                    <th>Turno</th>
+                    <th>Fecha de Creación</th>
+                    <th>Grupos de Envasadores</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdGrupoEnvasador</td>
+                        <td>@item.CAL_TipoGrupoEnvasador.Descripcion</td>
+                        <td>@item.Nombre</td>
+                        <td>@item.CAL_Turno.CAL_TipoTurno.Descripcion</td>
+                        <td>@string.Format("{0:dd/MM/yyyy HH:mm}", item.FechaHoraIns)</td>
+                        <td>
+                            <ul>
+                                @foreach (CAL_Envasador envasador in item.GetEnvasadores(item.IdGrupoEnvasador))
+                                {
+                                    <li>@envasador.GetEnvasador(envasador.UserID).FullName</li>
+                                }
+                            </ul>
+                        </td>
+                        <td>
+                            <button id="@string.Format("editar_{0}", item.IdGrupoEnvasador)" onclick="window.location.href='@Url.Action("Editar", new { id = item.IdGrupoEnvasador })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar Grupo de Envasadores"><i class="fa fa-edit"></i></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

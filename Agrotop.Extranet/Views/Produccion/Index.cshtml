@@ -1,0 +1,70 @@
+﻿@using Agrotop.Extranet.Models
+@{
+    var temporadas = (IEnumerable<Temporada>)ViewData["temporadas"];
+    var temporada = (Temporada)ViewData["temporada"];
+    var agricultor = (Agricultor)ViewData["agricultor"];
+    var predios = (IEnumerable<PRO_Predio>)ViewData["predios"];
+
+    ViewBag.Title = "Plataforma Productiva " + temporada.Nombre;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<div class="titulo1-consubmenu">@ViewBag.Title</div>
+<div class="submenu">
+    @foreach (var t in temporadas)
+    {
+        <div class="submenuitem">
+            @if (t.IdTemporada != temporada.IdTemporada)
+            {
+                @Html.ActionLink(t.Nombre, "index", new { id = t.IdTemporada })
+            }
+            else
+            {
+                <span class="submenuitem-selected">@t.Nombre</span>
+            }
+        </div>
+    }
+    <div style="clear: both"></div>
+</div>
+<div style="margin: 20px 0px">
+    @Html.ActionLink("Crear Predio", "crearpredio", new { idTemporada = temporada.IdTemporada })
+</div>
+<table class="tabla1" style="width: 100%; margin-top: 50px;">
+    <tr class="header">
+        <td>Predio</td>
+        <td>Comuna</td>
+        <td align="center">Potreros</td>
+        <td align="center">Hectáreas</td>
+        <td align="center"></td>
+        <td align="center"></td>
+    </tr>
+    @foreach (var r in predios)
+    {
+
+        <tr valign="top">
+            <td>@r.Nombre</td>
+            <td>@r.Comuna.Nombre</td>
+            <td align="center">@r.PRO_Potrero.Count(p => p.Habilitado == true)</td>
+            <td align="center">@r.PRO_Potrero.Where(p => p.Habilitado == true).Sum(p => p.Superficie) </td>
+            <td align="center">@Html.ActionLink("Detalle", "predio", new { id = r.IdPredio, idTemporada = temporada.IdTemporada })</td>
+            <td align="center">@Html.ActionLink("Eliminar", "eliminarpredio", new { id = r.IdPredio }, new { @class = "deleteRecord" })</td>
+        </tr>
+    }
+
+    @if (predios.Count() == 0)
+    {
+        <tr>
+            <td colspan="10" style="padding-top: 60px; text-align: center; font-style: italic">No hay predios para esta temporada</td>
+        </tr>
+    }
+</table>
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".tabla1 tr:even").addClass("even");
+    });
+
+    $(".deleteRecord").click(function () {
+        return confirm('¿Está seguro que desea eliminar este predio?');
+    });
+</script>

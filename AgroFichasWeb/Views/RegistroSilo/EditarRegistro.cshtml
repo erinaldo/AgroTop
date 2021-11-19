@@ -1,0 +1,204 @@
+﻿@using AgroFichasWeb.Models
+@model OPR_RegistroSilo
+@{
+    ViewBag.Title = "Registro de Turno de Silos";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        var idSilos, idSilosExt, idSilosArray, idSilosExtArray;
+        idSilos = '@(Model.OPR_Silo.IdTipoSilo == 1 ? Model.IdSilo + "," : "")';
+        idSilosExt = '@(Model.OPR_Silo.IdTipoSilo == 2 ? Model.IdSilo + "," : "")';
+        idSilosArray = idSilos.split(',');
+        idSilosExtArray = idSilosExt.split(',');
+
+        $(document).ready(function () {
+            $('#datatable-default').dataTable({
+                "ordering": false,
+                "searching": false,
+                "lengthChange": false
+            });
+
+            Reset();
+
+            $("#btnRegistrar").click(function (e) {
+                if (!Validar()) {
+                    e.preventDefault(e);
+                    return false;
+                }
+                else {
+                    $(this).submit();
+                }
+            });
+        });
+
+        function Reset() {
+            if (idSilosArray != null) {
+                for (I = 0; I < idSilosArray.length - 1; I++) {
+                    $("#cantidad_" + idSilosArray[I]).css("border", "1px solid #ccc");
+                    $("#msg_" + idSilosArray[I]).hide();
+                }
+            }
+
+            if (idSilosExtArray != null) {
+                for (I = 0; I < idSilosExtArray.length - 1; I++) {
+                    $("#cantidad_" + idSilosExtArray[I]).css("border", "1px solid #ccc");
+                    $("#msg_" + idSilosExtArray[I]).hide();
+                }
+            }
+        }
+
+        function Validar() {
+            Reset();
+
+            if (idSilosArray != null) {
+                for (I = 0; I < idSilosArray.length - 1; I++) {
+                    if ($("#silo_" + idSilosArray[I]).val() == "") {
+                        $("#cantidad_" + idSilosArray[I]).css("border", "1px solid #FF2828");
+                        $("#msg_" + idSilosArray[I]).show();
+                        OK = false;
+                    }
+                }
+            }
+
+            if (idSilosExtArray != null) {
+                for (I = 0; I < idSilosExtArray.length - 1; I++) {
+                    if ($("#silo_" + idSilosExtArray[I]).val() == "") {
+                        $("#cantidad_" + idSilosExtArray[I]).css("border", "1px solid #FF2828");
+                        $("#msg_" + idSilosExtArray[I]).show();
+                        OK = false;
+                    }
+                }
+            }
+
+            return OK;
+        }
+
+        function TryParseInt(str, defaultValue) {
+            var retValue = defaultValue;
+            if (str !== null) {
+                if (str.length > 0) {
+                    if (!isNaN(str)) {
+                        retValue = parseInt(str);
+                    }
+                }
+            }
+            return retValue;
+        }
+
+        function CalcularCubicacion(idSilo, preCalc = false) {
+            var alturaBase, alturaCono, densidad, valor, tipoSilo;
+            alturaBase = $("#alturaBase_" + idSilo).val();
+            alturaCono = $("#alturaCono_" + idSilo).val();
+            densidad = $("#densidad_" + idSilo).val();
+            tipoSilo = $("#tipoSilo_" + idSilo).val();
+
+            if (TryParseInt($("#silo_" + idSilo).val(), null) == null && preCalc == false) {
+                $("#cantidad_" + idSilo).val("");
+                return;
+            }
+            else {
+                if (preCalc)
+                    valor = 0;
+                else
+                    valor = parseInt($("#silo_" + idSilo).val());
+            }
+
+            var cubicacion = 0;
+
+            if (tipoSilo == 1) {
+                cubicacion = (densidad * ((2 * alturaBase) * (8 - valor)) + (densidad * 2 * alturaBase * alturaCono / 3)) * 1000;
+            }
+
+            if (tipoSilo == 2) {
+                cubicacion = (densidad * ((4.5 * 4.5 * 3.14) * valor) + (densidad * (4.5 * 4.5) * 3.14 * alturaCono / 3)) * 1000;
+            }
+
+            if (preCalc)
+                return cubicacion;
+
+            $("#cantidad_" + idSilo).val(cubicacion.toFixed(2).toString().replace(",", "."));
+
+            return;
+        }
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Editar Registro de Silo #@Model.IdRegistroSilo</h2>
+                </header>
+                <div class="panel-body">
+                    @using (Html.BeginForm("EditarRegistro", "RegistroSilo", FormMethod.Post))
+                    {
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <label class="col-md-3 control-label" for="inputDefault"></label>
+                                        <div class="col-sm-3">
+                                            <div class="input-group mb-md">
+                                                <span class="input-group-addon">@Model.OPR_Silo.Descripcion</span>
+                                                <select data-plugin-selectTwo class="form-control populate" id="silo_@Model.IdSilo" name="silo_@Model.IdSilo" onchange="javacript:CalcularCubicacion(@Model.IdSilo)" title="">
+                                                    <option value="">Seleccione @Model.OPR_Silo.OPR_TipoSilo.UM</option>
+                                                    @for (int I = 0; I <= Model.OPR_Silo.OPR_TipoSilo.UnidadesMaximas; I++)
+                                                    {
+                                                        if (I == Model.Unidades)
+                                                        {
+                                                            <option selected>@I</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option>@I</option>
+                                                        }
+                                                    }
+                                                </select>
+                                                <input type="hidden" id="alturaBase_@Model.OPR_Silo.IdSilo" value="@Model.OPR_Silo.AlturaBase" />
+                                                <input type="hidden" id="alturaCono_@Model.OPR_Silo.IdSilo" value="@Model.OPR_Silo.AlturaCono" />
+                                                <input type="hidden" id="densidad_@Model.OPR_Silo.IdSilo" value="@Model.OPR_Silo.OPR_Densidad.Valor" />
+                                                <input type="hidden" id="tipoSilo_@Model.OPR_Silo.IdSilo" value="@Model.OPR_Silo.IdTipoSilo" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <input type="text" class="form-control" id="cantidad_@Model.OPR_Silo.IdSilo" name="cantidad_@Model.OPR_Silo.IdSilo" placeholder="Cantidad Cubicada" readonly="readonly" value="@Model.CantidadCubicada">
+                                            <span id="msg_@Model.IdSilo" style="color: red; display: none">Por favor seleccione unidades</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <footer class="panel-footer">
+                                <div class="row">
+                                    <div class="col-lg-12 center">
+                                        <button type="submit" id="btnRegistrar" class="btn btn-primary">Editar Registro de Silo</button>
+                                    </div>
+                                </div>
+                            </footer>
+                        </div>
+                    }
+                </div>
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

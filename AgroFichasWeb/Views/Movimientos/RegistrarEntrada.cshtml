@@ -1,0 +1,137 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model LOG_Movimiento
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    ViewBag.Title = "Registrar Movimiento de Entrada";
+
+    var dc = new AgroFichasDBDataContext();
+    var pedido = dc.LOG_Pedido.Single(x => x.IdPedido == (int)ViewData["IdPedido"]);
+}
+
+@section submenuSection {
+    @Html.Partial("~/Views/Requerimientos/Submenu.cshtml")
+}
+
+@section headSection {
+    <!-- this should go after your </body> -->
+    <link href="~/Scripts/datetimepicker-master/jquery.datetimepicker.css" rel="stylesheet" />
+    <style>
+        .label {
+            display: inline-block;
+        }
+    </style>
+    <script src="~/Scripts/datetimepicker-master/build/jquery.datetimepicker.full.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var currentDate = new Date();
+            var day = currentDate.getDate();
+            var month = currentDate.getMonth() + 1;
+            var year = currentDate.getFullYear();
+            var startDate = year + "/" + month + "/" + day;
+            jQuery.datetimepicker.setLocale('es');
+            jQuery('#datetimepicker1').datetimepicker({
+                i18n: {
+                    de: {
+                        months: [
+                         'Januar', 'Februar', 'März', 'April',
+                         'Mai', 'Juni', 'Juli', 'August',
+                         'September', 'Oktober', 'November', 'Dezember',
+                        ],
+                        dayOfWeek: [
+                         "So.", "Mo", "Di", "Mi",
+                         "Do", "Fr", "Sa.",
+                        ]
+                    },
+                    es: {
+                        months: [
+                         'Enero', 'Febrero', 'Marzo', 'Abril',
+                         'Mayo', 'Junio', 'Julio', 'Agosto',
+                         'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                         "Do", "Lu", "Ma", "Mi",
+                         "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                dayOfWeekStart: 1,
+                startDate: new Date(),
+                format: 'Y/m/d H:i',
+                timepicker: true,
+                weeks: true,
+            });
+        });
+    </script>
+}
+
+<h2>@ViewBag.Title</h2>
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Núm. Guía</label>
+            <span>@Model.NumeroGuia</span>
+        </p>
+        <p>
+            <label for="Titulo">Origen</label>
+            @{
+                if (pedido.Origen != null)
+                {
+                    var origen = dc.Bodega.Single(x => x.IdBodega == pedido.Origen.Value);
+                    @Html.Raw(string.Format("<span class=\"label\">Sucursal: {2}<br>Bodega: {0} ({1})</span>", origen.Nombre, origen.NombreCorto, origen.Sucursal.Nombre));
+                }
+                else
+                {
+                    @Html.Raw(pedido.OtroOrigen);
+                }
+            }
+        </p>
+        <p>
+            <label for="Titulo">Destino</label>
+            @{
+                if (pedido.Destino != null)
+                {
+                    var destino = dc.Bodega.Single(x => x.IdBodega == pedido.Destino.Value);
+                    @Html.Raw(string.Format("<span class=\"label\">Sucursal: {2}<br>Bodega: {0} ({1})</span>", destino.Nombre, destino.NombreCorto, destino.Sucursal.Nombre));
+                }
+                else
+                {
+                    @Html.Raw(pedido.OtroDestino);
+                }
+            }
+        </p>
+        <p>
+            <label for="Titulo">Fecha de Entrada</label>
+            @Html.TextBox("FechaLlegada", Model.FechaLlegada, new { @class = "heavy std", id = "datetimepicker1", maxlength = "10", value = "" })
+            @Html.ValidationMessage("FechaLlegada", " ")
+        </p>
+        <p>
+            <label for="Titulo">Pesaje Entrada</label>
+            @Html.TextBox("PesajeLlegadaKg", Model.PesajeLlegadaKg, new { @class = "heavy std" }) <em>En kg</em>
+            @Html.ValidationMessage("PesajeLlegadaKg", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar este Movimiento" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+
+    <input type="hidden" name="IdPedido" value="@ViewData["IdPedido"]" />
+    <input type="hidden" name="IdMovimiento" value="@ViewData["IdMovimiento"]" />
+}

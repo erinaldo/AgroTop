@@ -1,0 +1,749 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using System.Globalization
+
+@model List<CTR_PlanificacionSemanal>
+@{
+    ViewBag.Title = "Control de Tiempo";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+
+    CTR_ControlTiempo controlTiempo = (CTR_ControlTiempo)ViewData["controlTiempo"];
+    int yy = (int)ViewData["yy"];
+    int wk = (int)ViewData["wk"];
+    var UserID = (int)ViewData["UserID"];
+
+    CTR_PlanificacionSemanal planificacionSemanal = Model.FirstOrDefault();
+    string fLunes = "", fMartes = "", fMiercoles = "", fJueves = "", fViernes = "", fSabado = "", fDomingo = "";
+    if (planificacionSemanal != null)
+    {
+        fLunes = string.Format("{0:dd/MM}", planificacionSemanal.FechaLunes);
+        fMartes = string.Format("{0:dd/MM}", planificacionSemanal.FechaMartes);
+        fMiercoles = string.Format("{0:dd/MM}", planificacionSemanal.FechaMiercoles);
+        fJueves = string.Format("{0:dd/MM}", planificacionSemanal.FechaJueves);
+        fViernes = string.Format("{0:dd/MM}", planificacionSemanal.FechaViernes);
+        fSabado = string.Format("{0:dd/MM}", planificacionSemanal.FechaSabado);
+        fDomingo = string.Format("{0:dd/MM}", planificacionSemanal.FechaDomingo);
+    }
+    else
+    {
+        planificacionSemanal = new CTR_PlanificacionSemanal();
+    }
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": false,
+            "lengthChange": true,
+            "iDisplayLength": 50,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+
+    @foreach (var item in Model)
+    {
+        <script>
+            $("#delete_@item.IdPlanificacionSemanal").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas eliminar esta planificación?",
+                    text: "ID: " +@item.IdPlanificacionSemanal+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Eliminar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("eliminarplanificacion", new { id = item.IdPlanificacionSemanal })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+        </script>
+    }
+
+    <script>
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function AprobarLineaCredito(id) {
+
+            SetSpinner(id);
+
+            $.ajax({
+                url: uri + '/LineaCreditoRequerida/Aprobar',
+                type: 'POST',
+                data: {
+                    id: id
+                }
+            }).done(function (result) {
+                if (result.OK) {
+                    $("#ct-EstadoLC_" + id + " span").html("Aprobado");
+                    $("#ct-EstadoLC_" + id + " span").removeClass("label-warning");
+                    $("#ct-EstadoLC_" + id + " span").addClass("label-success");
+                    $("#LC_" + id).addClass("ct-aprobado");
+                    $(".spinner_" + id).hide();
+
+                }
+                else {
+                    $("#ct-EstadoLC_" + id + " span").html("Error: " + result.Error);
+                    $("#ct-EstadoLC_" + id + " span").removeClass("label-warning");
+                    $("#ct-EstadoLC_" + id + " span").addClass("label-danger");
+                    $("#LC_" + id).addClass("ct-rechazado");
+                    $(".spinner_" + id).hide();
+                }
+            });
+        }
+
+        function RechazarLineaCredito(id) {
+            SetSpinner(id);
+
+            $.ajax({
+                url: uri + '/LineaCreditoRequerida/Rechazar',
+                type: 'POST',
+                data: {
+                    'id': id,
+                    'observacion': $("#observacion_" + id).val()
+                }
+            }).done(function (result) {
+                if (result.OK) {
+                    $("#ct-EstadoLC_" + id + " span").html("Rechazado");
+                    $("#ct-EstadoLC_" + id + " span").removeClass("label-warning");
+                    $("#ct-EstadoLC_" + id + " span").addClass("label-danger");
+                    $("#LC_" + id).addClass("ct-rechazado");
+                    $(".spinner_" + id).hide();
+                    $("#ct-InfoRechazoLC_" + id).show();
+                    $("#btnCancelar_" + id).click();
+                    $("#ct-ObservacionLineaCreditoRechazada_" + id).html(result.Observacion);
+                    $("#ct-ND_ObservacionLineaCreditoRechazada_" + id).hide();
+                }
+                else {
+                    $(".spinner_" + id).hide();
+                    $("#ct-ObservacionError_" + id).html(result.Error);
+                    $("#ct-ObservacionError_" + id).show();
+                    GetButtons(id);
+                }
+            });;
+        }
+
+        function SetSpinner(id) {
+            $("#aprobar_" + id).hide();
+            $("#modalRechazo_" + id).hide();
+            $(".spinner_" + id).show();
+        }
+
+        function GetButtons(id) {
+            $("#aprobar_" + id).show();
+            $("#modalRechazo_" + id).show();
+            $(".spinner_" + id).hide();
+        }
+
+        function GetClientes() {
+            var id = $('#IdEmpresa').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdCliente'));
+            }
+            $.getJSON(uri + '/Clientes/GetClientes?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay clientes disponibles");
+                        DeleteClientes();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Cliente)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdCliente, '">',
+                                result[i].RazonSocial, '</option>');
+                        }
+                        $("#IdCliente").html(options.join(''));
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetProductos() {
+            var id = $('#IdEmpresa').val();
+            var idPlanta = @planificacionSemanal.IdPlantaProduccion;
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdProducto'));
+            }
+            $.getJSON(uri + '/Productos/GetProductos?id=' + id + '&idPlanta=' + idPlanta)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                        DeleteProductos();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdProducto, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#IdProducto").html(options.join(''));
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetEnvases() {
+            var id = $('#IdProducto').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdEnvase'));
+            }
+            $.getJSON(uri + '/Productos/GetEnvases?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay envases disponibles");
+                        DeleteEnvases();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Envase)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdEnvase, '">',
+                                result[i].Descripcion, '</option>');
+                        }
+                        $("#IdEnvase").html(options.join(''));
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function DeleteClientes() {
+            $("#IdCliente option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Cliente)', '</option>');
+            $("#IdCliente").html(options.join(''));
+        }
+
+        function DeleteProductos() {
+            $("#IdProducto option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Producto)', '</option>');
+            $("#IdProducto").html(options.join(''));
+        }
+
+        function DeleteEnvases() {
+            $("#IdEnvase option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Envase)', '</option>');
+            $("#IdEnvase").html(options.join(''));
+        }
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        $("#IdEmpresa").change(function () {
+            DeleteClientes();
+            DeleteProductos();
+            DeleteEnvases();
+            GetClientes();
+            GetProductos();
+        });
+
+        $("#IdProducto").change(function () {
+            DeleteEnvases();
+            GetEnvases();
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    @if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+    {
+        <div class="row">
+            @if (!string.IsNullOrEmpty(Request["errMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["errMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Request["okMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["okMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Filtro por Empresa</h2>
+                </header>
+                <div class="panel-body">
+                    <div class="form-inline center">
+                        @using (Html.BeginForm("Ver", "CTPlanificacionSemanal", null, FormMethod.Get))
+                        {
+                            <input type="hidden" name="wk" value="@ViewData["wk"]" />
+                            <input type="hidden" name="yy" value="@ViewData["yy"]" />
+                            <div class="form-group">
+                                <div class="form-group">
+                                    @Html.DropDownList("IdPlantaProduccion", controlTiempo.GetPlantaProduccion(controlTiempo.IdPlantaProduccion, UserID), new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.DropDownList("IdEmpresa", controlTiempo.GetEmpresas(controlTiempo.IdEmpresa), "(Todas las Empresas)", new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.DropDownList("IdProducto", new List<SelectListItem>(), "(Todos las Productos)", new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.DropDownList("IdEnvase", new List<SelectListItem>(), "(Todos las Envases)", new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.DropDownList("IdCliente", new List<SelectListItem>(), "(Todos las Clientes)", new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <input class="btn btn-default" type="submit" value="Buscar" />
+                            <div class="clearfix visible-xs mb-sm"></div>
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Planificación de la Semana @ViewData["wk"] del @ViewData["yy"]</h2>
+            @if (permisosUsuario.Crear)
+            {
+                <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                    <a href="@Url.Action("Crear", "CTPlanificacionSemanal", new { })" class="btn btn-primary">Crear Planificación <i class="fa fa-plus"></i></a>
+                </div>
+            }
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>Semana</th>
+                        <th>Planta Producción</th>
+                        <th>Producto</th>
+                        <th>Envase</th>
+                        <th>Cliente</th>
+                        <th>Transporte</th>
+                        <th>Destino/Puerto Embarque</th>
+                        <th>O/C<br />O/V</th>
+                        <th>N° Reserva</th>
+                        <th>N° Lote</th>
+                        <th>DUS</th>
+                        <th align="center" style="text-align: center">
+                            @if (!string.IsNullOrEmpty(fLunes))
+                            {
+                                @fLunes<br />
+                            }
+                            Lu
+                        </th>
+                        <th align="center" style="text-align: center">
+                            @if (!string.IsNullOrEmpty(fMartes))
+                            {
+                                @fMartes<br />
+                            }
+                            Ma
+                        </th>
+                        <th align="center" style="text-align: center">
+                            @if (!string.IsNullOrEmpty(fMiercoles))
+                            {
+                                @fMiercoles<br />
+                            }
+                            Mi
+                        </th>
+                        <th align="center" style="text-align: center">
+                            @if (!string.IsNullOrEmpty(fJueves))
+                            {
+                                @fJueves<br />
+                            }
+                            Ju
+                        </th>
+                        <th align="center" style="text-align: center">
+                            @if (!string.IsNullOrEmpty(fViernes))
+                            {
+                                @fViernes<br />
+                            }
+                            Vi
+                        </th>
+                        <th align="center" style="text-align: center">
+                            @if (!string.IsNullOrEmpty(fSabado))
+                            {
+                                @fSabado<br />
+                            }
+                            Sá
+                        </th>
+                        <th align="center" style="text-align: center">
+                            @if (!string.IsNullOrEmpty(fDomingo))
+                            {
+                                @fDomingo<br />
+                            }
+                            Do
+                        </th>
+                        <th align="center" style="text-align: center">Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr valign="top">
+                            <td>@item.Semana</td>
+                            <td>@item.PlantaProduccion.Nombre</td>
+                            <td>@item.CTR_Producto.Nombre</td>
+                            <td>@(item.CTR_Envase == null ? "" : item.CTR_Envase.Descripcion)</td>
+                            <td>
+                                @(item.Cliente == null ? "" : item.Cliente.RazonSocial) <br />
+
+                                @if (!String.IsNullOrEmpty(item.Cliente.IDAvenatop) || !String.IsNullOrEmpty(item.Cliente.IDOleotop) || !String.IsNullOrEmpty(item.Cliente.IDGranotop))
+                                {
+                                    <div class="h6 text-weight-bold mb-none mt-lg">@(item.Cliente.IDAvenatop == null ? "" : item.Cliente.IDAvenatop)  @(item.Cliente.IDOleotop == null ? "" : item.Cliente.IDOleotop)  @(item.Cliente.IDGranotop == null ? "" : item.Cliente.IDGranotop)</div>
+                                    <p class="text-xs text-muted mb-none">CÓDIGO SAP</p>
+                                }
+                            </td>
+                            <td>@(item.IdTransportista == null ? "ND" : item.LOG_Transportista.Nombre)</td>
+                            <td>@item.Destino</td>
+                            @{
+                                var documentos = "No existen documentos";
+                                if (item.CTR_PlanificacionSemanal_Detalle.Count() > 0)
+                                {
+                                    if (item.CTR_PlanificacionSemanal_Detalle.FirstOrDefault().TipoDocumento != 3)
+                                    {
+                                        documentos = "";
+                                        foreach (var detalle in item.CTR_PlanificacionSemanal_Detalle)
+                                        {
+                                            if (documentos.Length == 0)
+                                            {
+                                                documentos += detalle.NumeroDocumento;
+                                            }
+                                            else
+                                            {
+                                                documentos += " - " + detalle.NumeroDocumento;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        documentos = "Orden de traslado";
+                                    }
+                                }
+                            }
+                            <td>@documentos</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Reserva))
+                                {
+                                    <span>@item.Reserva</span>
+                                }
+                                else
+                                {
+                                    <span>N/D</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Lote))
+                                {
+                                    <span>@item.Lote</span>
+                                }
+                                else
+                                {
+                                    <span>N/D</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.DUS))
+                                {
+                                    <span>@item.DUS</span>
+                                }
+                                else
+                                {
+                                    <span>N/D</span>
+                                }
+                            </td>
+                            <td class="@item.GetCssStyle(item.Lunes)">@item.Lunes @Html.Raw(item.GetPresentados(item.FechaLunes))</td>
+                            <td class="@item.GetCssStyle(item.Martes)">@item.Martes @Html.Raw(item.GetPresentados(item.FechaMartes))</td>
+                            <td class="@item.GetCssStyle(item.Miercoles)">@item.Miercoles @Html.Raw(item.GetPresentados(item.FechaMiercoles))</td>
+                            <td class="@item.GetCssStyle(item.Jueves)">@item.Jueves @Html.Raw(item.GetPresentados(item.FechaJueves))</td>
+                            <td class="@item.GetCssStyle(item.Viernes)">@item.Viernes @Html.Raw(item.GetPresentados(item.FechaViernes))</td>
+                            <td class="@item.GetCssStyle(item.Sabado)">@item.Sabado @Html.Raw(item.GetPresentados(item.FechaSabado))</td>
+                            <td class="@item.GetCssStyle(item.Domingo)">@item.Domingo @Html.Raw(item.GetPresentados(item.FechaDomingo))</td>
+                            <td class="@item.GetCssStyle(item.GetSubtotal())">@item.GetSubtotal()</td>
+                            <td>
+                                @if (permisosUsuario.Actualizar)
+                                {
+                                    <button id="@string.Format("edit_{0}", item.IdPlanificacionSemanal)" onclick="window.location.href='@Url.Action("editarplanificacion", new { id = item.IdPlanificacionSemanal})'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                                }
+                                @if (permisosUsuario.Borrar)
+                                {
+                                    <button id="@string.Format("delete_{0}", item.IdPlanificacionSemanal)" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                                }
+                                <span data-toggle="modal" data-target=".modalInfo_@item.IdPlanificacionSemanal"><button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Más Información"> <i class="fa fa-info"></i></button></span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+
+                        <td colspan="11" style="font-weight: bold; text-align: right">TOTAL DE TRASLADOS:</td>
+                        <td class="@planificacionSemanal.GetCssStyle(Model.Sum(X => X.Lunes))">@Model.Sum(X => X.Lunes)</td>
+                        <td class="@planificacionSemanal.GetCssStyle(Model.Sum(X => X.Martes))">@Model.Sum(X => X.Martes)</td>
+                        <td class="@planificacionSemanal.GetCssStyle(Model.Sum(X => X.Miercoles))">@Model.Sum(X => X.Miercoles)</td>
+                        <td class="@planificacionSemanal.GetCssStyle(Model.Sum(X => X.Jueves))">@Model.Sum(X => X.Jueves)</td>
+                        <td class="@planificacionSemanal.GetCssStyle(Model.Sum(X => X.Viernes))">@Model.Sum(X => X.Viernes)</td>
+                        <td class="@planificacionSemanal.GetCssStyle(Model.Sum(X => X.Sabado))">@Model.Sum(X => X.Sabado)</td>
+                        <td class="@planificacionSemanal.GetCssStyle(Model.Sum(X => X.Domingo))">@Model.Sum(X => X.Domingo)</td>
+                        <td class="@planificacionSemanal.GetCssStyle(planificacionSemanal.GetTotal(Model))">@(planificacionSemanal.GetTotal(Model))</td>
+                        <td></td>
+                    </tr>
+                    @foreach (CTR_GetSubtotalPlanificacionSemanalResult item in planificacionSemanal.GetSubtotales(yy, wk, controlTiempo.IdEmpresa.Value, controlTiempo.IdProducto, controlTiempo.IdEnvase.Value, controlTiempo.IdCliente.Value, controlTiempo.IdPlantaProduccion))
+                    {
+                        <tr>
+                            <td colspan="11" style="font-weight: bold; text-align: right">TOTAL DE TRASLADOS DE @item.NomPro.ToUpper():</td>
+                            <td class="@planificacionSemanal.GetCssStyle(item.Lu.Value)">@item.Lu.Value</td>
+                            <td class="@planificacionSemanal.GetCssStyle(item.Ma.Value)">@item.Ma.Value</td>
+                            <td class="@planificacionSemanal.GetCssStyle(item.Mi.Value)">@item.Mi.Value</td>
+                            <td class="@planificacionSemanal.GetCssStyle(item.Ju.Value)">@item.Ju.Value</td>
+                            <td class="@planificacionSemanal.GetCssStyle(item.Vi.Value)">@item.Vi.Value</td>
+                            <td class="@planificacionSemanal.GetCssStyle(item.Sa.Value)">@item.Sa.Value</td>
+                            <td class="@planificacionSemanal.GetCssStyle(item.Do.Value)">@item.Do.Value</td>
+                            <td class="@planificacionSemanal.GetCssStyle(item.Subtotal.Value)">@item.Subtotal.Value</td>
+                            <td></td>
+                        </tr>
+                    }
+                </tfoot>
+            </table>
+        </div>
+    </section>
+    <!-- end: page -->
+    @foreach (var item in Model)
+    {
+        <div id="info_@item.IdPlanificacionSemanal" class="modal fade modalInfo_@item.IdPlanificacionSemanal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel"><i class="fa fa-info fa-1x"></i> Más información</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel-body">
+                            <div class="timeline timeline-simple mt-xlg mb-md">
+                                <div class="tm-body">
+                                    <div class="tm-title">
+                                        <h3 class="h5 text-uppercase">@(item.Cliente == null ? "" : item.Cliente.RazonSocial)</h3>
+                                    </div>
+                                    <ol class="tm-items">
+                                        <li>
+                                            <div class="tm-box">
+                                                <p class="text-muted mb-none">Planta Producción</p>
+                                                <p>
+                                                    <span class="text-primary">@item.PlantaProduccion.Nombre</span>
+                                                </p>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tm-box">
+                                                <p class="text-muted mb-none">Empresa</p>
+                                                <p>
+                                                    <span class="text-primary">@item.Empresa.Nombre</span>
+                                                </p>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tm-box">
+                                                <p class="text-muted mb-none">País</p>
+                                                <p>
+                                                    <span class="text-primary">@item.Pais.PaisNombre</span>
+                                                </p>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="tm-box">
+                                                <p class="text-muted mb-none">L/C Requerida</p>
+                                                <p class="@item.GetCssStyleRechazado(item.LineaCreditoRechazada)" id="LC_@item.IdPlanificacionSemanal" style="text-align: center;">
+                                                    @item.LC.ToString("C0")<br />
+                                                    @if (item.LineaCreditoRechazada == true)
+                                                    {
+                                                        <span data-toggle="modal" data-target=".modalInfoRechazo_@item.IdPlanificacionSemanal"><button class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Ver Observación"> <i class="fa fa-eye"></i></button></span>
+                                                        <div class="ct-EstadoLC" style="text-align: center;">
+                                                            <span class="label label-danger">Rechazado</span>
+                                                        </div>
+                                                    }
+                                                    @if (item.LineaCreditoRechazada == false)
+                                                    {
+                                                        <div class="ct-EstadoLC" style="text-align: center;">
+                                                            <span class="label label-success">Aprobado</span>
+                                                        </div>
+                                                    }
+                                                    @if (item.LineaCreditoRechazada == null)
+                                                    {
+                                                        if (permisosUsuario.VerificarLC)
+                                                        {
+                                                            <button id="@string.Format("aprobar_{0}", item.IdPlanificacionSemanal)" onclick="AprobarLineaCredito(@item.IdPlanificacionSemanal)" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Aprobar"> <i class="fa fa-check"></i></button>
+                                                            <span id="@string.Format("modalRechazo_{0}", item.IdPlanificacionSemanal)" data-toggle="modal" data-target=".modalRechazoLC_@item.IdPlanificacionSemanal"><button id="@string.Format("btnRechazar_{0}", item.IdPlanificacionSemanal)" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Rechazar"> <i class="fa fa-close"></i></button></span>
+                                                            <div id="treeAjaxHTML" class="@string.Format("spinner_{0}", item.IdPlanificacionSemanal)" style="display: none;"></div>
+                                                        }
+                                                        <div id="ct-InfoRechazoLC_@item.IdPlanificacionSemanal" class="ct-EstadoLC" style="display: none;text-align: center;">
+                                                            <span data-toggle="modal" data-target=".modalInfoRechazo_@item.IdPlanificacionSemanal"><button class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Ver Observación"> <i class="fa fa-eye"></i></button></span>
+                                                        </div>
+                                                        <div class="ct-EstadoLC" id="ct-EstadoLC_@item.IdPlanificacionSemanal" style="text-align: center;">
+                                                            <span class="label label-warning">En espera...</span>
+                                                        </div>
+                                                    }
+                                                </p>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <div id="rechazoLC_@item.IdPlanificacionSemanal" class="modal fade modalRechazoLC_@item.IdPlanificacionSemanal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel"><i class="fa fa-close fa-1x"></i> Rechazar Línea de Crédito Requerida</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel-body">
+                            <div class="clearfix">
+                                <div class="pull-left">
+                                </div>
+                                <div class="pull-center">
+                                    <div class="pull-left m-t-10">
+                                        <h4><strong>@(item.Cliente == null ? "" : item.Cliente.RazonSocial)</strong></h4>
+                                        <h4>L/C Requerida:<strong> @item.LC.ToString("C0")</strong></h4>
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <h4>Empresa:<strong> @item.Empresa.Nombre</strong></h4>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group mt-lg">
+                                <label class="col-sm-3 control-label">Observación del Rechazo</label>
+                                <div class="col-sm-9">
+                                    <textarea name="observacion_@item.IdPlanificacionSemanal" id="observacion_@item.IdPlanificacionSemanal" class="form-control" cols="3"></textarea>
+                                    <div id="ct-ObservacionError_@item.IdPlanificacionSemanal" style="color: red; display: none"></div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="col-md-12 text-right" id="footerButtonsFicha">
+                                <button class="btn btn-primary" id="btnGuardar_@item.IdPlanificacionSemanal" onclick="RechazarLineaCredito(@item.IdPlanificacionSemanal)">Guardar</button>
+                                <button class="btn btn-default" id="btnCancelar_@item.IdPlanificacionSemanal" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <div id="infoRechazo_@item.IdPlanificacionSemanal" class="modal fade modalInfoRechazo_@item.IdPlanificacionSemanal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myLargeModalLabel"><i class="fa fa-close fa-1x"></i> Detalle de Línea de Crédito Rechazada</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel-body">
+                            <div class="timeline timeline-simple mt-xlg mb-md">
+                                <div class="tm-body">
+                                    <div class="tm-title">
+                                        <h3 class="h5 text-uppercase">@(item.Cliente == null ? "" : item.Cliente.RazonSocial)</h3>
+                                    </div>
+                                    <ol class="tm-items">
+                                        <li>
+                                            <div class="tm-box">
+                                                <p class="text-muted mb-none">Causa del Rechazo:</p>
+                                                <p>
+                                                    @if (!string.IsNullOrEmpty(item.ObservacionLineaCreditoRechazada))
+                                                    {
+                                                        <span class="text-primary">@item.ObservacionLineaCreditoRechazada</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span id="ct-ND_ObservacionLineaCreditoRechazada_@item.IdPlanificacionSemanal" class="text-primary">N/D</span>
+                                                    }
+                                                    <div id="ct-ObservacionLineaCreditoRechazada_@item.IdPlanificacionSemanal" class="text-primary"></div>
+                                                </p>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    }
+</section>

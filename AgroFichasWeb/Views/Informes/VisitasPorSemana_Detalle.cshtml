@@ -1,0 +1,141 @@
+﻿@using AgroFichasWeb.Models
+@model AgroFichasWeb.ViewModels.Informes.VisitasPorSemana_DetalleViewModel
+
+@{
+    Layout = null;
+    int iFicha = 0;
+}
+    <style>
+        table.potrerosCultivo tr.cultivos td 
+        {
+            color: #fff;
+        }
+    </style>
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 10px;">
+    <tr>
+        @if (Model.Agricultor != null)
+        {
+        <td align="left"><b>@Model.Agricultor.Nombre</b></td>
+        }
+        @if (Model.Temporada != null)
+        {
+        <td align="left"><b>@Model.Temporada.Nombre</b></td>
+        }
+        @if (Model.Semana.HasValue)
+        {
+        <td align="left"><b>Semana @Model.Semana.Value</b></td>
+        }
+        @if (Model.UsuarioIngreso != null)
+        {
+        <td align="left"><b>Ingresadas por @Model.UsuarioIngreso.FullName</b></td>
+        }
+    </tr>
+    </table>
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">
+            Fecha / Tipo
+        </th>
+        <th align="left">
+            Potreros
+        </th>
+        <th align="left">
+            Observaciones / Recomendaciones
+        </th>
+    </tr>   
+    @foreach (var ficha in Model.Fichas.OrderBy(f => f.Fecha))
+    {
+        iFicha++;
+        <tr valign="top" class="@(iFicha % 2 == 0 ? "even" : "")">
+            <td align="left">
+                @ficha.Fecha.ToString("dd MMM")<br />
+                <b>@ficha.TipoFicha.Nombre</b>
+            </td>
+            <td align="left">
+                <table class="potrerosCultivo">
+                @foreach (var fp in ficha.FichaPotrero)
+                {
+                    var variedad = fp.Potrero.VariedadTemporada(ficha.IdTemporada);
+                    var idCultivo = (variedad != null) ? variedad.Cultivo.IdCultivo : 0;
+                    <tr valign="top" class="cultivos cultivo-@idCultivo">
+                        <td align="left">@fp.Potrero.Nombre</td>
+                        <td align="left" nowrap="nowrap">@fp.Potrero.Superficie.ToString("#,##0 há")</td>
+                        <td align="left">
+                            @if (variedad != null)
+                            {
+                                @(new MvcHtmlString(variedad.Cultivo.Nombre + "<br />" + variedad.Nombre))
+                            }
+                            else 
+                            {
+                                <text>Sin Info</text>   
+                            }
+                        </td>
+                    </tr>
+                }
+                </table>
+            </td>
+            <td align="left">
+                @ficha.Observaciones
+                <ul class="recs" style="margin: 20px 20px;">
+                @foreach (var rec in ficha.Recomendacion)
+                {
+                    <li><b>@rec.Quimico.TipoRecomendacion.Nombre &gt; @rec.Quimico.Nombre</b><br /> 
+                        @if (rec.Quimico.IdTipoRecomendacion != 3)
+                        {
+                            @rec.Dosis.ToString("#,###0.#### ")  @rec.UM.Nombre<br />
+                        }
+                        else
+                        {
+                            <table>
+                            <tr>
+                                <td>N</td>
+                                <td>P2O5</td>
+                                <td>KO2</td>
+                                <td>MgO</td>
+                                <td>S</td>
+                                <td>B</td>
+                                <td>Zn</td>
+                                <td>CaO</td>
+                            </tr> 
+                            <tr>
+                                <td>@rec.FerN.ToString("#,##0.####")</td>
+                                <td>@rec.FerP2O5.ToString("#,##0.####")</td>
+                                <td>@rec.FerKO2.ToString("#,##0.####")</td>
+                                <td>@rec.FerMgO.ToString("#,##0.####")</td>
+                                <td>@rec.FerS.ToString("#,##0.####")</td>
+                                <td>@rec.FerB.ToString("#,##0.####")</td>
+                                <td>@rec.FerZn.ToString("#,##0.####")</td>
+                                <td>@rec.FerCaO.ToString("#,##0.####")</td>
+                            </tr>  
+                            </table>
+                        }
+                        @if (rec.FechaAplicacion.HasValue)
+                        {
+                            <text>Aplicar</text> @rec.FechaAplicacion.Value.ToString("dd MMM yyyy");
+                        }
+
+                    </li>
+                }
+                </ul>
+                <p class="audit">
+                    Creado: @(ficha.UserIns + " " + ficha.FechaHoraIns.ToString("dd/MM/yy hh:mm"))
+                            
+                    @if (ficha.FechaHoraUpd.HasValue)
+                    {
+                        <br />
+                        <text>Actualizado:</text> @(ficha.UserUpd + " " + ficha.FechaHoraUpd.Value.ToString("dd/MM/yy hh:mm"))
+                    }
+                </p>
+            </td>
+        </tr>
+    }
+    @if (iFicha == 0)
+    {
+        <tr>
+            <td colspan="7" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+    </table>
+

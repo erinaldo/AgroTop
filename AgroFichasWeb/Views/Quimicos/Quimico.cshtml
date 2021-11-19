@@ -1,0 +1,58 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model Quimico
+
+@{
+    ViewBag.NombreSeccion = "Químicos";
+    if (Model.IdQuimico == 0) {
+        ViewBag.Title = "Crear Químico";
+    }
+    else {
+        ViewBag.Title = "Editar Químico";
+    }
+
+    var ums = (List<SelectListItem>)ViewData["ums"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm())
+    {
+
+        @Html.Hidden("IdTipoRecomendacion", Model.IdTipoRecomendacion)
+        <fieldset class="dataForm">
+            <p>
+                <label for="Titulo">Nombre</label>
+                @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "100" }) 
+                @Html.ValidationMessage("Nombre", ".")  
+            </p>
+            <p>
+                <label for="Fecha">Dosis</label>
+                @Html.TextBox("Dosis", Model.Dosis, new { @class = "std" })  
+                @Html.ValidationMessage("Dosis", ".")  
+            </p>
+            <p>
+                <label for="Fuente">Unidad Medida</label>
+                @Html.DropDownListFor(m => m.IdUM, ums, new { @class = "std" })
+            </p>
+            <p>
+                <label for="EnPortada">Habilitado</label>
+                @Html.CheckBox("Habilitado", Model.Habilitado)   Permitir el uso de este Químico
+                @Html.ValidationMessage("Habilitado", ".") 
+            </p>
+            <p class="okcancel">
+                <input type="submit" value="Guardar Este Químico" /> o @Html.ActionLink("Cancelar", "Index", new { tipo = Model.IdTipoRecomendacion })  
+            </p>
+        </fieldset>
+
+    }
+
+    <script type="text/javascript">
+
+    </script>   

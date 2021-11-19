@@ -1,0 +1,154 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model PrecioServicio
+
+@{
+    ViewBag.Title = "Crear";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        jQuery.datetimepicker.setLocale('es');
+        jQuery('#Fecha').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", DateTime.Now)',
+            weeks: true,
+            onSelectDate: function (ct, $i) {
+                var arrFechas = $("#Fecha").val().split(',').filter(function (elements) { return elements !== '' });
+                arrFechas.push(ct.dateFormat('DD/MM/YY'));
+                if (arrFechas.length > 1) {
+                    var arrSorted = arrFechas.sort(SortByDate);
+                    $("#Fecha").val($.unique(arrSorted).toString());
+                }
+                else
+                {
+                    $("#Fecha").val(ct.dateFormat('DD/MM/YY'));
+                }
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Crear Precio de Servicio</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Sucursal <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdSucursal", Model.GetSucursal(Model.IdSucursal), new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdSucursal", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Tipo Servicio <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdTipoServicio", Model.GetTipoServicio(Model.IdPrecioServicio), new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdTipoServicio", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cultivo <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdCultivo", Model.GetCultivo(Model.IdCultivo), new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdCultivo", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Valor CLP/Kg <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Valor", Model.Valor, new { @class = "form-control", maxlength = "50" })
+                                            @Html.ValidationMessage("Valor", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Fecha <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Fecha", Model.Fecha, new { @class = "form-control", id = "Fecha" })
+                                            @Html.ValidationMessage("Fecha", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Guardar" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

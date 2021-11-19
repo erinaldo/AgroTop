@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <link rel="canonical" href="https://getbootstrap.com/docs/3.3/examples/justified-nav/">
+
+    <title>@ViewBag.Title</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="~/Content/porto/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="~/Scripts/justified-nav/ie10-viewport-bug-workaround.css" rel="stylesheet" />
+
+    <!-- Custom styles for this template -->
+    <link href="~/Scripts/justified-nav/justified-nav.css" rel="stylesheet" />
+    <link href="~/Scripts/justified-nav/error-info-messages-css.css" rel="stylesheet" />
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="~/Scripts/justified-nav/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        @@media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="col-md-2 no-print">
+        <div class="btn-group btn-group-justified">
+            <a class="btn btn-primary" role="button" href="@Url.Action("index", "CALOperadoresGrua", new { id = ViewBag.TurnoAnterior, fecha= ViewBag.FAnterior}) "><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Turno Anterior</a>
+        </div>
+    </div>
+    <div class="col-md-2 col-md-offset-8 no-print">
+        <div class="btn-group btn-group-justified">
+            <a class="btn btn-primary" role="button" href="@Url.Action("index", "CALOperadoresGrua", new { id = ViewBag.TurnoSiguiente, fecha= ViewBag.FSiguiente }) ">Turno Siguiente <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> </a>
+        </div>
+    </div>
+    <div class="container">
+
+        <!-- Jumbotron -->
+        <div class="jumbotron no-print">
+            <h1><a href="@Url.Action("Index")" style="color: black">@ViewBag.Jornada</a></h1>
+            <p class="lead">@ViewBag.Turno</p>
+            <p class="lead">@ViewBag.FechaHora</p>
+            <a role="menuitem" tabindex="-1" href="~/account/logout"><i class="fa fa-power-off"></i> Cerrar sesión</a>
+        </div>
+
+        @RenderBody()
+
+        <!-- Site footer -->
+        <footer class="footer no-print">
+            <p>&copy; @DateTime.Now.Year Empresas Agrotop.</p>
+        </footer>
+
+    </div> <!-- /container -->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="~/Scripts/justified-nav/ie10-viewport-bug-workaround.js"></script>
+</body>
+</html>

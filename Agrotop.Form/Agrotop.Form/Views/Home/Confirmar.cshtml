@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Title = "Confirmación Incorporación";
+    Layout = "~/Views/Shared/_ResponsiveLayoutForm.cshtml";
+}
+
+@section CustomScripts
+{
+
+}
+@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+{
+    <form class="contact1-form validate-form">
+        <span class="contact1-form-title">
+            @Request["okMsg"]
+        </span>
+        <img align="right" src="~/Content/logo_agrotop.png" alt="agrotop">
+    </form>
+}
+

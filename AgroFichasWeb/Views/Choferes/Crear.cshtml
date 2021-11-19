@@ -1,0 +1,58 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model LOG_Chofer
+@{
+    ViewBag.NombreSeccion = "Transportistas";
+    ViewBag.Title = (Model.IdChofer == 0 ? "Crear Chofer" : "Editar Chofer");
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/validate.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <div class="p">
+            <label for="Titulo">Transportista</label>
+            @Html.Partial("~/Views/Controls/TransportistaSelector.cshtml", new TransportistaSelectorViewModel() { IdTransportista = Model.IdTransportista, Nombre = (Model.LOG_Transportista != null ? Model.LOG_Transportista.Nombre : ""), RUT = (Model.LOG_Transportista != null ? Model.LOG_Transportista.RUT : "") })
+            @Html.ValidationMessage("IdTransportista", " ")
+            @Html.Hidden("IdTransportista", Model.IdTransportista)
+        </div>
+        <p>
+            <label for="Titulo">RUT</label>
+            @Html.TextBox("RUT", Model.RUT, new { @class = "heavy std", maxlength = "13" })
+            @Html.ValidationMessage("RUT", " ")
+        </p>
+        <p>
+            <label for="Titulo">Nombre</label>
+            @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "128" })
+            @Html.ValidationMessage("Nombre", " ")
+        </p>
+        <p>
+            <label for="Titulo">Teléfono</label>
+            @Html.TextBox("Telefono", Model.Telefono, new { @class = "heavy std", maxlength = "50", placeholder = "45-2-31XXXX o 9-9538XXXX" }) <em>Opcional</em>
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar este Chofer" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+</fieldset>
+}
+
+<script type="text/javascript">
+
+    function agsCallback(idAgricultor, nombre) {
+        $("#IdTransportista").val(idAgricultor);
+    }
+
+</script>   

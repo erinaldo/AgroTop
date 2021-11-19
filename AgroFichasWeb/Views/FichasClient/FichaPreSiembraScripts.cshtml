@@ -1,0 +1,529 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var temporada = Temporada.TemporadaActivaFichas();
+}
+<script>
+ //Pre-Siembras
+
+        //Create
+        $('#addItemPreSiembra').click(function () {
+
+            var jqxhr = $.post('@Url.Action("getpotrerosparapresiembra")', { id: @Model.IdPredio, idTemporada: @temporada.IdTemporada },
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showDangerPopUp(data.msg);
+                        }
+                        else {
+                            loadItemPreSiembra({
+                                Id: 0,
+                                Fecha: '',
+                                Observaciones: '',
+                                Potreros: data.item.Potreros,
+                                Recomendaciones: [],
+                                IdEstadoSiembra: 5,
+                                IdImportanciaSeguimiento: 20,
+                                Fotos: []
+                            });
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showDangerPopUp(parsePostFail(jqXHR, errorThrown));
+                    })
+                    .always(function () {
+                    });
+
+            });
+
+        //Edit
+        $("#datatable-presiembra tbody").on("click", ".editItemPreSiembra", function (e) {
+
+            e.preventDefault();
+            var idItem = $(this).attr("data-id");
+
+            $("#editButtonPreSiembra-" + idItem).hide();
+            $("#editSpinnerPreSiembra-" + idItem).show();
+
+            var jqxhr = $.post('@Url.Action("getfichapresiembra")', { id: idItem },
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showDangerPopUp(data.msg);
+                        }
+                        else {
+                            loadItemPreSiembra(data.item);
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showDangerPopUp(parsePostFail(jqXHR, errorThrown));
+                    })
+                    .always(function () {
+                        $("#editButtonPreSiembra-" + idItem).show();
+                        $("#editSpinnerPreSiembra-" + idItem).hide();
+                    });
+
+            });
+
+            //Load Data
+            function loadItemPreSiembra(item) {
+
+                $("#validationErrorsPreSiembra").hide();
+                $("#footerButtonsPreSiembra").show();
+                $("#footerSpinnerPreSiembra").hide();
+
+
+                $("#idFichaPreSiembra").val(item.Id);
+                $("#fechapresiembra").val(item.Fecha);
+                $("#observacionespresiembra").val(item.Observaciones);
+                $("#idestadopresiembra").val(item.IdEstadoSiembra);
+                $("#idimportanciaseguimientopresiembra").val(item.IdImportanciaSeguimiento);
+
+                $("#tblPotrerosPreSiembra tbody tr").remove();
+                $("#tblRecomendacionesPreSiembra tbody tr").remove();
+                $("#tblFotosPreSiembra tbody tr").remove();
+
+                for (var i = 0; i < item.Potreros.length; i++) {
+                    renderPotreroPreSiembra(item.Potreros[i]);
+                }
+
+                for (var i = 0; i < item.Recomendaciones.length; i++) {
+                    renderRecomendacionPreSiembra(item.Recomendaciones[i]);
+                }
+
+                for (var i = 0; i < item.Fotos.length; i++) {
+                    renderFotoPreSiembra(item.Fotos[i]);
+                }
+
+                $("#formTitlePreSiembra").html((item.Id== 0 ? "Nueva" : "Editar") + " Ficha de Pre-Siembra");
+
+                showPreSiembraForm();
+            }
+
+            function showPreSiembraForm() {
+                $.magnificPopup.open({
+                    items: {
+                        src: '#modalFormPreSiembra', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            function renderPotreroPreSiembra(subItem) {
+
+                var s = '<tr id="potreroPreSiembraRow-' + subItem.IdPotrero + '">';
+
+                s += '<td>';
+                s += '<input type="hidden" name="SubItems.Index" value="' + subItem.IdPotrero + '" />';
+                s += '<input type="hidden" name="SubItems[' + subItem.IdPotrero + '].NombrePotrero" value="' + subItem.NombrePotrero + '" />';
+                s += '<input type="hidden" name="SubItems[' + subItem.IdPotrero + '].IdPotrero" value="' + subItem.IdPotrero + '" />';
+                s += '<input type="checkbox" name="SubItems[' + subItem.IdPotrero + '].Seleccionado" value="true" ' + (subItem.Seleccionado ? "checked" : "") + ' />';
+                s += '<input type="hidden"   name="SubItems[' + subItem.IdPotrero + '].Seleccionado" value="false" />';
+                s += '</td>';
+                s += '<td>' + subItem.NombrePotrero + '</td> ';
+                s += '</tr>';
+
+                return $("#tblPotrerosPreSiembra tbody").append(s);
+            }
+
+            //FOTOS PRE-SIEMBRA
+            function renderFotoPreSiembra(subItem) {
+
+                var s = '<tr id="fotoPreSiembraRow-' + subItem.Id + '">';
+
+                s += '<td>';
+                s += '<input type="hidden" name="Fotos.Index" value="' + subItem.Id + '" />';
+                s += '<input type="hidden" id="fotoPreSiembra-Id-' + subItem.Id + '" name="Fotos[' + subItem.Id + '].Id" value="' + subItem.Id + '" />';
+                s += '<input type="hidden" id="fotoPreSiembra-FileName-' + subItem.Id + '" name="Fotos[' + subItem.Id + '].FileName" value="' + subItem.FileName + '" />';
+                s += '<input type="hidden" id="fotoPreSiembra-FotoUrl-' + subItem.Id + '" name="Fotos[' + subItem.Id + '].FotoUrl" value="' + subItem.FotoUrl + '" />';
+                s += '<input type="hidden" id="fotoPreSiembra-Observaciones-' + subItem.Id + '" name="Fotos[' + subItem.Id + '].Observaciones" value="' + subItem.Observaciones + '" />';
+                s += '<img src="' + subItem.FotoUrl + '" width="150" />';
+                s += '</td>';
+                s += '<td>' + subItem.Observaciones + '</td>';
+                s += '<td>';
+                s += '<a href="#" class="editFotoPreSiembra" data-id="' + subItem.Id + '" style="margin-right: 10px"><i class="fa fa-pencil"></i></a>';
+                s += '<a href="#" class="deleteFotoPreSiembra" data-id="' + subItem.Id + '" style="margin-right: 10px"><i class="fa fa-trash-o"></i></a>';
+                s += '</td > ';
+                s += '</tr>';
+
+                return $("#tblFotosPreSiembra tbody").append(s);
+            }
+
+            $("#tblFotosPreSiembra tbody").on("click", ".editFotoPreSiembra", function (e) {
+
+                e.preventDefault();
+                var idSubItem = $(this).attr("data-id");
+
+                showFotoPreSiembra({
+                    Id: idSubItem,
+                    FileName: $("#fotoPreSiembra-FileName-" + idSubItem).val(),
+                    FotoUrl: $("#fotoPreSiembra-FotoUrl-" + idSubItem).val(),
+                    Observaciones: $("#fotoPreSiembra-Observaciones-" + idSubItem).val()
+                });
+
+                return false;
+            });
+
+            $("#tblFotosPreSiembra tbody").on("click", ".deleteFotoPreSiembra", function (e) {
+
+                e.preventDefault();
+                var idSubItem = $(this).attr("data-id");
+
+                $("#fotoPreSiembraRow-" + idSubItem).remove();
+
+                return false;
+            });
+
+            $("#addFotoPreSiembra").click(function (e) {
+
+                e.preventDefault();
+                $.magnificPopup.close();
+
+                showFotoPreSiembra({
+                    Id: 0,
+                    FileName: '',
+                    FotoUrl: '',
+                    Observaciones: ''
+                });
+
+                return false;
+            });
+
+            function showFotoPreSiembra(subItem) {
+
+                fofiRequestCode = 'PreSiembra'
+                fofiSetFoto(subItem);
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#fotoFichaForm', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            function fofiCancel() {
+                $.magnificPopup.close();
+                if (fofiRequestCode == 'PreSiembra') {
+                    showPreSiembraForm();
+                }
+                else if (fofiRequestCode == 'Ficha') {
+                    showFichaForm();
+                }
+            }
+
+            var indexFotoPreSiembra = 0;
+            function fofiCallback(result) {
+
+                fofiCancel();
+
+                if (fofiRequestCode == 'PreSiembra') {
+
+                    if (result.Id == 0) {
+                        result.Id = --indexFotoPreSiembra;
+                    }
+                    else {
+                        $("#fotoPreSiembraRow-" + result.Id).remove();
+                    }
+                    renderFotoPreSiembra(result);
+                }
+                else if (fofiRequestCode == 'Ficha') {
+
+                    if (result.Id == 0) {
+                        result.Id = --indexFotoFicha;
+                    }
+                    else {
+                        $("#fotoFichaRow-" + result.Id).remove();
+                    }
+
+                    renderFotoFicha(result);
+                }
+            }
+
+            // RECOMENDACIONES PRE-SIEMBRA
+            function renderRecomendacionPreSiembra(subItem) {
+
+                var quimico;
+                var dosis;
+                var edit;
+
+                if (subItem.IdTipoRecomendacion == 3) { // Fertilizante
+                    quimico = subItem.NombreTipoRecomendacion;
+                    dosis =
+                        'N: ' + subItem.FerN + ' - ' +
+                        'P2O5: ' + subItem.FerP2O5 + ' - ' +
+                        'KO2: ' + subItem.FerKO2 + ' - ' +
+                        'MgO: ' + subItem.FerMgO + ' - ' +
+                        'S: ' + subItem.FerS + ' - ' +
+                        'B: ' + subItem.FerB + ' - ' +
+                        'Zn: ' + subItem.FerZn + ' - ' +
+                        'CaO: ' + subItem.FerCaO;
+                    edit = '<a href="#" class="editFertilizantePreSiembra" data-id="' + subItem.Id + '" style="margin-right: 10px"><i class="fa fa-pencil"></i></a>';
+                }
+                else {
+                    quimico = subItem.NombreTipoRecomendacion + ' > ' + subItem.NombreQuimico
+                    dosis = subItem.Dosis + " " + subItem.NombreUM;
+                    edit = '<a href="#" class="editRecomendacionPreSiembra" data-id="' + subItem.Id + '" style="margin-right: 10px"><i class="fa fa-pencil"></i></a>';
+                }
+
+                var s = '<tr id="recomendacionPreSiembraRow-' + subItem.Id + '">';
+
+                s += '<td>';
+                s += '<input type="hidden" name="Recomendaciones.Index" value="' + subItem.Id + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-Id-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].Id" value="' + subItem.Id + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-IdTipoRecomendacion-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].IdTipoRecomendacion" value="' + subItem.IdTipoRecomendacion + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-IdQuimico-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].IdQuimico" value="' + subItem.IdQuimico + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-Dosis-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].Dosis" value="' + subItem.Dosis + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-IdUM-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].IdUM" value="' + subItem.IdUM + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-FechaAplicacion-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FechaAplicacion" value="' + subItem.FechaAplicacion + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-FerN-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerN" value="' + subItem.FerN + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-FerP2O5-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerP2O5" value="' + subItem.FerP2O5 + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-FerKO2-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerKO2" value="' + subItem.FerKO2 + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-FerMgO-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerMgO" value="' + subItem.FerMgO + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-FerS-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerS" value="' + subItem.FerS + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-FerB-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerB" value="' + subItem.FerB + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-FerZn-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerZn" value="' + subItem.FerZn + '" />';
+                s += '<input type="hidden" id="recomendacionPreSiembra-FerCaO-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerCaO" value="' + subItem.FerCaO + '" />';
+                s += quimico + '<br />' + dosis;
+                s += '</td>';
+                s += '<td>';
+                s += edit;
+                s += '</td>';
+                s += '</tr>';
+
+                return $("#tblRecomendacionesPreSiembra tbody").append(s);
+            }
+
+            $("#addRecomendacionPreSiembra").click(function (e) {
+
+                e.preventDefault();
+                $.magnificPopup.close();
+
+                showRecomendacionPreSiembra({
+                    Id: 0,
+                    IdTipoRecomendacion: 0,
+                    IdQuimico: 0,
+                    Dosis: 0,
+                    IdUM: 0,
+                    FechaAplicacion: ''
+                });
+                return false;
+            });
+
+            function showRecomendacionPreSiembra(subItem) {
+
+                recRequestCode = 'PreSiembra'
+                recSetRecomendacion(subItem);
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#recomendacionDialog', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            $("#tblRecomendacionesPreSiembra tbody").on("click", ".editRecomendacionPreSiembra", function (e) {
+
+                e.preventDefault();
+                var idSubItem = $(this).attr("data-id");
+
+                showRecomendacionPreSiembra({
+
+                    Id: idSubItem,
+                    IdTipoRecomendacion: $("#recomendacionPreSiembra-IdTipoRecomendacion-" + idSubItem).val(),
+                    IdQuimico: $("#recomendacionPreSiembra-IdQuimico-" + idSubItem).val(),
+                    Dosis: $("#recomendacionPreSiembra-Dosis-" + idSubItem).val(),
+                    IdUM: $("#recomendacionPreSiembra-IdUM-" + idSubItem).val(),
+                    FechaAplicacion: $("#recomendacionPreSiembra-FechaAplicacion-" + idSubItem).val(),
+                });
+
+                return false;
+            });
+
+            function recCancel() {
+                $.magnificPopup.close();
+                if (recRequestCode == 'PreSiembra') {
+                    showPreSiembraForm();
+                }
+                else if (recRequestCode == 'Ficha') {
+                    showFichaForm();
+                }
+            }
+
+            var indexRecomendacionPreSiembra = 0;
+            function recCallback(result) {
+
+                recCancel();
+                if (recRequestCode == 'PreSiembra') {
+
+                    if (result.Id == 0) {
+                        result.Id = --indexRecomendacionPreSiembra;
+                    }
+                    else {
+                        $("#recomendacionPreSiembraRow-" + result.Id).remove();
+                    }
+                    renderRecomendacionPreSiembra(result);
+                }
+                else if (recRequestCode == 'Ficha') {
+
+                    if (result.Id == 0) {
+                        result.Id = --indexRecomendacionFicha;
+                    }
+                    else {
+                        $("#recomendacionFichaRow-" + result.Id).remove();
+                    }
+                    renderRecomendacionFicha(result);
+                }
+            }
+
+            //FERTILIZANTE PRE-SIEMBRA
+            $("#addFertilizantePreSiembra").click(function (e) {
+
+                e.preventDefault();
+                $.magnificPopup.close();
+
+                showFertilizantePreSiembra({
+                    Id: 0,
+                    FerN   : 0,
+                    FerP2O5: 0,
+                    FerKO2 : 0,
+                    FerMgO : 0,
+                    FerS   : 0,
+                    FerB   : 0,
+                    FerZn  : 0,
+                    FerCaO : 0                   
+                });
+                return false;
+            });
+
+            function showFertilizantePreSiembra(subItem) {
+
+                ferRequestCode = 'PreSiembra'
+                ferSetFertilizante(subItem);
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#fertilizanteDialog', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            $("#tblRecomendacionesPreSiembra tbody").on("click", ".editFertilizantePreSiembra", function (e) {
+
+                e.preventDefault();
+                var idSubItem = $(this).attr("data-id");
+
+                showFertilizantePreSiembra({
+
+                    Id: idSubItem,
+                    FerN: $("#recomendacionPreSiembra-FerN-" + idSubItem).val(),
+                    FerP2O5: $("#recomendacionPreSiembra-FerP2O5-" + idSubItem).val(),
+                    FerKO2: $("#recomendacionPreSiembra-FerKO2-" + idSubItem).val(),
+                    FerMgO: $("#recomendacionPreSiembra-FerMgO-" + idSubItem).val(),
+                    FerS: $("#recomendacionPreSiembra-FerS-" + idSubItem).val(),
+                    FerB: $("#recomendacionPreSiembra-FerB-" + idSubItem).val(),
+                    FerZn: $("#recomendacionPreSiembra-FerZn-" + idSubItem).val(),
+                    FerCaO: $("#recomendacionPreSiembra-FerCaO-" + idSubItem).val()
+                });
+
+                return false;
+            });
+
+            function ferCancel() {
+                $.magnificPopup.close();
+                if (ferRequestCode == 'PreSiembra') {
+                    showPreSiembraForm();
+                }
+                else if (ferRequestCode == 'Ficha') {
+                    showFichaForm();
+                }
+            }
+
+            function ferCallback(result) {
+
+                ferCancel();
+
+                if (ferRequestCode == 'PreSiembra') {
+
+                    if (result.Id == 0) {
+                        result.Id = --indexRecomendacionPreSiembra;
+                    }
+                    else {
+                        $("#recomendacionPreSiembraRow-" + result.Id).remove();
+                    }
+                    renderRecomendacionPreSiembra(result);
+                }
+                else if (ferRequestCode == 'Ficha') {
+
+                    if (result.Id == 0) {
+                        result.Id = --indexRecomendacionFicha;
+                    }
+                    else {
+                        $("#recomendacionFichaRow-" + result.Id).remove();
+                    }
+                    renderRecomendacionFicha(result);
+                }
+            }
+
+            //Save
+            $('.modal-confirmPreSiembra').click(function (e) {
+                e.preventDefault();
+
+                $("#validationErrorsPreSiembra").hide();
+                $("#footerButtonsPreSiembra").hide();
+                $("#footerSpinnerPreSiembra").show();
+
+                var idItem = $("#idFichaPreSiembra").val();
+                var postUrl = idItem == 0 ? '@Url.Action("createfichapresiembra")' : '@Url.Action("editfichapresiembra")';
+
+                var jqxhr = $.post(postUrl, $("#formItemPreSiembra").serialize(),
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showValidationErrors(data.msg, data.errors, "#validationErrorsPreSiembra");
+                        }
+                        else {
+                            $.magnificPopup.close();
+
+                            new PNotify({
+                                title: 'Ficha de Pre-Siembra',
+                                text: data.msg,
+                                type: 'success'
+                            });
+
+                            if (idItem != 0) {
+                                $("#itemRowPreSiembra-" + idItem).replaceWith(data.view);
+                            }
+                            else {
+                                $("#datatable-presiembra tbody").append(data.view);
+                            }
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showValidationErrors(parsePostFail(jqXHR, errorThrown), null, "#validationErrorsPreSiembra");
+                    })
+                    .always(function () {
+                        $("#footerSpinnerPreSiembra").hide();
+                        $("#footerButtonsPreSiembra").show();
+                    });
+            });
+
+            //Close
+            $('.modal-dismissPreSiembra').click(function (e) {
+                e.preventDefault();
+                $.magnificPopup.close();
+            });
+
+</script>  

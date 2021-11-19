@@ -1,0 +1,62 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.AppLayer.Extensions
+
+@{
+
+    var puntos = from p in ((List<PuntoDescarga>)ViewData["puntosDescarga"])
+                 select new { IdPuntoDescarga = p.IdPuntoDescarga, Nombre = p.Nombre, IdSucursal = p.IdSucursal };
+
+    var oSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    string sJSON = oSerializer.Serialize(puntos);
+                   
+}
+
+
+
+<div id="descarga-window" style="display: none" title="Asignar Punto de Descarga">
+    <div id="descarga-content">
+        <input type="hidden" id="descarga-id" value="" />
+        <table class="form1" style="width: 100%; text-align: left;">
+            <tr>
+                <td class="label">Punto de Descarga:</td>
+                <td><select id="descarga-idPunto"></select></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    var puntosDescarga = @(sJSON.ToMvcHtmlString());
+
+    function descargaShow(id, idSucursal) {
+
+        $('#descarga-idPunto').html('');
+        for (var i = 0; i < puntosDescarga.length; i++)
+        {
+            if (puntosDescarga[i].IdSucursal == idSucursal)
+            {
+                $('#descarga-idPunto')
+                    .append($("<option></option>")
+                    .attr("value",puntosDescarga[i].IdPuntoDescarga)
+                    .text(puntosDescarga[i].Nombre)); 
+            }
+        }
+
+        $("#descarga-window").dialog({
+            width: 500,
+            modal: true,
+            buttons: {
+                Aceptar: function () {
+                    descargaCallback(id, $('#descarga-idPunto').val());
+                    $(this).dialog("close");
+                },
+                Cancelar: function () {
+                    $(this).dialog("close");
+                }
+            },
+        });
+
+    }
+</script>

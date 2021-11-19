@@ -1,0 +1,16 @@
+﻿@model AgroFichasWeb.Models.Ficha
+<tr id="itemRowFicha-@Model.IdFicha">
+    <td>@Model.Fecha.ToString("dd MMMM yyyy")</td>
+    <td>@Model.TipoFicha.Nombre</td>
+    <td>@Model.DescripcionPotreros()</td>
+    <td>@Model.UserIns</td>
+    <td class="actions text-center">
+        @if (true)
+        {
+            <img id="editSpinnerFicha-@Model.IdFicha" src="~/Content/spinner.svg" height="18" style="display: none; margin-right:10px" />
+            <a href="#" id="editButtonFicha-@Model.IdFicha" class="editItemFicha" data-id="@Model.IdFicha" style="margin-right:10px"><i class="fa fa-pencil"></i></a>
+            <a href="@Url.Content(Model.PdfUrl)"><i class="fa fa-file-pdf-o"></i></a>
+        }
+    </td>
+</tr>
+

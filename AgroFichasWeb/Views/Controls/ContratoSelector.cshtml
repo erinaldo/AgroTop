@@ -1,0 +1,142 @@
+﻿@using AgroFichasWeb.ViewModels
+@model ContratoSelectorViewModel
+@{
+    ViewData["temporada"] = Model.Temporada;
+    ViewData["temporadas"] = (new AgroFichasWeb.Models.AgroFichasDBDataContext()).Temporada.OrderBy(t => t.IdTemporada).ToList();
+}
+<style>
+    #cos-label {
+        width: 400px;
+        display: inline-block;
+        border:solid 1px #adadad;
+        padding: 5px;
+    }
+</style>
+<span id="cos-label"></span><input id="cos-select" type="button" value="..." /><input id="cos-delete" type="button" value="X" />
+
+<input type="hidden" id="cos-idContrato" />
+<input type="hidden" id="cos-nombre" />
+<input type="hidden" id="cos-idTemporada" />
+<input type="hidden" id="cos-nombreTemporada" />
+
+<div id="cosSearchWindow" style="display: none" title="Buscar Contrato">
+    <div id="cosSearchWindow-Content">
+        <table class="form1" style="width: 100%; text-align: left;">
+        <tr>
+            <td class="label">Buscar:</td>
+            <td><input type="text" id="cos-keyword" style="width: 400px" /></td>
+            <td><input type="button" value="Buscar" id="cos-buscar" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="label">Temporada:</td>
+            <td>@Html.Partial("TemporadaSelector")</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="title">
+            <td colspan="4">Resultados</td>
+        </tr>
+        <tr valign="top">
+            <td colspan="4">
+                <div  id="cos-results" style="height: 300px; overflow-y:scroll; width: 100%"></div>                        
+            </td>
+        </tr>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        @(new MvcHtmlString(String.Format("cosSetContrato({0}, '{1}', '{2}', '{3}', {4}, '{5}');", Model.IdContrato, Model.Nombre.Replace("'", ""), Model.NumeroContrato.Replace("'", ""), Model.NombreEmpresa.Replace(",", ""), Model.Temporada.IdTemporada, Model.Temporada.Nombre.Replace(",", ""))))
+
+        $("#cos-delete").click(function () {
+            cosClearContrato();
+        });
+
+        $("#cos-select").click(function () {
+            cosSelectContrato();
+        });
+
+        $("#cos-buscar").click(function () {
+            cosSearchContrato();
+        });
+
+    });
+
+    function cosClearContrato() {
+        cosSetContrato("", '&nbsp;', '', '', 0, '')
+    }
+
+    function cosSetContrato(id, nombre, numero, empresa, idTemporada, nombreTemporada) {
+        $("#cos-idContrato").val(id);
+        $("#cos-nombre").val(nombre);
+        $("#cos-idTemporada").val(id);
+        $("#cos-nombreTemporada").val(id);
+        $("#cos-label").html(numero + ' - ' + empresa + ' - ' + nombre + ' - ' + nombreTemporada);
+        cosCallback(id, nombre, numero, empresa, idTemporada, nombreTemporada);
+    }
+
+    function cosSelectContrato() {
+        $("#cosSearchWindow").dialog({
+            width: 600,
+            modal: true,
+            buttons: {
+                Cancelar: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+                $('#cos-results').html("");
+            }
+        });
+    }
+
+    function cosSearchContrato() {
+        $('#cos-results').html('<div class="cargando"></div>');
+        $.ajax({
+            type: "POST",
+            url: "@Url.Content("~/contratos/ContratosSelectorSearch")",
+            data: "{keyword: '" + $("#cos-keyword").val() + "', idTemporada: " + $("#idTemporada").val() + "}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                var table = '<table class="form1">';
+
+                if (result.length == 0)
+                    table += "<tr><td><i>No se encontraron resultados</i></td></tr>";
+
+                for (var contrato in result) {
+                    var row = '<tr valign="top">';
+                    row += '<td nowrap="nowrap">' + result[contrato].NumeroContrato + '</td>';
+                    row += '<td id="p_' + result[contrato].IdContrato + '"><a href="javascript:scos(' + "'" + result[contrato].IdContrato + "', '" + result[contrato].NumeroContrato + "', '" + result[contrato].NombreCultivo + "', '" + result[contrato].NombreEmpresa + "', " + result[contrato].IdTemporada +  ", '" + result[contrato].NombreTemporada + "'" + ')">' + result[contrato].Nombre + "</a></td>";
+                    row += '<td nowrap="nowrap">' + result[contrato].NombreEmpresa + '</td>';
+                    row += '<td nowrap="nowrap">' + result[contrato].NombreCultivo + '</td>';
+                    row += "</tr>";
+                    table += row;
+                }
+                table += "</table>";
+                $('#cos-results').html(table);
+            },
+            error: function (req, stat, err) {
+                var msg = '<div style="color:red;">';
+                msg += "Se produjo un error al ejecutar la búsqueda.";
+                msg += "<p>" + req.responseText + "</p>";
+                msg += "<p>" + req.statusText + "</p>";
+                msg += "</div>";
+                $('#cos-results').html(msg);
+            }
+        });
+    }
+
+    function scos(id, numero, cultivo, empresa, idTemporada, nombreTemporada) {
+        var nombre = $("#p_" + id + " > a").text();
+        cosSetContrato(id, nombre, numero, empresa, idTemporada, nombreTemporada);
+        $('#cosSearchWindow').dialog('close');
+    }
+
+
+</script>

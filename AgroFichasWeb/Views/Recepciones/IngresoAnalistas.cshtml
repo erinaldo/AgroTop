@@ -1,0 +1,311 @@
+﻿@using Zen.Barcode 
+@using Zen.Barcode.Web.Mvc 
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.AppLayer.Extensions 
+
+@model ProcesoIngreso
+@{
+    bool mostrarAnalisis = !(ViewData["hideAnalisis"] != null && ViewData["hideAnalisis"] == "1");
+    bool mostrarCierre = !(ViewData["hideConveniosPrecios"] != null && ViewData["hideConveniosPrecios"] == "1");
+    bool mostrarUsuarios = !(ViewData["hideUsers"] != null && ViewData["hideUsers"] == "1");
+
+    bool tieneAccesoSucursal = SYS_User.Current() != null && SYS_User.Current().TieneAccesoSucursal(Model.IdSucursal, "recepcion");
+    bool puedeEditarAnalisis = SYS_User.Current() != null && mostrarUsuarios && Model.EsAnalisisEditable() && SYS_User.Current().HasPermiso(60) && tieneAccesoSucursal;
+    bool puedeEditarPesoInicial = SYS_User.Current() != null && mostrarUsuarios && Model.EsPesoInicialEditable() && SYS_User.Current().HasPermiso(61) && tieneAccesoSucursal;
+    bool puedeEditarPesoFinal = SYS_User.Current() != null && mostrarUsuarios && Model.EsPesoFinalEditable() && SYS_User.Current().HasPermiso(61) && tieneAccesoSucursal;
+    bool puedeAnularCierre = SYS_User.Current() != null && mostrarUsuarios && Model.EsCierreEditable() && SYS_User.Current().HasPermiso(62);
+}
+        <table class="procesoIngreso">
+        <tr>
+            <td><label>Número</label></td>
+            <td>
+                @Model.IdProcesoIngreso 
+                @(Model.UltimaEntrega ? " - <b>Última Entrega</b>".ToMvcHtmlString() : "".ToMvcHtmlString())
+                @(Model.LiquidacionDolar ? " - <b>Liquidación en Dólares</b>".ToMvcHtmlString() : "".ToMvcHtmlString())
+            </td>
+            <td><label>Sucursal</label></td>
+            <td>@Model.Sucursal.Nombre</td>
+        </tr>
+        <tr>
+            <td><label>Cultivo</label></td>
+            <td><b>@Model.CultivoContrato.Nombre @(Model.IdVariedad.HasValue ? " - " + Model.Variedad.Nombre : "")</b></td>
+            <td><label>Empresa</label></td>
+            <td>@Model.Empresa.Nombre</td>
+        </tr>
+        <tr>
+            <td><label>Comuna Origen</label></td>
+            <td>@Model.Comuna.Nombre</td>
+            <td><label>Provincia Origen</label></td>
+            <td>@Model.Comuna.Provincia.Nombre</td>
+        </tr>
+        <tr>
+            <td><label>Temporada</label></td>
+            <td>@Model.Temporada.Nombre</td>
+            <td><label>Bodega</label></td>
+            <td>
+                @(Model.IdBodega.HasValue ? Model.Bodega.Nombre : "(No asignada)")
+                @(Model.IdBodega.HasValue && Model.Manga.HasValue ? " " + Model.Manga.Value : "")
+                @(Model.Secador.HasValue && Model.Secador.Value ? " - <b>Enviado a Secador</b>".ToMvcHtmlString() : "".ToMvcHtmlString())
+            </td>
+        </tr>
+        @*<tr>
+            <td><label>Agricultor</label></td>
+            <td><b>@Model.Agricultor.Nombre</b></td>
+            <td><label>Ingreso Manual</label></td>
+            <td>@(Model.NroIngresoManual.HasValue ? Model.NroIngresoManual.Value.ToString() : "-")</td>
+        </tr>
+        <tr>
+            <td><label>Rut</label></td>
+            <td>@Model.Agricultor.Rut</td>
+            <td><label>Guía</label></td>
+            <td>@Model.NumeroGuia «@Model.TipoGuia.Descripcion»</td>
+        </tr>*@
+        @if (Model.NroGuiaPropia.HasValue)
+        {
+        <tr>
+            <td colspan="2">&nbsp;</td>
+            <td><label>Guía Propia</label></td>
+            <td>@Model.NroGuiaPropia</td>
+        </tr>
+        }
+        @*<tr>
+            <td><label>Vehículo</label></td>
+            <td>@Model.TipoVehiculo.Nombre @Model.Patente</td>
+            <td><label>Chofer</label></td>
+            <td>@Model.Chofer</td>
+        </tr>*@
+        <tr>
+            <td><label>Peso Inicial</label></td>
+            <td>
+                @(Model.PesoInicial.HasValue ? Model.PesoInicial.Value.ToString("#,##0.## Kg") : "-")
+                @if (puedeEditarPesoInicial)
+                {
+                    <text>&nbsp;</text><a href="@Url.Action("editarpesoinicial", new { id = Model.IdProcesoIngreso })" class="command">Editar</a>
+                }
+            </td>
+            <td><label>Peso Final</label></td>
+            <td>
+                @(Model.PesoFinal.HasValue ? Model.PesoFinal.Value.ToString("#,##0.## Kg") : "-")
+                @if (puedeEditarPesoFinal)
+                {
+                    <text>&nbsp;</text><a href="@Url.Action("editarpesofinal", new { id = Model.IdProcesoIngreso })" class="command">Editar</a>
+                }
+            </td>
+        </tr>
+        <tr valing="top">
+            <td><label>Observaciones</label></td>
+            <td>@(!String.IsNullOrWhiteSpace(Model.ObservacionesPesoInicial) ? Model.ObservacionesPesoInicial : "-")</td>
+            <td><label>Observaciones</label></td>
+            <td>@(!String.IsNullOrWhiteSpace(Model.ObservacionesPesoFinal) ? Model.ObservacionesPesoFinal : "-")</td>
+        </tr>
+        <tr>
+            <td><label>Peso Neto</label></td>
+            <td>@(Model.PesoBruto.HasValue ? Model.PesoBruto.Value.ToString("#,##0.## Kg") : "-")</td>
+            <td><label>Peso Standard @(Model.IdEstado < 10 ?  "(Preliminar)" : "")</label></td>
+            <td>
+                @(Model.PesoNormal.HasValue ? Model.PesoNormal.Value.ToString("#,##0.## Kg") : "-")
+                @if (Model.PesoNormal.HasValue)
+                {
+                   
+                    <a href="@Url.Action("ExplainStandarizacion", new { id = Model.IdProcesoIngreso })" target="_blank" class="command" style="padding-left: 10px;">?</a>
+                }
+            </td>
+        </tr>
+        @*<tr>
+            <td><label>Liquidación</label></td>
+            <td colspan="3">                
+                @foreach (var idLiquidacion in Model.IdsLiquidaciones())
+                {
+                    <a href="@Url.Action("detalleliquidacion", "liquidaciones", new { id = idLiquidacion})" target="_blank" class="command">@idLiquidacion</a><text>&nbsp;</text>
+                }
+            </td>
+        </tr>*@
+        @if (Model.IdExportBatch.HasValue)
+        {
+        <tr>
+            <td><label>Exportación</label></td>
+            <td colspan="3">
+                 <a href="@Url.Action("detalle", "exportarrecepciones", new { id = Model.IdExportBatch })" target="_blank" class="command">@Model.IdExportBatch</a>
+            </td>
+        </tr>
+        }
+        @if (mostrarAnalisis)
+        {
+            <tr valign="top">
+                <td><label style="margin-top: 7px">Análisis</label></td>
+                <td colspan="3">
+                    @Html.Partial("~/Views/Recepciones/DetalleAnalisis.cshtml", new AgroFichasWeb.ViewModels.Recepciones.DetalleAnalisisViewModel() { ProcesoIngreso = Model, Columas = 3 })
+                    @if (puedeEditarAnalisis)
+                    {
+                        <a href="@Url.Action("editaranalisis", new { id = Model.IdProcesoIngreso })" id="editarAnalisis" class="command">Editar Análisis</a>
+                    }
+                </td>
+            </tr>
+        }
+        @if (mostrarCierre)
+        {
+            <tr valign="top">
+                <td><label style="margin-top: 7px">Cierre</label></td>
+                <td colspan="3">
+                    @if (Model.IdMonedaLiquidacion.HasValue)
+                    {
+                        <p>Liquidar en @Model.Moneda.Simbolo</p>
+                    }
+                    @if (Model.PrecioIngreso.Count > 0)
+                    {
+                        int iTotal = 0;
+                        decimal totalNeto = 0;
+                        <table class="sublist2" style="margin-bottom: 10px;">
+                        <tr>
+                            <td class="label" align="center"><b>Liq</b></td>
+                            <td class="label" align="left"><b>Contrato</b></td>
+                            <td class="label" align="right"><b>Convenio</b></td>
+                            <td class="label"><b>Agricultor</b></td>
+                            <td class="label" align="right"><b>Precio / Kg</b></td>
+                            <td class="label" align="right"><b>Bono</b></td>
+                            <td class="label" align="right"><b>Dscto</b></td>
+                            <td class="label" align="right"><b>Kg</b></td>
+                            <td class="label" align="right"><b>Total</b></td>
+                            <td class="label" align="right"><b>TC</b></td>
+                            <td class="label" align="right"><b>Neto</b></td>
+                        </tr>
+                        @foreach (var precio in Model.PrecioIngreso)
+                        {
+                            totalNeto += precio.TotalNeto.Value;
+                            <tr valign="top">
+                                <td align="center">@(precio.IdLiquidacion.HasValue ? "Sí": "")</td>
+                                <td align="left">@(precio.ItemContrato.Contrato.NumeroContrato)</td>
+                                @if (precio.IdConvenioPrecio != null)
+                                {
+                                    <td align="right">@precio.IdConvenioPrecio</td>
+                                }
+                                else
+                                {
+                                    <td align="right">-</td>
+                                }
+                                <td>@(precio.ItemContrato.Contrato.Agricultor.Nombre)</td>
+                                <td align="right">@String.Format(precio.Moneda.Formato, precio.PrecioUnidad)</td>
+                                <td align="right">@((precio.SobrePrecioPor * 100).ToString("#,##0.#####"))%</td>
+                                <td align="right">@((precio.DescuentoPor * 100).ToString("#,##0.#####"))%</td>
+                                <td align="right">@precio.Cantidad.ToString("#,##0")</td>
+                                <td align="right" nowrap="nowrap">@String.Format(precio.Moneda.Formato, precio.Total)</td>
+                                <td align="right">@String.Format(precio.Moneda.Formato2, precio.TasaCambio)</td>
+                                <td align="right">@precio.TotalNeto.Value.ToString("#,##0")</td>
+                            </tr>
+                            if (precio.BonoUnidad != 0)
+                            {
+                            <tr>
+                                <td colspan="3"></td>
+                                <td>@(precio.BonoUnidad >0 ? "Bono" : "Descuento")</td>
+                                <td align="right">@String.Format(precio.Moneda.Formato, precio.BonoUnidad)</td>
+                                <td colspan="2"></td>
+                                <td align="right">@precio.BonoCantidad.ToString("#,##0")</td>
+                                <td align="right" nowrap="nowrap">@String.Format(precio.Moneda.Formato, precio.BonoTotal)</td>
+                            </tr>
+                             }
+                         }
+                        @foreach (var total in Model.TotalesPrecios)
+                        {
+                            <tr>
+                                <td colspan="8" align="right"><b>Total</b></td>
+                                <td align="right" nowrap="nowrap"><b>@total.ValorFormateado</b></td>
+                                @if (++iTotal == 1)
+                                {
+                                    <td colspan="1" align="right"><b>Total Neto</b></td>
+                                    <td align="right"><b>@totalNeto.ToString("#,##0")</b></td>
+                                }
+                            </tr>
+                        }
+                        </table>
+                    }
+                    else
+                    {
+                        <text>-</text>
+                    }
+                    @if (puedeAnularCierre)
+                    {
+                        <a href="@Url.Action("anularcierre", new { id = Model.IdProcesoIngreso })" id="anularCierre" class="command">Anular Cierre</a>
+                    }
+                </td>
+            </tr>
+        }
+        <tr valign="top">
+            <td><label>Estado</label></td>
+            <td colspan="1">
+                <span style="background-color: @Model.EstadoProcesoIngreso.Color" class="estado">@Model.EstadoProcesoIngreso.Nombre</span>
+                <table class="sublist">
+                    @if (Model.FechaHoraLlegada.HasValue)
+                    {
+                        <tr><td>Llegada</td><td>@Model.FechaHoraLlegada.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.UserLlegada : "")</td></tr>
+                    }
+                    @if (Model.FechaHoraTomaMuestra.HasValue)
+                    {
+                        <tr><td>Toma Muestra</td><td>@Model.FechaHoraTomaMuestra.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.UserTomaMuestra : "")</td></tr>
+                    }
+                    @if (Model.FechaHoraLaboratorio.HasValue)
+                    {
+                        <tr><td>Llega Laboratorio</td><td>@Model.FechaHoraLaboratorio.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.UserLaboratorio : "")</td></tr>
+                    }
+                    @if (Model.FechaHoraAnalisis.HasValue)
+                    {
+                        <tr><td>Análisis</td><td>@Model.FechaHoraAnalisis.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.UserAnalisis : "")</td></tr>
+                    }
+                    @if (Model.Notificado == true)
+                    {
+                        <tr><td>Notificación Email</td><td>@Model.FechaHoraNotifica.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.UserNotifica : "")</td></tr>
+                    }
+                    @if (Model.Autorizado.HasValue)
+                    {
+                        <tr>
+                            <td>@(Model.Autorizado == ProcesoIngreso.ANALISIS_AUTORIZADO ? "Autorización" : "Rechazo")</td>
+                            <td>@((Model.AutorizadoAuto.Value ? Model.FechaHoraAnalisis.Value : Model.FechaHoraAutoriza.Value).ToString("dd/MM/yy HH:mm"))</td>
+                            <td>
+                                @if (mostrarUsuarios)
+                                {
+                                    @(Model.AutorizadoAuto.Value ? "(auto)" : Model.UserAutoriza)
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (Model.PesoInicial.HasValue)
+                    {
+                        <tr><td>Peso Inicial</td><td>@Model.FechaPesoInicial.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.UserPesoInicial : "")</td></tr>
+                    }
+                    @if (Model.PesoFinal.HasValue)
+                    {
+                        <tr><td>Peso Final</td><td>@Model.FechaPesoFinal.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.UserPesoFinal : "")</td></tr>
+                    }
+                    @if (Model.FechaCierre.HasValue)
+                    {
+                        <tr><td>Cierre</td><td>@Model.FechaCierre.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.UserCierre : "")</td></tr>
+                    }
+                    @foreach (var liquidacion in Model.Liquidaciones())
+                    {
+                        <tr><td>Liquidación Creada</td><td>@liquidacion.FechaHoraCreacion.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? liquidacion.UserCreacion : "")</td></tr>
+                    }
+                    @if (Model.IdExportBatch.HasValue)
+                    {
+                        <tr><td>Exportado</td><td>@Model.ExportBatch.FechaHoraIns.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.ExportBatch.UserIns : "")</td></tr>
+                    }
+                    @if (Model.Nulo == 1 && !String.IsNullOrEmpty(Model.UserNulo))
+                    {
+                        <tr><td>Anulación</td><td>@Model.FechaHoraNulo.Value.ToString("dd/MM/yy HH:mm")</td><td>@(mostrarUsuarios ? Model.UserNulo : "")</td></tr>
+                    }
+
+                </table>
+            </td>
+            <td colspan="2" style="text-align: center">
+                <img src="@Url.Barcode(Model.Barcode, Zen.Barcode.BarcodeSymbology.CodeEan13, 80, 2, true).Replace("/Barcode", "/agrotop/generador/barcode")" style="margin: 30px 30px 10px 30px" />
+                <div>@Model.Barcode</div>
+            </td>
+        </tr>
+        </table>
+
+        @if (puedeAnularCierre)
+        {
+            <script>
+                $("#anularCierre").click(function () {
+                    return confirm("¿Está seguro de que desea anular este cierre?");
+                });
+            </script>
+        }

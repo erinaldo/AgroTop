@@ -1,0 +1,3 @@
+System.InvalidOperationException: El objeto que acepta valores Null debe tener un valor.
+   en System.ThrowHelper.ThrowInvalidOperationException(ExceptionResource resource)
+   en Agrotop.ReporteControlPlanta.Program.Main(String[] args)

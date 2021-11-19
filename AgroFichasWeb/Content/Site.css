@@ -1,0 +1,866 @@
+﻿body 
+{
+    background: #ffffff;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+	text-align: center;
+	min-width: 1100px;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+#topper {
+    background: #ffffff url(images/bg_top.png) repeat-x;
+    height: 20px;
+}
+#wrapper {
+	background: inherit;
+	max-width:1100px;
+	min-width:1000px;
+	margin: 0 auto;
+	text-align: left;
+	position:relative;
+}
+
+.un-TopBar 
+{
+    margin: 10px 0px 30px 0px;
+    position: relative;
+}
+.un-TopBar-Logo
+{
+    position:absolute;
+    left: 25px;
+    top: 0px;
+    z-index: 20;
+}
+
+.un-TopBar-Content
+{
+    padding: 0px 0px 0px 150px;
+    position: relative;
+    top: 8px;
+    height: 33px;
+    background-color: #d32e12;
+}
+
+
+#infoBar 
+{
+    text-align: right;
+    width: 100%;
+    color: #ffffff;
+    padding: 8px 0px 0px 0px;
+}
+
+#infoBar .userName
+{
+    font-weight: bold;
+}
+
+#infoBar a {
+    color: #ffffff;
+}
+
+
+
+.datebox
+{
+    width: 80px;
+}
+
+.cargando
+{
+    background: url(images/loadingAnimation.gif) no-repeat center top;
+    height: 20px;
+    width: 100%;
+    margin: 20px 0px 20px 0px;
+}
+
+
+table.dataList
+{
+    
+}
+
+
+table.smallDataList
+{
+    font-size: 11px;
+}
+
+table.dataList th, table.smallDataList th
+{
+    background-color: #7e7e7e;
+    font-weight: bold;
+    color: #ffffff;
+    padding: 4px 4px 4px 4px;
+    margin: 0px 0px 0px 0px;    
+}
+
+table.dataList tr, table.smallDataList tr
+{
+    background: #f7f6f3;
+}
+
+table.dataList tr.even, table.smallDataList tr.even
+{
+    background: #ffffff;
+}
+
+
+table.dataList td, table.smallDataList td
+{
+    padding: 4px 4px 4px 4px;
+    margin: 0px 0px 0px 0px;
+    color: #333333;
+}
+
+table.dataList td.small, table.smallDataList td.small
+{
+    font-size: 10px;
+}
+
+
+table.dataList .audit {
+    font-size: 11px;
+    font-style: italic;
+}
+
+table.dataList td.norecords, table.smallDataList td.norecords
+{
+    text-align: center;
+    padding: 20px 0px 20px 0px;
+    font-style: italic;
+}
+
+table.dataList td.pager, table.smallDataList td.pager
+{
+    text-align:center;
+    background-color: #7e7e7e;
+    color: #ffffff;
+}
+
+table.dataList td.pager a, table.smallDataList td.pager a
+{
+    color: #ffffff;
+    margin: 0px 3px 0px 3px;
+    display: inline-block;
+}
+
+.checkbox
+{
+    background: url(images/checkbox.png) no-repeat 0px 5px;
+    width: 19px;
+    height: 26px;
+}
+
+fieldset.dataForm
+{
+    border: none;
+}
+
+fieldset.dataForm p, fieldset.dataForm div.p
+{
+    border-bottom: solid 1px #d5dfe5;
+    padding: 0px 0px 10px 0px;
+    margin: 0px 0px 10px 0px;
+}
+
+fieldset.dataForm label
+{
+    width: 100px;
+    font-weight:bold;
+    display: inline-block;
+    text-align: right;
+    padding: 0px 10px 0px 0px;
+    vertical-align: top;
+}
+
+fieldset.dataForm .okcancel
+{
+    padding: 0px 0px 0px 110px;
+    border: none;
+}
+
+
+fieldset.dataForm .okcancel a, a.command
+{
+    color: #ff0000;
+}
+
+a.command2 {
+    color: #ADADAD;
+}
+
+fieldset.dataForm .heavy
+{
+    font-weight: bold;
+    font-size: 14px;
+}
+
+fieldset.dataForm .std
+{
+    width: 450px;
+}
+
+fieldset.dataForm .stdmini
+{
+    width: 25px;
+}
+
+.field-validation-error
+{
+    display: inline-block;
+    width: 22px;
+    height: 17px;
+    background: #ffffff url(images/exclamacion.gif) no-repeat 5px top;
+    color: #ffffff;
+}
+
+    fieldset.dataForm table right {
+        text-align: left;
+    }
+
+fieldset.dataForm td
+{
+    border-bottom: solid 1px #d5dfe5;
+    padding: 5px 0px 5px 0px;
+    margin: 0px 0px 10px 0px;
+}
+
+
+fieldset.dataForm table.sublist td
+{
+    border-bottom: none;
+    padding: 5px 5px 5px 0px;
+    margin: 0px 0px 10px 0px;
+}
+
+fieldset.dataForm table.sublist2 td
+{
+    padding: 5px 10px 5px 0px;
+    margin: 0px 0px 10px 0px;
+}
+
+table.sublist2 td.small {
+    font-size: 10px;
+}
+
+table.sublist2 td.label {
+    font-weight: bold;
+    color: #333333;
+    background: #e5e5e5;
+}
+
+
+.imageList
+{
+    float: left;
+    margin: 0px 10px 10px 0px;
+}
+
+.imageListImg
+{   
+    border: solid 1px #d5dfe5;
+    padding: 5px 5px 5px 5px;
+
+}
+
+.imageList a.eliminar, a.eliminar
+{
+    color: #ff0000;
+}
+
+a.eliminar:visited 
+{
+    color: #ff0000;
+}
+
+a.deleteRecomendacion {
+    font-size: 11px;
+    font-style: italic;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.imageListControls
+{
+    margin: 3px 0px 0px 0px;
+    padding: 0px 3px 0px 3px;
+}
+
+.validation-summary-errors
+{
+    color: #ff0000;
+}
+
+span.validation-summary-errors
+{
+    padding-left: 110px;
+}
+
+ul.validation-summary-errors
+{
+    padding-left: 150px;
+    margin-bottom: 20px;
+}
+
+
+/***************************************************************/
+#menu1 
+{
+    height:30px; 
+    /*background:  url(images/back_menu_1.jpg);*/
+    background: url(images/bg_menu_1.jpg);
+    margin-bottom: 20px;
+}
+
+#menu1 ul, #menu2 ul 
+{
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+#menu1 li
+{
+    float:left;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 2px;
+    height: 25px;
+    padding-top: 7px;
+}
+
+#menu1 li.selected
+{
+    background-color: #FFFFFF;
+    color: #000000;
+    border-top: solid 1px #ADADAD;
+    border-left: solid 1px #ADADAD;
+    border-right: solid 1px #ADADAD;
+    height: 29px;
+    padding-top: 0px;
+}
+
+#menu1 li.selected a
+{
+    color: #000000;
+}
+
+
+#menu1 a:hover
+{
+    color: #000000;
+}
+
+#menu1 a 
+{
+    color: White;
+    font-weight: bold;
+    text-decoration: none;
+    position: relative;
+    top: 4px;
+}
+
+
+#menu2
+{
+    height:20px; 
+    background-color: #FFCF75;
+    font-size: 10px;
+}
+
+#menu2 li
+{
+    float:left;
+    padding-left : 8px;
+    padding-right: 8px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 1px;
+    background-color: orange;
+    height: 20px;
+}
+
+#menu2 li:hover 
+{
+    background-color:#FFCF75;
+}
+
+#menu2 a 
+{
+    color: White;
+    font-weight: bold;
+    text-decoration: none;
+    position: relative;
+    top: 3px;
+}
+
+#menu3 {
+    float: left;
+    width: 150px;
+}
+
+#menu3 ul {
+    list-style: none;
+    margin: 0px 20px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    border-right: solid 1px #adadad;
+    border-bottom: solid 1px #adadad;
+    border-top: solid 1px #adadad;
+}
+
+#menu3 li {
+    margin: 10px 0px 10px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+#menu3 a {
+    color: #e6181a;
+    text-decoration: none;
+}
+
+#menu3 a:hover  {
+    text-decoration: underline;
+}
+
+#workArea {
+    float: left;
+    width: 920px;
+}
+
+#mainContentWrapper
+{
+    background: white;
+    padding: 10px;
+}
+
+#footer 
+{
+    margin: 30px 0px 0px 0px;
+}
+
+#login 
+{
+    text-align: center;
+    font-weight: bold;
+    border: none;
+}
+
+h1 
+{
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+h2 
+{
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Trebuchet MS;
+    margin-top: 10px;
+    color: #5d8f8c;
+}
+
+
+.formLogin
+{
+    font-family:Trebuchet MS;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 3px;
+    width: 200px;
+}
+
+#login span.validation-summary-errors
+{
+    padding-left: 0px;
+}
+
+#login ul.validation-summary-errors
+{
+    padding-left: 0px;
+    margin-bottom: 20px;
+}
+
+ul.recs {
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+ul.recs li {
+    margin: 0px 0px 20px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    background-color: #ffffaa;
+    font-weight: bold;
+    color: #ff0000;
+    margin: 20px 0px 20px 0px;
+    padding: 20px;
+}
+
+.validation-summary-oks
+{
+    background-color: #ffffaa;
+    font-weight: bold;
+    color: green;
+    margin: 20px 0px 20px 0px;
+    padding: 20px;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}
+
+
+.reportFilter {
+    margin: 20px 0px;
+}
+
+a.piola {
+    color: orange; 
+    text-decoration:none;
+}
+
+a.piola:hover {
+    color: red; 
+    text-decoration:underline;
+}
+
+
+/***************************************************************/
+/* form 1
+----------------------------------------------------------------------------------*/
+
+table.form1 
+{
+    
+}
+table.form1 tr.title, table.form1 td.title
+{
+    font-weight: bold;
+    color: #ffffff;
+    background: #7f7f7f;    
+}
+table.form1 td
+{
+    padding: 4px 4px 4px 4px;
+}
+table.form1 td.label
+{
+    font-weight: bold;
+    color: #333333;
+    background: #e5e5e5;
+}
+
+table.form1 td.small
+{
+    font-size: 10px;
+    padding: 2px 2px 2px 2px;
+}
+table.form1 td.nopad td
+{
+    padding: 0px 0px 0px 0px;
+}
+
+table.form1 td.idins
+{
+    font-style: italic;
+}
+
+table.form1 tr.inlineForm td
+{
+    background-color: #ffc800;
+}
+
+    table.form1 td.small {
+        font-size: 11px;
+    }
+table.form1 td.buttons
+{
+    border-top: solid 1px #7f7f7f;
+    text-align: right;
+}
+
+table.form1-sublist td
+{
+    font-size: 10px;
+    padding: 2px 2px 2px 2px;
+}
+
+table.form1-sublist input
+{
+    font-size: 10px;
+}
+table.form1-sublist td.label
+{
+    background: transparent;
+    font-weight: bold;
+    font-size: 10px;
+}
+
+table.form1-sublist tr.title
+{
+    font-weight: bold;
+    color: #ffffff;
+    background: #7f7f7f;    
+}
+
+.cultivo-0, .cultivo-0 td{
+    background-color: #ff5b5b;
+    color: white;
+    font-weight: bold;
+}
+
+.cultivo-1, .cultivo-1 td { /*Raps*/
+    background-color: #006243;
+
+}
+
+.cultivo-2, .cultivo-2 td { /*Trigo*/
+    background-color: #FF8800;
+}
+
+.cultivo-3, .cultivo-3 td { /*Avena*/
+    background-color: #653600;
+}
+
+.cultivo-4, .cultivo-4 td { /*Lupino*/
+    background-color: #B2B2B2;
+}
+
+.cultivo-16, .cultivo-16 td { /*Linaza*/
+    background-color: #000099;
+}
+
+.cultivo-10, .cultivo-10 td { /*Maiz*/
+    background-color: #D47A00;
+}
+
+table.procesoIngreso {
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.readonly {
+    background-color: #e5e5e5;
+}
+
+a.exportlink {
+    color: red;
+}
+
+.procesoIngreso .creado {
+    background: #ffff00;
+    color: #000000;
+    padding: 3px;
+}
+
+.procesoIngreso .listoParaLiquidar {
+    background: #009900;
+    color: #ffffff;
+    padding: 3px;
+}
+
+.procesoIngreso .liquidado {
+    background: #009900;
+    color: #ffffff;
+    padding: 3px;
+}
+
+.procesoIngreso .anulado {
+    background: #ff0000;
+    color: #ffffff;
+    padding: 3px;
+}
+
+.sublist2 .icon {
+    padding: 3px;
+}
+
+.sublist2 .enEsperaDeCamion, .smallDataList .enEsperaDeCamion, .procesoIngreso .enEsperaDeCamion {
+    background: #ffff00;
+    color: #000000;
+    padding: 3px;
+}
+
+.sublist2 .enTransitoAPlantaDeOrigen, .smallDataList .enTransitoAPlantaDeOrigen, .procesoIngreso .enTransitoAPlantaDeOrigen  {
+    background: #ffff00;
+    color: #000000;
+    padding: 3px;
+}
+
+.sublist2 .enTransitoAPlantaDeDestino, .smallDataList .enTransitoAPlantaDeDestino, .procesoIngreso .enTransitoAPlantaDeDestino  {
+    background: #ffff00;
+    color: #000000;
+    padding: 3px;
+}
+
+.sublist2 .enRevisionDeDestino, .smallDataList .enRevisionDeDestino, .procesoIngreso .enRevisionDeDestino  {
+    background: #ffff00;
+    color: #000000;
+    padding: 3px;
+}
+
+.sublist2 .listoParaLiquidar, .smallDataList .listoParaLiquidar, .procesoIngreso .listoParaLiquidar  {
+    background: #009900;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 3px;
+}
+
+.sublist2 .propuestaDeLiquidacionCreada, .smallDataList .propuestaDeLiquidacionCreada, .procesoIngreso .propuestaDeLiquidacionCreada  {
+    background-color: orange;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 3px;
+}
+
+.sublist2 .liquidado, .smallDataList .liquidado, .procesoIngreso .liquidado  {
+    background: #009900;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 3px;
+}
+
+.smallDataListContainer {
+    padding-bottom: 10px;
+}
+
+#liquidacionesfletes .prontoPago {
+    padding: 4px;
+}
+
+#liquidacionesfletes .si {
+    background-color: #009900;
+    color: #ffffff;
+}
+
+#liquidacionesfletes .no {
+    background-color: #ffff00;
+    color: #000000;
+}
+
+/*.dataList .acuerdoComercial {
+    background-color: green;
+    color: white;
+}
+
+.dataList .contrato {
+    background-color: #d32e12;
+    color: white;
+}*/
+
+.oc-NumeroNegativo {
+    color: red;
+}
+
+.oc-Pendiente {
+    background-color: yellow;
+    color: black;
+    text-align: center;
+}
+
+.oc-Creada {
+    background-color: green;
+    color: white !important;
+    text-align: center;
+}
+
+.oc-Autorizada {
+    background-color: lightblue;
+    color: black;
+    text-align: center;
+}
+
+.oc-ArchivoCreado {
+    background-color: green;
+    color: white !important;
+    text-align: center;
+}
+
+.oc-NoEditable {
+    background-color: yellow;
+    color: black;
+    text-align: center;
+}
+
+.ct-RegistradoEnPorteria {
+    background-color: yellow;
+    color: black;
+    padding: 3px;
+}
+
+.ct-CargandoCamion {
+    background-color: yellow;
+    color: black;
+    padding: 3px;
+}
+
+.ct-CamionCargado {
+    background-color: yellow;
+    color: black;
+    padding: 3px;
+}
+
+.ct-Despachado {
+    background-color: green;
+    color: white !important;
+    padding: 3px;
+}
+
+.ct-ATiempo {
+    background-color: green;
+    color: white !important;
+    padding: 3px;
+}
+
+.ct-EnEspera {
+    background-color: yellow;
+    color: black;
+    padding: 3px;
+}
+
+.ct-Parado {
+    background-color: red;
+    color: white !important;
+    padding: 3px;
+}
+
+.ct-HayTraslados {
+    background-color: lightgreen;
+    text-align: center;
+}
+
+.ct-NoHayTraslados {
+    background-color: lightgoldenrodyellow;
+    text-align: center;
+}

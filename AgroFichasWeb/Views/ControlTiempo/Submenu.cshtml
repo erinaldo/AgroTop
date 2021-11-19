@@ -1,0 +1,22 @@
+﻿<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(232))
+    {
+        <li><a href="@Url.Content("~/ctregistrarllegada")">Reg. Llegada</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(233))
+    {
+        <li><a href="@Url.Content("~/ctregistrarpesajeinicial")">Reg. Pesaje Inicial</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(234))
+    {
+        <li><a href="@Url.Content("~/ctregistrarpesajefinal")">Reg. Pesaje Final</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(235))
+    {
+        <li><a href="@Url.Content("~/ctregistrarsalida")">Reg. Salida</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(224))
+    {
+        <li><a href="@Url.Content("~/controltiempo")">Ver Controles</a></li>
+    }
+</ul>

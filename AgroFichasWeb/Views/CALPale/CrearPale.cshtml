@@ -1,0 +1,203 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_Pale
+@{
+    ViewBag.Title = "Paletización";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdPale == 0)
+    {
+        ViewBag.SubTitle = "Crear Pallet";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Pallet";
+    }
+}
+@section CustomScripts
+{
+    <script>
+
+        //function PalletCntMax() {
+        //    $("#CantidadPaletizada").keyup(function () {
+        //        var CantidadPaletizada = $("#CantidadPaletizada").val();
+        //        var CntMax = $("#CntMax").val();
+
+        //        var cntPallet = parseInt(CantidadPaletizada) / parseInt(CntMax);
+        //        if (isNaN(cntPallet)) {
+        //            return 0;
+        //        } else {
+        //            document.getElementById("CntPallets").value = Math.ceil(cntPallet);
+        //            document.getElementById("HiddenCntPallets").value = Math.ceil(cntPallet);
+        //        }
+
+        //        var PalletMax10 = 10 * parseInt(CntMax);
+        //        var options = [];
+        //        if (CantidadPaletizada > parseInt(PalletMax10)) {
+        //            options.push('<span class="field-validation-error" style="display: inline;">La cantidad paletizada no puede superar los 10 pallets.</span>');
+        //            $($("#posicion1")).html(options.join(''));
+        //            $("#posicion1").show();
+        //            $('#CantidadPaletizada').addClass('input-validation-error');
+        //        }
+        //        else {
+        //            $("#posicion1").hide();
+        //            $('#CantidadPaletizada').removeClass('input-validation-error');
+        //        }
+        //    });
+        //}
+
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function DeleteCntMax() {
+            $("#CntMax").val(0);
+        }
+
+        function GetCntMax() {
+            var id = $('#IdTipoPale').val();
+            if (jQuery.isEmptyObject(id)) {
+                alert("El tipo de pallet es requerido");
+            }
+            $.getJSON(uri + '/Pale/GetTipoPale?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay tipos de pallets disponibles");
+                        DeleteCntMax();
+                        return;
+                    }
+                    else {
+                        $("#CntMax").val(result.CntMax);
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdTipoPale").change(function () {
+            DeleteCntMax();
+            GetCntMax();
+        });
+
+        $(document).ready(function () {
+            @if (Model.UltimoPallet_IdTipoPale != 0)
+            {
+                @:$("#IdTipoPale").val('@Model.UltimoPallet_IdTipoPale');
+                @:$("#CntMax").val('@Model.UltimoPallet_CntMax');
+            }
+        });
+    </script>
+}
+@if (!string.IsNullOrEmpty(ViewData["errMsg"].ToString()) || !string.IsNullOrEmpty(ViewData["okMsg"].ToString()))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(ViewData["okMsg"].ToString()))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @ViewData["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(ViewData["errMsg"].ToString()))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @ViewData["errMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Tipo <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdTipoPale", Model.GetTipoPales(Model.UltimoPallet_IdTipoPale), "(Seleccione Tipo)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdTipoPale")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cantidad Paletizada <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("CantidadPaletizada", Model.UltimoPallet_CantidadPaletizada, new { @class = "form-control", maxlength = "50", onkeypress = "PalletCntMax()" })
+                                        @Html.ValidationMessage("CantidadPaletizada")
+                                        <div id="posicion1" style="clear:both"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cantidad de Pallet <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @foreach (var lista in Model.GetCntPallets())
+                                        {
+                                            <div class="radio-custom radio-success">
+                                                @Html.RadioButton("CntPallets", lista.Value)<label for="@lista.Value">@lista.Text</label>
+                                            </div>
+                                        }
+                                        @*@Html.DropDownList("CntPallets", Model.GetCntPallets(), "(Seleccione Cantidad)", new { @class = "form-control" })*@
+                                        @Html.ValidationMessage("CntPallets")
+                                        @*<input style="background-color: #ebfbdf;" class="form-control" type="text" name="CntPallets" id="CntPallets" value="@Model.UltimoPallet_CntPallet" disabled />
+                        @Html.TextBox("HiddenCntPallets", Model.UltimoPallet_CntPallet)*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Control de Fechado <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdControlFechado", Model.GetControlFechado(Model.UltimoPallet_IdControlFechado), "(Seleccione Control de Fechado)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdControlFechado")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @Html.Hidden("IdGrupoEnvasador", Model.IdGrupoEnvasador)
+                @Html.Hidden("CntMax", Model.UltimoPallet_CntMax)
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Pallet" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

@@ -1,0 +1,83 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model SaldoCtaCte
+
+@{
+    ViewBag.NombreSeccion = "Saldos Cuenta Corriente";
+
+    var dc = new AgroFichasDBDataContext();
+
+    if (Model.IdSaldoCtaCte == 0)
+    {
+        ViewBag.Title = "Crear Saldo Cuenta Corriente";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Saldo Cuenta Corriente";
+    }
+
+    var empresas = from c in ((List<Empresa>)ViewData["empresas"])
+                   select new SelectListItem() { Text = c.Nombre, Value = c.IdEmpresa.ToString(), Selected = c.IdEmpresa == Model.IdEmpresa };
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <div class="p">
+            <label>Agricultor</label>
+            @Html.Partial("~/Views/Controls/AgricultorSelector.cshtml", new AgricultorSelectorViewModel() { IdAgricultor = Model.IdAgricultor, Nombre = (Model.Agricultor != null) ? Model.Agricultor.Nombre : "&nbsp;" })
+            @Html.ValidationMessage("IdAgricultor", ".")
+            @Html.Hidden("IdAgricultor", Model.IdAgricultor)
+        </div>
+        <p>
+            <label>Empresa</label>
+            @Html.DropDownList("IdEmpresa", empresas)
+            @Html.ValidationMessage("IdEmpresa", ".")
+        </p>
+        <p>
+            <label>Monto Cta Cte</label>
+            @Html.TextBox("MontoCtaCte", Model.MontoCtaCte, new { @class = "heavy std" })
+            @Html.ValidationMessage("MontoCtaCte", ".")
+        </p>
+        <p>
+            <label>Monto Documentado</label>
+            @Html.TextBox("MontoDocumentado", Model.MontoDocumentado, new { @class = "heavy std" })
+            @Html.ValidationMessage("MontoDocumentado", ".")
+        </p>
+        <p>
+            <label>Comentarios</label>
+            @Html.TextArea("Comentarios", Model.Comentarios, new { @class = "std", rows = 5 })
+            @Html.ValidationMessage("Comentarios", ".")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar Este Saldo" /> o @Html.ActionLink("Cancelar", "Index", (RouteValueDictionary)ViewData["indexRouteValues"])
+        </p>
+    </fieldset>
+
+}
+
+<script type="text/javascript">
+
+
+    function agsCallback(idAgricultor, nombre) {
+        $("#IdAgricultor").val(idAgricultor);
+    }
+
+</script>   

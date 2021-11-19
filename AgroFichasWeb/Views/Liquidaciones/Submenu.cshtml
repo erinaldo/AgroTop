@@ -1,0 +1,35 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var cultivos = (List<Cultivo>)ViewData["cultivos"];
+}
+<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(47))
+    {
+        <li><a href="@Url.Content("~/liquidaciones")">Listado</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(47))
+    {
+        <li><a href="@Url.Content("~/liquidaciones/liquidacionesdescuentos")">Listado Descuentos</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(48))
+    {
+        <li><a href="@Url.Content("~/liquidaciones/pendientes")">Crear Liquidación</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(59))
+    {
+        <li><a href="@Url.Content("~/liquidaciones/asignardescuentosindex")">Asignar Descuentos</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(68))
+    {
+        <li><a href="@Url.Content("~/liquidaciones/autorizaringresosindex")">Autorizar Ingresos</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(69))
+    {
+        <li><a href="@Url.Content("~/liquidaciones/autorizardescuentosindex")">Autorizar Descuentos</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1029))
+    {
+        <li><a href="@Url.Content("~/liquidaciones/pagarliquidaciones")">Pagar Liquidaciones</a></li>
+    }
+</ul>
+<div style="clear:both;"></div>

@@ -1,0 +1,119 @@
+﻿@using AgroFichasWeb.Models
+
+@{
+    ViewBag.Title = "Parámetros de Pesticidas para Fichas Técnicas";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    CAL_FT cAL_FT = (CAL_FT)ViewData["cAL_FT"];
+    List<CAL_ParametroPesticida> parametroPesticidas = (List<CAL_ParametroPesticida>)ViewData["parametroPesticidas"];
+    ViewBag.SubTitle = string.Format("Crear Parámetros de Pesticidas para la Ficha Técnica {0}", cAL_FT.Codigo);
+}
+@section CustomScripts
+{
+<script>
+        $("#select_all").click(function () {
+            var isChecked = $(this).is(':checked') ? true : false;
+            console.log("isChecked= " + isChecked);
+            if (isChecked) {
+                SelectAll();
+            } else {
+                DeselectAll();
+            }
+        })
+
+        function SelectAll() {
+            @foreach (CAL_ParametroPesticida parametroPesticida in parametroPesticidas)
+            {
+                @:$('#NA_' + @parametroPesticida.IdParametroPesticida + '').prop('checked', true);
+                @:$('#NA_' + @parametroPesticida.IdParametroPesticida + '').val(true);
+                @:$('#HID_NA_' + @parametroPesticida.IdParametroPesticida + '').val(true);
+            }
+        }
+
+        function DeselectAll() {
+            @foreach (CAL_ParametroPesticida parametroPesticida in parametroPesticidas)
+            {
+                @:$('#NA_' + @parametroPesticida.IdParametroPesticida + '').prop('checked', false);
+                @:$('#NA_' + @parametroPesticida.IdParametroPesticida + '').val(false);
+                @:$('#HID_NA_' + @parametroPesticida.IdParametroPesticida + '').val(false);
+            }
+        }
+
+        function SetCheckBox(IdParametroPesticida) {
+            var isChecked = $('#NA_' + IdParametroPesticida + '').is(':checked') ? true : false;
+            console.log("isChecked= " + isChecked);
+            if (isChecked) {
+                $('#NA_' + IdParametroPesticida + '').val(true);
+                $('#HID_NA_' + IdParametroPesticida + '').val(true);
+            }
+            else {
+                $('#NA_' + IdParametroPesticida + '').val(false);
+                $('#HID_NA_' + IdParametroPesticida + '').val(false);
+            }
+        }
+</script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm("Crear", "CALFTParametroPesticida", FormMethod.Post))
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Parámetros de Pesticidas <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <div class="col-sm-12" style="padding-top: 7px;">
+                                            <div class="col-sm-12 text-left" style="background-color: yellow">
+                                                <input type="checkbox" name="select_all" id="select_all" value="Seleccionar todo" /> <strong>Seleccionar todo</strong>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                @foreach (CAL_ParametroPesticida parametroPesticida in parametroPesticidas)
+                                                {
+                                                    <div class="col-sm-6" style="padding-left: 0;">
+                                                        <span>@parametroPesticida.Nombre (@parametroPesticida.UM)</span>
+                                                    </div>
+                                                    <div class="col-sm-2" style="padding-left: 0;">
+                                                        <input type="text" class="form-control" id="PARAM_min_@parametroPesticida.IdParametroPesticida" name="PARAM_min_@parametroPesticida.IdParametroPesticida" placeholder="Mín." value="0" />
+                                                    </div>
+                                                    <div class="col-sm-2" style="padding-left: 0;">
+                                                        <input type="text" class="form-control" id="PARAM_max_@parametroPesticida.IdParametroPesticida" name="PARAM_max_@parametroPesticida.IdParametroPesticida" placeholder="Máx." value="0" />
+                                                    </div>
+                                                    <div class="col-sm-2" style="padding-left: 0;">
+                                                        <input type="checkbox" id="NA_@parametroPesticida.IdParametroPesticida" name="NA_@parametroPesticida.IdParametroPesticida" value="false" onclick="SetCheckBox(@parametroPesticida.IdParametroPesticida)" /> N/A
+                                                        <input type="hidden" id="HID_NA_@parametroPesticida.IdParametroPesticida" name="HID_NA_@parametroPesticida.IdParametroPesticida" value="false" />
+                                                    </div>
+                                                    <div style="clear:both"></div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar estos Parámetros de Pesticidas" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

@@ -1,0 +1,398 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model Contrato
+
+@{
+    ViewBag.NombreSeccion = "Contratos";
+
+    var dc = new AgroFichasDBDataContext();
+
+    ViewBag.Title = String.Format("{0} Contrato", (Model.IdContrato == 0 ? "Crear" : "Editar"));
+
+    var items = (List<ItemContratoViewModel>)ViewData["items"];
+
+
+    var empresas = from c in ((List<Empresa>)ViewData["empresas"])
+                   select new SelectListItem() { Text = c.Nombre, Value = c.IdEmpresa.ToString(), Selected = c.IdEmpresa == Model.IdEmpresa };
+
+    var comunas = from c in ((List<Comuna>)ViewData["comunas"])
+                  orderby c.Nombre
+                  select new SelectListItem() { Text = c.Nombre, Value = c.IdComuna.ToString(), Selected = c.IdComuna == Model.IdComuna };
+
+    var sucursales = (from s in ((List<Sucursal>)ViewData["sucursales"])
+                     where s.Habilitada || s.IdSucursal == Model.IdSucursal
+                     orderby s.Nombre
+                     select new SelectListItem() { Text = s.Nombre, Value = s.IdSucursal.ToString(), Selected = s.IdSucursal == Model.IdSucursal }).ToList();
+
+    //sucursales.Add(new SelectListItem() { Text = "(Desconocida)", Value = null, Selected = Model.IdSucursal == null });
+
+
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/validate.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label>Temporada</label>
+            @if (Model.IdContrato == 0)
+            {
+                @Html.Partial("TemporadaSelector")
+            }
+            else
+            {
+                <text>@Model.Temporada.Nombre</text>
+                @Html.Hidden("IdTemporada", Model.IdTemporada)
+            }
+        </p>
+        <div class="p">
+            <label>Agricultor</label>
+            @Html.Partial("~/Views/Controls/AgricultorSelector.cshtml", new AgricultorSelectorViewModel() { IdAgricultor = Model.IdAgricultor, Nombre = (Model.Agricultor != null) ? Model.Agricultor.Nombre : "&nbsp;" })
+            @Html.ValidationMessage("IdAgricultor", ".")
+            @Html.Hidden("IdAgricultor", Model.IdAgricultor)
+
+        </div>
+        <p>
+            <label>Tipo de Contrato</label>
+            @Html.Partial("TipoContratoSelector")
+        </p>
+        <p>
+            <label>Número Contrato</label>
+            @Html.TextBox("NumeroContrato", Model.NumeroContrato, new { @class = "heavy std", maxlength = "20" })
+            @Html.ValidationMessage("NumeroContrato", ".")
+        </p>
+        <p>
+            <label>Empresa</label>
+            @Html.DropDownList("IdEmpresa", empresas)
+            @Html.ValidationMessage("IdEmpresa", ".")
+        </p>
+        <p>
+            <label>Comuna de Origen</label>
+            @Html.DropDownList("IdComuna", comunas)
+            @Html.ValidationMessage("IdComuna", ".")
+        </p>
+        <p>
+            <label>Sucursal de Entrega</label>
+            @Html.DropDownList("IdSucursal", sucursales, "(Desconocida)")
+            @Html.ValidationMessage("IdSucursal", ".")
+        </p>
+        <div class="p">
+            <label>Cultivos</label>
+            
+            <table id="culcon-table" class="sublist2" style="margin-bottom: 10px; display: inline-block">
+                <tbody>
+                    <tr>
+                        <td colspan="4">
+                            <a href="#" id="culcon-add" class="command">Agregar Cultivo</a>
+                            @Html.Partial("CultivoContrato")
+                            <script>
+                                $(document).ready(function () {
+                                    $("#culcon-add").click(function () {
+                                        var newIdItemContrato = parseInt($("#nextItemId").val(), 10);
+                                        culconShow({ id: newIdItemContrato, idCultivo: 0, superficie: 0, cantidad: 0 });
+                                        $("#nextItemId").val(newIdItemContrato + 1);
+                                        return false;
+                                    });
+                                });
+
+                                function culconCallback(cultivoContrato) {
+                                    agregarItem(cultivoContrato);
+                                };
+
+                            </script>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Cultivo</b></td>
+                        <td align="right"><b>Superficie (há)</b></td>
+                        <td align="right"><b>Cantidad (Kg)</b></td>
+                    </tr>
+                    @Html.Hidden("nextItemId", ViewData["nextItemId"])
+                    @foreach (var item in items)
+                    {
+                        var itemClass = String.Format("item-{0}", item.IdItemContrato);
+                        @Html.Hidden("Items.Index", item.IdItemContrato, new { @class = "itemIndex " + itemClass })
+                        @Html.Hidden(String.Format("Items[{0}].IdItemContrato", item.IdItemContrato), item.IdItemContrato, new { @class = itemClass })
+                        @Html.Hidden(String.Format("Items[{0}].IdCultivoContrato", item.IdItemContrato), item.IdCultivoContrato, new { @class = itemClass })
+                        @Html.Hidden(String.Format("Items[{0}].NombreCultivoContrato", item.IdItemContrato), item.NombreCultivoContrato, new { @class = itemClass })
+                        @Html.Hidden(String.Format("Items[{0}].Cantidad", item.IdItemContrato), item.Cantidad, new { @class = itemClass })
+                        @Html.Hidden(String.Format("Items[{0}].Superficie", item.IdItemContrato), item.Superficie, new { @class = itemClass })
+                    }
+                </tbody>
+            </table>
+            <script>
+                $(document).ready(function () {
+                    renderItems();
+                });
+
+                function renderItems() {
+                    $(".itemRow").remove();
+                    $(".itemIndex").each(function (ix, element) {
+                        var id = $(this).val();
+                        var s = '<tr class="itemRow">' +
+                                '<td>' + getItemValue(id, "NombreCultivoContrato") + '</td>' +
+                                '<td align="right">' + getItemValue(id, "Superficie") + '</td>' +
+                                '<td align="right">' + getItemValue(id, "Cantidad") + '</td>' +
+                                '<td><a href="javascript:editarItem(' + id + ');" class="command">Editar</a></td>' +
+                                '<td><a href="javascript:quitarItem(' + id + ');" class="command">Quitar</a></td>' +
+                                '</tr>';
+
+                        $("#culcon-table > tbody:last").append(s);
+                    });
+                }
+
+                function agregarItem(cultivoContrato) {
+
+                    var id = cultivoContrato.id;
+
+                    if ($(".item-" + id).length == 0) {
+
+                        var s = '<input class="itemIndex item-' + id + '" id="Item_Index" name="Items.Index" type="hidden" value="' + id + '" />' +
+                                renderItem(id, "IdItemContrato"         , cultivoContrato.id) +
+                                renderItem(id, "IdCultivoContrato"      , cultivoContrato.idCultivo) +
+                                renderItem(id, "NombreCultivoContrato"  , cultivoContrato.nombreCultivo) +
+                                renderItem(id, "Cantidad"               , cultivoContrato.cantidad) +
+                                renderItem(id, "Superficie"             , cultivoContrato.superficie)
+
+                        $("form").first().append(s);
+                    }
+                    else {
+                        setItemValue(id, 'IdItemContrato',        cultivoContrato.id);
+                        setItemValue(id, 'IdCultivoContrato',     cultivoContrato.idCultivo);
+                        setItemValue(id, 'NombreCultivoContrato', cultivoContrato.nombreCultivo);
+                        setItemValue(id, 'Superficie',            cultivoContrato.superficie);
+                        setItemValue(id, 'Cantidad',              cultivoContrato.cantidad);
+                    }
+
+                    renderItems();
+                }
+
+                function editarItem(id) {
+                    culconShow({
+                        id:             getItemValue(id, 'IdItemContrato'),
+                        idCultivo:      getItemValue(id, 'IdCultivoContrato'),
+                        nombreCultivo:  getItemValue(id, 'NombreCultivoContrato'),
+                        superficie:     getItemValue(id, 'Superficie'), 
+                        cantidad:       getItemValue(id, 'Cantidad')
+                    });
+                }
+
+                function quitarItem(id) {
+
+                    if (!confirm("¿Está seguto de que desea eliminar este cultivo?"))
+                        return;
+
+                    $(".item-" + id).remove();
+                    renderItems();
+                }
+
+                function renderItem(id, field, value) {
+                    return '<input type="hidden" class="item-' + id + '" id="Items_' + id + '__' + field + '" name="Items[' + id + '].' + field + '" value="' + value + '" />';
+                }
+
+                function getItemValue(id, field) {
+                    return $('#Items_' + id + '__' + field).val();
+                }
+
+                function setItemValue(id, field, value) {
+                    return $('#Items_' + id + '__' + field).val(value);
+                }
+
+
+            </script>
+
+
+
+        </div>
+        <p>
+            <label>Comentarios</label>
+            @Html.TextArea("Comentarios", Model.Comentarios, new { @class = "std", rows = 5 })
+            @Html.ValidationMessage("Comentarios", ".")
+        </p>
+        <p>
+            <label for="EnPortada">Habilitado</label>
+            @Html.CheckBox("Habilitado", Model.Habilitado)   Permitir el uso de este Contrato
+            @Html.ValidationMessage("Habilitado", ".")
+        </p>
+
+        @if (SYS_User.Current().HasPermiso(15))
+        {
+            <div class="p">
+                <label>Convenios de Precio</label>
+                <table class="sublist2" style="margin-bottom: 10px; display: inline-block; width: 750px">
+                    @if (Model.IdContrato == 0)
+                    {
+                        <tr><td colspan="10"><i>Debe guardar el contrato antes de crear convenios de precio</i></td></tr>
+                    }
+                    else
+                    {
+                        if (SYS_User.Current().HasPermiso(16))
+                        {
+                        <tr>
+                            <td colspan="10">@Html.ActionLink("Agregar convenio de precio", "crear", "conveniosprecio", new { idcontrato = Model.IdContrato, backto = Request.Url.AbsoluteUri }, new { @class = "command" }) </td>
+                        </tr>
+                        }
+                        <tr>
+                            <td><b>ID</b></td>
+                            <td colspan="3"><b>Prioridad</b></td>
+                            <td align="right"><b>Volumen</b></td>
+                            <td align="right"><b>Precio</b></td>
+                            <td><b>Sucursales</b></td>
+                        </tr>
+                    }
+                    @{
+                    var puedeEditarConvenio = SYS_User.Current().HasPermiso(17);
+                    foreach (var convenio in Model.ConvenioPrecio.OrderBy(c => c.Prioridad))
+                    {
+                        <tr valign="">
+                            <td>@convenio.IdConvenioPrecio</td>
+                            <td>@convenio.Prioridad</td>
+                            @if (puedeEditarConvenio)
+                            {
+                                <td align="center">
+                                    @Html.ActionImage(Url.Content("~/content/images/up_green_small.png"), "subir", "conveniosprecio", new { id = convenio.IdConvenioPrecio, backto = Request.Url.AbsoluteUri }, null)
+                                </td>
+                                <td align="center">
+                                    @Html.ActionImage(Url.Content("~/content/images/down_green_small.png"), "bajar", "conveniosprecio", new { id = convenio.IdConvenioPrecio, backto = Request.Url.AbsoluteUri }, null)
+                                </td>                                
+                            }
+                            <td align="right" nowrap="nowrap">
+                                @String.Format("{0:#,##0.00}", convenio.Cantidad / 1000M) Ton
+                            </td>
+                            <td align="right" nowrap="nowrap">
+                                @String.Format(convenio.Moneda.Formato, convenio.PrecioUnidad)
+                            </td>
+                            <td>@String.Join(", " , convenio.ConvenioPrecioSucursal.Select(c => c.Sucursal.Nombre))</td>
+                            <td>
+                                @if (puedeEditarConvenio)
+                                {
+                                    @Html.ActionLink("Editar", "editar", "conveniosprecio", new { id = convenio.IdConvenioPrecio, backto = Request.Url.AbsoluteUri }, new { @class = "command" })
+                                }
+                            </td>
+                            <td>
+                                @if (SYS_User.Current().HasPermiso(18))
+                                {
+                                    @Html.ActionLink("Eliminar", "eliminar", "conveniosprecio", new { id = convenio.IdConvenioPrecio, backto = Request.Url.AbsoluteUri }, new { @class = "command , eliminar-convenioprecio" })
+                                }
+                            </td>
+                        </tr>
+                        foreach (var ajuste in convenio.ConvenioPrecioAjuste)
+                        {
+                            <tr valign="top">
+                                <td colspan="4" align="right"><b>@(ajuste.PrecioUnidad > 0 ? "Bono" : "Descuento")<br />@ajuste.MotivoAjustePrecio.Nombre</b></td>
+                                <td align="right" nowrap="nowrap">
+                                    @String.Format("{0:#,##0.00}", ajuste.Cantidad / 1000M) Ton
+                                </td>
+                                <td align="right" nowrap="nowrap">
+                                    @String.Format(convenio.Moneda.Formato, Math.Abs(ajuste.PrecioUnidad))
+                                </td>
+                                <td>@String.Join(", ", ajuste.ConvenioPrecioAjusteSucursal.Select(c => c.Sucursal.Nombre))</td>
+                            </tr>
+                        }
+                    }
+                    }
+                </table>
+            </div>
+        }
+        @if (SYS_User.Current().HasPermiso(19))
+        {
+            <div class="p">
+                <label>Convenios de Cambio Moneda</label>
+                <table class="sublist2" style="margin-bottom: 10px; display: inline-block">
+                    @if (Model.IdContrato == 0)
+                    {
+                        <tr><td colspan="10"><i>Debe guardar el contrato antes de crear convenios de cambio de moneda</i></td></tr>
+                    }
+                    else
+                    {
+                        if (SYS_User.Current().HasPermiso(20))
+                        {
+                            <tr>
+                                <td colspan="10">@Html.ActionLink("Agregar convenio de cambio de moneda", "crear", "conveniosmoneda", new { idcontrato = Model.IdContrato, backto = Request.Url.AbsoluteUri }, new { @class = "command" }) </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td><b>ID</b></td>
+                            <td colspan="3"><b>Prioridad</b></td>
+                            <td align="right"><b>Cantidad</b></td>
+                            <td align="right"><b>Tasa Cambio</b></td>
+                        </tr>
+                    }
+                    @{
+                    var puedeEditarConvenio = SYS_User.Current().HasPermiso(21);
+                    foreach (var convenio in Model.ConvenioCambioMoneda.OrderBy(c => c.Prioridad))
+                    {
+                        <tr>
+                            <td>@convenio.IdConvenioCambioMoneda</td>
+                            <td>@convenio.Prioridad</td>
+                            @if (puedeEditarConvenio)
+                            {
+                                <td align="center">
+                                    @Html.ActionImage(Url.Content("~/content/images/up_green_small.png"), "subir", "conveniosmoneda", new { id = convenio.IdConvenioCambioMoneda, backto = Request.Url.AbsoluteUri }, null)
+                                </td>
+                                <td align="center">
+                                    @Html.ActionImage(Url.Content("~/content/images/down_green_small.png"), "bajar", "conveniosmoneda", new { id = convenio.IdConvenioCambioMoneda, backto = Request.Url.AbsoluteUri }, null)
+                                </td>
+                            }
+                            <td align="right">
+                                @String.Format(convenio.Moneda1.Formato, convenio.Cantidad)
+                            </td>
+                            <td align="right">
+                                @String.Format("{0:#,##0.00} {1} / {2}", convenio.PrecioUnidad, convenio.Moneda.Simbolo, convenio.Moneda1.Simbolo)
+                            </td>
+                            <td>
+                                @if (puedeEditarConvenio)
+                                {
+                                    @Html.ActionLink("Editar", "editar", "conveniosmoneda", new { id = convenio.IdConvenioCambioMoneda, backto = Request.Url.AbsoluteUri }, new { @class = "command" })
+                                }
+                            </td>
+                            <td>
+                                @if (SYS_User.Current().HasPermiso(22))
+                                {
+                                    @Html.ActionLink("Eliminar", "eliminar", "conveniosmoneda", new { id = convenio.IdConvenioCambioMoneda, backto = Request.Url.AbsoluteUri }, new { @class = "command , eliminar-conveniomoneda" })
+                                }
+                            </td>
+                        </tr>
+                    }
+                    }
+                </table>
+            </div>
+        }        
+        <p class="okcancel">
+            <input type="submit" value="Guardar Este Contrato" /> o @Html.ActionLink("Cancelar", "Index", (RouteValueDictionary)ViewData["indexRouteValues"])
+        </p>
+    </fieldset>
+
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(".eliminar-convenioprecio").click(function () {
+            return confirm("¿Está seguro de que desea eliminar este convenio de precio?");
+        });
+    });
+
+    function agsCallback(idAgricultor, nombre) {
+        $("#IdAgricultor").val(idAgricultor);
+    }
+
+
+</script>   

@@ -1,0 +1,148 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.SoftwareCalidad
+@model DespachoCargaGranelViewModel
+@{
+    ViewBag.Title = string.Format("Despacho Carga a Granel #{0}", Model.DespachoCargaGranel.IdDespachoCargaGranel);
+    Layout = "~/Views/Shared/_ResponsiveLayoutPrint.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+}
+@section VendorCSS
+{
+    <!-- Invoice Print Style -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/stylesheets/invoice-print.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        window.print();
+        //window.close();
+    </script>
+}
+
+<div class="invoice">
+    <header class="clearfix">
+        <div class="row">
+            <div class="col-sm-8 mt-md">
+                <h2 class="h2 text-dark text-weight-bold">
+                    Despacho Carga a Granel <span style="font-family: Consolas">#@Model.DespachoCargaGranel.IdDespachoCargaGranel</span><br />
+                    <small>Orden de Producción <span style="font-family: Consolas">@Model.OrdenProduccion.LoteComercial</span></small>
+                </h2>
+            </div>
+            <div class="col-sm-4 text-right mt-md mb-md">
+                @if (Model.DespachoCargaGranel.Reproceso)
+                {
+                    <i class="fa fa-recycle fa-5x" style="color: black"></i>
+                }
+            </div>
+        </div>
+    </header>
+    <header class="clearfix">
+        <div class="bill-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bill-to">
+                        <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">ANTECEDENTES PRELIMINARES:</h3>
+                        <div class="text-left">
+                            <table class="table h5 text-dark" style="border: none">
+                                <tbody>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">PRODUCTO:</span></td>
+                                        <td class="text-left"><span class="value">@Model.Producto.Nombre</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">ESPESOR:</span></td>
+                                        <td class="text-left"><span class="value">@(Model.EspesorProducto != null ? string.Format("{0:N2}-{1:N2} mm", Model.EspesorProducto.Min, Model.EspesorProducto.Max) : "(No tiene Espesor)")</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">FICHA TÉCNICA:</span></td>
+                                        <td class="text-left"><span class="value">@Model.FichaTecnica.Codigo</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">VERSIÓN:</span></td>
+                                        <td class="text-left"><span class="value">@Model.ControlVersion.Version</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">RET. AUTOMÁTICO:</span></td>
+                                        <td class="text-left"><span class="value @(Model.DespachoCargaGranel.RetenidoAut.Value ? "cal-Retenido" : "cal-NoRetenido")">@(Model.DespachoCargaGranel.RetenidoAut.Value ? "Sí" : "No")</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">RET. ANALISTA:</span></td>
+                                        <td class="text-left"><span class="value @(Model.DespachoCargaGranel.Retenido.HasValue && Model.DespachoCargaGranel.Retenido.Value ? "cal-Retenido" : "cal-NoRetenido")">@(Model.DespachoCargaGranel.Retenido.HasValue && Model.DespachoCargaGranel.Retenido.Value ? "Sí" : "No")</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="bill-info" style="margin-top: 20px;">
+        <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">CARGA</h3>
+        <div class="text-left">
+            <table class="table h5 text-dark" style="border: none">
+                <thead>
+                    <tr>
+                        <th>Nº CONTENEDOR DIARIO</th>
+                        <th>CONTENEDOR</th>
+                        <th>SILO DE ALIMENTACIÓN</th>
+                        <th>CANTIDAD CARGADA</th>
+                        <th>KG NO CONFORME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="b-top-none">
+                        <td class="text-left"><span class="value">@Model.DespachoCargaGranel.NContainerDiario</span></td>
+                        <td class="text-left"><span class="value">@Model.DespachoCargaGranel.CAL_RITContenedor.NContenedor</span></td>
+                        <td class="text-left">
+                            <span class="value">
+                                @foreach (CAL_DespachoCargaGranelSilo siloAlimentacion in Model.DespachoCargaGranel.GetSilos())
+                                {
+                                    @Model.DespachoCargaGranel.GetSilo(siloAlimentacion.IdSilo)<br />
+                                }
+                            </span>
+                        </td>
+                        <td class="text-left"><span class="value">@string.Format("{0:N0}", Model.DespachoCargaGranel.CantidadCargada)</span></td>
+                        <td class="text-left"><span class="value">@string.Format("{0:N0}", Model.DespachoCargaGranel.KgProductoNoConforme)</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (!Model.DespachoCargaGranel.NoEstaAnalizado(Model.DespachoCargaGranel.IdDespachoCargaGranel))
+    {
+        <div class="bill-info" style="margin-top: 20px;">
+            <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS</h3>
+            <div class="text-left">
+                <table class="table h5 text-dark" style="border: none">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Parámetro</th>
+                            <th>Mínimo</th>
+                            <th>Máximo</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (CAL_DespachoCargaGranelTest cAL_AnalisisDespachoCargaGranelTest in Model.AnalisisDespachoCargaGranelTestList)
+                        {
+                            <tr class="b-top-none">
+                                <td colspan="2"><span class="text-dark text-weight-semibold">@cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.Nombre.ToUpper() (@cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.UM.ToUpper()):</span></td>
+                                <td>@Formatter.Format(cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.MinValidValue.Value, cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.UM, cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.FormatString, cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.IdParametroAnalisis)</td>
+                                <td>@Formatter.Format(cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.MaxValidValue.Value, cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.UM, cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.FormatString, cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.IdParametroAnalisis)</td>
+                                <td class="text-left"><span class="value @(cAL_AnalisisDespachoCargaGranelTest.ValidValue.Value ? "cal-ValidValue" : "cal-NoValidValue")">@Formatter.Format(cAL_AnalisisDespachoCargaGranelTest.Value, cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.UM, cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.FormatString, cAL_AnalisisDespachoCargaGranelTest.CAL_FTParametroAnalisis.IdParametroAnalisis)</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

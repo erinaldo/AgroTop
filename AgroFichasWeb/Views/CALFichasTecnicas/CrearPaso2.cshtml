@@ -1,0 +1,468 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_FT
+
+@{
+    ViewBag.Title = "Fichas Técnicas";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdFichaTecnica == 0)
+    {
+        ViewBag.SubTitle = "Crear Ficha Técnica - Paso 2";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Ficha Técnica";
+    }
+
+    List<CAL_ParametroAnalisis> list = (List<CAL_ParametroAnalisis>)ViewData["list"];
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#Observacion').summernote({
+            height: 500
+        });
+
+        // dec2hex :: Integer -> String
+        function dec2hex(dec) {
+            return ('0' + dec.toString(16)).substr(-2)
+        }
+
+        // generateId :: Integer -> String
+        function generateId(len) {
+            var arr = new Uint8Array((len || 40) / 2)
+            window.crypto.getRandomValues(arr)
+            return Array.from(arr, dec2hex).join('')
+        }
+
+        $(document).ready(function () {
+            $("#btnAgregar").click(function () {
+                console.log("text= " + $("#IdSaco option:selected").text() + " value= " + $("#IdSaco option:selected").val());
+                var IdSaco = $("#IdSaco option:selected").val();
+                var Saco = $("#IdSaco option:selected").text();
+                if (IdSaco == "") {
+                    alert("Debe seleccionar el saco");
+                    return;
+                }
+                var IdPesoSaco = $("#cal-PesoSaco option:selected").val();
+                var PesoSaco = $("#cal-PesoSaco option:selected").text();
+                if (IdPesoSaco == "") {
+                    alert("Debe seleccionar el peso del saco");
+                    return;
+                }
+                var IdctrlFechado = $("#IdControlFechado").val();
+                var ctrlFechado = $("#IdControlFechado option:selected").text();
+                if (ctrlFechado == "") {
+                    alert("Debe seleccionar el control de fechado del saco");
+                    return;
+                }
+                var hilo = $("#hilo").val();
+
+                var genId = generateId(40);
+
+                var s = "<tr id=\"cal-cont-Saco-" + genId + "\">";
+                s += "<td><span>" + Saco + "</span><input type=\"hidden\" id=\"Saco_"               + genId + "\" name=\"Sacos_"       + genId + "\" value=\"" + IdSaco + "\" /></td>";
+                s += "<td><span>" + PesoSaco + "</span><input type=\"hidden\" id=\"pesoSaco_"       + genId + "\" name=\"pesoSaco_"    + genId + "\" value=\"" + PesoSaco + "\" /></td>";
+                s += "<td><span>" + ctrlFechado + "</span><input type=\"hidden\" id=\"ctrlFechado_" + genId + "\" name=\"ctrlFechado_" + genId + "\" value=\"" + IdctrlFechado + "\" /></td>";
+                s += "<td><span>" + hilo + "</span><input type=\"hidden\" id=\"hilo_"               + genId + "\" name=\"hilo_"        + genId + "\" value=\"" + hilo + "\" /></td>";
+                s += "<td><input type=\"hidden\" id=\"NEWID\" name=\"NEWID\" value=\"" + genId + "\" /><input type=\"button\" class=\"btn btn-danger btn-xs remove-item\" id=\"btnEliminar\" value=\"Eliminar\" onclick=\"Eliminar('" + genId + "')\" /></td>";
+                s += "</tr>";
+                $("#cal-Sacos").append(s);
+            });
+        });
+
+        function Eliminar(IdSaco) {
+            $("#cal-cont-Saco-" + IdSaco + "").remove();
+            $("#cal-separator-Saco-" + IdSaco + "").remove();
+        }
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="', '', '">', 'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        function GetPesoSaco(id) {
+            var idSaco = $("#IdSaco").val();
+            if (idSaco == "") {
+                alert("Debe seleccionar el saco");
+                return;
+            }
+            SetCargando($("#cal-PesoSaco"));
+            $.getJSON(uri + '/Sacos/GetPesoSaco?IdSaco=' + idSaco)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result == null || result.length == 0) {
+                        alert("No hay pesos disponibles");
+                    }
+                    else {
+                        options.push('<option value="', '', '">', '(Seleccione Peso Saco)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="', result[i].IdPesoSaco, '">', result[i].Peso, '</option>');
+                        }
+
+                        $($("#cal-PesoSaco")).html(options.join(''));
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdSaco").on("change", valTipoColorHiloSaco);
+        function valTipoColorHiloSaco() {
+            if (document.getElementById("IdSaco").value != 'NULL') {
+                var idSaco = $("#IdSaco").val();
+                $.getJSON(uri + '/Sacos/GetTipoColorHiloSaco?IdSaco=' + idSaco)
+                    .done(function (result) {
+                        if (result == null || result.length == 0) {
+                            alert("No hay colores de hilo disponibles");
+                        }
+                        else {
+                            document.getElementById("hilo").value = result;
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(err);
+                    });
+            }
+        }
+
+        $("#select_all").click(function () {
+            var isChecked = $(this).is(':checked') ? true : false;
+            console.log("isChecked= " + isChecked);
+            if (isChecked) {
+                SelectAll();
+            } else {
+                DeselectAll();
+            }
+        })
+
+        function SelectAll() {
+            @foreach (CAL_ParametroAnalisis parametroAnalisis in list)
+            {
+                @:$('#NA_' + @parametroAnalisis.IdParametroAnalisis + '').prop('checked', true);
+                @:$('#NA_' + @parametroAnalisis.IdParametroAnalisis + '').val(true);
+                @:$('#HID_NA_' + @parametroAnalisis.IdParametroAnalisis + '').val(true);
+            }
+        }
+
+        function DeselectAll() {
+            @foreach (CAL_ParametroAnalisis parametroAnalisis in list)
+            {
+                @:$('#NA_' + @parametroAnalisis.IdParametroAnalisis + '').prop('checked', false);
+                @:$('#NA_' + @parametroAnalisis.IdParametroAnalisis + '').val(false);
+                @:$('#HID_NA_' + @parametroAnalisis.IdParametroAnalisis + '').val(false);
+            }
+        }
+
+        function SetCheckBox(IdParametroAnalisis) {
+            var isChecked = $('#NA_' + IdParametroAnalisis + '').is(':checked') ? true : false;
+            console.log("isChecked= " + isChecked);
+            if (isChecked) {
+                $('#NA_' + IdParametroAnalisis + '').val(true);
+                $('#HID_NA_' + IdParametroAnalisis + '').val(true);
+            }
+            else {
+                $('#NA_' + IdParametroAnalisis + '').val(false);
+                $('#HID_NA_' + IdParametroAnalisis + '').val(false);
+            }
+        }
+
+        $("#cal-ContainerGranel").click(function () {
+            var isChecked = $(this).is(':checked') ? true : false;
+            if (isChecked) {
+                $("#cal-ContainerSacos").hide();
+            } else {
+                $("#cal-ContainerSacos").show();
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm("CrearPaso2", "CALFichasTecnicas", FormMethod.Post))
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Familia de Productos <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control">@Model.CAL_Producto.Nombre</span>
+                                        @Html.Hidden("IdProducto", Model.IdProducto)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control">@Model.CAL_Subproducto.Nombre</span>
+                                        @Html.Hidden("IdSubproducto", Model.IdSubproducto)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Código <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Codigo", Model.Codigo, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("Codigo")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cliente <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdCliente", Model.GetClientes(Model.IdCliente), "(Seleccione Clientes)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdCliente")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">País <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("PaisCodigo", Model.GetPaises(Model.PaisCodigo), "(Seleccione País)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("PaisCodigo")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">SAG <span class="required">*</span></label>
+                                    <div class="col-sm-6" style="padding-top: 7px;">
+                                        @Html.CheckBox("SAG", Model.Sag)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fumigación <span class="required">*</span></label>
+                                    <div class="col-sm-6" style="padding-top: 7px;">
+                                        @Html.CheckBox("Fumigacion", Model.Fumigacion)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Peso Total del Picking Test <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("PesoTotalPickingTest", Model.PesoTotalPickingTest, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("PesoTotalPickingTest")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label"><strong>Granel</strong></label>
+                                    <div class="col-sm-6" style="padding-top: 7px;">
+                                        @Html.CheckBox("Granel", Model.Granel, new { id = "cal-ContainerGranel" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="cal-ContainerSacos">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Sacos <span class="required">*</span></label>
+                                    <div class="col-sm-8">
+                                        <table id="datatable" class="table" style="margin-bottom: 0;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Saco</th>
+                                                    <th>Peso Saco</th>
+                                                    <th>Control Fechado</th>
+                                                    <th>Hilo</th>
+                                                    <th>Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="cal-Sacos">
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("IdSaco", Model.GetSacos(Model.IdSaco), "(Seleccione Saco)", new { @class = "form-control", onchange = "GetPesoSaco()" })
+                                                        @Html.ValidationMessage("IdSaco")
+                                                    </td>
+                                                    <td><select class="form-control" id="cal-PesoSaco" name="PesoSaco_"><option value="">Seleccione Peso Saco</option></select></td>
+                                                    <td>
+                                                        @Html.DropDownList("IdControlFechado", Model.GetSacoControlFechados(Model.IdControlFechado), "(Seleccione Control Fechado)", new { @class = "form-control" })
+                                                        @Html.ValidationMessage("IdControlFechado")
+                                                    </td>
+                                                    <td><input type="text" id="hilo" class="form-control" readonly /></td>
+                                                    <td><input type="button" class="btn btn-primary" id="btnAgregar" value="Agregar" /></td>
+                                                </tr>
+                                                @foreach (CAL_GetSacoPorIdFichaTecnicaResult saco in Model.GetSaco())
+                                                {
+                                                    <tr id="cal-cont-Saco-@saco.NEWID">
+                                                        <td>
+                                                            <span>@saco.Nombre</span>
+                                                            <input type="hidden" id="Sacos_@saco.NEWID" name="Sacos_@saco.NEWID" value="@saco.IdSaco" />
+                                                        </td>
+                                                        <td>
+                                                            <span>@string.Format("{0:N2} kg", saco.Peso)</span>
+                                                            <input type="hidden" id="pesoSaco_@saco.NEWID" name="pesoSaco_@saco.NEWID" value="@saco.Peso" />
+                                                        </td>
+                                                        <td>
+                                                            <span>@saco.Descripcion</span>
+                                                            <input type="hidden" id="ctrlFechado_@saco.NEWID" name="ctrlFechado_@saco.NEWID" value="@saco.IdControlFechado" />
+                                                        </td>
+                                                        <td>
+                                                            <span>@saco.ColorHilo</span>
+                                                            <input type="hidden" id="hilo_@saco.NEWID" name="hilo_@saco.NEWID" value="@saco.ColorHilo" />
+                                                        </td>
+                                                        <td>
+                                                            <input type="hidden" id="NEWID" name="NEWID" value="@saco.NEWID" />
+                                                            <input type="button" class="btn btn-danger btn-xs remove-item" id="btnEliminar" value="Eliminar" onclick="Eliminar('@saco.NEWID')" />
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Envase (Contenedores-Sacos)  <span class="required">*</span></label>
+                                    <div class="col-sm-8">
+                                        <table id="datatable" class="table" style="margin-bottom: 0;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Temperatura Óptima</th>
+                                                    <th>Humedad Relativa</th>
+                                                    <th>Vida Útil</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>@Html.DropDownList("IdTemperatura", Model.GetTemperatura(Model.IdTemperatura), "(Seleccione Temperatura)", new { @class = "form-control" })</td>
+                                                    <td>@Html.DropDownList("HumedadRelativa", Model.GetHumedadRelativa(Model.HumedadRelativa), "(Seleccione Humedad Relativa)", new { @class = "form-control" })</td>
+                                                    <td>@Html.DropDownList("VidaUtil", Model.GetVidaUtil(Model.VidaUtil), "(Seleccione Vida Útil)", new { @class = "form-control" })</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>@Html.ValidationMessage("IdTemperatura")</td>
+                                                    <td>@Html.ValidationMessage("HumedadRelativa")</td>
+                                                    <td>@Html.ValidationMessage("VidaUtil")</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Parámetros de Análisis <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <div class="col-sm-12" style="padding-top: 7px;">
+                                            <div class="col-sm-12 text-left" style="background-color: yellow">
+                                                <input type="checkbox" name="select_all" id="select_all" value="Seleccionar todo" /> <strong>Seleccionar todo</strong>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                @foreach (CAL_ParametroAnalisis parametroAnalisis in list)
+                                                {
+                                                    <div class="col-sm-6" style="padding-left: 0;">
+                                                        <span>
+                                                            @parametroAnalisis.Nombre<br />
+                                                            <sup>@parametroAnalisis.UM.ToUpper()</sup>
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-sm-2" style="padding-left: 0;">
+                                                        <input type="text" class="form-control" id="PARAM_min_@parametroAnalisis.IdParametroAnalisis" name="PARAM_min_@parametroAnalisis.IdParametroAnalisis" placeholder="Mín." value="0" />
+                                                    </div>
+                                                    <div class="col-sm-2" style="padding-left: 0;">
+                                                        <input type="text" class="form-control" id="PARAM_max_@parametroAnalisis.IdParametroAnalisis" name="PARAM_max_@parametroAnalisis.IdParametroAnalisis" placeholder="Máx." value="0" />
+                                                    </div>
+                                                    <div class="col-sm-2" style="padding-left: 0;">
+                                                        <input type="checkbox" id="NA_@parametroAnalisis.IdParametroAnalisis" name="NA_@parametroAnalisis.IdParametroAnalisis" value="false" onclick="SetCheckBox(@parametroAnalisis.IdParametroAnalisis)" /> N/A
+                                                        <input type="hidden" id="HID_NA_@parametroAnalisis.IdParametroAnalisis" name="HID_NA_@parametroAnalisis.IdParametroAnalisis" value="false" />
+                                                    </div>
+                                                    <div style="clear:both"></div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Observación</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextArea("Observacion", Model.Observacion, new { @class = "summernote", @data_plugin_summernote = "{}" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Verificación Cliente <span class="required">*</span></label>
+                                    <div class="col-sm-6" style="padding-top: 7px;">
+                                        @Html.CheckBox("VerificacionCliente", Model.VerificacionCliente)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar esta Ficha Técnica" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

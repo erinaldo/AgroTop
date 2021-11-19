@@ -1,0 +1,18 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var tipos = (List<TipoDescuento>)ViewData["tiposDescuento"];
+}    
+    <ul>
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(36))
+        {
+            <li><a href="@Url.Content("~/descuentos")">Listado</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(37))
+        {
+            foreach (var tipo in tipos)
+            {
+                <li><a href="@Url.Content("~/descuentos/crear?idTipoDescuento=" + tipo.IdTipoDescuento)">Crear @tipo.Nombre</a></li>
+            }
+        }
+    </ul>
+    <div style="clear:both;"></div>

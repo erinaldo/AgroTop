@@ -1,0 +1,102 @@
+﻿@using AgroFichasWeb.Models
+@model OPR_RegistroGeneracionMaxisacos
+@{
+    ViewBag.Title = "Registro de Turno de Subproducto";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+    var registroTurno = (OPR_RegistroTurno)ViewData["registroTurno"];
+}
+
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/bootstrap-timepicker/css/bootstrap-timepicker.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/bootstrap-timepicker/css/MvcBootstrapTimepicker.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+}
+
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Content/porto/vendor/bootstrap-timepicker/bootstrap-timepicker.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/bootstrap-timepicker/MvcBootstrapTimepicker.js")"></script>
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    @if (Model.IdRegistroGeneracionMaxisacos == 0)
+                    {
+                        <h2 class="panel-title">Registrar Subproducto del Turno #@registroTurno.Correlativo @registroTurno.OPR_Turno.OPR_TipoTurno.Descripcion</h2>
+                    }
+                    else
+                    {
+                        <h2 class="panel-title">Editar Registro de Subproducto #@Model.IdRegistroGeneracionMaxisacos</h2>
+                    }
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Despedradora (kg)<span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Despedradora", Model.Despedradora, new { @class = "form-control" })
+                                            @Html.ValidationMessage("Despedradora")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Desperdicio (kg)<span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Desperdicio", Model.Desperdicio, new { @class = "form-control" })
+                                            @Html.ValidationMessage("Desperdicio")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Sortex (kg)<span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Sortex", Model.Sortex, new { @class = "form-control" })
+                                            @Html.ValidationMessage("Sortex")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Guardar" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

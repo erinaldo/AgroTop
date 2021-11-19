@@ -1,0 +1,94 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model Cliente
+
+@{
+    ViewBag.NombreSeccion = "Clientes";
+    if (Model.IdCliente == 0)
+    {
+        ViewBag.Title = "Crear Cliente";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Cliente";
+    }
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+<fieldset class="dataForm">
+    <p>
+        <label for="Titulo">DNI/RUT</label>
+        @Html.TextBox("DNI", Model.DNI, new { @class = "std", maxlength = "50" })
+    </p>
+    <p>
+        <label for="Titulo">Razón Social</label>
+        @Html.TextBox("RazonSocial", Model.RazonSocial, new { @class = "std", maxlength = "255" })
+        @Html.ValidationMessage("RazonSocial", " ")
+    </p>
+    <p>
+        <label for="Titulo">País</label>
+        @Html.DropDownList("PaisCodigo", Model.GetPaises(Model.PaisCodigo), "-- Seleccione País --", new { @class = "std" })
+    </p>
+    <p>
+        <label for="Titulo">Teléfono</label>
+        @Html.TextBox("Telefono", Model.Telefono, new { @class = "std", maxlength = "15" })
+    </p>
+    <p>
+        <label for="Titulo">Teléfono 2</label>
+        @Html.TextBox("Telefono2", Model.Telefono2, new { @class = "std", maxlength = "15" })
+    </p>
+    <p>
+        <label for="Titulo">Email Cliente</label>
+        @Html.TextBox("EmailCliente", Model.EmailCliente, new { @class = "std", maxlength = "255" })
+    </p>
+    <p>
+        <label for="Titulo">Email Contacto Comercial</label>
+        @Html.TextBox("EmailContactoComercial", Model.EmailContactoComercial, new { @class = "std", maxlength = "255" })
+    </p>
+    <p>
+        <label for="Titulo">Empresa</label>
+        @foreach (var empresa in Model.GetEmpresas(Model.IdCliente))
+        {
+            <input type="checkbox" name="chkEmpresa" value="@empresa.Empresa.IdEmpresa" @(empresa.Tiene ? "checked" : "") /> @empresa.Empresa.Nombre
+        }
+        @Html.ValidationMessage("ClienteValido", " ")
+    </p>
+    <p>
+        <label for="Fuente">Código SAP Oleotop</label>
+        @Html.TextBox("IDOleotop", Model.IDOleotop, new { @class = "std", maxlength = 50 })
+        @Html.ValidationMessage("IDOleotop", ".")
+    </p>
+    <p>
+        <label for="Fuente">Código SAP Avenatop</label>
+        @Html.TextBox("IDAvenatop", Model.IDAvenatop, new { @class = "std", maxlength = 50 })
+        @Html.ValidationMessage("IDAvenatop", ".")
+    </p>
+    <p>
+        <label for="Fuente">Código SAP Granotop</label>
+        @Html.TextBox("IDGranotop", Model.IDGranotop, new { @class = "std", maxlength = 50 })
+        @Html.ValidationMessage("IDGranotop", ".")
+    </p>
+    <p>
+        <label for="Fuente">Código SAP Saprosem</label>
+        @Html.TextBox("IDSaprosem", Model.IDSaprosem, new { @class = "std", maxlength = 50 })
+        @Html.ValidationMessage("IDSaprosem", ".")
+    </p>
+    <p>
+        <label for="Fuente">Código SAP ICI</label>
+        @Html.TextBox("IDICI", Model.IDICI, new { @class = "std", maxlength = 50 })
+        @Html.ValidationMessage("IDICI", ".")
+    </p>
+    <p class="okcancel">
+        <input type="submit" value="Guardar este Cliente" /> o <a href="javascript:window.history.back();">Cancelar</a>
+    </p>
+</fieldset>
+}

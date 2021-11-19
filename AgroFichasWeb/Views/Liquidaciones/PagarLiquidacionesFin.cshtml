@@ -1,0 +1,20 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model ExportBatch
+@{
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "Las liquidaciones ha sido pagadas con éxito";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm" style="padding:0">
+    <p class="okcancel" style="padding:0">
+        @Html.ActionLink("Lista de Liquidaciones", "index", "liquidaciones")
+    </p>
+</fieldset>

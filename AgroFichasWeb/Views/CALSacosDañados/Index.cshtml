@@ -1,0 +1,208 @@
+﻿@using AgroFichasWeb.Models
+@model AgroFichasWeb.ViewModels.SoftwareCalidad.SacosDañadosViewModel
+@{
+    ViewBag.Title = "Sacos Dañados";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantasProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtros de Búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <div class="form-inline center">
+                    @using (Html.BeginForm("index", "CALSacosDañados", new { id = 0 }, FormMethod.Get))
+                    {
+                        <div class="form-group">
+                            @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                        </div>
+
+                        <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                        <input class="btn btn-default" type="submit" value="Buscar" />
+                        <div class="clearfix visible-xs mb-sm"></div>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Sacos Dañados</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>Lote</th>
+                    <th>Sacos Dañados</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.SacosDañados)
+                {
+                    <tr valign="top">
+                        <td>@item.LoteComercial</td>
+                        <td>@item.SacosDañados</td>
+                        <td>
+                            <span data-toggle="modal" data-target=".modalInfo_@item.IdOrdenProduccion"><button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Detalle"> <i class="fa fa-info"></i></button></span>
+                            @if (permisosUsuario.CrearReprocesoSacosDañados)
+                            {
+                                <button id="reprocess_@item.IdOrdenProduccion" onclick="window.location.href='@Url.Action("CrearReprocesoSacosDañados", "CALSacosDañados", new { id = item.IdOrdenProduccion })'" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Reprocesar Sacos Dañados"> <i class="fa fa-recycle"></i></button>
+                            }
+                            @if (permisosUsuario.VerReprocesoSacosDañados)
+                            {
+                                <button id="view_@item.IdOrdenProduccion" onclick="window.location.href='@Url.Action("VerReprocesoSacosDañados", "CALSacosDañados", new { id = item.IdOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Reprocesos"> <i class="fa fa-eye"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+@foreach (var item in Model.SacosDañados)
+{
+    <div id="info_@item.IdOrdenProduccion" class="modal fade modalInfo_@item.IdOrdenProduccion" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myLargeModalLabel"><i class="fa fa-info fa-1x"></i> Detalle de Sacos Dañados</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel-body">
+                        <div class="invoice">
+                            <header class="clearfix">
+                                <div class="row">
+                                    <div class="col-sm-6 mt-md">
+                                        <h2 class="h2 mb-sm text-dark text-weight-bold">
+                                            Lote #<span style="font-family: Consolas">@item.LoteComercial</span>
+                                        </h2>
+                                    </div>
+                                    <div class="col-sm-6 text-right mt-md mb-md">
+                                        <address class="ib mr-xlg">
+                                        </address>
+                                        <div class="ib">
+                                        </div>
+                                    </div>
+                                </div>
+                            </header>
+                            <header class="clearfix">
+                                <div class="bill-info">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="bill-to">
+                                                <div class="text-left">
+                                                    <table class="table h5 text-dark" style="border: none">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Planta de producción</th>
+                                                                <th>N° de Pallet</th>
+                                                                <th>Producto</th>
+                                                                <th>Sacos Dañados</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var detalle in Model.DetalleSacosDañados)
+                                                            {
+                                                                if (detalle.IdOrdenProduccion == item.IdOrdenProduccion)
+                                                                {
+                                                            <tr class="@(detalle.Reprocesado.Value ? "empty" : "")" valign="top">
+                                                                <td>
+                                                                    @detalle.Nombre
+                                                                </td>
+                                                                <td>
+                                                                    @detalle.IdPale
+                                                                </td>
+                                                                <td>
+                                                                    @detalle.Producto
+                                                                </td>
+                                                                <td>
+                                                                    @detalle.SacosDañados
+                                                                </td>
+                                                            </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr valign="top">
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td><strong>TOTAL</strong></td>
+                                                                <td><strong>@item.SacosDañados</strong></td>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </header>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+}
+<!-- end: page -->

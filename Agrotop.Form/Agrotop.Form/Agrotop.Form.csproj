@@ -1,0 +1,973 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1D67DD24-04C8-4B97-9261-7AA79E703F67}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Agrotop.Form</RootNamespace>
+    <AssemblyName>Agrotop.Form</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort>44383</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="RtfPipe, Version=2.0.7677.4303, Culture=neutral, PublicKeyToken=5f6ab4ce530296d2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RtfPipe.2.0.7677.4303\lib\net45\RtfPipe.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
+    <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
+    <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />
+    <Compile Include="Areas\HelpPage\HelpPageAreaRegistration.cs" />
+    <Compile Include="Areas\HelpPage\HelpPageConfigurationExtensions.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\CollectionModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ComplexTypeModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\DictionaryModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumTypeModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumValueDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\IModelDocumentationProvider.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\KeyValuePairModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescriptionGenerator.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameAttribute.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameHelper.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterAnnotation.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterDescription.cs" />
+    <Compile Include="Areas\HelpPage\ModelDescriptions\SimpleTypeModelDescription.cs" />
+    <Compile Include="Areas\HelpPage\Models\HelpPageApiModel.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleGenerator.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleKey.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\ImageSample.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\InvalidSample.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\ObjectGenerator.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
+    <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
+    <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\ControllerHelpers.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AgrotopDB.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AgrotopDB.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\IncorporacionCamiongo.cs" />
+    <Compile Include="Models\RuleViolation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\ContactFrom\css\main.css" />
+    <Content Include="Content\ContactFrom\css\util.css" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\css\font-awesome.css" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\css\font-awesome.min.css" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\HELP-US-OUT.txt" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\OFL.txt" />
+    <Content Include="Content\ContactFrom\images\camiongo.png" />
+    <Content Include="Content\ContactFrom\images\icons\favicon.ico" />
+    <Content Include="Content\ContactFrom\images\img-01.png" />
+    <Content Include="Content\ContactFrom\index.html" />
+    <Content Include="Content\ContactFrom\js\main.js" />
+    <Content Include="Content\ContactFrom\vendor\animate\animate.css" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap-grid.css" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap-grid.min.css" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap-reboot.css" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap-reboot.min.css" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap.css" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\js\bootstrap.js" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\js\popper.js" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\js\popper.min.js" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\js\tooltip.js" />
+    <Content Include="Content\ContactFrom\vendor\css-hamburgers\hamburgers.css" />
+    <Content Include="Content\ContactFrom\vendor\css-hamburgers\hamburgers.min.css" />
+    <Content Include="Content\ContactFrom\vendor\jquery\jquery-3.2.1.min.js" />
+    <Content Include="Content\ContactFrom\vendor\select2\select2.css" />
+    <Content Include="Content\ContactFrom\vendor\select2\select2.js" />
+    <Content Include="Content\ContactFrom\vendor\select2\select2.min.css" />
+    <Content Include="Content\ContactFrom\vendor\select2\select2.min.js" />
+    <Content Include="Content\ContactFrom\vendor\tilt\tilt.jquery.min.js" />
+    <Content Include="Content\jquery.Rut.js" />
+    <Content Include="Content\logo_agrotop.png" />
+    <Content Include="Content\porto\images\logo.png" />
+    <Content Include="Content\porto\images\logo2.png" />
+    <Content Include="Content\porto\images\porigon-logo-bn.png" />
+    <Content Include="Content\porto\images\porigon-logo.png" />
+    <Content Include="Content\porto\images\profesionpicture.jpg" />
+    <Content Include="Content\porto\javascripts\forms\examples.advanced.form.js" />
+    <Content Include="Content\porto\javascripts\forms\examples.wizard.js" />
+    <Content Include="Content\porto\javascripts\jquery.Rut.js" />
+    <Content Include="Content\porto\javascripts\tables\examples.datatables.row.with.details.js" />
+    <Content Include="Content\porto\javascripts\theme.admin.extension.js" />
+    <Content Include="Content\porto\javascripts\theme.custom.js" />
+    <Content Include="Content\porto\javascripts\theme.init.js" />
+    <Content Include="Content\porto\javascripts\theme.js" />
+    <Content Include="Content\porto\stylesheets\invoice-print.css" />
+    <Content Include="Content\porto\stylesheets\skins\default.css" />
+    <Content Include="Content\porto\stylesheets\skins\extension.css" />
+    <Content Include="Content\porto\stylesheets\skins\square-borders.css" />
+    <Content Include="Content\porto\stylesheets\theme-admin-extension.css" />
+    <Content Include="Content\porto\stylesheets\theme-custom.css" />
+    <Content Include="Content\porto\stylesheets\theme.css" />
+    <Content Include="Content\porto\vendor\bootstrap-confirmation\bootstrap-confirmation.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker.css" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker.min.css" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker.standalone.css" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker.standalone.min.css" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker3.css" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker3.min.css" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker3.standalone.css" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker3.standalone.min.css" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\js\bootstrap-datepicker.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\js\bootstrap-datepicker.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.ar.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.az.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.bg.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.bs.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.ca.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.cs.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.cy.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.da.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.de.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.el.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.en-AU.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.en-GB.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.eo.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.es.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.et.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.eu.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.fa.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.fi.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.fo.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.fr-CH.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.fr.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.gl.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.he.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.hr.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.hu.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.hy.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.id.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.is.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.it-CH.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.it.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.ja.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.ka.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.kh.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.kk.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.ko.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.kr.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.lt.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.lv.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.me.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.mk.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.mn.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.ms.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.nb.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.nl-BE.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.nl.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.no.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.pl.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.pt-BR.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.pt.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.ro.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.rs-latin.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.rs.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.ru.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.sk.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.sl.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.sq.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.sr-latin.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.sr.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.sv.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.sw.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.th.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.tr.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.uk.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.vi.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.zh-CN.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\locales\bootstrap-datepicker.zh-TW.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-multiselect\bootstrap-multiselect.css" />
+    <Content Include="Content\porto\vendor\bootstrap-multiselect\bootstrap-multiselect.js" />
+    <Content Include="Content\porto\vendor\bootstrap-timepicker\bootstrap-timepicker.js" />
+    <Content Include="Content\porto\vendor\bootstrap-timepicker\css\bootstrap-timepicker.css" />
+    <Content Include="Content\porto\vendor\bootstrap-timepicker\css\bootstrap-timepicker.min.css" />
+    <Content Include="Content\porto\vendor\bootstrap-wizard\jquery.bootstrap.wizard.js" />
+    <Content Include="Content\porto\vendor\bootstrap\css\bootstrap-theme.css" />
+    <Content Include="Content\porto\vendor\bootstrap\css\bootstrap-theme.min.css" />
+    <Content Include="Content\porto\vendor\bootstrap\css\bootstrap.css" />
+    <Content Include="Content\porto\vendor\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Content\porto\vendor\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\porto\vendor\bootstrap\js\bootstrap.js" />
+    <Content Include="Content\porto\vendor\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap\js\npm.js" />
+    <Content Include="Content\porto\vendor\flot.tooltip\flot.tooltip.js" />
+    <Content Include="Content\porto\vendor\flot\examples\ajax\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\annotating\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-interacting\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-multiple\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\date.js" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\background.png" />
+    <Content Include="Content\porto\vendor\flot\examples\basic-options\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\basic-usage\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\canvas\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\categories\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\examples.css" />
+    <Content Include="Content\porto\vendor\flot\examples\image\hs-2004-27-a-large-web.jpg" />
+    <Content Include="Content\porto\vendor\flot\examples\image\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\interacting\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\navigate\arrow-down.gif" />
+    <Content Include="Content\porto\vendor\flot\examples\navigate\arrow-left.gif" />
+    <Content Include="Content\porto\vendor\flot\examples\navigate\arrow-right.gif" />
+    <Content Include="Content\porto\vendor\flot\examples\navigate\arrow-up.gif" />
+    <Content Include="Content\porto\vendor\flot\examples\navigate\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\percentiles\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\realtime\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\resize\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\selection\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\series-errorbars\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\series-pie\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\series-toggle\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\series-types\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\shared\jquery-ui\jquery-ui.min.css" />
+    <Content Include="Content\porto\vendor\flot\examples\shared\jquery-ui\jquery-ui.min.js" />
+    <Content Include="Content\porto\vendor\flot\examples\stacking\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\symbols\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\threshold\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\tracking\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\visitors\index.html" />
+    <Content Include="Content\porto\vendor\flot\examples\zooming\index.html" />
+    <Content Include="Content\porto\vendor\flot\excanvas.js" />
+    <Content Include="Content\porto\vendor\flot\excanvas.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.colorhelpers.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.colorhelpers.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.canvas.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.canvas.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.categories.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.categories.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.crosshair.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.crosshair.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.errorbars.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.errorbars.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.fillbetween.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.fillbetween.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.image.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.image.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.navigate.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.navigate.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.pie.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.pie.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.resize.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.resize.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.selection.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.selection.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.stack.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.stack.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.symbol.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.symbol.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.threshold.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.threshold.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.time.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.flot.time.min.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.js" />
+    <Content Include="Content\porto\vendor\flot\jquery.min.js" />
+    <Content Include="Content\porto\vendor\flot\LICENSE.txt" />
+    <Content Include="Content\porto\vendor\font-awesome\css\font-awesome.css" />
+    <Content Include="Content\porto\vendor\font-awesome\css\font-awesome.min.css" />
+    <Content Include="Content\porto\vendor\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\porto\vendor\font-awesome\HELP-US-OUT.txt" />
+    <Content Include="Content\porto\vendor\fullcalendar\fullcalendar.css" />
+    <Content Include="Content\porto\vendor\fullcalendar\fullcalendar.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\fullcalendar.min.css" />
+    <Content Include="Content\porto\vendor\fullcalendar\fullcalendar.min.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\fullcalendar.print.css" />
+    <Content Include="Content\porto\vendor\fullcalendar\fullcalendar.print.min.css" />
+    <Content Include="Content\porto\vendor\fullcalendar\gcal.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\gcal.min.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale-all.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\af.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ar-dz.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ar-ly.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ar-ma.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ar-sa.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ar-tn.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ar.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\bg.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ca.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\cs.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\da.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\de-at.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\de.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\el.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\en-au.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\en-ca.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\en-gb.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\en-ie.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\en-nz.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\es-do.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\es.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\eu.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\fa.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\fi.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\fr-ca.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\fr-ch.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\fr.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\gl.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\he.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\hi.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\hr.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\hu.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\id.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\is.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\it.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ja.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\kk.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ko.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\lb.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\lt.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\lv.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\mk.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ms-my.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ms.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\nb.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\nl-be.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\nl.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\nn.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\pl.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\pt-br.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\pt.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ro.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\ru.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\sk.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\sl.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\sr-cyrl.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\sr.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\sv.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\th.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\tr.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\uk.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\vi.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\zh-cn.js" />
+    <Content Include="Content\porto\vendor\fullcalendar\locale\zh-tw.js" />
+    <Content Include="Content\porto\vendor\gauge\gauge.js" />
+    <Content Include="Content\porto\vendor\gauge\gauge.min.js" />
+    <Content Include="Content\porto\vendor\jquery-appear\jquery-appear.js" />
+    <Content Include="Content\porto\vendor\jquery-browser-mobile\jquery.browser.mobile.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\assets\css\datatables.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\assets\images\sort_asc.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\assets\images\sort_asc_disabled.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\assets\images\sort_both.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\assets\images\sort_desc.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\assets\images\sort_desc_disabled.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\assets\js\datatables.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\Datatables.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\css\datatables.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\images\sort_asc.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\images\sort_asc_disabled.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\images\sort_both.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\images\sort_desc.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\images\sort_desc_disabled.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\js\datatables.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\pagination_four_buttons.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\pagination_full.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\pagination_normal.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\examples\pagination_two_buttons.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables-bs3\index.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\css\dataTables.tableTools.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\css\dataTables.tableTools.min.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\ajax.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\alter_buttons.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\bootstrap.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\button_text.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\collection.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\defaults.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\index.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\jqueryui.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\multiple_tables.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\multi_instance.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\new_init.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\pdf_message.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\plug-in.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\select_column.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\select_multi.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\select_os.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\select_single.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\simple.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\examples\swf_path.html" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\collection.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\collection_hover.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\copy.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\copy_hover.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\csv.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\csv_hover.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\pdf.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\pdf_hover.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\print.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\print_hover.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\xls.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\xls_hover.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\js\dataTables.tableTools.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\js\dataTables.tableTools.min.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\swf\copy_csv_xls.swf" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\swf\copy_csv_xls_pdf.swf" />
+    <Content Include="Content\porto\vendor\jquery-datatables\license.txt" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.bootstrap.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.bootstrap.min.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.bootstrap4.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.bootstrap4.min.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.foundation.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.foundation.min.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.jqueryui.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.jqueryui.min.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.material.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.material.min.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.semanticui.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.semanticui.min.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.uikit.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\dataTables.uikit.min.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\jquery.dataTables.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\jquery.dataTables.min.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\css\jquery.dataTables_themeroller.css" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\images\favicon.ico" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\images\sort_asc.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\images\sort_asc_disabled.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\images\sort_both.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\images\sort_desc.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\images\sort_desc_disabled.png" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.bootstrap.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.bootstrap.min.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.bootstrap4.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.foundation.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.foundation.min.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.jqueryui.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.jqueryui.min.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.material.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.material.min.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.semanticui.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.semanticui.min.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.uikit.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\dataTables.uikit.min.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\jquery.dataTables.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\jquery.dataTables.min.js" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\js\jquery.js" />
+    <Content Include="Content\porto\vendor\jquery-maskedinput\jquery.maskedinput.js" />
+    <Content Include="Content\porto\vendor\jquery-placeholder\jquery-placeholder.js" />
+    <Content Include="Content\porto\vendor\jquery-sparkline\jquery-sparkline.js" />
+    <Content Include="Content\porto\vendor\jquery-ui\AUTHORS.txt" />
+    <Content Include="Content\porto\vendor\jquery-ui\external\jquery\jquery.js" />
+    <Content Include="Content\porto\vendor\jquery-ui\images\ui-icons_444444_256x240.png" />
+    <Content Include="Content\porto\vendor\jquery-ui\images\ui-icons_555555_256x240.png" />
+    <Content Include="Content\porto\vendor\jquery-ui\images\ui-icons_777620_256x240.png" />
+    <Content Include="Content\porto\vendor\jquery-ui\images\ui-icons_777777_256x240.png" />
+    <Content Include="Content\porto\vendor\jquery-ui\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\porto\vendor\jquery-ui\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\porto\vendor\jquery-ui\index.html" />
+    <Content Include="Content\porto\vendor\jquery-ui\jquery-ui.css" />
+    <Content Include="Content\porto\vendor\jquery-ui\jquery-ui.js" />
+    <Content Include="Content\porto\vendor\jquery-ui\jquery-ui.min.css" />
+    <Content Include="Content\porto\vendor\jquery-ui\jquery-ui.min.js" />
+    <Content Include="Content\porto\vendor\jquery-ui\jquery-ui.structure.css" />
+    <Content Include="Content\porto\vendor\jquery-ui\jquery-ui.structure.min.css" />
+    <Content Include="Content\porto\vendor\jquery-ui\jquery-ui.theme.css" />
+    <Content Include="Content\porto\vendor\jquery-ui\jquery-ui.theme.min.css" />
+    <Content Include="Content\porto\vendor\jquery-ui\LICENSE.txt" />
+    <Content Include="Content\porto\vendor\jquery-validation\additional-methods.js" />
+    <Content Include="Content\porto\vendor\jquery-validation\additional-methods.min.js" />
+    <Content Include="Content\porto\vendor\jquery-validation\jquery.validate.js" />
+    <Content Include="Content\porto\vendor\jquery-validation\jquery.validate.min.js" />
+    <Content Include="Content\porto\vendor\jquery\jquery.js" />
+    <Content Include="Content\porto\vendor\jstree\jstree.js" />
+    <Content Include="Content\porto\vendor\jstree\jstree.min.js" />
+    <Content Include="Content\porto\vendor\jstree\themes\default-dark\32px.png" />
+    <Content Include="Content\porto\vendor\jstree\themes\default-dark\40px.png" />
+    <Content Include="Content\porto\vendor\jstree\themes\default-dark\style.css" />
+    <Content Include="Content\porto\vendor\jstree\themes\default-dark\style.min.css" />
+    <Content Include="Content\porto\vendor\jstree\themes\default-dark\throbber.gif" />
+    <Content Include="Content\porto\vendor\jstree\themes\default\32px.png" />
+    <Content Include="Content\porto\vendor\jstree\themes\default\40px.png" />
+    <Content Include="Content\porto\vendor\jstree\themes\default\style.css" />
+    <Content Include="Content\porto\vendor\jstree\themes\default\style.min.css" />
+    <Content Include="Content\porto\vendor\jstree\themes\default\throbber.gif" />
+    <Content Include="Content\porto\vendor\magnific-popup\jquery.magnific-popup.js" />
+    <Content Include="Content\porto\vendor\magnific-popup\magnific-popup.css" />
+    <Content Include="Content\porto\vendor\mocha\mocha.js" />
+    <Content Include="Content\porto\vendor\modernizr\modernizr.js" />
+    <Content Include="Content\porto\vendor\nanoscroller\nanoscroller.css" />
+    <Content Include="Content\porto\vendor\nanoscroller\nanoscroller.js" />
+    <Content Include="Content\porto\vendor\pnotify\pnotify.custom.css" />
+    <Content Include="Content\porto\vendor\pnotify\pnotify.custom.js" />
+    <Content Include="Content\porto\vendor\raphael\raphael.js" />
+    <Content Include="Content\porto\vendor\select2-bootstrap-theme\select2-bootstrap.css" />
+    <Content Include="Content\porto\vendor\select2-bootstrap-theme\select2-bootstrap.min.css" />
+    <Content Include="Content\porto\vendor\select2\css\select2.css" />
+    <Content Include="Content\porto\vendor\select2\css\select2.min.css" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\ar.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\az.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\bg.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\ca.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\cs.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\da.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\de.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\el.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\en.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\es.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\et.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\eu.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\fa.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\fi.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\fr.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\gl.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\he.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\hi.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\hr.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\hu.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\id.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\is.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\it.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\ja.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\km.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\ko.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\lt.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\lv.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\mk.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\ms.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\nb.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\nl.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\pl.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\pt-BR.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\pt.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\ro.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\ru.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\sk.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\sr-Cyrl.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\sr.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\sv.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\th.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\tr.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\uk.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\vi.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\zh-CN.js" />
+    <Content Include="Content\porto\vendor\select2\js\i18n\zh-TW.js" />
+    <Content Include="Content\porto\vendor\select2\js\select2.full.js" />
+    <Content Include="Content\porto\vendor\select2\js\select2.full.min.js" />
+    <Content Include="Content\porto\vendor\select2\js\select2.js" />
+    <Content Include="Content\porto\vendor\select2\js\select2.min.js" />
+    <Content Include="Content\porto\vendor\snap.svg\snap.svg.js" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker.min.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker.standalone.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker.standalone.min.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker3.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker3.min.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker3.standalone.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap-datepicker\css\bootstrap-datepicker3.standalone.min.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap-multiselect\bootstrap-multiselect.less" />
+    <Content Include="Content\porto\vendor\bootstrap\css\bootstrap-theme.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap\css\bootstrap-theme.min.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap\css\bootstrap.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap\css\bootstrap.min.css.map" />
+    <Content Include="Content\porto\vendor\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\porto\vendor\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Content\porto\vendor\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\porto\vendor\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Content\porto\vendor\flot\API.md" />
+    <Content Include="Content\porto\vendor\flot\CONTRIBUTING.md" />
+    <Content Include="Content\porto\vendor\flot\examples\ajax\data-eu-gdp-growth-1.json" />
+    <Content Include="Content\porto\vendor\flot\examples\ajax\data-eu-gdp-growth-2.json" />
+    <Content Include="Content\porto\vendor\flot\examples\ajax\data-eu-gdp-growth-3.json" />
+    <Content Include="Content\porto\vendor\flot\examples\ajax\data-eu-gdp-growth-4.json" />
+    <Content Include="Content\porto\vendor\flot\examples\ajax\data-eu-gdp-growth-5.json" />
+    <Content Include="Content\porto\vendor\flot\examples\ajax\data-eu-gdp-growth.json" />
+    <Content Include="Content\porto\vendor\flot\examples\ajax\data-japan-gdp-growth.json" />
+    <Content Include="Content\porto\vendor\flot\examples\ajax\data-usa-gdp-growth.json" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\africa" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\antarctica" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\asia" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\australasia" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\backward" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\etcetera" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\europe" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\factory" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\iso3166.tab" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\leapseconds" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\northamerica" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\pacificnew" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\solar87" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\solar88" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\solar89" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\southamerica" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\systemv" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\yearistype.sh" />
+    <Content Include="Content\porto\vendor\flot\examples\axes-time-zones\tz\zone.tab" />
+    <Content Include="Content\porto\vendor\flot\FAQ.md" />
+    <Content Include="Content\porto\vendor\flot\Makefile" />
+    <Content Include="Content\porto\vendor\flot\NEWS.md" />
+    <Content Include="Content\porto\vendor\flot\PLUGINS.md" />
+    <Content Include="Content\porto\vendor\flot\README.md" />
+    <Content Include="Content\porto\vendor\font-awesome\bower.json" />
+    <Content Include="Content\porto\vendor\font-awesome\css\font-awesome.css.map" />
+    <Content Include="Content\porto\vendor\font-awesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\porto\vendor\font-awesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\porto\vendor\font-awesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\porto\vendor\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\porto\vendor\font-awesome\fonts\FontAwesome.otf" />
+    <Content Include="Content\porto\vendor\font-awesome\less\animated.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\bordered-pulled.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\core.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\fixed-width.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\font-awesome.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\icons.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\larger.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\list.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\mixins.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\path.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\rotated-flipped.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\screen-reader.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\stacked.less" />
+    <Content Include="Content\porto\vendor\font-awesome\less\variables.less" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\font-awesome.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_animated.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_bordered-pulled.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_core.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_fixed-width.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_icons.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_larger.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_list.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_mixins.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_path.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_rotated-flipped.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_screen-reader.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_stacked.scss" />
+    <Content Include="Content\porto\vendor\font-awesome\scss\_variables.scss" />
+    <Content Include="Content\porto\vendor\gauge\gauge.coffee" />
+    <Content Include="Content\porto\vendor\jquery-datatables\bower.json" />
+    <Content Include="Content\porto\vendor\jquery-datatables\Contributing.md" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\psd\collection.psd" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\psd\copy document.psd" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\psd\file_types.psd" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\images\psd\printer.psd" />
+    <Content Include="Content\porto\vendor\jquery-datatables\extras\TableTools\Readme.md" />
+    <Content Include="Content\porto\vendor\jquery-datatables\ISSUE_TEMPLATE.md" />
+    <Content Include="Content\porto\vendor\jquery-datatables\media\images\Sorting icons.psd" />
+    <Content Include="Content\porto\vendor\jquery-datatables\Readme.md" />
+    <Content Include="Content\porto\vendor\jquery-ui\package.json" />
+    <Content Include="Content\porto\vendor\nanoscroller\jquery.nanoscroller.min.js.map" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\fonts\FontAwesome.otf" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\animated.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\bordered-pulled.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\core.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\fixed-width.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\font-awesome.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\icons.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\larger.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\list.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\mixins.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\path.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\rotated-flipped.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\screen-reader.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\stacked.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\less\variables.less" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\font-awesome.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_animated.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_bordered-pulled.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_core.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_fixed-width.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_icons.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_larger.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_list.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_mixins.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_path.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_rotated-flipped.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_screen-reader.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_stacked.scss" />
+    <Content Include="Content\ContactFrom\fonts\font-awesome-4.7.0\scss\_variables.scss" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-Black.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-BlackItalic.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-Bold.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-BoldItalic.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-ExtraBold.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-ExtraBoldItalic.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-ExtraLight.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-ExtraLightItalic.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-Italic.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-Light.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-LightItalic.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-Medium.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-MediumItalic.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-Regular.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-SemiBold.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-SemiBoldItalic.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-Thin.ttf" />
+    <Content Include="Content\ContactFrom\fonts\montserrat\Montserrat-ThinItalic.ttf" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap-grid.css.map" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap-grid.min.css.map" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap-reboot.css.map" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap.css.map" />
+    <Content Include="Content\ContactFrom\vendor\bootstrap\css\bootstrap.min.css.map" />
+    <Content Include="Models\AgrotopDB.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>AgrotopDB.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\HelpPage\Views\Web.config" />
+    <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\TextSample.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\SimpleTypeModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Samples.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Parameters.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ModelDescriptionLink.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\KeyValuePairModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\InvalidSample.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ImageSample.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\EnumTypeModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\DictionaryModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ComplexTypeModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
+    <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <None Include="Models\AgrotopDB.dbml.layout">
+      <DependentUpon>AgrotopDB.dbml</DependentUpon>
+    </None>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.4.1.js" />
+    <Content Include="Scripts\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_ResponsiveLayoutBaseForm.cshtml" />
+    <Content Include="Views\Shared\_ResponsiveLayoutForm.cshtml" />
+    <Content Include="Views\Home\Confirmar.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.min.css.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.css.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap-theme.css.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.4.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>57786</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://localhost:44383/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

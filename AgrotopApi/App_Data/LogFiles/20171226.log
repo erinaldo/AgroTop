@@ -1,0 +1,28 @@
+2017-12-26 00:47:18.0509 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 00:47:30.2624 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 09:52:14.5879 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 09:52:17.2229 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 09:53:22.2036 - ERROR: errMsg = Acceso deshabilitado
+2017-12-26 09:53:27.2368 - ERROR: Unathorized
+EXCEPTION: System.Exception: Unathorized
+   en AgrotopApi.Controllers.LiquidacionesController.Get(String privateKey) en F:\Proyectos\Agrotop\AgrotopApi\AgrotopApi\Controllers\LiquidacionesController.cs:lï¿½nea 31
+2017-12-26 09:55:06.1121 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 09:55:42.4259 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 09:55:42.7812 - ERROR: errMsg = No tienes los permisos de acceso suficientes para obtener las liquidaciones
+2017-12-26 09:55:42.7812 - ERROR: Insufficient Permissions
+EXCEPTION: System.Exception: Insufficient Permissions
+   en AgrotopApi.Controllers.LiquidacionesController.Get(String privateKey) en F:\Proyectos\Agrotop\AgrotopApi\AgrotopApi\Controllers\LiquidacionesController.cs:lï¿½nea 40
+2017-12-26 09:56:27.4227 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:35:46.8103 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:36:02.3080 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:38:18.8359 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:47:24.4840 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:47:38.6834 - INFO: CurrentUser = SOINDUS Soluciones Industriales y Consulting SAP, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:54:30.9877 - DEBUG: Controller = Liquidaciones, Method = Get
+2017-12-26 11:54:31.0068 - DEBUG: privateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:54:31.0308 - INFO: FullName = SOINDUS Soluciones Industriales y Consulting SAP, Email = jaraya@soindus.cl, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:54:31.2104 - DEBUG: {"OK":true,"Message":"OK","Liquidaciones":[{"Proyecto":{"Id":2,"Descripcion":"Logística y Corretaje"},"Empresa":{"Id":2,"Nombre":"Avenatop"},"Proveedor":{"Id":"P16187180","Nombre":"CARLOS ANDRES MORA SOTO"},"IdLiquidacion":2586,"Estado":{"Id":1,"Descripcion":"Pendiente"},"FechaDocumento":"2017-12-22T11:34:49.73","Glosas":[{"CentroCosto":{"Id":"OPFREIRE","Nombre":"Planta Freire"},"Material":{"Id":"FIFRRU01","Nombre":"Avenatop"},"Moneda":"CLP","Cantidad":29950,"PrecioUnitario":10.00,"PrecioTotal":299500.00,"CondicionPago":"SERV. DE FLETE DE FREIRE A RUCAPEQUÉN"},{"CentroCosto":{"Id":"OPFREIRE","Nombre":"Planta Freire"},"Material":{"Id":"FIDEPE01","Nombre":"Avenatop"},"Moneda":"CLP","Cantidad":1,"PrecioUnitario":-14975.00,"PrecioTotal":-14975.00,"CondicionPago":"CARGO POR PRONTO PAGO"},{"CentroCosto":{"Id":"OPFREIRE","Nombre":"Planta Freire"},"Material":{"Id":"FIPRPA01","Nombre":"Avenatop"},"Moneda":"CLP","Cantidad":1,"PrecioUnitario":0.00,"PrecioTotal":0.00,"CondicionPago":"CARGO POR DIFERENCIA DE PESAJES"}]}]}
+2017-12-26 11:57:59.9976 - DEBUG: Controller = Liquidaciones, Method = Get
+2017-12-26 11:58:02.0419 - DEBUG: privateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:58:02.0419 - INFO: FullName = SOINDUS Soluciones Industriales y Consulting SAP, Email = jaraya@soindus.cl, PrivateKey = /kHFQD"!,$G;5~/^QCw:6Z2;Vy%z;FKb)e"<pkt59fx6@^{mPP[naD~]6`Gj6/Rb
+2017-12-26 11:58:02.0865 - DEBUG: {"OK":true,"Message":"OK","Liquidaciones":[{"Proyecto":{"Id":2,"Descripcion":"Logística y Corretaje"},"Empresa":{"Id":2,"Nombre":"Avenatop"},"Proveedor":{"Id":"P16187180","Nombre":"CARLOS ANDRES MORA SOTO"},"IdLiquidacion":2586,"Estado":{"Id":1,"Descripcion":"Pendiente"},"FechaDocumento":"2017-12-22T11:34:49.73","Glosas":[{"CentroCosto":{"Id":"OPFREIRE","Nombre":"Planta Freire"},"Material":{"Id":"FIFRRU01","Nombre":"Avenatop"},"Moneda":"CLP","Cantidad":29950,"PrecioUnitario":10.00,"PrecioTotal":299500.00,"CondicionPago":"SERV. DE FLETE DE FREIRE A RUCAPEQUÉN"},{"CentroCosto":{"Id":"OPFREIRE","Nombre":"Planta Freire"},"Material":{"Id":"FIDEPE01","Nombre":"Avenatop"},"Moneda":"CLP","Cantidad":1,"PrecioUnitario":-14975.00,"PrecioTotal":-14975.00,"CondicionPago":"CARGO POR PRONTO PAGO"},{"CentroCosto":{"Id":"OPFREIRE","Nombre":"Planta Freire"},"Material":{"Id":"FIPRPA01","Nombre":"Avenatop"},"Moneda":"CLP","Cantidad":1,"PrecioUnitario":0.00,"PrecioTotal":0.00,"CondicionPago":"CARGO POR DIFERENCIA DE PESAJES"}]}]}

@@ -1,0 +1,16 @@
+﻿@model AgroFichasWeb.Models.Predio
+<tr id="itemRowPredio-@Model.IdPredio">
+    <td>@Model.Nombre</td>
+    <td>@Model.Comuna.Nombre</td>
+    <td class="actions text-center">
+        @if (true)
+        {
+            <img id="editSpinnerPredio-@Model.IdPredio" src="~/Content/spinner.svg" height="18" style="display: none; margin-right:10px" />
+            <a href="#" id="editButtonPredio-@Model.IdPredio" class="editItemPredio" data-id="@Model.IdPredio" style="margin-right:10px"><i class="fa fa-pencil"></i></a>
+        }
+        @if (true)
+        {
+            <a href="@Url.Action("predio", new { id = Model.IdPredio })" style="margin-right:10px"><i class="fa fa-list-ul"></i></a>
+        }
+    </td>
+</tr>

@@ -1,0 +1,16 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model Liquidacion
+@{
+
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "La liquidación ha sido marcada como facturada";
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm">
+    @Html.Partial("Liquidacion", Model)
+</fieldset>

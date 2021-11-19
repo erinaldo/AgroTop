@@ -1,0 +1,20 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model Liquidacion
+@{
+
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "La Retención ha sido editada con éxito";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm">
+    @Html.Partial("Liquidacion", Model)
+</fieldset>
+

@@ -1,0 +1,92 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model ColaDescargaViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = Model.Title;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="refresh" content="10">
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            background-color: #1E1E1E;
+            color: #ffffff;
+            font-family: 'Segoe UI', Helvetica, Arial;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: normal;
+        }
+
+        table.lista {
+            width: 100%;
+        }
+
+        table.lista tr.header td {
+            background-color: #007ACC;
+        }
+
+        table.lista tr.alt td {
+            background-color: #464646;
+        }
+
+        table.lista td {
+            font-size: 20px;
+            padding: 7px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>@ViewBag.Title</h1>
+
+        <table class="lista">
+            <tr class="header">
+                @for (int j = 1; j <= 2; j++)
+                {
+                <td align="center">Patente</td>
+                <td align="center">Análisis</td>
+                <td align="center">Descarga</td>
+                <td>&nbsp;&nbsp;</td>
+                }
+            </tr>
+            <tr valign="top" class="alt">
+                @{
+                    int i = 0;
+                    foreach (var pi in Model.Items)
+                    {
+                        var styleAnalisis = "";
+                        if (!String.IsNullOrEmpty(pi.ColorAnalisis))
+                        {
+                            styleAnalisis = "color: " + pi.ColorAnalisis;
+                        }
+
+                        var styleDescarga = "";
+                        if (!String.IsNullOrEmpty(pi.ColorDescarga))
+                        {
+                            styleDescarga = "color: " + pi.ColorDescarga;      
+                        }
+                        <td align="center">@pi.Patente</td>
+                        <td align="center" style="@styleAnalisis">@pi.EstadoAnalisis</td>
+                        <td align="center" style="@styleDescarga">@pi.EstadoDescarga</td>
+                        <td>&nbsp;</td>
+                        if (++i % 2 == 0)
+                        {
+                            @(String.Format("</tr><tr valign=\"top\" class=\"{0}\">", i%4 == 0 ? "alt" : "" ).ToMvcHtmlString())
+                        }
+                    }
+                }
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

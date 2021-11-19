@@ -1,0 +1,18 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var empresas = (List<Empresa>)ViewData["empresas"];
+}    
+    <ul>
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(78))
+        {
+            <li><a href="@Url.Content("~/exportarrecepciones")">Listado</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(79))
+        {
+            foreach (var empresa in empresas)
+            {
+                <li><a href="@Url.Content("~/exportarrecepciones/crear?idEmpresa=" + empresa.IdEmpresa)">Exportar @empresa.Nombre</a></li>
+            }
+        }
+    </ul>
+    <div style="clear:both;"></div>

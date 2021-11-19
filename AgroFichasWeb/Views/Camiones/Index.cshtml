@@ -1,0 +1,131 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model AgroFichasWeb.Controllers.PaginatedList<LOG_Camion>
+
+@{
+    ViewBag.NombreSeccion = "Transportistas";
+    ViewBag.Title = "Administrar Camiones";
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/validate.js"></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "camiones", new { id = 0 }, FormMethod.Get))
+    {
+        @Html.Partial("~/Views/Controls/TransportistaSelector.cshtml", new TransportistaSelectorViewModel() { })
+        <input type="hidden" id="IdTransportista" name="IdTransportista" value="" />
+        <input type="submit" value="Filtrar por Transportista" />
+    }
+</div>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "camiones", new { id = 0 }, FormMethod.Get))
+    {
+        <input type="text" name="key" value="@ViewData["key"]" /> <input type="submit" value="Buscar" />
+    }
+</div>
+
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">
+            Transportista
+        </th>
+        <th align="left">
+            Patente
+        </th>
+        <th align="left">
+            Patente Carro
+        </th>
+        <th align="left">
+            Modelo
+        </th>
+        <th align="left">
+            Tara Máxima
+        </th>
+        <th align="center">
+            Editar
+        </th>
+        <th align="center">
+            Eliminar
+        </th>
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="9" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        <tr valign="top">
+            <td align="left">
+                @item.LOG_Transportista.Nombre
+            </td>
+            <td align="left">
+                @item.Patente 
+            </td>
+            <td align="left">
+                @(item.PatenteCarro ?? "")
+            </td>
+            <td align="left">
+                @item.LOG_Marca.Nombre @item.Modelo
+            </td>
+            <td align="left">
+                @item.TaraMaxima.ToString("N0") kg
+            </td>
+            <td align="center">
+                @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "editar", new { id = item.IdCamion })
+            </td>
+            <td align="center">
+                @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "eliminar", new { id = item.IdCamion })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="9" class="pager">
+            @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "camiones", ViewData["key"].ToString())
+        </td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+
+    function agsCallback(idAgricultor, nombre) {
+        $("#IdTransportista").val(idAgricultor);
+    }
+
+</script>

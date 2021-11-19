@@ -1,0 +1,464 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@model CAL_FT
+@{
+    ViewBag.Title = string.Format("Ficha Técnica {0}", Model.Codigo);
+    Layout = "~/Views/Shared/_ResponsiveLayoutPrint.cshtml";
+    List<CAL_FT> detalleFTList = Model.GetDetalleFT();
+}
+@section VendorCSS
+{
+    <!-- Invoice Print Style -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/stylesheets/invoice-print.css")" />
+    <style>
+        @@media print {
+            a[href]:after {
+                content: " ("attr(href)")";
+                color: #868686;
+                background-color: inherit;
+                font-style: italic;
+                size: 90%;
+            }
+            a[href]:after {
+                content: "" !important;
+            }
+        }
+    </style>
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        window.print();
+        //window.close();
+    </script>
+}
+<div class="invoice">
+    <header class="clearfix">
+        <div class="row">
+            <div class="col-sm-7 mt-md">
+                <h2 class="h2 mb-sm text-dark text-weight-bold">
+                    FICHA TÉCNICA <span style="font-family: Consolas">@Model.Codigo</span>
+                    @if (Model.VerificacionCliente == true)
+                    {
+                        <i class="ml-md fa fa-check-square-o" style="color:green;"></i>
+                    }
+                </h2>
+            </div>
+            <div class="col-sm-5 text-right mt-md mb-md">
+                <address class="ib mr-xlg">
+                    Ficha Técnica
+                    <br />
+                    Código #<span style="font-family: Consolas">@Model.Codigo</span>
+                    <br />
+                    Versión #@Model.GetControlVersion()
+                </address>
+                <div class="ib">
+                    <img src="@Url.Content("~/Content/images/avenatop.png")" alt="Agrotop" />
+                </div>
+            </div>
+        </div>
+    </header>
+    <header class="clearfix">
+        <div class="bill-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bill-to">
+                        <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">ANTECEDENTES PRELIMINARES:</h3>
+                        <div class="text-left">
+                            <table class="table h5 text-dark" style="border: none">
+                                <tbody>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">Cliente</span></td>
+                                        <td class="text-left"><span class="value">@Model.GetCliente(Model.IdCliente).RazonSocial</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">Familia de Productos</span></td>
+                                        <td class="text-left"><span class="value">@Model.GetProducto(Model.IdProducto).Nombre</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">Producto</span></td>
+                                        <td class="text-left"><span class="value">@Model.GetSubproducto(Model.IdSubproducto).Nombre</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">País</span></td>
+                                        <td class="text-left"><span class="value">@Model.GetPais(Model.PaisCodigo).PaisNombreLocal</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">SAG</span></td>
+                                        <td class="text-left"><span class="value">@(Model.Sag ? "Sí" : "No")</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">Fumigación</span></td>
+                                        <td class="text-left"><span class="value">@(Model.Fumigacion ? "Sí" : "No")</span></td>
+                                    </tr>
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">Picking Test</span></td>
+                                        <td class="text-left"><span class="value">@Model.PesoTotalPickingTest</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bill-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bill-to">
+                        @if (Model.Granel == false)
+                        {
+                            <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">SACOS</h3>
+                        }
+                        else
+                        {
+                            <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">GRANEL</h3>
+                        }
+                        <div class="text-left">
+                            @if (Model.Granel == false)
+                            {
+                                <table class="table h5 text-dark" style="border: none">
+                                    <tbody>
+                                        <tr class="b-top-none">
+                                            <th>Saco</th>
+                                            <th>Peso Saco</th>
+                                            <th>Control Fechado</th>
+                                            <th>Hilo</th>
+                                        </tr>
+                                        @foreach (CAL_GetSacoPorIdFichaTecnicaResult saco in Model.GetSaco())
+                                        {
+                                            <tr class="b-top-none">
+                                                <td class="text-left">
+                                                    <span class="value" style="display: block">@saco.Nombre</span>
+                                                </td>
+                                                <td class="text-left">
+                                                    <span class="value" style="display: block">@string.Format("{0:N2} kg", saco.Peso)</span>
+                                                </td>
+                                                <td class="text-left">
+                                                    <span class="value" style="display: block">@saco.Descripcion</span>
+                                                </td>
+                                                <td class="text-left">
+                                                    <span class="value" style="display: block">@saco.ColorHilo</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            <table class="table h5 text-dark" style="border: none">
+                                <tr class="b-top-none">
+                                    <td><strong>Condiciones de Almacenamiento</strong></td>
+                                    <td><strong>Vida Útil</strong></td>
+                                </tr>
+                                <tr>
+                                    @if (Model.CAL_FTTemperatura != null && !string.IsNullOrEmpty(Model.HumedadRelativa))
+                                    {
+                                        <td>
+                                            <span class="text-dark">Las condiciones de temperatura óptimas fluctúan entre <span class="text-dark text-weight-bold">@Model.CAL_FTTemperatura.MinValidValue a @Model.CAL_FTTemperatura.MaxValidValue ºC</span> y un <span class="text-dark text-weight-bold">@Model.HumedadRelativa%</span> de humedad relativa.</span>
+                                        </td>
+                                    }
+                                    @if (Model.VidaUtil.HasValue)
+                                    {
+                                        <td>
+                                            <span class="text-dark text-weight">Vida útil, <span class="text-dark text-weight-bold">@Model.VidaUtil</span> meses desde su elaboración y bajo condiciones apropiadas de embalaje y almacenamiento.</span>
+                                        </td>
+                                    }
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS DE ANÁLISIS</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td><span class="text-dark text-weight-semibold">Parámetro</span></td>
+                                    <td><span class="text-dark text-weight-semibold">UM</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Mínimo</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Máximo</span></td>
+                                </tr>
+                                @foreach (CAL_GetParametroAnalisisAsociadosPorFichaTecnicaResult parametroAnalisis in Model.GetParametroAnalisis())
+                                {
+                                    <tr class="b-top-none">
+                                        <td class="text-left"><span class="value">@parametroAnalisis.Nombre</span></td>
+                                        <td class="text-left"><span class="value">@parametroAnalisis.UM</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroAnalisis.MinValidValue.Value, parametroAnalisis.UM, parametroAnalisis.FormatString, parametroAnalisis.IdParametroAnalisis)</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroAnalisis.MaxValidValue.Value, parametroAnalisis.UM, parametroAnalisis.FormatString, parametroAnalisis.IdParametroAnalisis)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS DE PESTICIDAS</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td><span class="text-dark text-weight-semibold">Parámetro</span></td>
+                                    <td><span class="text-dark text-weight-semibold">UM</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Mínimo</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Máximo</span></td>
+                                </tr>
+                                @foreach (CAL_GetParametroPesticidaPorIdFichaTecnicaResult parametroPesticida in Model.GetParametroPesticidas())
+                                {
+                                    <tr class="b-top-none">
+                                        <td class="text-left"><span class="value">@parametroPesticida.Nombre</span></td>
+                                        <td class="text-left"><span class="value">@parametroPesticida.UM</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroPesticida.MinValidValue.Value, parametroPesticida.UM, parametroPesticida.FormatString)</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroPesticida.MaxValidValue.Value, parametroPesticida.UM, parametroPesticida.FormatString)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS DE METALES PESADOS</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td><span class="text-dark text-weight-semibold">Parámetro</span></td>
+                                    <td><span class="text-dark text-weight-semibold">UM</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Mínimo</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Máximo</span></td>
+                                </tr>
+                                @foreach (CAL_GetParametroMetalPesadoPorIdFichaTecnicaResult parametroMetalPesado in Model.GetParametroMetalesPesados())
+                                {
+                                    <tr class="b-top-none">
+                                        <td class="text-left"><span class="value">@parametroMetalPesado.Nombre</span></td>
+                                        <td class="text-left"><span class="value">@parametroMetalPesado.UM</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroMetalPesado.MinValidValue.Value, parametroMetalPesado.UM, parametroMetalPesado.FormatString)</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroMetalPesado.MaxValidValue.Value, parametroMetalPesado.UM, parametroMetalPesado.FormatString)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS DE MICOTOXINAS</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td><span class="text-dark text-weight-semibold">Parámetro</span></td>
+                                    <td><span class="text-dark text-weight-semibold">UM</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Mínimo</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Máximo</span></td>
+                                </tr>
+                                @foreach (CAL_GetParametroMicotoxinaPorIdFichaTecnicaResult parametroMicotoxina in Model.GetParametroMicotoxinas())
+                                {
+                                    <tr class="b-top-none">
+                                        <td class="text-left"><span class="value">@parametroMicotoxina.Nombre</span></td>
+                                        <td class="text-left"><span class="value">@parametroMicotoxina.UM</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroMicotoxina.MinValidValue.Value, parametroMicotoxina.UM, parametroMicotoxina.FormatString)</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroMicotoxina.MaxValidValue.Value, parametroMicotoxina.UM, parametroMicotoxina.FormatString)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS DE MICROBIOLOGÍA</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td><span class="text-dark text-weight-semibold">Parámetro</span></td>
+                                    <td><span class="text-dark text-weight-semibold">UM</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Mínimo</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Máximo</span></td>
+                                </tr>
+                                @foreach (CAL_GetParametroMicrobiologiaPorIdFichaTecnicaResult parametroMicrobiologia in Model.GetParametroMicrobiologia())
+                                {
+                                    <tr class="b-top-none">
+                                        <td class="text-left"><span class="value"><em>@parametroMicrobiologia.Nombre</em></span></td>
+                                        <td class="text-left"><span class="value">@parametroMicrobiologia.UM</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroMicrobiologia.MinValidValue.Value, parametroMicrobiologia.UM, parametroMicrobiologia.FormatString)</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroMicrobiologia.MaxValidValue.Value, parametroMicrobiologia.UM, parametroMicrobiologia.FormatString)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS NUTRICIONALES</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td><span class="text-dark text-weight-semibold">Parámetro</span></td>
+                                    <td><span class="text-dark text-weight-semibold">UM</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Mínimo</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Máximo</span></td>
+                                </tr>
+                                @foreach (CAL_GetParametroNutricionalPorIdFichaTecnicaResult parametroNutricional in Model.GetParametroNutricionales())
+                                {
+                                    <tr class="b-top-none">
+                                        <td class="text-left"><span class="value">@parametroNutricional.Nombre</span></td>
+                                        <td class="text-left"><span class="value">@parametroNutricional.UM</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroNutricional.MinValidValue.Value, parametroNutricional.UM, parametroNutricional.FormatString)</span></td>
+                                        <td class="text-left"><span class="value">@Formatter.Format(parametroNutricional.MaxValidValue.Value, parametroNutricional.UM, parametroNutricional.FormatString)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">FRECUENCIAS DE ANÁLISIS</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td><span class="text-dark text-weight-semibold">Tipo</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Frecuencia</span></td>
+                                </tr>
+                                @foreach (CAL_FTFrecuenciaAnalisis frecuenciaAnalisis in Model.GetFrecuenciasAnalisis())
+                                {
+                                    <tr class="b-top-none">
+                                        <td class="text-left"><span class="value">@frecuenciaAnalisis.CAL_TipoAnalisis.Descripcion</span></td>
+                                        <td class="text-left"><span class="value">@frecuenciaAnalisis.CAL_FrecuenciaAnalisis.Frecuencia</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">DOCUMENTOS</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td><span class="text-dark text-weight-semibold">#</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Doc</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Observación</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Fecha</span></td>
+                                </tr>
+                                @foreach (CAL_FTDoc cAL_FTDoc in Model.GetDocumentos())
+                                {
+                                    <tr class="b-top-none">
+                                        <td class="text-left"><span class="value">@cAL_FTDoc.IdDoc</span></td>
+                                        <td class="text-left"><span class="value">@Html.Raw(cAL_FTDoc.GetArchivo())</span></td>
+                                        <td class="text-left"><span class="value">@Html.Raw(cAL_FTDoc.Observacion)</span></td>
+                                        <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yy}", cAL_FTDoc.FechaHoraIns)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">CONTROL DE VERSIONES</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td><span class="text-dark text-weight-semibold">Versión</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Ítem</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Cambios</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Razón / Motivo</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Solicitante</span></td>
+                                    <td><span class="text-dark text-weight-semibold">Fecha</span></td>
+                                </tr>
+                                @foreach (CAL_FTControlVersion cAL_FTControlVersion in Model.GetControlVersiones())
+                                {
+                                    <tr class="b-top-none">
+                                        <td class="text-left"><span class="value">@cAL_FTControlVersion.Version</span></td>
+                                        <td class="text-left"><span class="value">@cAL_FTControlVersion.CAL_FTControlVersionItem.Nombre</span></td>
+                                        <td class="text-left"><span class="value">@cAL_FTControlVersion.Cambios</span></td>
+                                        <td class="text-left"><span class="value">@cAL_FTControlVersion.CAL_FTControlVersionMotivo.Descripcion</span></td>
+                                        <td class="text-left"><span class="value">@cAL_FTControlVersion.CAL_FTControlVersionSolicitante.Nombre</span></td>
+                                        <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yy}", cAL_FTControlVersion.Fecha)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.Observacion))
+    {
+        <div class="bill-to">
+            <table class="table h5 text-dark" style="border: none">
+                <tr>
+                    <td><strong>OBSERVACIONES</strong></td>
+                </tr>
+                <tr>
+                    <td>@Html.Raw(Model.Observacion)</td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>

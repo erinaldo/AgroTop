@@ -1,0 +1,73 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+
+@model List<SelectAgricultoresProveedorResult>
+
+@{
+    ViewBag.NombreSeccion = "Proveedores";
+    ViewBag.Title = "Agricultores asignados al proveedor";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <style>
+        .sel {
+            background-color: yellow;
+        }
+    </style>
+    <h2>@ViewBag.Title</h2>
+
+    @using(Html.BeginForm())
+    {
+        <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+
+            <tr>
+            @{ var i = 0; var last = "";}
+            @foreach (var item in Model)
+            {
+                if (item.Nombre.Length > 0 && item.Nombre.Substring(0, 1).ToUpper() != last)
+                {
+                    last = item.Nombre.Substring(0, 1).ToUpper();
+                    i = 0;
+                    @Html.Raw("</tr>")
+                    <tr>
+                        <th colspan="6">
+                            @last    
+                        </th>
+                    </tr>             
+                    @Html.Raw("<tr>");   
+                }
+                if (++i % 3 == 1)
+                {
+                   @Html.Raw("</tr><tr valing=\"top\">");
+                }
+                <td><input type="checkbox" name="ia" value="@item.IdAgricultor" @(item.TieneAcceso.Value ? "checked=\"checked\"" : "") /></td>
+                <td class="@(item.TieneAcceso.Value ? "sel" : "")">
+                    @item.Nombre
+                    @if (!item.TieneAcceso.Value)
+                    {
+                        <br /><small>@item.Proveedor</small>
+                    }
+                </td>
+            }
+            </tr>
+            <tr>
+                <td colspan="6" align="center">
+                    <input type="submit" value="Guardar Cambios" />
+                </td>
+            </tr>
+        </table>
+    }
+
+    <script>
+        $(document).ready(function () {
+
+            $("#onlySelected").click(function () {
+                foreach (var 
+                alert($("input:checked").length);
+            });
+        });
+    </script>

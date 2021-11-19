@@ -1,0 +1,225 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Models.SoftwareCalidad
+@using AgroFichasWeb.Views
+@model CAL_DetalleOrdenProduccion
+@{
+    ViewBag.Title = string.Format("{0} - SACO {1}", Model.CAL_Subproducto.Nombre, Model.CAL_Saco.Nombre);
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+    CAL_AnalisisPale analisis = (CAL_AnalisisPale)ViewData["analisis"];
+
+    //327 Ver pallets a analizar
+    //328 Crear análisis de pallet
+    //329 Editar análisis de pallet
+    //330 Eliminar análisis de pallet
+
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    @foreach (vw_CAL_SoloTurnoPallet soloTurnoPale in Model.GetSoloTurnoPallet(Model.IdDetalleOrdenProduccion))
+    {
+<script>
+            $('#datatable-@soloTurnoPale.IdDetalleOrdenProduccion-@soloTurnoPale.IdTurno2-@soloTurnoPale.IdTurno').dataTable({
+                "ordering": true,
+                "order": [0, 'desc'],
+                "searching": true,
+                "lengthChange": true,
+                "language": {
+                    "emptyTable": "No hay registros"
+                },
+                "pageLength": 100
+            });
+</script>
+    }
+}
+
+@if (Model.GetPorcentajeAvance() > 100)
+{
+    <div class="alert alert-success">
+        El porcentaje de avance del envasado es de @string.Format("{0:N2}%", Model.GetPorcentajeAvance()).
+        <div class="progress progress-striped light active m-md">
+            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", Model.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", Model.GetPorcentajeAvance());">
+                @string.Format("{0:N2}%", Model.GetPorcentajeAvance())
+            </div>
+        </div>
+    </div>
+}
+@if (Model.GetPorcentajeAvance() == 100)
+{
+    <div class="alert alert-success">
+        El porcentaje de avance del envasado es de @string.Format("{0:N2}%", Model.GetPorcentajeAvance()).
+        <div class="progress progress-striped light active m-md">
+            <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", Model.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", Model.GetPorcentajeAvance());">
+                @string.Format("{0:N2}%", Model.GetPorcentajeAvance())
+            </div>
+        </div>
+    </div>
+}
+@if (Model.GetPorcentajeAvance() == 0)
+{
+    <div class="alert alert-danger">
+        El porcentaje de avance del envasado es de @string.Format("{0:N2}%", Model.GetPorcentajeAvance()).
+        <div class="progress progress-striped light active m-md">
+            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", Model.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", Model.GetPorcentajeAvance());">
+                @string.Format("{0:N2}%", Model.GetPorcentajeAvance())
+            </div>
+        </div>
+    </div>
+}
+@if (Model.GetPorcentajeAvance() > 0 && Model.GetPorcentajeAvance() < 100)
+{
+    <div class="alert alert-warning">
+        El porcentaje de avance del envasado es de @string.Format("{0:N2}%", Model.GetPorcentajeAvance()).
+        <div class="progress progress-striped light active m-md">
+            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", Model.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", Model.GetPorcentajeAvance());">
+                @string.Format("{0:N2}%", Model.GetPorcentajeAvance())
+            </div>
+        </div>
+    </div>
+}
+@if (Model.GetPorcentajeAvance() == 0)
+{
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        No hay pallets.
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@foreach (vw_CAL_SoloTurnoPallet soloTurnoPale in Model.GetSoloTurnoPallet(Model.IdDetalleOrdenProduccion))
+{
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">@string.Format("{0:dd/MM/yyyy} desde {2} hasta {3} en la {1}", soloTurnoPale.Date, soloTurnoPale.Turno2, soloTurnoPale.Desde2, soloTurnoPale.Hasta2)</h2>
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable-@soloTurnoPale.IdDetalleOrdenProduccion-@soloTurnoPale.IdTurno2-@soloTurnoPale.IdTurno">
+                <thead>
+                    <tr>
+                        <th>Código QR</th>
+                        <th>Correlativo</th>
+                        <th>Tipo</th>
+                        <th>Cantidad Paletizada</th>
+                        <th>Control de Fechado</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (CAL_Pale pale in Model.GetPales(soloTurnoPale.IdDetalleOrdenProduccion, soloTurnoPale.Date.Value, soloTurnoPale.IdTurno2.Value))
+                    {
+                        <tr valign="top">
+                            <td><img src="@pale.GetImgSrc()" width="100" /></td>
+                            <td>@pale.IdPale<br />@pale.CodigoInterno</td>
+                            <td>@pale.CAL_TipoPale.Descripcion</td>
+                            <td>@pale.CantidadPaletizada</td>
+                            <td>
+                                @if (pale.IdControlFechado.HasValue)
+                                {
+                                    @pale.CAL_FTSacoControlFechado.Descripcion
+                                }
+                            </td>
+                            <td>
+                                <span style="display: block">@string.Format("{0:dd/MM/yyyy HH:mm:ss}", pale.FechaHoraIns)</span>
+                                @pale.GetTurno().CAL_TipoTurno.Descripcion
+                            </td>
+                            <td>
+                                <span class="label label-@(permisosUsuario.CrearAnalisisPallet && pale.NoEstaAnalizado(pale.IdPale) ? "warning" : "success")" style="display: block">@(permisosUsuario.CrearAnalisisPallet && pale.NoEstaAnalizado(pale.IdPale) ? "En espera de análisis..." : "Analizado:")</span>
+                                @if (pale.NoEstaRetenidoAut(pale.IdPale) && pale.NoEstaRetenido(pale.IdPale) && !(permisosUsuario.CrearAnalisisPallet && pale.NoEstaAnalizado(pale.IdPale)))
+                                {
+                                    <span class="label label-@(pale.NoEstaRetenido(pale.IdPale) && pale.NoEstaRetenidoAut(pale.IdPale) ? "success" : "warning")" style="display: block">Liberado Sincronizado</span>
+                                }
+                                else if (!pale.NoEstaLiberado(pale.IdPale))
+                                {
+                                    <span class="label label-@(!pale.NoEstaLiberado(pale.IdPale) ? "success" : "warning")" style="display: block">Liberado</span>
+                                }
+                                else if (!pale.NoEstaRetenidoAut(pale.IdPale) && !(permisosUsuario.CrearAnalisisPallet && pale.NoEstaAnalizado(pale.IdPale)))
+                                {
+                                    <span class="label label-@(!pale.NoEstaRetenidoAut(pale.IdPale) ? "danger" : "success")" style="display: block">@(!pale.NoEstaRetenidoAut(pale.IdPale) ? "Retenido Automático" : "Liberado Automático")</span>
+                                }
+                                else if ((pale.NoEstaRetenido(pale.IdPale) || !pale.NoEstaRetenido(pale.IdPale)) && !(permisosUsuario.CrearAnalisisPallet && pale.NoEstaAnalizado(pale.IdPale)))
+                                {
+                                    <span class="label label-@(!pale.NoEstaRetenido(pale.IdPale) ? "danger" : "success")" style="display: block">@(!pale.NoEstaRetenido(pale.IdPale) ? "Retenido Analista" : "Liberado Analista")</span>
+                                }
+                                <span class="label label-@(pale.NoEstaCargado(pale.IdPale) ? "" : "info")" style="display: block">@(pale.NoEstaCargado(pale.IdPale) ? "" : "Cargado:")  @(pale.NoEstaCargado(pale.IdPale) ? "" : pale.GetDespachoPale(pale.IdPale).CAL_RITContenedor.NContenedor)</span>
+                            </td>
+                            <td>
+                                @if (permisosUsuario.CrearAnalisisPallet && pale.NoEstaAnalizado(pale.IdPale))
+                                {
+                                    <a href="@Url.Action("Crear", "CALAnalisisPallets", new { id = pale.IdPale })" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Analizar Pallet"><i class="fa fa-plus"></i></a>
+                                    <button id="@string.Format("view_{0}", pale.IdPale)" onclick="window.location.href='@Url.Action("VerAnalisisPale", "CALAnalisisPallets", new { id = pale.IdPale })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Análisis"> <i class="fa fa-eye"></i></button>
+                                    if (pale.VieneReprocesoSacosDañados.HasValue)
+                                    {
+                                        if (pale.VieneReprocesoSacosDañados.Value == false)
+                                        {
+                                            <button id="@string.Format("deletePallet_{0}", pale.IdPale)" onclick="window.location.href='@Url.Action("Eliminar", new { id = pale.IdPale, pale.CAL_DetalleOrdenProduccion.IdOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar Pallet"><i class="fa fa-trash-o"></i></button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (permisosUsuario.Actualizar)
+                                        {
+                                            <button id="@string.Format("editPallet_{0}", pale.IdPale)" onclick="window.location.href='@Url.Action("EditarPallet", new { id = pale.IdPale })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar Pallet"><i class="fa fa-edit"></i></button>
+                                        }
+
+                                        if (permisosUsuario.Borrar)
+                                        {
+                                            <button id="@string.Format("deletePallet_{0}", pale.IdPale)" onclick="window.location.href='@Url.Action("Eliminar", new { id = pale.IdPale, pale.CAL_DetalleOrdenProduccion.IdOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar Pallet"><i class="fa fa-trash-o"></i></button>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <button id="@string.Format("view_{0}", pale.IdPale)" onclick="window.location.href='@Url.Action("VerAnalisisPale", "CALAnalisisPallets", new { id = pale.IdPale })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Análisis"> <i class="fa fa-eye"></i></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+<!-- end: page -->

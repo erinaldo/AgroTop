@@ -1,0 +1,168 @@
+﻿@using AgroFichasWeb.Models.Logistica.Utilidades
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model MovimientosViewModel
+
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    ViewBag.Title = "Movimientos";
+}
+
+@section submenuSection {
+    @Html.Partial("~/Views/Requerimientos/Submenu.cshtml")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList2 tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "movimientos", new { id = 0 }, FormMethod.Get))
+    {
+        @Html.DropDownList("idRequerimiento", Model.SelectListRequerimientos, "-- Seleccione --", new { @class = "heavy std" })
+        <input type="submit" value="Filtrar por Requerimiento" />
+    }
+</div>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("buscar", "movimientos", new { id = 0, idRequerimiento = Model.IdRequerimiento }, FormMethod.Post))
+    {
+        <input type="text" name="keyword" value="@ViewData["keyword"]" /> <input type="submit" value="Buscar" />
+    }
+</div>
+
+<div style="margin: 20px 0px">
+    <a class="exportlink" href="@Url.Action("exportar", "movimientos", new { id = 0, IdRequerimiento = Model.IdRequerimiento })">Exportar a Excel</a>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="validation-summary-errors">
+        @Model.ErrorMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.OKMessage))
+{
+    <div class="validation-summary-oks">
+        @Model.OKMessage
+    </div>
+}
+
+<table class="smallDataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">Núm. Req.</th>
+        <th align="left">Núm. Ped.</th>
+        <th align="left">Núm. Guía</th>
+        <th align="left">Producto</th>
+        <th align="left">Transportista</th>
+        <th align="left">Estado</th>
+        <th align="left">Salida</th>
+        <th align="left">Destino</th>
+        <th align="left">Kgs Salida</th>
+        <th align="left">Kgs Llegada</th>
+        <th align="left">Tol.</th>
+        <th align="left">Dif.</th>
+        <th align="left">Merma</th>
+        <th align="left">Precio</th>
+        <th align="left">Neto</th>
+        <th align="center" colspan="3">Acciones</th>
+    </tr>
+    @if (Model.Movimientos.Count == 0)
+    {
+        <tr>
+            <td colspan="@Model.Columnas" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+    @if (Model.Movimientos.Count > 0)
+    {
+        foreach (var movimiento in Model.Movimientos)
+        {
+            var asignacioncamion = LogisticaHelper.GetCamionAsignadoExistente(movimiento.IdPedido);
+            var asignacionpedido = LogisticaHelper.GetPedidoAsignadoExistente(movimiento.IdPedido);
+            var pedido = LogisticaHelper.GetPedidoHabilitadoExistente(movimiento.IdPedido);
+            <tr valign="top">
+                <td align="left">@asignacionpedido.IdRequerimiento</td>
+                <td align="left">@pedido.IdPedido</td>
+                <td align="left">@movimiento.NumeroGuia</td>
+                <td align="left">@asignacionpedido.Cultivo</td>
+                <td align="left">@asignacioncamion.LOG_Chofer.LOG_Transportista.Nombre</td>
+                <td align="left" class="@CssClasses.GetEstadoPedido(pedido.IdPedido)">@asignacionpedido.LOG_Pedido.LOG_EstadoPedido.Descripcion</td>
+                <td align="left">@LogisticaHelper.GetSucursal(pedido.IdPedido, LogisticaHelper.Proviene.Origen)</td>
+                <td align="left">@LogisticaHelper.GetSucursal(pedido.IdPedido, LogisticaHelper.Proviene.Destino)</td>
+                <td align="left">@movimiento.PesajeSalidaKg.ToString("N0")</td>
+                <td align="left">
+                    @if (movimiento.PesajeLlegadaKg != null)
+                    {
+                        @movimiento.PesajeLlegadaKg.Value.ToString("N0")
+                    }
+                </td>
+                <td align="left">@movimiento.Tolerancia.ToString("N2")</td>
+                <td align="left">
+                    @if (movimiento.DiferenciaPesajesKg != null)
+                    {
+                        @((movimiento.PesajeSalidaKg - movimiento.PesajeLlegadaKg.Value).ToString("N2"))
+                    }
+                </td>
+                <td align="left">
+                    @if (movimiento.Merma != null)
+                    {
+                        @movimiento.Merma.Value.ToString("N2")
+                    }
+                </td>
+                <td align="left">@movimiento.ValorFletePorKgTransportado.ToString("C1")</td>
+                <td align="left">
+                    @if (movimiento.TotalNeto != null)
+                    {
+                        @movimiento.TotalNeto.Value.ToString("C0")
+                    }
+                </td>
+                @if (Model.MostrarEditar)
+                {
+                    <td align="left">
+                        @if (movimiento.LOG_Pedido.IdEstado == 5)
+                        {
+                            <a href="@Url.Action("editar", "movimientos", new { id = movimiento.IdMovimiento })">
+                                <img src="@Url.Content("~/Content/images/editar.png")" alt="Editar" height="16" width="16" />
+                            </a>
+                        }
+                    </td>
+                }
+                @if (Model.MostrarCompletar)
+                {
+                    <td align="left">
+                        @if (movimiento.LOG_Pedido.IdEstado == 4)
+                        {
+                            <a href="@Url.Action("marcarcompleto", "movimientos", new { id = movimiento.IdMovimiento })">
+                                <img src="@Url.Content("~/Content/images/editar.gif")" alt="Marcar Completo" height="16" width="16" />
+                            </a>
+                        }
+                    </td>
+                }
+                @if (Model.MostrarEliminar)
+                {
+                    <td align="left">
+                        @if (pedido.IdEstado != 5 && pedido.IdEstado != 6 && pedido.IdEstado != 7)
+                        {
+                            <a href="@Url.Action("eliminar", "movimientos", new { id = movimiento.IdMovimiento })">
+                                <img src="@Url.Content("~/Content/images/eliminar.png")" alt="Editar" height="16" width="16" />
+                            </a>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    }
+    <tr>
+        <td colspan="@Model.Columnas" class="pager">
+            @Html.Paginador(Model.Movimientos.PageIndex, Model.Movimientos.TotalPages, "", "movimientos", Model.IdRequerimiento.ToString(), "index")
+        </td>
+    </tr>
+</table>

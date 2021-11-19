@@ -1,0 +1,100 @@
+﻿
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model List<CTR_PlanificacionSemanal_Detalle>
+@{
+    Layout = null;
+}
+
+@if (Model.Count() > 0)
+{
+    <div class="form-group center">
+        <div class="row">
+            <div class="">
+                <div class="col-sm-6" style="float:none;margin:auto;">
+                    <table class="table table-bordered table-striped mb-sm" id="TablaLineasNoAsociadas">
+                        <thead>
+                            <tr>
+                                <th>N° Documento</th>
+                                <th>Codigo</th>
+                                <th>Producto</th>
+                                <th>Saldo</th>
+                                <th>U. Medida</th>
+                                <th style="margin:auto;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (CTR_PlanificacionSemanal_Detalle linea in Model)
+                            {
+                                <tr valign="top">
+                                    <td class="hide">@linea.IdPlanificacionDetalle</td>
+                                    <td>@linea.NumeroDocumento</td>
+                                    <td>@linea.Codigo</td>
+                                    <td>@linea.NombreProducto</td>
+                                    @{
+                                        decimal saldoParse = (decimal)linea.Saldo;
+                                    }
+                                    <td>@String.Format("{0:N2}", saldoParse) </td>
+                                    <td></td>
+                                    <td>
+                                        <div class="btn-group center" role="group" aria-label="Botones de acción">
+                                            <button type="button" id="addDocumento" onclick="AddDocumento(this);" class="btn btn-primary btn-sm">Asignar</button>
+                                            <button type="button" id="deleteDocumento" onclick="DeleteDocumento(this);" class="btn btn-danger btn-sm">Borrar</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+
+            var id = $('#IdEmpresa').val();
+
+
+            var urlTablaDP = "";
+
+            if (id == 1) {
+                urlTablaDP = '@System.Configuration.ConfigurationManager.AppSettings["URL_OLEOTOP"]'
+            }
+
+            if (id == 2) {
+                //url para avenatop
+                urlTablaDP = '@System.Configuration.ConfigurationManager.AppSettings["URL_AVENATOP"]'
+                if (jQuery.isEmptyObject(urlTablaDP)) {
+                    urlTablaDP = '@System.Configuration.ConfigurationManager.AppSettings["URL_FASE_PRUEBAS"]'
+                }
+            }
+
+            if (id == 3) {
+                //url para granotop
+                urlTablaDP = '@System.Configuration.ConfigurationManager.AppSettings["URL_GRANOTOP"]'
+            }
+
+            if (id == 4) {
+                //url para saprosem
+                urlTablaDP = '@System.Configuration.ConfigurationManager.AppSettings["URL_SAPROSEM"]'
+            }
+            urlTablaDP += "ItemsSBO?Codigo="
+
+            $("#TablaLineasNoAsociadas tbody tr").each(function () {
+                var row = $(this);
+                codigo = row.find("td").eq(2).html()
+
+                var value = $.ajax({
+                    url: urlTablaDP + codigo,
+                    async: false
+                }).responseText;
+                var resultado = JSON.parse(value)
+                row.find("td").eq(5).text(resultado.UnidadMedidaInventario);
+
+            });
+        });
+    </script>
+}
+

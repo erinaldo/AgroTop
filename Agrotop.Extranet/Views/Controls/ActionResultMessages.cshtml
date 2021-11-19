@@ -1,0 +1,25 @@
+﻿@{ 
+    var msgOK = "";
+    if (Request["msgok"] != null && Request["msgok"] != "")
+    {
+        msgOK = Request["msgok"];
+    }
+    else if (ViewData["msgok"] != null && ViewData["msgok"].ToString() != "")
+    {
+        msgOK = ViewData["msgok"].ToString();
+    }
+
+}
+    @if (Request["msgerr"] != null && Request["msgerr"] != "")
+    {
+        <div class="validation-summary-errors">
+            @Request["msgerr"]
+        </div>
+    }
+
+    @if (msgOK != "")
+    {
+        <div class="validation-summary-oks">
+            @msgOK
+        </div>
+    }

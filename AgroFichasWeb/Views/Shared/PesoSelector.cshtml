@@ -1,0 +1,8 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var idPeso = (int)ViewData["idPeso"];
+}
+<select id="idPeso" name="idpeso">
+    <option value="1" @(idPeso == 1 ? "selected" : "")>Peso Standard</option>
+    <option value="2" @(idPeso == 2 ? "selected" : "")>Peso Neto</option>
+</select>

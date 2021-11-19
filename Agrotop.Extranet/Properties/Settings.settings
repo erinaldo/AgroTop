@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Agrotop.Extranet.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="WebsiteUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:56691</Value>
+    </Setting>
+    <Setting Name="ForceManagerData" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\Microsoft OneDrive\Proyectos\ForceManagerData</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -1,0 +1,264 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_DespachoPale
+@{
+    ViewBag.Title = "Despachos Carga Pallet";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    AgroFichasDBDataContext dc = new AgroFichasDBDataContext();
+    if (Model.IdDespachoPale == 0)
+    {
+        ViewBag.SubTitle = string.Format("Crear Despacho Carga Pallet {0}", Model.IdPale);
+    }
+    else
+    {
+        ViewBag.SubTitle = string.Format("Editar Despacho Carga Pallet #{0}", Model.IdDespachoPale);
+    }
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+    CAL_DetalleOrdenProduccion detalleOrdenProduccion = (CAL_DetalleOrdenProduccion)ViewData["detalleOrdenProduccion"];
+    CAL_Pale pale = (CAL_Pale)ViewData["pale"];
+    CAL_AnalisisPale analisisPale = (CAL_AnalisisPale)ViewData["analisisPale"];
+    PlantaProduccion plantaProduccion = dc.PlantaProduccion.Where(X => X.IdPlantaProduccion == ordenProduccion.IdPlanta).FirstOrDefault();
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+}
+@section CustomScripts
+{
+    @*<script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+        <script src="//ajax.aspnetcdn.com/ajax/mvc/4.0/jquery.validate.unobtrusive.min.js"></script>*@
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        //function GetBandera(id) {
+        //    var idContenedor = $("#IdContenedor").val();
+        //    $.getJSON(uri + '/PosicionContenedor/GetBandera?IdContenedor=' + idContenedor)
+        //        .done(function (result) {
+        //            var options = [];
+
+        //            if (result == null || result.length == 0) {
+        //                $("#radios").show();
+        //                $("#posicion").hide();
+        //            }
+        //            else {
+        //                for (var i = 0; i < result.length; i++) {
+        //                    if (result[i].IdPosicion == 1)
+        //                    { options.push('<label style="background-color:orange;color: white; padding: 3px;"><i class="fa fa-chevron-left fa-1x"></i> ', result[i].Descripcion, '</label>'); }
+        //                    else
+        //                    { options.push('<label style="background-color:deepskyblue;color: white; padding: 3px;">', result[i].Descripcion, ' <i class="fa fa-chevron-right fa-1x"></i></label>'); }
+        //                }
+        //                $($("#posicion")).html(options.join(''));
+        //                $("#radios").hide();
+        //                $("#posicion").show();
+        //            }
+        //        })
+        //        .fail(function (jqXHR, textStatus, err) {
+        //            console.log(err);
+        //        });
+        //}
+
+        $(".sacosdanados").keyup(function () {
+            var SacosDañados = $(".sacosdanados").val();
+            var CantidadPaletizada = $("#CantidadPaletizada").val();
+            var options = [];
+            var diferenciaSacos = parseInt(CantidadPaletizada) - parseInt(SacosDañados);
+
+            if (isNaN(diferenciaSacos)) {
+                document.getElementById("diferencia").value = 0;
+                document.getElementById("SacosTotales").value = 0;
+            } else {
+                document.getElementById("diferencia").value = diferenciaSacos;
+                document.getElementById("SacosTotales").value = diferenciaSacos;
+            }
+
+            if (SacosDañados >= parseInt(CantidadPaletizada)) {
+                options.push('<span class="field-validation-error" style="display: inline;">La carga de sacos no puede ser igual o superior a los sacos paletizados</span>');
+                $($("#alert")).html(options.join(''));
+                $("#alert").show();
+                $('.sacosdanados').addClass('input-validation-error');
+                $('#diferencia').addClass('input-validation-error');
+                $('#crear').prop('disabled', true);
+            }
+            else {
+                $("#alert").hide();
+                $('.sacosdanados').removeClass('input-validation-error');
+                $('#diferencia').removeClass('input-validation-error');
+                $('#crear').prop('disabled', false);
+            }
+        });
+
+    </script>
+}
+@if ((!Model.Retenido(Model.IdPale) || !Model.RetenidoAut(Model.IdPale) || !Model.Reproceso(Model.IdPale)) && Model.Liberado(Model.IdPale))
+{
+    Response.Redirect(Url.Action("QRDespachoPallet", new { errMsg = "PALLET RETENIDO Ó REPROCESADO, No se puede despachar", okMsg = "" }));
+}
+else
+{
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                </header>
+                @using (Html.BeginForm((Model.IdDespachoPale == 0 ? "CrearDespachoPallet" : "EditarDespachoPallet"), "CALDespachosPallets", FormMethod.Post))
+                {
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Planta de producción</label>
+                                    <span class="form-control" style="background-color: #ebfbdf;">@plantaProduccion.Nombre</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Pallet</label>
+                                    <span class="form-control" style="background-color: #ebfbdf;">@Model.IdPale</span>
+                                    @Html.Hidden("IdPale", Model.IdPale)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Lote Comercial</label>
+                                    <span class="form-control" style="background-color: #ebfbdf;">@ordenProduccion.LoteComercial</span>
+                                    @Html.Hidden("IdOrdenProduccion", Model.IdOrdenProduccion)
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Cliente</label>
+                                    <span class="form-control" style="background-color: #ebfbdf;">@ordenProduccion.GetCliente(ordenProduccion.IdCliente).RazonSocial</span>
+                                    @*<span class="form-control" style="background-color: #ebfbdf;">
+
+                                            @if (detalleOrdenProduccion.IdEspesorProducto.HasValue)
+                                            {
+                                                @:@string.Format("{0:N2}-{1:N2} mm", detalleOrdenProduccion.CAL_EspesorProducto.Min, detalleOrdenProduccion.CAL_EspesorProducto.Max)
+                                            }
+                                            else
+                                            {
+                                                @:(No tiene Espesor)
+                                            }
+                                        </span>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label">Producto</label>
+                                    <span class="form-control" style="background-color: #ebfbdf;">
+                                        @detalleOrdenProduccion.CAL_Subproducto.Nombre
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Cliente</label>
+                                        <span class="form-control" style="background-color: #ebfbdf;">@ordenProduccion.GetCliente(ordenProduccion.IdCliente).RazonSocial</span>
+                                    </div>
+                                </div>
+                            </div>*@
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-bold">Parámetros a Revisar <span class="required">*</span></label>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Fecha Etiqueta</label>
+                                                <input style="background-color: #ebfbdf;" class="form-control" type="text" name="" id="" value="@string.Format("{0:dd/MM/yyyy}", analisisPale.FechaEtiquetado)" disabled />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label class="control-label">N° Sacos Pallet</label>
+                                                <input style="background-color: #ebfbdf;" class="form-control" type="text" name="" id="CantidadPaletizada" value="@pale.CantidadPaletizada" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label class="control-label">N° Sacos Dañados</label>
+                                                @Html.TextBox("SacosDañados", (Model.IdDespachoPale == 0 ? 0 : Model.SacosDañados), new { @class = "form-control sacosdanados", onkeyup = "Valida()" })
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label class="control-label">N° Sacos Cargado</label>
+                                                <input class="form-control" type="text" name="" id="diferencia" value="@if (Model.SacosTotales == 0 && Model.SacosDañados == 0) { @pale.CantidadPaletizada } else {@Model.SacosTotales }" disabled />
+                                                @Html.Hidden("SacosTotales")
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="control-label">Container <span class="required">*</span></label>
+                                    @Html.DropDownList("IdContenedor", Model.GetContenedores(Model.IdContenedor), "(Seleccione Contenedor)", new { @class = "form-control", maxlength = "50", onchange = "GetBandera()" })
+                                    @Html.ValidationMessage("IdContenedor")
+                                    <span id="posicion" class="help-block"></span>
+                                    <div id="radios" class="col-sm-2" style="display:none">
+                                        <div class="btn-group">
+                                            <div class="radio-custom radio-warning">
+                                                <input type="radio" id="izquierda" name="posicionContenedor" value="1">
+                                                <label for="izquierda" style="background-color:orange;color: white; padding: 3px;"><i class="fa fa-chevron-left" aria-hidden="true"></i> Contenedor a la Izquierda</label>
+                                            </div>
+                                            <div class="radio-custom radio-info">
+                                                <input type="radio" id="derecha" name="posicionContenedor" value="2">
+                                                <label for="derecha" style="background-color:deepskyblue;color: white; padding: 3px;">Contenedor a la Derecha <i class="fa fa-chevron-right" aria-hidden="true"></i></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="control-label">Observaciones</label>
+                                    @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "summernote", @data_plugin_summernote = "{}" })
+                                </div>
+                            </div>
+                        </div>
+                        @Html.Hidden("IdDetalleOrdenProduccion", Model.IdDetalleOrdenProduccion)
+                    </div>
+
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" id="crear" class="btn btn-primary" value="@(Model.IdDespachoPale == 0 ? "Guardar este Despacho" : "Editar este Despacho")" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+}

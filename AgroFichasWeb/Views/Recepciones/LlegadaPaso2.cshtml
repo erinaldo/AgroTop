@@ -1,0 +1,216 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model LlegadaViewModel
+
+@section submenuSection {
+    @Html.Partial("TemporadaSelectorUL", new AgroFichasWeb.ViewModels.Recepciones.TemporadaSelectorViewModel()
+    {
+        Temporada = Model.Temporada,
+        Temporadas = (List<Temporada>)ViewData["temporadas"],
+        HrefMask = Url.Action("LlegadaPaso1", "Recepciones", new { idTemporada = "IDTEMPORADA" })
+    })
+}
+
+@{
+
+    ViewBag.NombreSeccion = "Registrar Llegada " + Model.Temporada.Nombre;
+    ViewBag.Title = "Ingresar Datos";
+    var idTipoServicio = ViewData["idTipoServicio"];
+
+
+    var cultivos = (from ic in Model.CultivosEmpresas
+                    select new SelectListItem
+                    {
+                        Value = ic.IdCultivoEmpresa,
+                        Text = ic.Nombre,
+                        Selected = ic.IdCultivoEmpresa == Model.IdCultivoEmpresa
+                    });
+
+    var sucursales = from su in Model.Sucursales
+                     select new SelectListItem
+                     {
+                         Value = su.IdSucursal.ToString(),
+                         Text = su.Nombre,
+                         Selected = su.IdSucursal == Model.IdSucursal
+                     };
+
+    var tipoServicio = new SelectList(
+        new List<SelectListItem>
+        {
+            new SelectListItem { /*Selected = idTipoServicio.ToString().Equals("1") ? true : false,*/ Text = "Compra", Value = "1"},
+            new SelectListItem { /*Selected = idTipoServicio.ToString().Equals("2") ? true : false,*/ Text = "A Guarda", Value = "2"}
+                }, "Value", "Text");
+
+    var comunas = from com in Model.Comunas
+                  select new SelectListItem { Value = com.IdComuna.ToString(), Text = com.Nombre, Selected = com.IdComuna == Model.IdComunaOrigen };
+
+    var tiposVehiculo = from tv in Model.TiposVehiculo
+                        select new SelectListItem { Value = tv.IdTipoVehiculo.ToString(), Text = tv.Nombre, Selected = tv.IdTipoVehiculo == Model.IdTipoVehiculo };
+
+    var oSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    var variedades = oSerializer.Serialize(from p in Model.Variedades
+                                           select new { IdCultivo = p.IdCultivo, Nombre = p.Cultivo.Nombre + " " + p.Nombre, IdVariedad = p.IdVariedad });
+
+    var cultivosContrato = oSerializer.Serialize(from p in Model.CultivosContrato
+                                                 select new { IdCultivoContrato = p.IdCultivoContrato, IdCultivo = p.IdCultivo });
+
+    var tiposGuia = from tg in Model.TipoGuias
+                    select new SelectListItem { Value = tg.IdTipoGuia.ToString(), Text = tg.Descripcion, Selected = tg.IdTipoGuia == Model.IdTipoGuia };
+}
+
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@if (Model.CultivosEmpresas.Count == 0)
+{
+    <div class="validation-summary-errors">
+        No es posible hacer el ingreso por que <span style="color: black">@Model.Agricultor.Nombre (@Model.Agricultor.Rut) no tiene contrantos vigentes</span> para esta temporada
+        <p>
+            <a href="~/recepciones/llegadapaso1" style="color: blue;">Buscar a otro agricultor</a>
+        </p>
+    </div>
+}
+else
+{
+    using (Html.BeginForm("llegadapaso3", "recepciones", FormMethod.Post, new { id = "frm" }))
+    {
+        @Html.Hidden("IdTemporada", Model.IdTemporada)
+<fieldset class="dataForm">
+    <p>
+        <label>Sucursal</label>
+        @Html.DropDownList("IdSucursal", sucursales, new { @class = "std" })
+        @Html.ValidationMessage("IdSucursal", ".")
+    </p>
+    <p>
+        <label>Agricultor</label>
+        @Model.Agricultor.Rut @Model.Agricultor.Nombre
+        @Html.Hidden("IdAgricultor", Model.IdAgricultor)
+    </p>
+    <p>
+        <label>eMail</label>
+        @Html.TextBox("email", Model.Agricultor.Email, new { maxlength = "50", @class = "std" })
+        @Html.ValidationMessage("eMail", ".")
+    </p>
+    <p>
+        <label>Teléfono 1</label>
+        @Html.TextBox("fono1", Model.Agricultor.Fono1, new { maxlength = "50", @class = "std" })
+        @Html.ValidationMessage("Teléfono", ".")
+    </p>
+    <p>
+        <label>Teléfono 2</label>
+        @Html.TextBox("fono2", Model.Agricultor.Fono2, new { maxlength = "50", @class = "std" })
+        @Html.ValidationMessage("Teléfono", ".")
+    </p>
+    <p>
+        <label>Cultivo<br />Empresa</label>
+        @Html.DropDownList("IdCultivoEmpresa", cultivos, new { @class = "std" })
+        @Html.ValidationMessage("IdCultivoEmpresa", ".")
+    </p>
+    <p>
+        <label>Variedad</label>
+        @Html.DropDownList("IdVariedad", new List<SelectListItem>(), new { @class = "std" })
+        @Html.ValidationMessage("IdVariedad", ".")
+    </p>
+    <p>
+        <label>Comuna<br />Origen</label>
+        @Html.DropDownList("IdComunaOrigen", comunas, new { @class = "std" })
+        @Html.ValidationMessage("IdComunaOrigen", ".")
+    </p>
+    <p>
+        <label>Tipo de Vehículo</label>
+        @Html.DropDownList("IdTipoVehiculo", tiposVehiculo, new { @class = "std" })
+        @Html.ValidationMessage("IdTipoVehiculo", ".")
+    </p>
+    <p>
+        <label>Tipo Guía</label>
+        @Html.DropDownList("IdTipoGuia", tiposGuia, new { @class = "std" })
+        @Html.ValidationMessage("IdTipoGuia", ".")
+    </p>
+    <p>
+        <label>Tipo Servicio</label>
+        @Html.DropDownList("IdTipoServicio", tipoServicio, new { @class = "std" })
+        @Html.ValidationMessage("IdTipoServicio", ".")
+    </p>
+    <p>
+        <label>Número Guía</label>
+        @Html.TextBox("NumeroGuia", Model.NumeroGuia, new { maxlength = "10", @class = "std" })
+        @Html.ValidationMessage("NumeroGuia", ".")
+    </p>
+    <p>
+        <label>Última Entrega</label>
+        @Html.CheckBox("UltimaEntrega", Model.UltimaEntrega)
+    </p>
+    <p>
+        <label>Liquidación en Dólares</label>
+        @Html.CheckBox("LiquidacionDolar", Model.LiquidacionDolar)
+    </p>
+    <p>
+        <label>Patente</label>
+        @Html.TextBox("Patente", Model.Patente, new { maxlength = "10", @class = "std" })
+        @Html.ValidationMessage("Patente", ".")
+    </p>
+    <p>
+        <label>Chofer</label>
+        @Html.TextBox("Chofer", Model.Chofer, new { maxlength = "50", @class = "std" })
+        @Html.ValidationMessage("Chofer", ".")
+    </p>
+    <p>
+        <label>PIN</label>
+        @Html.Password("Pin", "", new { autocomplete = "off" })
+        @Html.ValidationMessage("Pin", ".")
+    </p>
+    <p class="okcancel">
+        <input type="submit" value="Guardar Este Ingreso" id="saveButton" /> o @Html.ActionLink("Cancelar", "llegadapaso1", "recepciones")
+    </p>
+</fieldset>
+    }
+
+    <script type="text/javascript">
+
+            var variedades = @(variedades.ToMvcHtmlString());
+            var cultivosContrato = @(cultivosContrato.ToMvcHtmlString());
+
+            $(document).ready(function () {
+
+                $('#saveButton').click( function (e) {
+                    $(this).attr('disabled', 'disabled');
+                    $("#frm").submit();
+                });
+
+                $("#IdCultivoEmpresa").change(function () {
+                    updateVariedades();
+                });
+
+                updateVariedades();
+            });
+
+
+
+            function updateVariedades() {
+
+                $('#IdVariedad').html('');
+                var idCultivo = getIdCultivo($("#IdCultivoEmpresa").val());
+                for (var i = 0; i < variedades.length; i++)
+                    if (variedades[i].IdCultivo == idCultivo || idCultivo == 0)
+                        $('#IdVariedad')
+                            .append($("<option></option>")
+                            .attr("value",variedades[i].IdVariedad)
+                            .text(variedades[i].Nombre));
+            };
+
+            function getIdCultivo(idCultivoEmpresa) {
+                var data = idCultivoEmpresa.split(',');
+                var idCultivoContrato = data[0];
+                for (var i = 0; i < cultivosContrato.length; i++)
+                    if (cultivosContrato[i].IdCultivoContrato == idCultivoContrato)
+                        return cultivosContrato[i].IdCultivo;
+
+                return 0;
+            }
+
+    </script>
+
+}

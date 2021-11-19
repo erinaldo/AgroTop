@@ -1,0 +1,19 @@
+﻿@using AgroFichasWeb.Models
+
+@model SolicitudPrecio
+
+@{
+    ViewBag.NombreSeccion = "Convenios de Precio";
+    ViewBag.Title = "Solicitud de Precio";
+}
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm">
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+    @Html.Partial("SolicitudPrecio", Model)
+</fieldset>

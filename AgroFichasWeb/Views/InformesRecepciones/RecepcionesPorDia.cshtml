@@ -1,0 +1,92 @@
+﻿@using AgroFichasWeb.Models
+@model List<rpt_RecepcionesPorDiaResult>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.Title = "Recepciones Diarias " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+}
+
+
+@section filter {
+    @using(Html.BeginForm()) {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("EmpresaSelector")</td>
+                <td>@Html.Partial("SucursalSelector")</td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Empresa:</td>
+        <td>@ViewData["empresaLabel"]</td>
+        <td class="RptLabel">Planta:</td>
+        <td width="100%">
+            @ViewData["sucursalLabel"]
+            @Html.ActionLink("Exportar", "recepcionespordiaexport", new { idTemporada = temporada.IdTemporada, idEmpresa = ViewData["idEmpresa"], idSucursal = ViewData["idSucursal"], key = ViewData["key"] }, new { @class = "exportlink" })
+        </td>
+    </tr>
+    </table>
+    <br />
+
+    <table width="100%" cellpadding="2" cellspacing="2">
+        <tr>
+            <td class="RptEncabezadoListado">Fecha</td>
+            <td class="RptEncabezadoListado" align="right">Ton Neto</td>
+            <td class="RptEncabezadoListado" align="right">Ton Std</td>
+            <td class="RptEncabezadoListado" align="right">Ton Neto / Hora</td>
+            <td class="RptEncabezadoListado" align="right">Ingresos</td>
+            <td class="RptEncabezadoListado" align="right">Muestreos</td>
+            <td class="RptEncabezadoListado" align="right">Análisis</td>
+            <td class="RptEncabezadoListado" align="right">Descargados</td>
+        </tr>
+    @foreach (var item in Model)
+    {
+    <tr class="RptItemListado" valign="top">
+        <td nowrap="nowrap" align="left">@item.Fecha.ToString("dd MMM yyyy")</td>
+        <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", item.PesoBruto.Value / 1000M)</td>
+        <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", item.PesoNormal.Value / 1000M)</td>
+        <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", item.PesoBruto.Value / 1000M / 24M)</td>
+        <td nowrap="nowrap" align="right">@String.Format("{0:#,##0}", item.Ingresados)</td>
+        <td nowrap="nowrap" align="right">@String.Format("{0:#,##0}", item.Muestreados)</td>
+        <td nowrap="nowrap" align="right">@String.Format("{0:#,##0}", item.Analizados)</td>
+        <td nowrap="nowrap" align="right">@String.Format("{0:#,##0}", item.Descargados)</td>
+    </tr>
+    }
+    <tr>
+        <td class="RptPieListado" colspan="1" align="right">Sumas</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => m.PesoBruto).Sum().Value / 1000M)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => m.PesoNormal).Sum().Value / 1000M)</td>
+        <td class="RptPieListado" colspan="1">&nbsp;</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", Model.Select(m => m.Ingresados).Sum())</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", Model.Select(m => m.Muestreados).Sum())</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", Model.Select(m => m.Analizados).Sum())</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", Model.Select(m => m.Descargados).Sum())</td>
+    </tr>
+    @{
+        var dias = Model.Count;
+        var totalNeto = Model.Select(m => m.PesoBruto).Sum() ?? 0;
+        decimal netoHora = 0;
+        if (dias != 0)
+        {
+            netoHora = totalNeto / dias / 1000M / 24M;
+        }
+    }
+    <tr>
+        <td class="RptPieListado" colspan="1" align="right">Promedios Diarios</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", (decimal)(Model.Select(m => m.PesoBruto).Average() ?? 0) / 1000M)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", (decimal)(Model.Select(m => m.PesoNormal).Average() ?? 0) / 1000M)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", netoHora)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", (decimal)(Model.Select(m => m.Ingresados).Average() ?? 0))</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", (decimal)(Model.Select(m => m.Muestreados).Average() ?? 0))</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", (decimal)(Model.Select(m => m.Analizados).Average() ?? 0))</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", (decimal)(Model.Select(m => m.Descargados).Average() ?? 0))</td>
+    </tr>
+</table>

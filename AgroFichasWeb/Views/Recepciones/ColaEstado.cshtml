@@ -1,0 +1,147 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model ColaViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = Model.Title;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="refresh" content="10">
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            background-color: #1E1E1E;
+            color: #ffffff;
+            font-family: 'Segoe UI', Helvetica, Arial;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: normal;
+        }
+
+
+        #leftCol {
+            width: 60%;
+            float: left;
+        }
+
+        #rightCol {
+            width: 38%;
+            float: right;
+        }
+
+        td.patente {
+            background-color: white;
+            color: #1E1E1E;
+            font-size: 90px;
+            text-align: center;
+            padding: 5px;
+        }
+
+        td.nombre {
+            text-align: center;
+            padding: 5px;
+            border: solid 1px white;
+            font-size: 20px;
+        }
+
+        td.patenteS {
+            background-color: white;
+            color: black;
+            font-size: 50px;
+            text-align: center;
+            padding: 5px;
+        }
+
+        table.lista {
+            width: 100%;
+        }
+
+        table.lista tr.header td {
+            background-color: #007ACC;
+        }
+
+        table.lista td {
+            padding: 3px 3px;
+            font-size: 20px;
+        }
+
+        table.lista tr.alt td {
+            background-color: #464646;
+        }
+
+        td.pos1 {
+            color: #83f03c;
+        }
+
+        td.pos2, td.pos3, td.pos4 {
+            color: #FFE640;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>@ViewBag.Title</h1>
+    <div id="leftCol">
+        <table class="lista">
+            <tr class="header">
+                @for (int k = 1; k <= 2; k++)
+                {
+                    <td></td>
+                    <td align="center">Patente</td>
+                    <td>Nombre</td>
+                    <td>&nbsp;&nbsp;</td>
+                }
+            </tr>
+            <tr valign="top" class="alt">
+                @{
+                    int i = 0;
+                    foreach (var pi in Model.Items)
+                    {
+                        <td class="pos@(pi.Orden)" align="right">@pi.Orden</td>
+                        <td class="pos@(pi.Orden)">@pi.Patente</td>
+                        <td class="pos@(pi.Orden)">@pi.Nombre</td>
+                        <td>&nbsp;</td>
+                        if (++i % 2 == 0)
+                        {
+                            @(String.Format("</tr><tr valign=\"top\" class=\"{0}\">", i%4 == 0 ? "alt" : "" ).ToMvcHtmlString())
+                        }
+                    }
+                }
+            </tr>
+        </table>
+
+    </div>
+    <div id="rightCol" align="center">
+
+        <table class="top">
+        @{
+            int j = 0;
+            foreach (var pi in Model.Items.Where(p => p.Orden <= 4))
+            {
+                <tr>
+                    <td class="@(++j == 1 ? "patente" : "patenteS")">@pi.Patente</td>
+                </tr>
+                <tr>
+                    <td class="nombre pos@(pi.Orden)">@pi.Nombre</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+            }
+        }
+        </table>
+
+    </div>
+    <div style="clear: both"></div>
+</body>
+</html>

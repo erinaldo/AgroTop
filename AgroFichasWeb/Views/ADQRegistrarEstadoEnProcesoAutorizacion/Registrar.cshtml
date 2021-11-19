@@ -1,0 +1,39 @@
+﻿@using AgroFichasWeb.Models
+
+@model ADQ_SolicitudCompra
+@{
+    ViewBag.Title = "Registrar Estado: En Proceso de Autorización";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVien.cshtml";
+}
+
+@section VendorCSS
+{
+
+}
+@section VendorScripts
+{
+
+}
+@section CustomScripts
+{
+
+}
+<div class="nav justify-content-center">
+    @using (Html.BeginForm())
+    {
+        <div class="card mb-4">
+            <div class="card-body ">
+                @Html.Partial("../ADQOrdenesCompra/DetalleInvoiceRegistro", Model)
+                <div class="custom-control custom-checkbox mb-4">
+                    <input type="checkbox" class="custom-control-input" id="IdEstado" name="IdEstado" value="3" required>
+                    <label class="custom-control-label" for="IdEstado">
+                        Confirmar
+                    </label>
+                    @Html.ValidationMessage("IdEstado")
+                </div>
+                <button type="submit" class="btn btn-primary">Registrar Estado: En Proceso de Autorización</button>
+            </div>
+        </div>
+
+    }
+</div>

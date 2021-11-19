@@ -1,0 +1,141 @@
+﻿@using AgroFichasWeb.Models
+@model OPR_Silo
+@{
+    ViewBag.Title = "Silos";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var densidadList = (IEnumerable<SelectListItem>)ViewData["densidadList"];
+    var tipoSiloList = (IEnumerable<SelectListItem>)ViewData["tipoSiloList"];
+    var title = "";
+    if (Model.IdSilo == 0)
+    {
+        title = "Nuevo Silo";
+    }
+    else
+    {
+        title = "Editar Silo";
+    }
+}
+
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@title</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Tipo de Silo <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdTipoSilo", tipoSiloList, "-- Seleccione Tipo de Silo --", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdTipoSilo")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Descripción <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Descripcion", Model.Descripcion, new { @class = "form-control" })
+                                            @Html.ValidationMessage("Descripcion")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Altura Base <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("AlturaBase", Model.AlturaBase, new { @class = "form-control" })
+                                            @Html.ValidationMessage("AlturaBase")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Altura Cono <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("AlturaCono", Model.AlturaCono, new { @class = "form-control" })
+                                            @Html.ValidationMessage("AlturaCono")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Densidad <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdDensidad", densidadList, "-- Seleccione Densidad --", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdDensidad")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Habilitado <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <div class="checkbox">
+                                                <label>
+                                                    @Html.CheckBox("Habilitado", Model.Habilitado)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Guardar" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

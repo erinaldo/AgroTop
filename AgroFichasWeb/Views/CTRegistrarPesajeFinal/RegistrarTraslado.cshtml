@@ -1,0 +1,1049 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_ControlTiempo
+
+@{
+
+
+
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = "Registrar Pesaje Final | Camion N° " + Model.IdControlTiempo;
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+@section VendorCSS
+{
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+
+    <script>
+        var uri = '@ApiRealUrl.GetApiUrl()';
+        var urlGeneral = '@Url.Content("~/")';
+        $(document).ready(function () {
+            GetBodegaSalida();
+        });
+
+
+
+
+
+
+
+
+
+
+
+        function EnviarDatos(element) {
+            swal({
+                title: "¿Estás seguro/a de querer enviar los datos?",
+                text: "¡Una vez enviados no son modificables!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: 'Si, estoy seguro/a!',
+                cancelButtonText: "No!",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+
+                    var IdBodega1 = $("#Bodega1").val();
+                    var IdBodega2 = $("#Bodega2").val();
+                    var PesoFinalBaseDatos = "@Model.PesoFinal";
+                    var PesoFinalHtml = $("#PesoFinal").val()
+                    var Codigo = $("#Codigo").val();
+                    var CodigoAux = $("#CodigoAuxiliar").val();
+
+                    if (IdBodega1.length == 0) {
+                        swal("Cancelado", "La bodega de salida debe estar seleccionada", "error");
+                        return;
+                    }
+
+                    if (IdBodega2.length == 0) {
+                        swal("Cancelado", "La bodega de entrada debe estar seleccionada", "error");
+                        return;
+                    }
+
+                    if (PesoFinalBaseDatos == null || Number(PesoFinalHtml) == 0) {
+                        swal("Cancelado", "Debe haber un peso final registrado para poder realizar la acción", "error");
+                        return;
+                    }
+
+                    if (CodigoAux.length > 0) {
+                        if (Codigo != CodigoAux) {
+                            swal("Cancelado", "Al parecer a cambiado de código, el codigo ingresado anteriormente no coincide con el actual. Presione buscar con el código nuevo o vuelva al anterior", "error");
+                            return;
+                        }
+                    }
+
+
+
+
+
+                    EnviarDatosSAP();
+                    /**/
+                } else {
+                    swal("Cancelado", "No se efectuo la acción", "error");
+                }
+            });
+        }
+
+        function GetCodigoBodega(){
+            $.ajax({
+                type: "POST",
+                url: urlGeneral + 'CTRegistrarPesajeFinal/GetCodigo',
+                data: { IdBodega1: $("#Bodega1").val(), IdBodega2: $("#Bodega2").val() },
+                success: function (response) {
+                    EnviarDatosSAP(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText)
+                }
+            });
+        }
+
+        function EnviarDatosSAP(response) {
+            var detalle = [];
+            //var row = $(this);
+            //aux = row.find("td").eq(0).html();
+            var admitelotes = $("#Admitelotes").val();
+
+            if (admitelotes == "N") {
+                var obj = {
+                    "DocEntry": null,
+                    "LineNum": null,
+                    "ItemCode": $("#Codigo").val(),
+                    "Quantity": $("#Cantidad").val(),
+                    "FromWhsCod": $("#Bodega1").val(),
+                    "WhsCode": $("#Bodega2").val(),
+                    "LineStatus": null,
+                    "Lotes": []
+                }
+                detalle.push(obj)
+
+            } else {
+                var array_lote = []
+                $("#datatable tbody tr").each(function () {
+                    var row = $(this);
+                    console.log(row.find("td").eq(1).html())
+                    var lotes = {
+                        "BatchNumber": row.find("td").eq(0).html(),
+                        "Quantity": row.find("td").eq(1).html()
+                    }
+                    array_lote.push(lotes)
+                });
+                var obj = {
+                    "DocEntry": null,
+                    "LineNum": null,
+                    "ItemCode": $("#Codigo").val(),
+                    "Quantity": $("#Cantidad").val(),
+                    "FromWhsCod": $("#Bodega1").val(),
+                    "WhsCode": $("#Bodega2").val(),
+                    "LineStatus": null,
+                    "Lotes": array_lote
+                }
+                detalle.push(obj)
+            }
+
+
+            var id = $('#Empresa1').val();
+
+
+            var CodigoCliente = "";
+            var Empresa = "";
+            var UrlTraslado = "";
+
+            if (id == 1) {
+                CodigoCliente = "@Model.Cliente.IDOleotop"
+                Empresa = "Oleotop"
+                UrlTraslado = '@System.Configuration.ConfigurationManager.AppSettings["URL_OLEOTOP"]'
+            }
+
+            if (id == 2) {
+                //url para avenatop
+                CodigoCliente = "@Model.Cliente.IDAvenatop"
+                Empresa = "Avenatop"
+                UrlTraslado = '@System.Configuration.ConfigurationManager.AppSettings["URL_AVENATOP"]'
+                if (jQuery.isEmptyObject(UrlTraslado)) {
+                    UrlTraslado = '@System.Configuration.ConfigurationManager.AppSettings["URL_FASE_PRUEBAS"]'
+                }
+            }
+
+            if (id == 3) {
+                //url para granotop
+                CodigoCliente = "@Model.Cliente.IDGranotop"
+                Empresa = "Granotop"
+                UrlTraslado = '@System.Configuration.ConfigurationManager.AppSettings["URL_GRANOTOP"]'
+            }
+
+            if (id == 4) {
+                //url para saprosem
+                CodigoCliente = "@Model.Cliente.IDSaprosem"
+                Empresa = "Saprosem"
+                UrlTraslado = '@System.Configuration.ConfigurationManager.AppSettings["URL_SAPROSEM"]'
+            }
+
+            if (id == 5) {
+                //url para industry
+                CodigoCliente = "@Model.Cliente.IDICI"
+                Empresa = "Industrial Community International"
+            }
+
+            if (CodigoCliente.length == 0) {
+                swal("Cancelado", "No existe código de cliente", "error");
+                return;
+            }
+
+            if (UrlTraslado.length == 0) {
+                swal("Cancelado", "[SAP] No existe url api para la empresa " + Empresa, "error");
+                return;
+            }
+
+            UrlTraslado += 'TrasladoSBO';
+
+
+
+            var datos = {
+
+                "DocEntry": null,
+                "DocNum": null,
+                "CardCode": CodigoCliente,
+                "DocDate": null,
+                "TaxDate": null,
+                "Filler": $("#Bodega1").val(),
+                "ToWhsCode": $("#Bodega2").val(),
+                "Comments": $("#Comentario").val(),
+                "U_SDG_DTE_TT": "5",
+                "U_SDG_DTE_CHOFER": "@Model.NombreChofer",
+                "U_SDG_DTE_PATENTE": "@Model.Patente",
+                "U_SDG_DTE_RUT_CHOFER": "@Model.RutChofer",
+                "U_SDG_DTE_FACRESERVA": "N",
+                "U_SDG_DTE_AUTO_PRN": "1",
+                "U_SDG_DTE_PRINTER": "NO_IMPRIMIR",
+                "U_SDG_DTE_MAIL_PDF": "@Model.EmailChofer",
+                "U_Email_Chofer": "@Model.EmailChofer",
+                "Detalle": detalle
+            };
+            console.log(JSON.stringify(datos, null, '\t'));
+            $.ajax({
+                type: "POST",
+                url: UrlTraslado,
+                data: {
+                    "DocEntry": null,
+                    "DocNum": null,
+                    "CardCode": CodigoCliente,
+                    "DocDate": null,
+                    "TaxDate": null,
+                    "Filler": $("#Bodega1").val(),
+                    "ToWhsCode": $("#Bodega2").val(),
+                    "Comments": $("#Comentario").val(),
+                    "U_SDG_DTE_TT": "5",
+                    "U_SDG_DTE_CHOFER": "@Model.NombreChofer",
+                    "U_SDG_DTE_PATENTE": "@Model.Patente",
+                    "U_SDG_DTE_RUT_CHOFER": "@Model.RutChofer",
+                    "U_SDG_DTE_FACRESERVA": "N",
+                    "U_SDG_DTE_AUTO_PRN": "1",
+                    "U_SDG_DTE_PRINTER": "NO_IMPRIMIR",
+                    "U_SDG_DTE_MAIL_PDF": "@Model.EmailChofer",
+                    "U_Email_Chofer": "@Model.EmailChofer",
+                    "Detalle": detalle},
+                success: function (res) {
+                    console.log(res)
+                    if (res.Estado == "OK") {
+                        swal({
+                            title: "Todo ha salido bien",
+                            text: "¡Los datos han sido enviados satisfactoriamente!",
+                            type: "success",
+                            confirmButtonColor: '#DD6B55',
+                            confirmButtonText: 'Continuar',
+                            closeOnConfirm: false
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+                                console.log(res)
+                                $("#NumeroGuia").val(res.Documento)
+                                $("#formPeso").submit()
+                            }
+                        });
+                    } else {
+                        swal("Cancelado", res.ErrMsg , "error");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr)
+                }
+            });
+        }
+
+        function GetBodegaSalida() {
+            var id = $('#Empresa1').val();
+
+            var preUrl = "";
+            var Empresa = "";
+
+            if (id.length == 0) {
+                DeleteBodegaSalida();
+                return;
+            }
+
+            if (id == 1) {
+                //url para aleotop
+                Empresa = "[IDOleotop]"
+                preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_OLEOTOP"]'
+            }
+
+            if (id == 2) {
+                //url para avenatop
+                preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_AVENATOP"]'
+                if (jQuery.isEmptyObject(preUrl)) {
+                    preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_FASE_PRUEBAS"]'
+                }
+                Empresa = "[IDAvenatop]"
+
+            }
+
+            if (id == 3) {
+                //url para granotop
+                Empresa = "[IDGranotop]"
+                preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_GRANOTOP"]'
+
+            }
+
+            if (id == 4) {
+                Empresa = "[IDSaprosem]"
+                preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_SAPROSEM"]'
+                //url para saprosem
+            }
+
+            if (id == 5) {
+                //url para industry
+                Empresa = "[IDICI]"
+            }
+
+
+            if (jQuery.isEmptyObject(preUrl)) {
+                alert("[SAP] No se ha encontrado url para " + Empresa + ". No se sabe a que API conectar.")
+                return;
+            }
+
+
+            preUrl += 'AlmacenesSBO'
+
+            $.getJSON(preUrl)
+
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay bodegas disponibles");
+                        DeleteBodegaSalida();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Bodega)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].Codigo, '">',
+                                result[i].Descripcion, '</option>');
+                        }
+                        $("#Bodega1").html(options.join(''));
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+        function DeleteBodegaSalida() {
+            $("#Bodega1 option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione bodega)', '</option>');
+            $("#Bodega1").html(options.join(''));
+        }
+        function GetBodegaEntrada() {
+            var id = $('#Empresa2').val();
+
+            var preUrl = "";
+            var Empresa = "";
+
+            if (id.length == 0) {
+                DeleteBodegaEntrada();
+                return;
+            }
+            if (id == 1) {
+                //url para aleotop
+                Empresa = "[IDOleotop]"
+                preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_OLEOTOP"]'
+            }
+
+            if (id == 2) {
+                //url para avenatop
+                preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_AVENATOP"]'
+                if (jQuery.isEmptyObject(preUrl)) {
+                    preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_FASE_PRUEBAS"]'
+                }
+                Empresa = "[IDAvenatop]"
+
+            }
+
+            if (id == 3) {
+                //url para granotop
+                Empresa = "[IDGranotop]"
+                preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_GRANOTOP"]'
+
+            }
+
+            if (id == 4) {
+                Empresa = "[IDSaprosem]"
+                preUrl = '@System.Configuration.ConfigurationManager.AppSettings["URL_SAPROSEM"]'
+                //url para saprosem
+            }
+
+            if (id == 5) {
+                //url para industry
+                Empresa = "[IDICI]"
+            }
+
+
+            if (jQuery.isEmptyObject(preUrl)) {
+                alert("[SAP] No se ha encontrado url para " + Empresa + ". No se sabe a que API conectar.")
+                return;
+            }
+
+
+            preUrl += 'AlmacenesSBO'
+
+            if (jQuery.isEmptyObject(preUrl)) {
+                alert("[SAP] No se ha encontrado url para " + Empresa + ". No se sabe a que API conectar.")
+                return;
+            }
+
+            $.getJSON(preUrl)
+
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay bodegas disponibles");
+                        DeleteBodegaSalida();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Bodega)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].Codigo, '">',
+                                result[i].Descripcion, '</option>');
+                        }
+                        $("#Bodega2").html(options.join(''));
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+        function DeleteBodegaEntrada() {
+            $("#Bodega2 option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Bodega)', '</option>');
+            $("#Bodega2").html(options.join(''));
+        }
+
+        function GetCodigoItem() {
+
+
+
+            var id = $('#Empresa1').val();
+
+
+            var Empresa = "";
+            var UrlItem = "";
+
+            if (id == 1) {
+                Empresa = "Oleotop"
+                UrlItem = '@System.Configuration.ConfigurationManager.AppSettings["URL_OLEOTOP"]'
+            }
+
+            if (id == 2) {
+                //url para avenatop
+                Empresa = "Avenatop"
+                UrlItem = '@System.Configuration.ConfigurationManager.AppSettings["URL_AVENATOP"]'
+                if (jQuery.isEmptyObject(UrlItem)) {
+                    UrlItem = '@System.Configuration.ConfigurationManager.AppSettings["URL_FASE_PRUEBAS"]'
+                }
+            }
+
+            if (id == 3) {
+                //url para granotop
+                Empresa = "Granotop"
+                UrlItem = '@System.Configuration.ConfigurationManager.AppSettings["URL_GRANOTOP"]'
+            }
+
+            if (id == 4) {
+                //url para saprosem
+                Empresa = "Saprosem"
+                UrlItem = '@System.Configuration.ConfigurationManager.AppSettings["URL_SAPROSEM"]'
+            }
+
+            if (id == 5) {
+                //url para industry
+                Empresa = "Industrial Community International"
+            }
+
+            if (UrlItem.length == 0) {
+                swal("Cancelado", "[SAP] No existe url api para la empresa " + Empresa, "error");
+                return;
+            }
+
+            UrlItem += 'ItemsSBO?Codigo=';
+
+
+
+            var codigo = $("#Codigo").val();
+            if (codigo.length > 0) {
+                $.getJSON(UrlItem + codigo)
+                    .done(function (result) {
+                        console.log(result);
+                        if (result.Descripcion != null) {
+                            $("#DesCodigo").val(result.Descripcion);
+                            $("#Admitelotes").val(result.GestionLote)
+                            $("#CodigoAuxiliar").val(codigo);
+                            $("#UnidadDeMedida").val(result.UnidadMedidaInventario);
+                        } else {
+                            alert("No existe ningun ítem con ese código")
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(err);
+                    });
+            } else {
+                alert("Por favor llene el item")
+            }
+
+        }
+
+
+
+        function AgregarLote() {
+            var numero = $("#nlote").val();
+            var cantidadTotal = $("#Cantidad").val();
+            var cantidadTotalLotes = 0;
+            var cantidad = $("#cantidadLote").val();
+            var codigo = $("#Codigo").val();
+            var descodigo = $("#DesCodigo").val();
+            var admitelotes = $("#Admitelotes").val();
+
+            if (admitelotes == "N") {
+                alert("Este item no necesita lotes")
+                return
+            }
+            if (numero.length == 0) {
+                alert("El número no debe venir vacío")
+                RefrescaLote()
+                return
+            }
+            if (Number(cantidad) <= 0) {
+                alert("Ingrese una cantidad correcta")
+                RefrescaLote()
+                return
+            }
+            if (Number(cantidadTotal) < Number(cantidad)) {
+                alert("La cantidad que maneje el lote no puede ser mayor a la ingresada para el traslado")
+                RefrescaLote()
+                return
+            }
+            if (codigo.length == 0) {
+                alert("Ingrese un codigo antes de agregar lotes")
+                RefrescaLote()
+                return
+            }
+            if (descodigo.length == 0) {
+                alert("Se necesita la descripción del código")
+                RefrescaLote()
+                return
+            }
+
+            cantidadTabla = 0;
+            $("#datatable tbody tr").each(function () {
+                var row = $(this);
+                cantidadTabla += Number(row.find("td").eq(1).html())
+            });
+            cantidadVerificacion = Number(cantidadTotal) - Number(cantidadTabla)
+            console.log("cantidadVerificacion: " + cantidadVerificacion)
+            console.log("cantidadLote" + cantidad )
+            if (cantidad > cantidadVerificacion) {
+                alert("Está sobrepasando el cumulo de cantidades. Cantidad en tabla: " + cantidadTabla + ". Cantidad disponible por ingresar: " + cantidadVerificacion)
+                return;
+            }
+
+
+
+
+
+
+            var newtr = '<tr class="item" data-id="lote_' + numero + '">';
+            newtr += '<td>' + numero + '</td>';
+            newtr += '<td>' + cantidad + '</td>';
+            newtr += '<td><button type="button" class="btn btn-danger btn-xs remove-item"><i class="fa fa-times"></i></button></td>';
+            newtr += '</tr>';
+
+            $("#LoteSelected").append(newtr);
+            RefrescaLote()
+            VerificarCantidad(cantidadTotal);
+
+            $('.remove-item').off().click(function (e) {
+                $(this).parent('td').parent('tr').remove();
+                $("#btnModal").prop("disabled", false);
+                RefrescaLote()
+                VerificarCantidad(cantidadTotal)
+            });
+        }
+
+        function RefrescaLote() {
+            $("#nlote").val('');
+            $("#cantidadLote").val('');
+        }
+
+        function VerificarCantidad(cantidadTotal) {
+            cantidad = 0;
+            $("#datatable tbody tr").each(function () {
+                var row = $(this);
+                cantidad += Number(row.find("td").eq(1).html())
+            });
+            if (cantidadTotal == cantidad) {
+                $("#btnModal").prop("disabled", true);
+            }
+            if (cantidad == 0) {
+                $("#Cantidad").prop("disabled", false)
+            } else {
+                $("#Cantidad").prop("disabled", true)
+            }
+        }
+
+
+        $("#Empresa1").change(function () {
+            DeleteBodegaSalida();
+            GetBodegaSalida();
+        });
+        $("#Empresa2").change(function () {
+            DeleteBodegaEntrada();
+            GetBodegaEntrada();
+        });
+
+
+        function ValidarComas(txt, evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode == 46) {
+                if (txt.value.length == 0 && txt.value.indexOf('.') === -1) {
+                    return false;
+                }
+                if (txt.value.indexOf('.') === -1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                if (charCode > 31 &&
+                    (charCode < 48 || charCode > 57))
+                    return false;
+            }
+            return true;
+        }
+
+        function GuardarSoloPeso() {
+            var pesoFinal = $("#PesoFinal").val();
+            if (pesoFinal.length == 0) {
+                alert("Por favor ingrese peso final")
+                return;
+            }
+
+            if (Number(pesoFinal) == 0) {
+                alert("El peso final no puede ser 0")
+                return;
+            }
+            window.location.href = '/ctregistrarpesajefinal/RegistrarSoloPesoTraslado?id=@Model.IdControlTiempo&peso=' + pesoFinal;
+        }
+
+    </script>
+
+}
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                </header>
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formPeso" }))
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Producción</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.PlantaProduccion.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.Empresa.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            <input type="hidden" id="Empresa1" class="form-control" value="@Model.Empresa.IdEmpresa" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.CTR_Producto.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">RUT</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.RutTransportista" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Transportista</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.NombreTransportista" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Patente</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.Patente" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Estado</label>
+                                        <div class="col-sm-6">
+                                            <label class="col-sm-0 control-label"><span id="estado_description" class="@Model.CreateCSSClassResponsive()">@Model.CTR_Estado.Descripcion</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Peso Inicial</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.PesoInicial.Value.ToString("N0")" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cliente</label>
+                                        <div class="col-sm-6">
+                                            @if (!Model.IdCliente.HasValue)
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.Cliente.RazonSocial" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">D.U.S.</label>
+                                        <div class="col-sm-6">
+                                            @if (string.IsNullOrEmpty(Model.DUS))
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.DUS" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Reserva</label>
+                                        <div class="col-sm-6">
+                                            @if (string.IsNullOrEmpty(Model.Reserva))
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.Reserva" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Bodega salida <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("Bodega1", new List<SelectListItem>(), "(Seleccione Bodega)", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Hasta<span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("Empresa2", Model.GetEmpresas(null), "(Seleccione Empresa)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdEmpresa")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Bodega entrada <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("Bodega2", new List<SelectListItem>(), "(Seleccione Bodega)", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Comentario</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="Comentario" name="Comentario" maxlength="17" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Peso Final <span class="required">*</span></label>
+                                        @if (ViewBag.Romana != null)
+                                        {
+                                            if (ViewBag.Romana.EsPesajeAutomatico == true)
+                                            {
+                                                <div class="col-sm-4">
+                                                    @if (Model.PesoFinal == null)
+                                                    {
+                                                        @Html.TextBox("PesoFinal", Model.PesoFinal, new { @class = "form-control", @readonly = "readonly" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextBox("PesoFinal", Model.PesoFinal, new { @class = "form-control", @readonly = "readonly" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <input type="button" onclick="getPesoFinal('')" class="btn btn-danger btn-sm" value="Romana salida" />
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-sm-6">
+                                                    @if (Model.PesoFinal == null)
+                                                    {
+                                                        @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control", onkeypress = "return ValidarComas(this, event);", onpaste = "return false" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control", onkeypress = "return ValidarComas(this, event);", onpaste = "return false" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+
+                                                </div>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <div class="col-sm-6">
+                                                @if (Model.PesoFinal == null)
+                                                {
+                                                    @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control", onkeypress = "return ValidarComas(this, event);", onpaste = "return false" })
+                                                    @Html.ValidationMessage("PesoFinal")
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control", onkeypress = "return ValidarComas(this, event);", onpaste = "return false" })
+                                                    @Html.ValidationMessage("PesoFinal")
+                                                }
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Código <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="Codigo" name="Codigo" />
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button type="button" class="btn btn-primary" onclick="GetCodigoItem();">Buscar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Descripción código <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly class="form-control" id="DesCodigo" name="DesCodigo" />
+                                            <input type="hidden" readonly class="form-control" id="Admitelotes" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Unidad de medida <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly class="form-control" id="UnidadDeMedida" name="UnidadDeMedida" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cantidad <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="Cantidad" name="Cantidad" onkeypress="return ValidarComas(this, event);" onpaste="return false" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Lotes</label>
+                                        <div class="col-sm-6">
+                                            <button type="button" class="btn btn-info" id="btnModal" data-toggle="modal" data-target="#ModalLote">(Agregar Lote)</button>
+                                            <table id="datatable" class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Número de lote</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="LoteSelected">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div id="lote-HiddenKeys">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <div class="btn-group" role="group" aria-label="Botones de acción">
+                                    <input type="button" class="btn btn-primary" id="" onclick="EnviarDatos(this)" value="Registrar" />
+                                    <button type="button" onclick="GuardarSoloPeso();" class="btn btn-primary">Guardar solo peso</button>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                    <!--Auxiliares-->
+
+                    <input type="hidden" name="NumeroGuia" id="NumeroGuia" />
+                    <input type="hidden" id="CodigoAuxiliar"/>
+
+
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+    <!-- Modal -->
+    <div class="modal fade" id="ModalLote" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Agregar Lote a la Lista</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>N° Lote</label>
+                        <input class="form-control" id="nlote" name="nlote" tabindex="-1" aria-hidden="true" />
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad</label>
+                        <input class="form-control" id="cantidadLote" name="cantidadLote" tabindex="-1" aria-hidden="true" onkeypress="return ValidarComas(this, event);" onpaste="return false" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="AgregarLote()" class="btn btn-default" data-dismiss="modal">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+

@@ -1,0 +1,92 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<LOG_Liquidacion>
+@{
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "Administrar Liquidaciones";
+
+    var msgerr = (Request["msgerr"] ?? "");
+    var msgok = (Request["msgok"] ?? "");
+    var key = (string)ViewData["key"];
+}
+
+@section headSection {
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("liquidarpropuestasindex", "liquidacionesfletes", new { id = 0 }, FormMethod.Get))
+    {
+        <input type="text" name="key" value="@ViewData["key"]" placeholder="Número de Liquidación" /> <input type="submit" value="Buscar" />
+    }
+</div>
+
+@if (!string.IsNullOrEmpty(msgerr))
+{
+    <div class="validation-summary-errors">
+        @msgerr
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(msgok))
+{
+    <div class="validation-summary-oks">
+        @msgok
+    </div>
+}
+
+<table class="dataList" id="liquidacionesfletes" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">Núm. Liq.</th>
+        <th align="left">Núm. Req.</th>
+        <th align="left">Glosa Requerimiento</th>
+        <th align="left">Núm. Guía</th>
+        <th align="left">Pronto Pago</th>
+        <th align="left">Liquidar</th>
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="5" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+    @foreach (var item in Model)
+    {
+        <tr valign="top">
+            <td align="left"><strong>@item.IdLiquidacion</strong></td>
+            <td align="left"><strong>@item.IdRequerimiento</strong></td>
+            <td align="left"><strong>@item.LOG_Requerimiento.Glosa</strong></td>
+            <td align="left">
+                @{
+                    var dc = new AgroFichasDBDataContext();
+                    var desgloses = dc.LOG_LiquidacionLog.Where(x => x.IdLiquidacion == item.IdLiquidacion);
+                    foreach (var desglose in desgloses)
+                    {
+                        var movimiento = dc.LOG_Movimiento.First(x => x.IdPedido == desglose.IdPedido && x.Habilitado == true);
+                        <strong>@movimiento.NumeroGuia</strong>
+                    }
+                }
+            </td>
+            <td align="left"><span class="prontoPago @(item.ProntoPago ? "si" : "no")">@(item.ProntoPago ? "Sí" : "No")</span></td>
+            <td align="left"><a class="command" href="@Url.Action("crearliquidacion", "liquidacionesfletes", new { id = item.IdLiquidacion })">Liquidar</a></td>
+        </tr>
+    }
+    <tr>
+        <td colspan="6" class="pager">
+            @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "liquidacionesfletes", key)
+        </td>
+    </tr>
+</table>

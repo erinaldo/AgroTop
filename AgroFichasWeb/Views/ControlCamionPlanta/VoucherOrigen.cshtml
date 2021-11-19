@@ -1,0 +1,113 @@
+﻿@model AgroFichasWeb.ViewModels.VoucherViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Voucher</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+
+        #wrapper {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 302.362204724px;
+        }
+
+        #logo {
+            display: block;
+            text-align: center;
+        }
+
+        #barcode {
+            display: block;
+            text-align: center;
+        }
+
+            #barcode img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                padding-bottom: 10px;
+            }
+
+        .uppercase {
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .text {
+            text-align: center;
+        }
+
+            .text .first {
+                font-weight: bold;
+            }
+
+            .text span {
+                display: block;
+            }
+
+        .noprint {
+            text-align: center;
+        }
+
+            .noprint .important {
+                background-color: yellow;
+            }
+
+        @@media print {
+            .noprint {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="logo">
+            <img src="@Url.Content("~/Content/images/agrotop.png")" alt="Empresas Agrotop - Llevando al mundo los productos agrícolas de uno de los rincones más puros del planeta" />
+        </div>
+        <p class="uppercase">Voucher de llegada a origen</p>
+        <p class="text">
+            <span class="first">FECHA</span>
+            <span class="second">@Model.Fecha</span>
+        </p>
+        <p class="text">
+            <span class="first">ORIGEN</span>
+            <span class="second">@Model.Origen</span>
+        </p>
+        <p class="text">
+            <span class="first">TRANSPORTISTA</span>
+            <span class="second">@Model.Transportista</span>
+        </p>
+        <p class="text">
+            <span class="first">CAMIÓN</span>
+            <span class="second">@Model.Camion</span>
+        </p>
+        <div id="content">
+            <div id="barcode">
+                <img src="@Model.ImgSrc" alt="Barcode" width="256" height="80" />
+                <strong>FIRMA DIGITAL</strong><br />
+                @Model.FirmaDigital
+            </div>
+            <p>&nbsp;</p>
+            <div class="noprint">
+                <p class="important"><a href="javascript:window.print();">Imprimir</a></p>
+                <p><a href="@Model.ReturnUrl">Atrás</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

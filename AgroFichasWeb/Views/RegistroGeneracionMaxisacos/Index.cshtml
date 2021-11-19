@@ -1,0 +1,123 @@
+﻿@using AgroFichasWeb.ViewModels.Operaciones
+@model RegistroGeneracionMaxisacosViewModel
+@{
+    ViewBag.Title = "Registro de Turno de Subproducto";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        @if (Model.TurnoAnteriorSiguiente.IdAnterior != 0)
+        {
+            <div class="col-md-2">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-primary" role="button" href="@Url.Action("index", "registrogeneracionmaxisacos", new { id = Model.TurnoAnteriorSiguiente.IdAnterior })"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Turno Anterior</a>
+                </div>
+            </div>
+        }
+        @if (Model.TurnoAnteriorSiguiente.IdSiguiente != 0)
+        {
+            <div class="col-md-2 col-md-offset-8">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-primary" role="button" href="@Url.Action("index", "registrogeneracionmaxisacos", new { id = Model.TurnoAnteriorSiguiente.IdSiguiente })">Turno Siguiente <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> </a>
+                </div>
+            </div>
+        }
+    </div>
+    @if (false == string.IsNullOrWhiteSpace(Model.MensajeError) || false == string.IsNullOrWhiteSpace(Model.MensajeExito))
+    {
+        <div class="row">
+            @if (false == string.IsNullOrWhiteSpace(Model.MensajeError))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Model.MensajeError
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (false == string.IsNullOrWhiteSpace(Model.MensajeExito))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Model.MensajeExito
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Registro de Subproducto del Turno #@Model.RegistroTurno.Correlativo, @Model.RegistroTurno.OPR_Turno.OPR_TipoTurno.Descripcion del @String.Format("{0:dd/MM/yyyy}", Model.RegistroTurno.FechaHoraIns)</h2>
+            @if (Model.PuedeCrear)
+            {
+                <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                    <a href="@Url.Action("Registrar", "RegistroGeneracionMaxisacos", new { id = Model.RegistroTurno.IdRegistroTurno })" class="btn btn-primary">Registrar Subproducto <i class="fa fa-plus"></i></a>
+                </div>
+            }
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Despedradora (kg)</th>
+                        <th>Desperdicio (kg)</th>
+                        <th>Sortex (kg)</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var registroGeneracionMaxisacos in Model.RegistroGeneracionMaxisacos)
+                    {
+                        <tr role="row" class="odd">
+                            <td class="sorting_@registroGeneracionMaxisacos.IdRegistroGeneracionMaxisacos">@registroGeneracionMaxisacos.IdRegistroGeneracionMaxisacos</td>
+                            <td>@registroGeneracionMaxisacos.Despedradora</td>
+                            <td>@registroGeneracionMaxisacos.Desperdicio</td>
+                            <td>@registroGeneracionMaxisacos.Sortex</td>                           
+                            <td class="actions">
+                                @if (Model.PuedeEditar)
+                                {
+                                    <button id="edit_@registroGeneracionMaxisacos.IdRegistroGeneracionMaxisacos" onclick="window.location.href='@Url.Action("EditarRegistro", "RegistroGeneracionMaxisacos", new { id = registroGeneracionMaxisacos.IdRegistroGeneracionMaxisacos })'" class="btn btn-default"> <i class="fa fa-pencil"></i></button>
+                                }
+                                @if (Model.PuedeEliminar)
+                                {
+                                    <button id="delete_@registroGeneracionMaxisacos.IdRegistroGeneracionMaxisacos" onclick="window.location.href='@Url.Action("Eliminar", "RegistroGeneracionMaxisacos", new { id = registroGeneracionMaxisacos.IdRegistroGeneracionMaxisacos })'" class="btn btn-default"> <i class="fa fa-trash-o"></i></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- end: page -->
+</section>

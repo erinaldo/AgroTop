@@ -1,0 +1,55 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model Proveedor
+
+@{
+    ViewBag.NombreSeccion = "Proveedores";
+    if (Model.IdProveedor == 0) {
+        ViewBag.Title = "Crear Proveedor";
+    }
+    else {
+        ViewBag.Title = "Editar Proveedor";
+    }
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm())
+    {
+        <fieldset class="dataForm">
+            <p>
+                <label for="Titulo">Nombre</label>
+                @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "100" }) 
+                @Html.ValidationMessage("Nombre", ".")  
+            </p>
+            <p>
+                <label for="Fecha">Email</label>
+                @Html.TextBox("Email", Model.Email, new { @class = "std" })  
+                @Html.ValidationMessage("Email", ".")  
+            </p>
+            <p>
+                <label for="Fuente">Teléfono</label>
+                @Html.TextBox("Telefono1", Model.Telefono1, new { @class = "std" })  
+                @Html.ValidationMessage("Telefono1", ".")  
+            </p>
+            <p>
+                <label for="EnPortada">Habilitado</label>
+                @Html.CheckBox("Habilitado", Model.Habilitado)   Permitir el uso de este Proveedor
+                @Html.ValidationMessage("Habilitado", ".") 
+            </p>
+            <p class="okcancel">
+                <input type="submit" value="Guardar Este Proveedor" /> o @Html.ActionLink("Cancelar", "Index")  
+            </p>
+        </fieldset>
+
+    }
+
+    <script type="text/javascript">
+
+    </script>   

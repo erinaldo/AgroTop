@@ -1,0 +1,79 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model LOG_Transportista
+
+@{
+    ViewBag.NombreSeccion = "Transportistas";
+    if (Model.IdTransportista == 0)
+    {
+        ViewBag.Title = "Crear Transportista";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Transportista";
+    }
+    var selectList = (IEnumerable<SelectListItem>)ViewData["bancosList"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">RUT</label>
+            @Html.TextBox("RUT", Model.RUT, new { @class = "heavy std", maxlength = "13" })
+            @Html.ValidationMessage("RUT", " ")
+        </p>
+        <p>
+            <label for="Titulo">Nombre</label>
+            @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "200" })
+            @Html.ValidationMessage("Nombre", " ")
+        </p>
+        <p>
+            <label for="Titulo">Teléfono</label>
+            @Html.TextBox("Telefono", Model.Telefono, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">Email</label>
+            @Html.TextBox("Email", Model.Email, new { @class = "heavy std", maxlength = "200" })
+        </p>
+        <p>
+            <label for="Titulo">Banco</label>
+            @Html.DropDownList("IdBanco", selectList, "-- Seleccione --", new { @class = "heavy std"})
+        </p>
+        <p>
+            <label for="Titulo">Número de Cuenta</label>
+            @Html.TextBox("NumeroCuenta", Model.NumeroCuenta, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">Código SAP Oleotop</label>
+            @Html.TextArea("IDOleotop", Model.IDOleotop, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">Código SAP Avenatop</label>
+            @Html.TextArea("IDAvenatop", Model.IDAvenatop, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">Código SAP Granotop</label>
+            @Html.TextArea("IDGranotop", Model.IDGranotop, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">Código SAP Saprosem</label>
+            @Html.TextArea("IDSaprosem", Model.IDSaprosem, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">Observación</label>
+            @Html.TextArea("Observacion", Model.Observacion, new { @class = "heavy std", maxlength = "300" })
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar este Transportista" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

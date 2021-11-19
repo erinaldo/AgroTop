@@ -1,0 +1,14 @@
+﻿@model AgroFichasWeb.Models.FichaPreSiembra
+<tr id="itemRowPreSiembra-@Model.IdFichaPreSiembra">
+    <td>@Model.Fecha.ToString("dd MMMM yyyy")</td>
+    <td>@Model.DescripcionPotreros()</td>
+    <td>@Model.UserIns</td>
+    <td class="actions text-center">
+        @if (true)
+        {
+            <img id="editSpinnerPreSiembra-@Model.IdFichaPreSiembra" src="~/Content/spinner.svg" height="18" style="display: none; margin-right:10px" />
+            <a href="#" id="editButtonPreSiembra-@Model.IdFichaPreSiembra" class="editItemPreSiembra" data-id="@Model.IdFichaPreSiembra" style="margin-right:10px"><i class="fa fa-pencil"></i></a>
+            <a href="@Url.Content(Model.PdfUrl)"><i class="fa fa-file-pdf-o"></i></a>
+        }
+    </td>
+</tr>

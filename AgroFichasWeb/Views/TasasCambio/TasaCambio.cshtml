@@ -1,0 +1,72 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model TasaCambio
+
+@{
+    ViewBag.NombreSeccion = "Tasas de Cambio";
+    if (Model.IsNew) {
+        ViewBag.Title = "Crear Tasa de Cambio " + Model.Moneda.Nombre;
+    }
+    else {
+        ViewBag.Title = "Editar Tasa de Cambio " + Model.Moneda.Nombre;
+    }
+
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery.ui.datepicker-es.js"></script>
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm())
+    {
+
+        @Html.Hidden("IdMoneda", Model.IdMoneda)
+        @Html.Hidden("IsNew", Model.IsNew)
+        <fieldset class="dataForm">
+        <p>
+            <label>Fecha</label>
+            @if (Model.IsNew)
+            {
+                @Html.TextBox("Fecha", String.Format("{0:dd/MM/yyyy}", Model.Fecha), new { @class = "datebox" })
+                @Html.ValidationMessage("Fecha", ".")
+            }
+            else
+            {
+                @String.Format("{0:dd/MM/yyyy}", Model.Fecha)
+                @Html.Hidden("Fecha",  String.Format("{0:dd/MM/yyyy}", Model.Fecha)) 
+            }
+        </p>
+            <p>
+                <label for="Fecha">Valor</label>
+                @Html.TextBox("Valor", Model.Valor, new { })  CLP / @Model.Moneda.Simbolo
+                @Html.ValidationMessage("Valor", ".")  
+            </p>
+            <p class="okcancel">
+                <input type="submit" value="Guardar Este Precio" /> o @Html.ActionLink("Cancelar", "Index", new { })  
+            </p>
+        </fieldset>
+
+    }
+
+    @if (Model.IsNew)
+    {
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                $.datepicker.setDefaults($.datepicker.regional["es"]);
+                $("#Fecha").datepicker({ showOn: 'button', buttonImage: '@Url.Content("~/Content/images/calendar.gif") ', buttonImageOnly: true });
+            });
+
+        </script>   
+    }

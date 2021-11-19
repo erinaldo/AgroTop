@@ -1,0 +1,20 @@
+﻿@using AgroFichasWeb.Models
+@model ExportBatch
+@{
+   
+    ViewBag.NombreSeccion = "Lotes de Exportación " + Model.Temporada.Nombre;
+    ViewBag.Title = "Detalle del Lote";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <h2>@ViewBag.Title</h2>
+
+
+    <fieldset class="dataForm">
+        @Html.Partial("ExportBatch", Model)
+    </fieldset>
+
+    

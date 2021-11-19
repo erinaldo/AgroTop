@@ -1,0 +1,904 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_PlanificacionSemanal
+
+@{
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = "Crear Planificación Semanal";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var UserID = (int)ViewData["UserID"];
+
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+}
+@section CustomScripts
+{
+    <script src="~/Scripts/date.format.js"></script>
+    <script>
+        var uri = '@ApiRealUrl.GetApiUrl()';
+        var urlGeneral = '@Url.Content("~/")';
+        function DeleteAños() {
+            $("#Año option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Año)', '</option>');
+            $("#Año").html(options.join(''));
+        }
+
+        function DeleteClientes() {
+            $("#IdCliente option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Cliente)', '</option>');
+            $("#IdCliente").html(options.join(''));
+        }
+
+        function DeleteDiasSemana() {
+            $("#dtSemana").html('');
+            $("#dtLu").html('');
+            $("#dtMa").html('');
+            $("#dtMi").html('');
+            $("#dtJu").html('');
+            $("#dtVi").html('');
+            $("#dtSa").html('');
+            $("#dtDo").html('');
+        }
+
+        function DeleteEnvases() {
+            $("#IdEnvase option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Envase)', '</option>');
+            $("#IdEnvase").html(options.join(''));
+        }
+
+        function DeleteProductos() {
+            $("#IdProducto option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Producto)', '</option>');
+            $("#IdProducto").html(options.join(''));
+        }
+
+        function DeleteSemana() {
+            $("#NumeroDeLaSemana").val();
+            $("#FechaDeInicio").val();
+            $("#FechaFinal").val();
+        }
+
+        function DeleteSemanas() {
+            $("#Semana option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Semana)', '</option>');
+            $("#Semana").html(options.join(''));
+        }
+
+        function GetAños() {
+            $.getJSON(uri + '/Fechas/GetAños')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay años disponibles");
+                        DeleteAños();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Año)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].Año, '">',
+                                result[i].Año, '</option>');
+                        }
+                        $("#Año").html(options.join(''));
+
+                        var año = '@(Model.Año == 0 ? "" : Model.Año.ToString())';
+                        if (!$.isEmptyObject(año)) {
+                            $("#Año").val(año);
+
+                            DeleteSemanas();
+                            GetSemanas();
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetClientes() {
+            var id = $('#IdEmpresa').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdCliente'));
+            }
+            $.getJSON(uri + '/Clientes/GetClientes?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay clientes disponibles");
+                        DeleteClientes();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Cliente)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdCliente, '">',
+                                result[i].RazonSocial, '</option>');
+                        }
+                        $("#IdCliente").html(options.join(''));
+
+                        var idCliente = '@(Model.IdCliente == 0 ? "" : Model.IdCliente.ToString())';
+                        var idEmpresa = '@(Model.IdEmpresa == 0 ? "" : Model.IdEmpresa.ToString())';
+                        if (!$.isEmptyObject(idCliente) && id == idEmpresa) {
+                            $("#IdCliente").val(idCliente);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetDiasSemana() {
+            var fInicio = $('#FechaDeInicio').val();
+            if (!jQuery.isEmptyObject(fInicio)) {
+                $("#dtLu").html('Cargando...');
+                $("#dtMa").html('Cargando...');
+                $("#dtMi").html('Cargando...');
+                $("#dtJu").html('Cargando...');
+                $("#dtVi").html('Cargando...');
+                $("#dtSa").html('Cargando...');
+                $("#dtDo").html('Cargando...');
+            }
+
+            $.getJSON(uri + '/Fechas/GetDiasSemana?fInicio=' + dateFormat(fInicio, "yyyy-mm-dd"))
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay días de la semana disponibles");
+                        DeleteSemanas();
+                    }
+                    else {
+                        for (var i = 0; i < result.length; i++) {
+                            if (result[i].DiaDeLaSemana == 'Monday') {
+                                $("#dtLu").html(dateFormat(result[i].Fecha, "dd/mm/yyyy"));
+                                $("#FechaLunes").val(dateFormat(result[i].Fecha, "yyyy-mm-dd"));
+                            }
+                            if (result[i].DiaDeLaSemana == 'Tuesday') {
+                                $("#dtMa").html(dateFormat(result[i].Fecha, "dd/mm/yyyy"));
+                                $("#FechaMartes").val(dateFormat(result[i].Fecha, "yyyy-mm-dd"));
+                            }
+                            if (result[i].DiaDeLaSemana == 'Wednesday') {
+                                $("#dtMi").html(dateFormat(result[i].Fecha, "dd/mm/yyyy"));
+                                $("#FechaMiercoles").val(dateFormat(result[i].Fecha, "yyyy-mm-dd"));
+                            }
+                            if (result[i].DiaDeLaSemana == 'Thursday') {
+                                $("#dtJu").html(dateFormat(result[i].Fecha, "dd/mm/yyyy"));
+                                $("#FechaJueves").val(dateFormat(result[i].Fecha, "yyyy-mm-dd"));
+                            }
+                            if (result[i].DiaDeLaSemana == 'Friday') {
+                                $("#dtVi").html(dateFormat(result[i].Fecha, "dd/mm/yyyy"));
+                                $("#FechaViernes").val(dateFormat(result[i].Fecha, "yyyy-mm-dd"));
+                            }
+                            if (result[i].DiaDeLaSemana == 'Saturday') {
+                                $("#dtSa").html(dateFormat(result[i].Fecha, "dd/mm/yyyy"));
+                                $("#FechaSabado").val(dateFormat(result[i].Fecha, "yyyy-mm-dd"));
+                            }
+                            if (result[i].DiaDeLaSemana == 'Sunday') {
+                                $("#dtDo").html(dateFormat(result[i].Fecha, "dd/mm/yyyy"));
+                                $("#FechaDomingo").val(dateFormat(result[i].Fecha, "yyyy-mm-dd"));
+                            }
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetEnvases() {
+            var id = $('#IdProducto').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdEnvase'));
+            }
+            $.getJSON(uri + '/Productos/GetEnvases?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay envases disponibles");
+                        DeleteEnvases();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Envase)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdEnvase, '">',
+                                result[i].Descripcion, '</option>');
+                        }
+                        $("#IdEnvase").html(options.join(''));
+
+                        var idEnvase = '@(Model.IdEnvase == 0 ? "" : Model.IdEnvase.ToString())';
+                        if (!$.isEmptyObject(idEnvase)) {
+                            $("#IdEnvase").val(idEnvase);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetProductos() {
+            var id = $('#IdEmpresa').val();
+            var idPlanta = $('#IdPlantaProduccion').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdProducto'));
+            }
+            $.getJSON(uri + '/Productos/GetProductos?id=' + id + '&idPlanta=' + idPlanta)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                        DeleteProductos();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdProducto, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#IdProducto").html(options.join(''));
+
+                        var idProducto = '@(Model.IdProducto == 0 ? "" : Model.IdProducto.ToString())';
+                        var idEmpresa = '@(Model.IdEmpresa == 0 ? "" : Model.IdEmpresa.ToString())';
+                        var idPlanta1 = '@(Model.IdPlantaProduccion == 0 ? "" : Model.IdPlantaProduccion.ToString())';
+                        if (!$.isEmptyObject(idProducto) && id == idEmpresa && idPlanta == idPlanta1) {
+                            $("#IdProducto").val(idProducto);
+
+                            DeleteEnvases();
+                            GetEnvases();
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetSemanas() {
+            var año = $('#Año').val();
+            if (!jQuery.isEmptyObject(año)) {
+                SetCargando($('#Semana'));
+            }
+            $.getJSON(uri + '/Fechas/GetSemanas?año=' + año)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay semanas disponibles");
+                        DeleteSemanas();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Semana)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].NumeroDeLaSemana, '">',
+                                'Semana ' + (result[i].NumeroDeLaSemana.toString().length == 1 ? '0' + result[i].NumeroDeLaSemana : result[i].NumeroDeLaSemana) + ' - Desde el ' + dateFormat(result[i].FechaDeInicio, "dd/mm/yyyy") + ' Hasta el ' + dateFormat(result[i].FechaFinal, "dd/mm/yyyy") + '</option>');
+                        }
+                        $("#Semana").html(options.join(''));
+
+                        var semana = '@(Model.Semana == 0 ? "" : Model.Semana.ToString())';
+                        if (!$.isEmptyObject(semana)) {
+                            $("#Semana").val(semana);
+
+                            DeleteDiasSemana();
+                            SetSemana();
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        function SetSemana() {
+            var año = $('#Año').val();
+            var semana = $('#Semana').val();
+
+            $.getJSON(uri + '/Fechas/GetSemana?año=' + año + '&nroSemana=' + semana)
+                .done(function (result) {
+                    if (result != null) {
+                        $("#NumeroDeLaSemana").val(result.NumeroDeLaSemana);
+                        $("#FechaDeInicio").val(result.FechaDeInicio);
+                        $("#FechaFinal").val(result.FechaFinal);
+
+                        // Set Label N° de Semana
+                        $("#dtSemana").html((result.NumeroDeLaSemana.toString().length == 1 ? '0' + result.NumeroDeLaSemana : result.NumeroDeLaSemana));
+
+                        //Set Fechas en el Nombre de los Días
+                        GetDiasSemana();
+                    };
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetCodigoSAP() {
+            var planta = $("#IdPlantaProduccion").val();
+            var empresa = $("#IdEmpresa").val();
+            var cliente = $("#IdCliente").val();
+            var tipo_documento = $("input[name='tipo_planificacion']:checked").val();
+            var tabla = '';
+            if (planta.length > 0 && empresa.length > 0 && cliente.length > 0 && tipo_documento != undefined) {
+
+                if (tipo_documento == 'OV') {
+                    $.ajax({
+                        type: "POST",
+                        url: urlGeneral + 'CTPlanificacionSemanal/GetCliente',
+                        data: { Id: $("#IdCliente").val() },
+                        success: function (response) {
+                            if (response.IsSuccess == true) {
+                                if (!jQuery.isEmptyObject(response.CodigoSAPCliente)) {
+                                    urlListar = 'http://190.13.134.173/Soindus/SoindusApi/ListaOrdenes?CardCode=' + response.CodigoSAPCliente;
+                                    GetLineas(urlListar);
+                                } else {
+                                    SinDatos();
+                                }
+                            } else {
+                                alert(response.Message)
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText)
+                        }
+                    });
+                } else {
+                    $.ajax({
+                        type: "POST",
+                        url: urlGeneral + 'CTPlanificacionSemanal/GetCliente',
+                        data: { Id: $("#IdCliente").val() },
+                        success: function (response) {
+                            if (response.IsSuccess == true) {
+                                if (!jQuery.isEmptyObject(response.CodigoSAPCliente)) {
+                                    urlListar = 'http://190.13.134.173/Soindus/SoindusApi/ListaFacturas?CardCode=' + response.CodigoSAPCliente;
+                                    GetLineas(urlListar);
+                                } else {
+                                    SinDatos();
+                                }
+
+                            } else {
+                                alert(response.Message)
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText)
+                        }
+                    });
+                }
+
+            } else {
+                alert("¡Planta, empresa, cliente y O/V o F/R deben estar seleccionados!");
+            }
+        }
+
+        function SinDatos() {
+            $("#LINEAS_AUX").val('');
+            tabla = '<table class="table table-bordered table-striped mb-none">'
+            tabla += '<thead>'
+            tabla += '<tr>'
+            tabla += '<th>#</th>'
+            tabla += '<th>Linea</th>'
+            tabla += '<th>Tipo documento</th>'
+            tabla += '<th>Numero documento</th>'
+            tabla += '<th>Código</th>'
+            tabla += '<th>Producto</th>'
+            tabla += '<th>Cantidad pendiente</th>'
+            tabla += '<th>Cantidad entregada</th>'
+            tabla += '</tr>'
+            tabla += '</thead>'
+            tabla += '<tbody>'
+            tabla += '<tr>'
+            tabla += '<td colspan="8">No existen datos</td>'
+            tabla += '</tr>'
+            tabla += '</tbody>'
+            tabla += '</table>'
+
+            $("#LINE_TABLE").html(tabla);
+        }
+
+        function GetLineas(url) {
+            $.getJSON(url)
+                .done(function (result) {
+                    console.log(JSON.stringify(result, null, '\t'));
+                    GenerarTabla(result)
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+           });
+        }
+
+        function GenerarTabla(obj){
+            $("#LINEAS_AUX").val('');
+            tabla = '<table class="table table-bordered table-striped mb-none">'
+            tabla += '<thead>'
+            tabla += '<tr>'
+            tabla += '<th>#</th>'
+            tabla += '<th>Linea</th>'
+            tabla += '<th>Tipo documento</th>'
+            tabla += '<th>Numero documento</th>'
+            tabla += '<th>Código</th>'
+            tabla += '<th>Producto</th>'
+            tabla += '<th>Cantidad pendiente</th>'
+            tabla += '<th>Cantidad entregada</th>'
+            tabla += '<th>Bodega</th>'
+            tabla += '</tr>'
+            tabla += '</thead>'
+            tabla += '<tbody>'
+            if (obj.length > 0) {
+                for (var i = 0; i < obj.length; i++) {
+                    if (obj[i].OpenQty > 0) {
+                        tabla += '<tr valign="top">'
+                        tabla += '<td><input type="checkbox" value="Valor" class="form-check-input" name="SELECT" onclick="SetValue(this)" id="SELECTED"/></td>'
+                        tabla += '<td>' + obj[i].LineNum + '</td>'
+                        tabla += '<td>' + obj[i].TipoDoc + '</td>'
+                        tabla += '<td>' + obj[i].DocNum + '</td>'
+                        tabla += '<td>' + obj[i].ItemCode + '</td>'
+                        tabla += '<td>' + obj[i].ItemName + '</td>'
+                        tabla += '<td>' + obj[i].OpenQty + '</td>'
+                        tabla += '<td>' + obj[i].Quantity + '</td>'
+                        tabla += '<td>' + obj[i].WhsCode + '</td>'
+                        tabla += '</tr>'
+                    }
+                }
+            } else {
+                tabla += '<td colspan="8">No existen datos</td>'
+            }
+
+            tabla += '</tbody>'
+            tabla += '</table>'
+
+            $("#LINE_TABLE").html(tabla);
+        }
+
+        function SetValue(element) {
+            var currentRow = $(element).closest("tr");
+            var aux = $("#LINEAS_AUX").val();
+            var val = currentRow.find("td:eq(2)").text() + ',' + currentRow.find("td:eq(3)").text() + ',' + currentRow.find("td:eq(4)").text() + ',' + currentRow.find("td:eq(5)").text() + ',' + currentRow.find("td:eq(6)").text() + ',' + currentRow.find("td:eq(7)").text() + ',' + currentRow.find("td:eq(8)").text();
+
+            if ($("#LINEAS_AUX").val().includes('-' + val)) {
+
+                $("#LINEAS_AUX").val(aux.replace('-' + val, ''));
+
+            } else if ($("#LINEAS_AUX").val().includes(val + '-')) {
+
+                $("#LINEAS_AUX").val(aux.replace(val + '-', ''));
+
+            } else if ($("#LINEAS_AUX").val().includes(val)) {
+
+                $("#LINEAS_AUX").val(aux.replace(val, ''));
+
+            } else {
+
+                if (aux.length > 0) {
+
+                    $("#LINEAS_AUX").val(aux + '-' + val);
+
+                } else {
+
+                    $("#LINEAS_AUX").val(val);
+                }
+            }
+
+
+
+        }
+
+        function ValidateCheckBox() {
+            var tipo_documento = $("input[name='tipo_planificacion']:checked").val()
+            if (tipo_documento != "TI") {
+                var checks = $('input:checkbox:checked').length;
+                if (checks > 0) {
+                    $("#form").submit();
+                }
+                else {
+                    alert("Debe seleccionar al menos un item de la lista")
+                }
+            } else {
+                $("#form").submit();
+            }
+
+        }
+
+        function LimpiarRadio(element) {
+            $("#LINEAS_AUX").val('');
+            $("#LINE_TABLE").html('');
+            switch ($(element).val()) {
+                case 'OV':
+                    $("#BuscarCodigo").show();
+                    break;
+                case 'FR':
+                    $("#BuscarCodigo").show();
+                    break;
+                case 'TI':
+                    $("#BuscarCodigo").hide();
+                    break;
+                default:
+            }
+        }
+
+
+        $("#Año").change(function () {
+            DeleteDiasSemana();
+            DeleteSemanas();
+            GetSemanas();
+        });
+
+        $("#IdEmpresa").change(function () {
+            DeleteClientes();
+            DeleteProductos();
+            DeleteEnvases();
+            GetClientes();
+            GetProductos();
+        });
+
+        $("#IdPlantaProduccion").change(function () {
+            DeleteProductos();
+            GetProductos();
+        });
+
+        $("#IdProducto").change(function () {
+            DeleteEnvases();
+            GetEnvases();
+        });
+
+        $("#Semana").change(function () {
+            DeleteDiasSemana();
+            SetSemana();
+        });
+
+        $(document).ready(function () {
+            //Init
+            SetCargando($("#Año"));
+            GetAños();
+
+            if ($("#IdEmpresa").val() != "") {
+                DeleteClientes();
+                GetClientes();
+
+                DeleteProductos();
+                DeleteEnvases();
+                GetProductos();
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                </header>
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form" }))
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Año <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("Año", new List<SelectListItem>(), "(Seleccione Año)", new { @class = "form-control", id = "Año" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Semana <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("Semana", new List<SelectListItem>(), "(Seleccione Semana)", new { @class = "form-control", id = "Semana" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Producción <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdPlantaProduccion", Model.GetPlantaProduccion(Model.IdPlantaProduccion, UserID), new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdPlantaProduccion")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdEmpresa", Model.GetEmpresas(Model.IdEmpresa), "(Seleccione Empresa)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdEmpresa")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cliente <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdCliente", new List<SelectListItem>(), "(Seleccione Cliente)", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">O/V</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-check-input" type="radio" value="OV" name="tipo_planificacion" onclick="LimpiarRadio(this)" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">F/R</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-check-input" type="radio" value="FR" name="tipo_planificacion" onclick="LimpiarRadio(this)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Traslado interno</label>
+                                        <div class="col-sm-6">
+                                            <input class="form-check-input" type="radio" value="TI" name="tipo_planificacion" onclick="LimpiarRadio(this)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="BuscarCodigo">
+                                <div class="row">
+                                    <div class="col-lg-12 center">
+                                        <input type="button" onclick="GetCodigoSAP();" class="btn btn-primary" value="Buscar" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="container" id="LINE_TABLE">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdProducto", new List<SelectListItem>(), "(Seleccione Producto)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdProducto")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Envase <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdEnvase", new List<SelectListItem>(), "(Seleccione Envase)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdEnvase")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">País <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("PaisCodigo", Model.GetPaises(Model.PaisCodigo), "(Seleccione País)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("PaisCodigo")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Transporte Terrestre <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdTransportista", Model.GetTransportistas(Model.IdTransportista), "(Seleccione Transporte)", new { @class = "form-control populate", data_plugin_selectTwo = "" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Destino/Puerto Embarque <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Destino", Model.Destino, new { @class = "form-control", maxlength = "256" })
+                                            @Html.ValidationMessage("Destino")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Lote</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Lote", Model.Lote, new { @class = "form-control" })
+                                        </div>
+                                        <div class="lg-Avenatop">AT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">O/C<br />O/V</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("OC", Model.OC, new { @class = "form-control" })
+                                        </div>
+                                        <div class="lg-Avenatop">AT</div>
+                                        <div class="lg-Oleotop">OT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">D.U.S.</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("DUS", Model.DUS, new { @class = "form-control" })
+                                        </div>
+                                        <div class="lg-Avenatop">AT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Reserva</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Reserva", Model.Reserva, new { @class = "form-control" })
+                                        </div>
+                                        <div class="lg-Avenatop">AT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">L/C Requerida</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("LC", Model.LC, new { @class = "form-control" })
+                                        </div>
+                                        <div class="lg-Avenatop">AT</div>
+                                        <div class="lg-Oleotop">OT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Semana <span id="dtSemana"></span></label>
+                                        <div class="col-sm-6">
+                                            <section class="form-group-vertical">
+                                                <label class="control-label">Lu <span id="dtLu"></span> <span class="required">*</span></label>
+                                                @Html.TextBox("Lunes", Model.Lunes, new { @class = "form-control" })
+                                                <label class="control-label">Ma <span id="dtMa"></span> <span class="required">*</span></label>
+                                                @Html.TextBox("Martes", Model.Martes, new { @class = "form-control" })
+                                                <label class="control-label">Mi <span id="dtMi"></span> <span class="required">*</span></label>
+                                                @Html.TextBox("Miercoles", Model.Miercoles, new { @class = "form-control" })
+                                                <label class="control-label">Ju <span id="dtJu"></span> <span class="required">*</span></label>
+                                                @Html.TextBox("Jueves", Model.Jueves, new { @class = "form-control" })
+                                                <label class="control-label">Vi <span id="dtVi"></span> <span class="required">*</span></label>
+                                                @Html.TextBox("Viernes", Model.Viernes, new { @class = "form-control" })
+                                                <label class="control-label">Sá <span id="dtSa"></span> <span class="required">*</span></label>
+                                                @Html.TextBox("Sabado", Model.Sabado, new { @class = "form-control" })
+                                                <label class="control-label">Do <span id="dtDo"></span> <span class="required">*</span></label>
+                                                @Html.TextBox("Domingo", Model.Domingo, new { @class = "form-control" })
+                                            </section>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.Hidden("FechaLunes", Model.FechaLunes, new { id = "FechaLunes" })
+                    @Html.Hidden("FechaMartes", Model.FechaMartes, new { id = "FechaMartes" })
+                    @Html.Hidden("FechaMiercoles", Model.FechaMiercoles, new { id = "FechaMiercoles" })
+                    @Html.Hidden("FechaJueves", Model.FechaJueves, new { id = "FechaJueves" })
+                    @Html.Hidden("FechaViernes", Model.FechaViernes, new { id = "FechaViernes" })
+                    @Html.Hidden("FechaSabado", Model.FechaSabado, new { id = "FechaSabado" })
+                    @Html.Hidden("FechaDomingo", Model.FechaDomingo, new { id = "FechaDomingo" })
+                    <!--Aux Inputs-->
+                    <input type="hidden" id="NumeroDeLaSemana" name="NumeroDeLaSemana" value="" />
+                    <input type="hidden" id="FechaDeInicio" name="FechaDeInicio" value="" />
+                    <input type="hidden" id="FechaFinal" name="FechaFinal" value="" />
+                    <input id="LINEAS_AUX" name="LINEAS_AUX" type="hidden" />
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <button type="button" class="btn btn-primary" onclick="ValidateCheckBox();">Guardar esta Planificación</button>
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

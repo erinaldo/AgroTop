@@ -1,0 +1,51 @@
+﻿@using AgroFichasWeb.Models
+
+@{
+    ViewBag.NombreSeccion = "Informes de Logística";
+    ViewBag.Title = "Seleccione el Informe";
+}
+<style>
+    ul.inpagemenu li {
+        margin: 20px 0px;
+    }
+</style>
+
+<h2>@ViewBag.Title</h2>
+<ul class="inpagemenu">
+    @if (SYS_User.Current().HasPermiso(131))
+    {
+        <li>@Html.ActionLink("Costos por Mes", "costopormes", null, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(132))
+    {
+        <li>@Html.ActionLink("Costos por Tramo", "costoportramo", null, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(133))
+    {
+        <li>@Html.ActionLink("Mermas Global", "mermasglobal", null, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(134))
+    {
+        <li>@Html.ActionLink("Mermas Transportistas", "mermastransportistas", null, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(135))
+    {
+        <li>@Html.ActionLink("Mermas Choferes por Transportista", "mermaschoferesportransportista", null, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(136))
+    {
+        <li>@Html.ActionLink("Total Facturado", "totalfacturado", null, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(137))
+    {
+        <li>@Html.ActionLink("Seguimiento Interno", "seguimientointerno", null, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(138))
+    {
+        <li>@Html.ActionLink("Alertas por Transportistas", "alertasportransportistas", new { idcultivo = 1 }, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(222))
+    {
+        <li>@Html.ActionLink("Movimientos Internos", "movimientosinternos", null, new { @class = "command" })</li>
+    }
+</ul>

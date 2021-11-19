@@ -1,0 +1,133 @@
+﻿@using AgroFichasWeb.Models
+@model List<CAL_ReprocesoSacosDañadosPallets>
+@{
+    ViewBag.Title = "Sacos Dañados";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+    @foreach (var item in Model)
+    {
+        <script>
+            $("#autorizar_@item.IdReprocesoSacosDañados").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas autorizar este reproceso?",
+                    text: "ID: " +@item.IdReprocesoSacosDañados+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Autorizar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Autorizar", "CALSacosDañados", new { id = item.IdReprocesoSacosDañados })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+        </script>
+    }
+}
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Paletizar</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Origen</th>
+                    <th>Sacos Dañados</th>
+                    <th>Sacos Utilizados</th>
+                    <th>Sacos Disponibles</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdReprocesoSacosDañadosPallets</td>
+                        <td>@item.CAL_Pale.IdPale<br />@item.CAL_Pale.CodigoInterno</td>
+                        <td>@item.SacosDañados</td>
+                        <td>@item.SacosUtilizados</td>
+                        <td>@item.SacosDisponibles</td>
+                        <td>
+                            @if (item.HaySacosDisponibles.Value)
+                            {
+                                <button id="palletize_@item.IdReprocesoSacosDañadosPallets" onclick="window.location.href='@Url.Action("CrearPallet", "CALSacosDañados", new { id = item.IdReprocesoSacosDañadosPallets })'" class="btn" style="background-color:#6ab42f;color: white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Paletizar">Crear Pallet</button>
+                                <button id="palletize_@item.IdReprocesoSacosDañadosPallets" onclick="window.location.href='@Url.Action("UsarPalletExistente", "CALSacosDañados", new { id = item.IdReprocesoSacosDañadosPallets })'" class="btn" style="background-color:saddlebrown;color: white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Paletizar">Usar Existente</button>
+                            }
+                            else
+                            {
+                                <button id="palletize_@item.IdReprocesoSacosDañadosPallets" onclick="window.location.href='@Url.Action("CrearPallet", "CALSacosDañados", new { id = item.IdReprocesoSacosDañadosPallets })'" class="btn" style="background-color:#6ab42f;color: white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Paletizar" disabled>Crear Pallet</button>
+                                <button id="palletize_@item.IdReprocesoSacosDañadosPallets" onclick="window.location.href='@Url.Action("UsarPalletExistente", "CALSacosDañados", new { id = item.IdReprocesoSacosDañadosPallets })'" class="btn" style="background-color:saddlebrown;color: white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Paletizar" disabled>Usar Existente</button>
+                            }
+                            <button id="seepalletized_@item.IdReprocesoSacosDañadosPallets" onclick="window.location.href='@Url.Action("VerPaletizado", "CALSacosDañados", new { id = item.IdReprocesoSacosDañadosPallets })'" class="btn" style="background-color:dodgerblue;color: white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ver Paletizado">Ver Paletizado</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

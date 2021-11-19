@@ -1,0 +1,10 @@
+﻿    <ul>
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(19))
+        {
+        <li><a href="@Url.Content("~/conveniosmoneda")">Listado</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(21))
+        {
+        <li><a href="@Url.Content("~/conveniosmoneda/crear")">Crear Convenio de Cambio de Moneda</a></li>
+        }
+    </ul>

@@ -1,0 +1,155 @@
+﻿@using AgroFichasWeb.Models
+
+@model ADQ_SolicitudCompra
+@{
+    ViewBag.Title = "Solicitud de Órden de Compra";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVien.cshtml";
+
+    if (Model.IdSolicitud == 0)
+    {
+        ViewBag.SubTitle = "Formulario de Registro de Solicitud de Órden de Compra";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Solicitud de Órden de Compra";
+    }
+}
+
+@section VendorCSS
+{
+
+}
+@section VendorScripts
+{
+    <script src="~/Content/vien/js/vendor/ckeditor5-build-classic/ckeditor.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        // dec2hex :: Integer -> String
+        function dec2hex(dec) {
+            return ('0' + dec.toString(16)).substr(-2)
+        }
+
+        // generateId :: Integer -> String
+        function generateId(len) {
+            var arr = new Uint8Array((len || 40) / 2)
+            window.crypto.getRandomValues(arr)
+            return Array.from(arr, dec2hex).join('')
+        }
+
+        function AgregarArticulo() {
+            var genId = generateId(40);
+
+            var newtr = '<tr class="item" data-id="' + genId + '">';
+            newtr += '<td> <input class="form-control" id="codigo-' + genId + '" name="codigo_' + genId + '" /></td >';
+            newtr += '<td> <input class="form-control" id="cantidad-' + genId + '" name="cantidad_' + genId + '" value="0" required /></td >';
+            newtr += '<td> <textarea class="form-control" id="descripcion-' + genId + '" name="descripcion_' + genId + '" required /></td >';
+            newtr += '<td> <input class="form-control" id="precio-' + genId + '" name="precio_' + genId + '" value="0" required /></td >';
+            newtr += '<td> <button type="button" class="btn btn-outline-danger mb-1 remove-item" data-datakey="' + genId + '">X</button></td >';
+            newtr += '</tr > ';
+
+            $('#NuevoArticulo').append(newtr);
+
+            //Hidden Keys
+            var hiddenKeys = '';
+            //hiddenKeys += '< input type = "hidden" id = "idProducto_' + genId + '" name = "idProducto_' + genId + '" value = "' + id + '" /> ';
+            hiddenKeys += '<input type = "hidden" id = "RowKey_' + genId + '" name = "RowKey" value = "' + genId + '" /> ';
+            $("#HiddenKeys").append(hiddenKeys);
+
+            //RefrescaProducto();
+
+            $('.remove-item').off().click(function (e) {
+
+                var datakey = $(this).data("datakey");
+                //$("#idProducto_" + datakey).remove();
+                $("#RowKey_" + datakey).remove();
+
+                $(this).parent('td').parent('tr').remove();
+                if ($('#NuevoArticulo tr.item').length == 0)
+                    $('#NuevoArticulo .no-item').slideDown(300);
+                //RefrescaProducto();
+            });
+
+            //$('.idProducto').off().change(function (e) {
+            //    RefrescaProducto();
+            //});
+        }
+    </script>
+}
+<div class="nav justify-content-center">
+    @using (Html.BeginForm())
+    {
+        <div class="card mb-4">
+            <div class="card-body ">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="IdEmpresa">Empresa*</label>
+                        @Html.DropDownList("IdEmpresa", Model.GetEmpresas(Model.IdEmpresa), "(Seleccione Empresa)", new { @class = "form-control" })
+                        @Html.ValidationMessage("IdEmpresa")
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="IdTipoCompra">Tipo de Compra*</label>
+                        @Html.DropDownList("IdTipoCompra", Model.GetTipoCompra(Model.IdTipoCompra), "(Seleccione Tipo de Compra)", new { @class = "form-control" })
+                        @Html.ValidationMessage("IdTipoCompra")
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputPassword4">Centro de Costo*</label>
+                        @Html.DropDownList("IdCentroCosto", Model.GetCentroCosto(Model.IdCentroCosto), "(Seleccione Centro de Costo)", new { @class = "form-control" })
+                        @Html.ValidationMessage("IdCentroCosto")
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="Proyecto">Nombre Proyecto</label>
+                        @Html.TextBox("Proyecto", "", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="Numero">Número de Proyecto</label>
+                        @Html.TextBox("Numero", "", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="IdDetalleProyecto">Detalle de Proyecto</label>
+                        @Html.DropDownList("IdDetalleProyecto", Model.GetDetalleProyectos(), "(Seleccione Detalle de Proyecto)", new { @class = "form-control" })
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div class="form-group">
+                    <label for="Proveedor">Nombre Proveedor</label>
+                    @Html.TextBox("Proveedor", Model.Proveedor, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    <label for="inputAddress2"><button type="button" onclick="AgregarArticulo()" class="btn btn-primary btn-xs mb-1">Agregar Articulos <i class="iconsminds-add-basket"></i></button></label>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Cantidad</th>
+                                <th>Descripción</th>
+                                <th>Precio (Referencial)</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="NuevoArticulo">
+                            <tr></tr>
+                        </tbody>
+                    </table>
+                    <div id="HiddenKeys"></div>
+                </div>
+                <hr class="my-4">
+                <div class="form-group">
+                    <label for="Proveedor">Observación</label>
+                    <textarea name="Observacion" id="ckEditorClassic"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary d-block mt-3">Registrar Solicitud</button>
+        </div>
+
+    }
+
+
+</div>

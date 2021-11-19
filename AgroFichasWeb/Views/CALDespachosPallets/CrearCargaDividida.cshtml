@@ -1,0 +1,263 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_DespachoPale
+@{
+    ViewBag.Title = "Despachos Carga Pallet";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdDespachoPale == 0)
+    {
+        ViewBag.SubTitle = string.Format("Crear Carga Dividida de Pallet {0}", Model.IdPale);
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Carga Dividida de Pallet";
+    }
+
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+    CAL_DetalleOrdenProduccion detalleOrdenProduccion = (CAL_DetalleOrdenProduccion)ViewData["detalleOrdenProduccion"];
+    CAL_Pale pale = (CAL_Pale)ViewData["pale"];
+    CAL_AnalisisPale analisisPale = (CAL_AnalisisPale)ViewData["analisisPale"];
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+}
+@section CustomScripts
+{
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/mvc/4.0/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        function ValidaCarga() {
+            $("#PrimeraCarga").keyup(function () {
+                var primeraCarga = $("#PrimeraCarga").val();
+                var segundaCarga = $("#SegundaCarga").val();
+                var totalCarga = $("#CantidadPaletizada").val();
+                var diferenciaCarga = parseInt(totalCarga) - parseInt(primeraCarga);
+                var options = [];
+                document.getElementById("SegundaCarga").value = diferenciaCarga;
+                document.getElementById("HiddenSegundaCarga").value = diferenciaCarga;
+
+                if (primeraCarga >= parseInt(totalCarga)) {
+                    options.push('<span class="field-validation-error" style="display: inline;">La carga dividida no puede ser igual o superior a los sacos cargados</span>');
+                    $($("#posicion1")).html(options.join(''));
+                    $("#posicion1").show();
+                    $('#PrimeraCarga').addClass('input-validation-error');
+                }
+                else {
+                    $("#posicion1").hide();
+                    $('#PrimeraCarga').removeClass('input-validation-error');
+                }
+            });
+        }
+    </script>
+}
+@if ((!Model.Retenido(Model.IdPale) || !Model.RetenidoAut(Model.IdPale) || !Model.Reproceso(Model.IdPale)) && Model.Liberado(Model.IdPale))
+{
+    Response.Redirect(Url.Action("QRCargaDivididaPallet", new { errMsg = "PALLET RETENIDO Ó REPROCESADO, No se puede generar carga dividida", okMsg = "" }));
+}
+@if (!Model.Despachado(Model.IdPale))
+{
+    Response.Redirect(Url.Action("QRCargaDivididaPallet", new { errMsg = "PALLET YA FUE DESPACHADO, No se puede generar carga dividida", okMsg = "" }));
+}
+else
+{
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                </header>
+                @using (Html.BeginForm((Model.IdDespachoPale == 0 ? "CrearCargaDividida" : "EditarCargaDividida"), "CALDespachosPallets", FormMethod.Post))
+                {
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Pallet</label>
+                            <span class="form-control" style="background-color: #ebfbdf;">@Model.IdPale</span>
+                            @Html.Hidden("IdPale", Model.IdPale)
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Lote Comercial</label>
+                            <span class="form-control" style="background-color: #ebfbdf;">@ordenProduccion.LoteComercial</span>
+                            @Html.Hidden("IdOrdenProduccion", Model.IdOrdenProduccion)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Espesor</label>
+                            <span class="form-control" style="background-color: #ebfbdf;">
+
+                                @if (detalleOrdenProduccion.IdEspesorProducto.HasValue)
+                                {
+                                    @:@string.Format("{0:N2}-{1:N2} mm", detalleOrdenProduccion.CAL_EspesorProducto.Min, detalleOrdenProduccion.CAL_EspesorProducto.Max)
+                                }
+                                else
+                                {
+                                    @:(No tiene Espesor)
+                                }
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Producto</label>
+                            <span class="form-control" style="background-color: #ebfbdf;">
+                                @detalleOrdenProduccion.CAL_Subproducto.Nombre
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label">Cliente</label>
+                            <span class="form-control" style="background-color: #ebfbdf;">@ordenProduccion.GetCliente(ordenProduccion.IdCliente).RazonSocial</span>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label text-weight-bold">Parámetros a Revisar <span class="required">*</span></label>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Fecha Etiqueta</label>
+                                        <input style="background-color: #ebfbdf;" class="form-control" type="text" name="" id="" value="@string.Format("{0:dd/MM/yyyy}", analisisPale.FechaEtiquetado)" disabled />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">N° Sacos Pallet</label>
+                                        <input style="background-color: #ebfbdf;" class="form-control" type="text" name="" id="CantidadPaletizada" value="@pale.CantidadPaletizada" disabled />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">N° Sacos Carga Pallet @Model.IdPale</label>
+                                        @Html.TextBox("PrimeraCarga", Model.PrimeraCarga, new { @class = "form-control", onkeypress = "ValidaCarga()" })
+                                        @Html.ValidationMessage("PrimeraCarga")
+                                        <div id="posicion1" style="clear:both"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label">N° Sacos Carga Nuevo Pallet</label>
+                                        <input class="form-control" type="text" name="SegundaCarga" id="SegundaCarga" disabled />
+                                        @Html.Hidden("HiddenSegundaCarga")
+                                        @Html.ValidationMessage("HiddenSegundaCarga")
+                                        <span id="posicion2" class="help-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*<div class="form-horizontal form-bordered">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label">Parámetros a Revisar <span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <div class="col-sm-12" style="padding-top: 7px;">
+                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                            <div class="col-sm-3">
+                                                <span class="text-weight-bold">Fecha Etiqueta</span>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <span class="text-weight-bold">N° Sacos Envasados</span>
+                                            </div>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                            <div class="col-sm-3 has-success">
+                                                <input style="background-color: #ebfbdf;" class="form-control" type="text" name="" id="" value="@string.Format("{0:dd/MM/yyyy}", analisisPale.FechaEtiquetado)" disabled />
+                                            </div>
+                                            <div class="col-sm-3 has-success">
+                                                <input style="background-color: #ebfbdf;" class="form-control" type="text" name="" id="CantidadPaletizada" value="@pale.CantidadPaletizada" disabled />
+                                            </div>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label class="col-sm-3 control-label">Dividir Carga <span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <div class="col-sm-12" style="padding-top: 7px;">
+                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                            <div class="col-sm-3">
+                                                <span class="text-weight-bold">N° Sacos Carga Pallet @Model.IdPale</span>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <span class="text-weight-bold">N° Sacos Carga Nuevo Pallet</span>
+                                            </div>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                            <div class="col-sm-3 has-success">
+                                                @Html.TextBox("PrimeraCarga", Model.PrimeraCarga, new { @class = "form-control", onkeypress = "ValidaCarga()" })
+                                                <span class="help-block"></span>
+                                            </div>
+                                            <div class="col-sm-3 has-success">
+                                                <input class="form-control" type="text" name="SegundaCarga" id="SegundaCarga" disabled />
+                                                @Html.Hidden("HiddenSegundaCarga")
+                                                @Html.ValidationMessage("HiddenSegundaCarga")
+                                                <span id="posicion2" class="help-block"></span>
+                                            </div>
+                                            
+                                            @Html.ValidationMessage("PrimeraCarga")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>*@
+                @Html.Hidden("IdOrdenProduccion", Model.IdOrdenProduccion)
+                @Html.Hidden("IdDetalleOrdenProduccion", Model.IdDetalleOrdenProduccion)
+                @Html.Hidden("IdPale", Model.IdPale)
+                @Html.Hidden("CantidadPaletizada", Model.CantidadPaletizada)
+            </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Crear Carga Dividida" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+}

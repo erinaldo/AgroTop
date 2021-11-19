@@ -1,0 +1,22 @@
+﻿<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(96))
+    {
+        <li><a href="@Url.Content("~/camiones/crear")">Crear Camión</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(87))
+    {
+        <li><a href="@Url.Content("~/transportistas")">Ver Transportistas</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(91))
+    {
+        <li><a href="@Url.Content("~/choferes")">Ver Choferes</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(95))
+    {
+        <li><a href="@Url.Content("~/camiones")">Ver Camiones</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(100))
+    {
+        <li><a href="@Url.Content("~/marcas")">Ver Marcas</a></li>
+    }
+</ul>

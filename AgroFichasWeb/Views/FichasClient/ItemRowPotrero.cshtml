@@ -1,0 +1,12 @@
+﻿@model AgroFichasWeb.Models.Potrero
+<tr id="itemRowPotrero-@Model.IdPotrero">
+    <td>@Model.Nombre</td>
+    <td class="text-right">@Model.Superficie.ToString("#,##0")</td>
+    <td class="actions text-center">
+        @if (true)
+        {
+            <img id="editSpinnerPotrero-@Model.IdPotrero" src="~/Content/spinner.svg" height="18" style="display: none; margin-right:10px" />
+            <a href="#" id="editButtonPotrero-@Model.IdPotrero" class="editItemPotrero" data-id="@Model.IdPotrero" style="margin-right:10px"><i class="fa fa-pencil"></i></a>
+        }
+    </td>
+</tr>

@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Telesign</name>
+    </assembly>
+    <members>
+        <member name="T:Telesign.AppVerifyClient">
+            <summary>
+             AppVerify is a secure, lightweight SDK that integrates a frictionless user verification process into existing native mobile applications.
+            </summary>
+        </member>
+        <member name="M:Telesign.AppVerifyClient.Status(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+             <summary>
+             Retrieves the verification result for an AppVerify transaction by externalId. To ensure a secure verification
+             flow you must check the status using TeleSign's servers on your backend. Do not rely on the SDK alone to
+             indicate a successful verification.
+            
+             See https://developer.telesign.com/docs/app-verify-android-sdk-self#section-obtaining-verification-status or
+             https://developer.telesign.com/docs/app-verify-ios-sdk-self#section-obtaining-verification-status for detailed
+             API documentation.
+             </summary>
+        </member>
+        <member name="M:Telesign.AppVerifyClient.StatusAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+             <summary>
+             Retrieves the verification result for an AppVerify transaction by externalId. To ensure a secure verification
+             flow you must check the status using TeleSign's servers on your backend. Do not rely on the SDK alone to
+             indicate a successful verification.
+            
+             See https://developer.telesign.com/docs/app-verify-android-sdk-self#section-obtaining-verification-status or
+             https://developer.telesign.com/docs/app-verify-ios-sdk-self#section-obtaining-verification-status for detailed
+             API documentation.
+             </summary>
+        </member>
+        <member name="T:Telesign.MessagingClient">
+            <summary>
+             TeleSign's Messaging API allows you to easily send SMS messages. You can send alerts, reminders, and notifications,
+             or you can send verification messages containing one-time passcodes(OTP).
+            </summary>
+        </member>
+        <member name="M:Telesign.MessagingClient.Message(System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Send a message to the target phone_number.
+            
+            See https://developer.telesign.com/docs/messaging-api for detailed API documentation.
+            </summary>
+        </member>
+        <member name="M:Telesign.MessagingClient.Status(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Retrieves the current status of the message.
+            
+            See https://developer.telesign.com/docs/messaging-api for detailed API documentation.
+            </summary>
+        </member>
+        <member name="M:Telesign.MessagingClient.MessageAsync(System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Send a message to the target phone_number.
+            
+            See https://developer.telesign.com/docs/messaging-api for detailed API documentation.
+            </summary>
+        </member>
+        <member name="M:Telesign.MessagingClient.StatusAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Retrieves the current status of the message.
+            
+            See https://developer.telesign.com/docs/messaging-api for detailed API documentation.
+            </summary>
+        </member>
+        <member name="T:Telesign.PhoneIdClient">
+            <summary>
+            A set of APIs that deliver deep phone number data attributes that help optimize the end user
+            verification process and evaluate risk.
+            </summary>
+        </member>
+        <member name="M:Telesign.PhoneIdClient.Execute(System.String,System.Net.Http.HttpMethod,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Generic TeleSign REST API request handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="method">The HTTP method name, as an upper case string.</param>
+            <param name="parameters">Params to perform the request with. With application/json content type, Dictionary with string keys and object values should be used, otherwise string keys and string values</param>
+            <returns></returns>
+        </member>
+        <member name="M:Telesign.PhoneIdClient.Post(System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Generic TeleSign REST API POST handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="parameters">Body params to perform the POST request with.</param>
+            <returns>The TelesignResponse for the request.</returns>
+        </member>
+        <member name="M:Telesign.PhoneIdClient.PhoneId(System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            The PhoneID API provides a cleansed phone number, phone type, and telecom carrier information to determine the
+            best communication method - SMS or voice.
+            
+            See https://developer.telesign.com/docs/phoneid-api for detailed API documentation.      
+            </summary>
+        </member>
+        <member name="M:Telesign.PhoneIdClient.PhoneIdAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            The PhoneID API provides a cleansed phone number, phone type, and telecom carrier information to determine the
+            best communication method - SMS or voice.
+            
+            See https://developer.telesign.com/docs/phoneid-api for detailed API documentation.      
+            </summary>
+        </member>
+        <member name="T:Telesign.ScoreClient">
+            <summary>
+            Score provides risk information about a specified phone number.
+            </summary>
+        </member>
+        <member name="M:Telesign.ScoreClient.Score(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Score is an API that delivers reputation scoring based on phone number intelligence, traffic patterns, machine
+            learning, and a global data consortium.
+            
+            See https://developer.telesign.com/docs/score-api for detailed API documentation.     
+            </summary>
+        </member>
+        <member name="M:Telesign.ScoreClient.ScoreAsync(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Score is an API that delivers reputation scoring based on phone number intelligence, traffic patterns, machine
+            learning, and a global data consortium.
+            
+            See https://developer.telesign.com/docs/score-api for detailed API documentation.     
+            </summary>
+        </member>
+        <member name="T:Telesign.RestClient">
+            <summary>
+            The TeleSign RestClient is a generic HTTP REST client that can be extended to make requests against any of
+            TeleSign's REST API endpoints.
+            
+            See https://developer.telesign.com for detailed API documentation.
+            </summary>
+        </member>
+        <member name="M:Telesign.RestClient.#ctor(System.String,System.String,System.String,System.Int32,System.Net.WebProxy,System.String,System.String)">
+            <summary>
+            TeleSign RestClient useful for making generic RESTful requests against our API.
+            </summary>
+            <param name="customerId">Your customer_id string associated with your account.</param>
+            <param name="apiKey">Your api_key string associated with your account.</param>
+            <param name="restEndpoint">Override the default restEndpoint to target another endpoint.</param>
+            <param name="timeout">The timeout passed into HttpClient.</param>
+            <param name="proxy">The proxy passed into HttpClient.</param>
+            <param name="proxyUsername">The username passed into HttpClient.</param>
+            <param name="proxyPassword">The password passed into HttpClient.</param>
+        </member>
+        <member name="T:Telesign.RestClient.TelesignResponse">
+            <summary>
+            A simple HTTP Response object to abstract the underlying HttpClient library response.
+            </summary>
+        </member>
+        <member name="M:Telesign.RestClient.GenerateTelesignHeaders(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+             <summary>
+             Generates the TeleSign REST API headers used to authenticate requests.
+            
+             Creates the canonicalized stringToSign and generates the HMAC signature.This is used to authenticate requests
+             against the TeleSign REST API.
+            
+             See https://developer.telesign.com/docs/authentication for detailed API documentation.
+             </summary>
+             <param name="customerId">Your account customer_id.</param>
+             <param name="apiKey">Your account api_key.</param>
+             <param name="methodName">The HTTP method name of the request as a upper case string, should be one of 'POST', 'GET', 'PUT' or 'DELETE'.</param>
+             <param name="resource">The partial resource URI to perform the request against.</param>
+             <param name="urlEncodedFields">URL encoded HTTP body to perform the HTTP request with.</param>
+             <param name="dateRfc2616">The date and time of the request formatted in rfc 2616.</param>
+             <param name="nonce">A unique cryptographic nonce for the request.</param>
+             <param name="userAgent">User Agent associated with the request.</param>
+             <param name="contentType">Content type of the request.</param>
+             <returns>A dictionary of HTTP headers to be applied to the request.</returns>
+        </member>
+        <member name="M:Telesign.RestClient.Post(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Generic TeleSign REST API POST handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="parameters">Body params to perform the POST request with.</param>
+            <returns>The TelesignResponse for the request.</returns>
+        </member>
+        <member name="M:Telesign.RestClient.PostAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Generic TeleSign REST API POST handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="parameters">Body params to perform the POST request with.</param>
+            <returns>The TelesignResponse for the request.</returns>
+        </member>
+        <member name="M:Telesign.RestClient.Get(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Generic TeleSign REST API GET handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="parameters">Body params to perform the GET request with.</param>
+            <returns>The TelesignResponse for the request.</returns>
+        </member>
+        <member name="M:Telesign.RestClient.GetAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Generic TeleSign REST API GET handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="parameters">Body params to perform the GET request with.</param>
+            <returns>The TelesignResponse for the request.</returns>
+        </member>
+        <member name="M:Telesign.RestClient.Put(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Generic TeleSign REST API PUT handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="parameters">Body params to perform the PUT request with.</param>
+            <returns>The TelesignResponse for the request.</returns>
+        </member>
+        <member name="M:Telesign.RestClient.PutAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Generic TeleSign REST API PUT handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="parameters">Body params to perform the PUT request with.</param>
+            <returns>The TelesignResponse for the request.</returns>
+        </member>
+        <member name="M:Telesign.RestClient.Delete(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Generic TeleSign REST API DELETE handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="parameters">Body params to perform the DELETE request with.</param>
+            <returns>The TelesignResponse for the request.</returns>
+        </member>
+        <member name="M:Telesign.RestClient.DeleteAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Generic TeleSign REST API DELETE handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="parameters">Body params to perform the DELETE request with.</param>
+            <returns>The TelesignResponse for the request.</returns>
+        </member>
+        <member name="M:Telesign.RestClient.Execute(System.String,System.Net.Http.HttpMethod,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Generic TeleSign REST API request handler.
+            </summary>
+            <param name="resource">The partial resource URI to perform the request against.</param>
+            <param name="method">The HTTP method name, as an upper case string.</param>
+            <param name="parameters">Params to perform the request with.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Telesign.VoiceClient">
+            <summary>
+             TeleSign's Voice API allows you to easily send voice messages. You can send alerts, reminders, and notifications,
+            or you can send verification messages containing time-based, one-time passcodes(TOTP).
+            </summary>
+        </member>
+        <member name="M:Telesign.VoiceClient.Call(System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Send a voice call to the target phone_number.
+            
+            See https://developer.telesign.com/docs/voice-api for detailed API documentation.
+            </summary>
+        </member>
+        <member name="M:Telesign.VoiceClient.Status(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Retrieves the current status of the voice call.
+            
+            See https://developer.telesign.com/docs/voice-api for detailed API documentation.
+            </summary>
+        </member>
+        <member name="M:Telesign.VoiceClient.CallAsync(System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Send a voice call to the target phone_number.
+            
+            See https://developer.telesign.com/docs/voice-api for detailed API documentation.
+            </summary>
+        </member>
+        <member name="M:Telesign.VoiceClient.StatusAsync(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Retrieves the current status of the voice call.
+            
+            See https://developer.telesign.com/docs/voice-api for detailed API documentation.
+            </summary>
+        </member>
+    </members>
+</doc>

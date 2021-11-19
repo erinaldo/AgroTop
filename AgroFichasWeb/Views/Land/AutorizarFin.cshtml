@@ -1,0 +1,47 @@
+﻿@using AgroFichasWeb.Models
+
+@model ProcesoIngreso
+@{
+    Layout = null;
+    ViewBag.Title = "Ingreso Autorizado";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <style>
+        label {
+            font-weight: bold;
+        }
+        table.procesoIngreso {
+            width: 100%;
+        }
+        .command {
+            text-align: center;
+            margin: 10px;
+        }
+        .error {
+            color: red; 
+            font-weight: bold;
+        }
+        .validation-summary-oks {
+            background-color: #ffffaa;
+            font-weight: bold;
+            color: green;
+            margin: 20px 0px 20px 0px;
+            padding: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div>
+        <h2>@ViewBag.Title</h2>
+        @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+        @Html.Partial("~/Views/Recepciones/Ingreso.cshtml", Model)
+    </div>
+</body>
+</html>
+

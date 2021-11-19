@@ -1,0 +1,139 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_PresetPepsiCoIncChemicalParameter
+@{
+    ViewBag.Title = "PepsiCo";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdPresetPepsiCoIncChemicalParameter == 0)
+    {
+        ViewBag.SubTitle = "Crear Preset de Parámetro Nutricional";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Preset de Parámetro Nutricional";
+    }
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Ficha Técnica <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdFichaTecnica", Model.GetFichasTecnicas(Model.IdFichaTecnica), new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("IdFichaTecnica")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Parámetro <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdParametroNutricional", Model.GetParametros(Model.IdParametroNutricional), new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("IdParametroNutricional")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Specification <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Specification", Model.Specification, new { @class = "form-control", maxlength = "20" })
+                                        @Html.ValidationMessage("Specification")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">India Method <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("IndiaMethod", Model.IndiaMethod, new { @class = "form-control", maxlength = "20" })
+                                        @Html.ValidationMessage("IndiaMethod")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">India Freq <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("IndiaFreq", Model.IndiaFreq, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("IndiaFreq")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Avenatop Method <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("AvenatopMethod", Model.AvenatopMethod, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("AvenatopMethod")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Avenatop Freq <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("AvenatopFreq", Model.AvenatopFreq, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("AvenatopFreq")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Sort Order <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("SortOrder", Model.SortOrder, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("SortOrder")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Preset" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

@@ -1,0 +1,91 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@model List<rpt_RecomendacionesResult>
+@{
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Informes";
+    ViewBag.Title = "Recomendaciones " + temporada.Nombre;
+
+    //var dc = new AgroFichasDBDataContext();
+}
+
+@section filter {
+    @using (Html.BeginForm())
+    {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("CultivoSelector")</td>
+                <td><input type="hidden" name="run" value="1" /></td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Cultivo:</td>
+        <td nowrap="nowrap">@ViewData["cultivoLabel"]</td>
+        <td width="100%">
+            @Html.ActionLink("Exportar", "recomendaciones_excel", new { idTemporada = temporada.IdTemporada, idCultivo = ViewData["idCultivo"] }, new { @class = "exportlink" })
+        </td>
+    </tr>
+</table>
+<br />
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptEncabezadoListado">Ficha</td>
+        <td class="RptEncabezadoListado">Fecha</td>
+        <td class="RptEncabezadoListado">Predio</td>
+        <td class="RptEncabezadoListado">Cultivo</td>
+        <td class="RptEncabezadoListado">Etapa</td>
+        <td class="RptEncabezadoListado">Agente</td>
+        <td class="RptEncabezadoListado">Químico</td>
+        <td class="RptEncabezadoListado" align="right">Dosis</td>
+        <td class="RptEncabezadoListado" >UM</td>
+        <td class="RptEncabezadoListado" align="right">N</td>
+        <td class="RptEncabezadoListado" align="right">P2O5</td>
+        <td class="RptEncabezadoListado" align="right">KO2</td>
+        <td class="RptEncabezadoListado" align="right">MgO</td>
+        <td class="RptEncabezadoListado" align="right">S</td>
+        <td class="RptEncabezadoListado" align="right">B</td>
+        <td class="RptEncabezadoListado" align="right">Zn</td>
+        <td class="RptEncabezadoListado" align="right">CaO</td>
+
+
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr class="RptItemListado" valign="top">
+            <td nowrap="nowrap">@item.IdFicha</td>
+            <td nowrap="nowrap" align="right">@item.Fecha.ToString("dd/MM")</td>
+            <td>@item.Predio<br />@item.Agricultor</td>
+            <td>@item.Cultivo</td>
+            <td>@item.Etapa</td>
+            <td>@item.Agente</td>
+            <td>@item.Quimico</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,###,####}", item.Dosis)</td>
+            <td>@(item.Dosis != 0 ? item.UM : "")</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,###,####}", item.FerN)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,###,####}", item.FerP2O5)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,###,####}", item.FerKO2)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,###,####}", item.FerMgO)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,###,####}", item.FerS)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,###,####}", item.FerB)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,###,####}", item.FerZn)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,###,####}", item.FerCaO)</td>
+        </tr>
+    }
+    <tr>
+        <td class="RptPieListado" colspan="17">&nbsp;</td>
+    </tr>
+</table>

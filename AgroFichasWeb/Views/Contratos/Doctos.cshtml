@@ -1,0 +1,97 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<DoctoContrato>
+
+@{
+    ViewBag.NombreSeccion = "Contratos";
+    var contrato = (Contrato)ViewData["contrato"];
+    ViewBag.Title = "Administrar Documentos de Contratos de " + contrato.NumeroContrato + " " + contrato.Agricultor.Nombre;
+}
+
+@section submenuSection {
+    @Html.Partial("SubmenuDoctoContrato", contrato)
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">
+            Tipo
+        </th>
+        <th align="left">
+            Correlativo
+        </th>
+        <th align="left">
+            Subido
+        </th>
+        <th align="left">
+            Descargar
+        </th>
+        <th align="center">
+            Eliminar
+        </th>
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="6" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        <tr valign="top">
+            <td align="left">
+                @item.TipoDoctoContrato.Descripcion
+            </td>
+            <td align="left">
+                @if (item.IdTipoDoctoContrato == 1)
+                {
+                    <span>-</span>
+                }
+                else
+                {
+                    <span>@item.Correlativo</span>
+                }
+            </td>
+            <td align="left">
+                @item.UserIns
+            </td>
+            <td align="left">
+                @Html.ActionLink("Descargar", "descargarcontrato", new { id = item.IdDoctoContrato }, new { target = "_blank" })
+            </td>
+            <td align="center">
+                @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "eliminardocto", new { id = item.IdDoctoContrato })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="6" class="pager">
+            @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "marcas")
+        </td>
+    </tr>
+</table>

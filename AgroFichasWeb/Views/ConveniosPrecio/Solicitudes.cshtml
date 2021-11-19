@@ -1,0 +1,110 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model AgroFichasWeb.Controllers.PaginatedList<SolicitudPrecio>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Convenios de Precio";
+    ViewBag.Title = "Solicitudes de Precio " + temporada.Nombre;
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("solicitudes", "conveniosprecio", new { id = 0 }, FormMethod.Get))
+    {
+        @Html.Partial("TemporadaSelector")
+        <input type="text" name="key" value="@ViewData["key"]" />
+        <input type="submit" value="Buscar" />
+    }
+</div>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">
+            Estado
+        </th>
+        <th align="right">
+            Fecha
+        </th>
+        <th align="right">
+            Nro
+        </th>
+        <th align="left">
+            Nombre
+        </th>
+        <th align="left">
+            Cultivo
+        </th>
+        <th align="right">
+            Ton
+        </th>
+        <th align="right">
+            Precio
+        </th>
+        <th align="center">
+        </th>
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="13" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        var itemParams = Model.RouteValues(new RouteValueDictionary() { { "id", item.IdSolicitudPrecio } });
+        var htmlAttr = new Dictionary<String, Object>() { { "class", "command" } };
+        <tr valign="top">
+            <td style="background-color: @item.ColorProceso">
+                @item.EstadoProceso
+            </td>
+            <td align="right">
+                @item.FechaHoraIns.Date.ToString("dd/MM/yyyy")
+            </td>
+            <td align="right">
+                @item.IdSolicitudPrecio
+            </td>
+            <td align="left">
+                @item.Agricultor.Nombre
+            </td>
+            <td align="left">
+                @item.Cultivo.Nombre
+            </td>
+            <td align="right" nowrap="nowrap">
+                @String.Format("{0:#,##0}", item.Cantidad / 1000M)
+            </td>
+            <td align="right" nowrap="nowrap">
+                @String.Format(item.Moneda.Formato, item.PrecioUnidad)
+            </td>
+            <td align="center">
+                @Html.ActionLink("Detalle", "solicitud", itemParams, htmlAttr)
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="13" class="pager">
+            @Model.Paginator("solicitudes", "conveniosprecio", ViewContext.RequestContext)
+        </td>
+    </tr>
+</table>

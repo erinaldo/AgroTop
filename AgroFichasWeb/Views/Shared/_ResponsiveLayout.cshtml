@@ -1,0 +1,37 @@
+﻿@using AgroFichasWeb.Models
+@{
+    Layout = "_ResponsiveLayoutBase.cshtml";
+    
+}
+
+@section VendorCSS {
+    @RenderSection("VendorCSS", required: false)
+}
+
+@section VendorScripts {
+    @RenderSection("VendorScripts", required: false)
+}
+
+@section CustomScripts {
+    <script src="~/Scripts/validate.js"></script>
+    @RenderSection("CustomScripts", required: false)
+
+}
+
+<section class="body">
+
+    @Html.Partial("_ResponsiveMenu")
+
+    <div class="inner-wrapper">
+        <section role="main" class="content-body">
+            <header class="page-header">
+                <h2>@ViewBag.Title</h2>
+            </header>
+
+            <!-- start: page -->
+            @RenderBody()
+            <!-- end: page -->
+        </section>
+    </div>
+
+</section>

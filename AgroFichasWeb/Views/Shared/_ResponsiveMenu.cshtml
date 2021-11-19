@@ -1,0 +1,84 @@
+﻿@using AgroFichasWeb.Models
+@{ 
+    var user = SYS_User.Current();
+}
+<!-- start: header -->
+<header class="header header-nav-menu">
+    <div class="logo-container">
+        <a href="~/" class="logo">
+            <img src="~/Content/images/logo.png" height="35" alt="Empresas Agrotop" />
+        </a>
+        <button class="btn header-btn-collapse-nav hidden-md hidden-lg" data-toggle="collapse" data-target=".header-nav">
+            <i class="fa fa-bars"></i>
+        </button>
+
+        <!-- start: header nav menu -->
+        <div class="header-nav collapse">
+            <div class="header-nav-main header-nav-main-effect-1 header-nav-main-sub-effect-1">
+                <nav>
+                    <ul class="nav nav-pills" id="mainNav">
+                        @foreach (var modulo in user.Modulos)
+                        {
+                            <li class="dropdown @(user.IdModuloActivo == modulo.ID ? "active" : "")">
+                                <a class="dropdown-toggle" href="#">
+                                    @modulo.Nombre
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @foreach (var menu in user.ItemsMenu(modulo.ID))
+                                    {
+                                        <li class="dropdown@(menu.ContieneSubMenu ? "-submenu" : "")">
+                                            <a href="@Url.Content(menu.Url)">@menu.Nombre</a>
+                                            @if (menu.ContieneSubMenu)
+                                            {
+                                                <ul class="dropdown-menu">
+                                                    @foreach (var submenu in user.ItemsSubMenu(menu.ID))
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Content(submenu.Url)">
+                                                                @submenu.Nombre
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- end: header nav menu -->
+    </div>
+
+    <!-- start: search & user box -->
+    <div class="header-right">
+        <span class="separator"></span>
+        <div id="userbox" class="userbox">
+            <a href="#" data-toggle="dropdown">
+                <figure class="profile-picture">
+                    <img src="~/Content/porto/images/!logged-user.jpg" alt="" class="img-circle" data-lock-picture="~/Content/porto/images/!logged-user.jpg" />
+                </figure>
+                <div class="profile-info" @*data-lock-name="John Doe" data-lock-email="johndoe@okler.com"*@>
+                    <span class="name">@user.FullName</span>
+                    <span class="role">@user.UserName</span>
+                </div>
+
+                <i class="fa custom-caret"></i>
+            </a>
+
+            <div class="dropdown-menu">
+                <ul class="list-unstyled">
+                    <li class="divider"></li>
+                    <li>
+                        <a role="menuitem" tabindex="-1" href="~/account/logout"><i class="fa fa-power-off"></i> Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- end: search & user box -->
+</header>
+<!-- end: header -->

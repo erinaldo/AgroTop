@@ -1,0 +1,12 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var idEstadoIngreso = (int)ViewData["idEstadoIngreso"];
+    var estados = (List<EstadoProcesoIngreso>)ViewData["estadosIngreso"];
+}
+<select id="idEstadoIngreso" name="idEstadoIngreso">
+    <option value="">(Todos los Estados - Excepto nulas)</option>
+    @foreach (var t in estados)
+    {
+        <option value="@t.IdEstado" @(t.IdEstado == idEstadoIngreso ? "selected" : "")>@t.Nombre</option>
+    }
+</select>

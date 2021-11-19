@@ -1,0 +1,46 @@
+﻿<script>
+
+    function showDangerPopUp(msg) {
+
+        $("#modalDanger-Message").html(msg);
+
+        $.magnificPopup.open({
+            items: {
+                src: '#modalDanger', // can be a HTML string, jQuery object, or CSS selector
+                type: 'inline',
+                preloader: false,
+                modal: true
+            }
+        });
+
+        $('.modalDanger-dismiss').click(function (e) {
+            e.preventDefault();
+            $.magnificPopup.close();
+        });
+
+    }
+</script>
+
+<div id="modalDanger" class="modal-block modal-block-danger mfp-hide">
+    <section class="panel">
+        <div class="panel-body">
+            <div class="modal-wrapper">
+                <div class="modal-icon">
+                    <i class="fa fa-times-circle"></i>
+                </div>
+                <div class="modal-text">
+                    <p id="modalDanger-Message"></p>
+                </div>
+            </div>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-danger modalDanger-dismiss">OK</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>
+
+

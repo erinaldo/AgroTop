@@ -1,0 +1,64 @@
+﻿@using AgroFichasWeb.Models
+@model List<CAL_Pale>
+@{
+    ViewBag.Title = "Etiquetas";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            font-size: large;
+        }
+
+        #qr-Wrapper {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 900px;
+        }
+
+        #qr-Container {
+            display: block;
+            float: left;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 280px;
+        }
+
+            #qr-Container img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #qr-Container p {
+                display: block;
+                text-align: center;
+                word-break: break-word
+            }
+    </style>
+</head>
+<body>
+    <div id="qr-Wrapper">
+        @foreach (CAL_Pale pale in Model)
+        {
+            <div id="qr-Container">
+                <img src="@pale.GetImgSrc()" width="250" />
+                <p><strong>@pale.CodigoInterno</strong></p>
+            </div>
+        }
+    </div>
+    <script>
+        window.print();
+        window.close();
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+@using AgroFichasWeb.ViewModels.Liquidaciones
+@using Newtonsoft.Json;
+
+@model RangoPrecioViewModel
+
+@{
+    ViewBag.NombreSeccion = "Rango de Precios " + Model.NivelRangoPrecio.Nombre;
+    ViewBag.Title = "Editar Rangos de Precios";
+
+    var mostrarRangoPadre = Model.NivelRangoPrecio.IdNivelRangoPrecioPadre.HasValue;
+}
+
+@section headSection {
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+@Html.ValidationSummary(false, "No fue posible procesar su solicitud. Por favor haga las siguientes correcciones los campos indicados.")
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.IdNivelRangoPrecio)
+    <fieldset class="dataForm">
+       
+        <div class="p">
+            <table id="bondes-table" class="sublist2" style="margin-bottom: 10px; display: inline-block; width: 700px">
+                @foreach (var cultivo in Model.Cultivos)
+                {
+                    <tr><td colspan="6"><h1>@cultivo.Nombre</h1></td></tr>
+                    <tr>
+                        <td><b>Sucursal</b></td>
+                        <td align="right"><b>@Model.CLP.Simbolo Mínimo</b></td>
+                        <td align="right"><b>@Model.CLP.Simbolo Máximo</b></td>
+                        <td align="right"><b>@Model.USD.Simbolo Mínimo</b></td>
+                        <td align="right"><b>@Model.USD.Simbolo Máximo</b></td>
+                    </tr>
+                    foreach (var item in Model.Items.Where(i => i.IdCultivo == cultivo.IdCultivo).OrderBy(i => i.NombreSucursal))
+                    {
+                        <tr>
+                            <td nowrap="nowrap" @(mostrarRangoPadre ? "rowspan=2" : "") valign="top">
+                                @item.NombreSucursal
+                                @Html.Hidden("Items.Index", item.Index)
+                                @Html.Hidden(String.Format("Items[{0}].Index", item.Index), item.Index)
+                                @Html.Hidden(String.Format("Items[{0}].IdCultivo", item.Index), item.IdCultivo)
+                                @Html.Hidden(String.Format("Items[{0}].IdSucursal", item.Index), item.IdSucursal)
+                                @Html.Hidden(String.Format("Items[{0}].NombreSucursal", item.Index), item.NombreSucursal)
+                                @Html.Hidden(String.Format("Items[{0}].NombreCultivo", item.Index), item.NombreCultivo)
+
+                                @Html.Hidden(String.Format("Items[{0}].PisoCLP", item.Index), item.PisoCLP)
+                                @Html.Hidden(String.Format("Items[{0}].TechoCLP", item.Index), item.TechoCLP)
+                                @Html.Hidden(String.Format("Items[{0}].PisoUSD", item.Index), item.PisoUSD)
+                                @Html.Hidden(String.Format("Items[{0}].TechoUSD", item.Index), item.TechoUSD)
+                            </td>
+                            <td>@Html.TextBox(String.Format("Items[{0}].PrecioMinCLP", item.Index), item.PrecioMinCLP, new { style = "text-align:right" })</td>
+                            <td>@Html.TextBox(String.Format("Items[{0}].PrecioMaxCLP", item.Index), item.PrecioMaxCLP, new { style = "text-align:right" })</td>
+                            <td>@Html.TextBox(String.Format("Items[{0}].PrecioMinUSD", item.Index), item.PrecioMinUSD, new { style = "text-align:right" })</td>
+                            <td>@Html.TextBox(String.Format("Items[{0}].PrecioMaxUSD", item.Index), item.PrecioMaxUSD, new { style = "text-align:right" })</td>
+                        </tr>
+                        if (mostrarRangoPadre)
+                        {
+                            <tr>
+                                <td align="right" style="color: #bbbbbb">(@String.Format(Model.CLP.Formato2, item.PisoCLP) - @String.Format(Model.CLP.Formato2, item.TechoCLP))</td>
+                                <td align="right" style="color: #bbbbbb">(@String.Format(Model.CLP.Formato2, item.PisoCLP) - @String.Format(Model.CLP.Formato2, item.TechoCLP))</td>
+                                <td align="right" style="color: #bbbbbb">(@String.Format(Model.USD.Formato2, item.PisoUSD) - @String.Format(Model.USD.Formato2, item.TechoUSD))</td>
+                                <td align="right" style="color: #bbbbbb">(@String.Format(Model.USD.Formato2, item.PisoUSD) - @String.Format(Model.USD.Formato2, item.TechoUSD))</td>
+                            </tr>
+
+                        }
+                    }
+                }
+            </table>
+        </div>
+        
+        <p class="okcancel">
+            <input type="submit" value="Guardar Cambios" /> 
+        </p>
+    </fieldset>
+
+}

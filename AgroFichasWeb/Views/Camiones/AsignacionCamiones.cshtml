@@ -1,0 +1,109 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<LOG_Pedido>
+
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    ViewBag.Title = "Asignación de Camiones a Planta de Origen";
+
+    var DC = new AgroFichasDBDataContext();
+    var requerimientosList = (IEnumerable<SelectListItem>)ViewData["requerimientosList"];
+}
+
+@section submenuSection {
+    @Html.Partial("~/Views/Requerimientos/Submenu.cshtml")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("asignacioncamiones", "camiones", new { id = 0 }, FormMethod.Get))
+    {
+
+        @Html.DropDownList("idRequerimiento", requerimientosList, "-- Seleccione --", new { @class = "heavy std" })
+        <input type="submit" value="Filtrar por Requerimiento" />
+    }
+</div>
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">
+            Núm. Req.
+        </th>
+        <th align="left">
+            Núm. Ped.
+        </th>
+        <th align="left">
+            Estado
+        </th>
+        <th align="left">
+            Cultivo
+        </th>
+        <th align="left">
+            Origen
+        </th>
+        <th align="left">
+            Destino
+        </th>
+        <th align="left">
+            Asignar
+        </th>
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="7" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        var asignacionpedido = DC.LOG_AsignacionPedido.FirstOrDefault(x => x.IdPedido == item.IdPedido);
+        var requerimiento = DC.LOG_Requerimiento.Single(x => x.IdRequerimiento == asignacionpedido.IdRequerimiento);
+        <tr valign="top">
+            <td align="left"><strong>@requerimiento.IdRequerimiento</strong></td>
+            <td align="left"><strong>@item.IdPedido</strong></td>
+            <td align="left">@item.LOG_EstadoPedido.Descripcion</td>
+            <td align="left">@item.Cultivo.Nombre</td>
+            <td align="left">
+                @if (item.Origen != null)
+                {
+                    var origen = DC.Bodega.Single(x => x.IdBodega == item.Origen.Value);
+                    @Html.Raw(string.Format("Sucursal: {2}<br>Bodega: {0} ({1})", origen.Nombre, origen.NombreCorto, origen.Sucursal.Nombre));
+                }
+                else
+                {
+                    @Html.Raw(item.OtroOrigen);
+                }
+            </td>
+            <td align="left">
+                @if (item.Destino != null)
+                {
+                    var Destino = DC.Bodega.Single(x => x.IdBodega == item.Destino.Value);
+                    @Html.Raw(string.Format("Sucursal: {2}<br>Bodega: {0} ({1})", Destino.Nombre, Destino.NombreCorto, Destino.Sucursal.Nombre));
+                }
+                else
+                {
+                    @Html.Raw(item.OtroDestino);
+                }
+            </td>
+            <td align="left">
+                <a class="command" href="@Url.Action("asignarpaso1", "camiones", new { id = item.IdPedido, IdRequerimiento = requerimiento.IdRequerimiento })">Asignar</a>
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="7" class="pager">
+            @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "camiones", ViewData["IdRequerimiento"].ToString(), "asignacioncamiones")
+        </td>
+    </tr>
+</table>

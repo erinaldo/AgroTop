@@ -1,0 +1,37 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model LOG_Marca
+
+@{
+    ViewBag.NombreSeccion = "Transportistas";
+    if (Model.IdMarca == 0)
+    {
+        ViewBag.Title = "Crear Marca";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Marca";
+    }
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Nombre</label>
+            @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "50" })
+            @Html.ValidationMessage("Nombre", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar esta Marca" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

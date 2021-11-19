@@ -1,0 +1,224 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_PlanificacionSemanal
+
+@{
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = "Registrar Llegada";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Producción <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@Model.PlantaProduccion.Nombre</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@Model.Empresa.Nombre</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cliente <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@Model.Cliente.RazonSocial</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@Model.CTR_Producto.Nombre</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Envase <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@Model.CTR_Envase.Descripcion</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Destino/Puerto Embarque <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@Model.Destino</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">País <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@Model.Pais.PaisNombre</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">D.U.S. <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@Model.DUS</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Reserva <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@Model.Reserva</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">RUT de la Empresa de Transporte <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("RUT", Model.RUT, new { @class = "form-control", maxlength = "10", placeholder = "Ingrese RUT sin puntos y con guíon" })
+                                            @Html.ValidationMessage("RUT")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Nombre de la Empresa de Transporte <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Transportista", Model.Transportista, new { @class = "form-control", maxlength = "200" })
+                                            @Html.ValidationMessage("Transportista")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Patente del Camión <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Patente", Model.Patente, new { @class = "form-control" })
+                                            @Html.ValidationMessage("Patente")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Nombre del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Chofer", Model.Chofer, new { @class = "form-control", maxlength = "200" })
+                                            @Html.ValidationMessage("Chofer")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Teléfono del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Telefono", Model.Telefono, new { @class = "form-control", maxlength = "100", required = "required" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Rut del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("RutChofer", Model.RutChofer, new { @class = "form-control", maxlength = "10", required = "required", placeholder = "Ingrese RUT sin puntos y con guíon" })
+                                            @Html.ValidationMessage("RutChofer")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Email del Chofer</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("EmailChofer", Model.EmailChofer, new { @class = "form-control", maxlength = "100", type = "email" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Tipo de camion <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("TipoCamion", Model.TipoCamion, new { @class = "form-control", maxlength = "100" })
+                                            @Html.ValidationMessage("TipoCamion")
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Registrar Llegada" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

@@ -1,0 +1,547 @@
+﻿@using AgroFichasWeb.ViewModels.Operaciones
+@model DashboardViewModel
+@{
+    var dateTime = (DateTime)ViewData["dateTime"];
+    ViewBag.Title = string.Format("Resumen del Día {0:dd/MM/yyyy}", dateTime);
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/chartist/chartist.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/morris.js/morris.css")" />
+}
+
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/chartist/chartist.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.categories.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.pie.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.resize.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot.tooltip/flot.tooltip.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/gauge/gauge.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery.easy-pie-chart/jquery.easy-pie-chart.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-appear/jquery-appear.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-sparkline/jquery-sparkline.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/liquid-meter/liquid.meter.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/morris.js/morris.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/raphael/raphael.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/snap.svg/snap.svg.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+
+    <script>
+        jQuery.datetimepicker.setLocale('es');
+        jQuery('#dateTime').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            step: 1,
+            timepicker: false,
+            todayButton: true,
+            value: null,
+            weeks: true
+        });
+    </script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable1').dataTable({
+            "ordering": false,
+            "searching": false,
+            "lengthChange": false,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+        $('#datatable2').dataTable({
+            "ordering": false,
+            "searching": false,
+            "lengthChange": false,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+        $('#datatable3').dataTable({
+            "ordering": false,
+            "searching": false,
+            "lengthChange": false,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+        $('#datatable4').dataTable({
+            "ordering": false,
+            "searching": false,
+            "lengthChange": false,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Filtrar Dashboard</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Fecha</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" name="dateTime" class="form-control" id="dateTime" value="@string.Format("{0:yyyy/MM/dd}", dateTime)" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Filtrar" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-lg-12 col-xl-12">
+            <header class="panel-heading">
+                <h2 class="panel-title">Turnos del Día</h2>
+            </header>
+            <section class="panel">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <table class="table table-bordered table-striped mb-none" id="datatable1">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Correlativo</th>
+                                        <th>Horas</th>
+                                        <th>Descripción</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.TurnosDelDia.Count > 0)
+                                    {
+                                        foreach (var turno in Model.TurnosDelDia)
+                                        {
+                                            <tr>
+                                                <td>@turno.IdRegistroTurno</td>
+                                                <td>@turno.Correlativo</td>
+                                                <td>@turno.Horas</td>
+                                                <td><span class="badge badge-success">@turno.Descripcion</span></td>
+                                                <td>
+                                                    @if (Model.PuedeVerProductividad)
+                                                    {
+                                                        <button id="addProductividad_@turno.IdRegistroTurno" onclick="window.location.href='@Url.Action("Index", "RegistroProductividad", new { id = turno.IdRegistroTurno })'" class="btn btn-primary">Reporte</button>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5">
+                                                <p class="center">No hay registros</p>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="col-sm-6">
+                            <table class="table table-bordered table-striped mb-none" id="datatable2">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Correlativo</th>
+                                        <th>Horas</th>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.OperadoresDelDia.Count > 0)
+                                    {
+                                        foreach (var operador in Model.OperadoresDelDia)
+                                        {
+                                            <tr>
+                                                <td>@operador.IdRegistroTurno</td>
+                                                <td>@operador.Correlativo</td>
+                                                <td>@operador.HorasTurno</td>
+                                                <td>
+                                                    @if (operador.UserIns == "automatico")
+                                                    {
+                                                        <span>Automático<br /><small><em>(creado en el turno de @operador.FullName)</em></small></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@operador.FullName</span>
+                                                    }
+                                                </td>
+                                                <td><a href="mailto:@operador.Email">@operador.Email</a></td>
+                                                <td>
+                                                    @if (operador.UserIns == "automatico")
+                                                    {
+                                                        <span class="badge badge-danger">Automático</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-success">Normal</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6">
+                                                <p class="center">No hay registros</p>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    @if (Model.ResumenDelDia != null)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Consumo MP</h4>
+                                        <div class="info">
+                                            <strong class="amount">@Model.ResumenDelDia.ConsumoMateriaPrima.Value.ToString("N2") kg</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-3">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Flujo Promedio</h4>
+                                        <div class="info">
+                                            <strong class="amount">@Model.ResumenDelDia.FlujoProm.Value.ToString("N2") kg/hr</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-3">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Producción</h4>
+                                        <div class="info">
+                                            <strong class="amount">@Model.ResumenDelDia.ProduccionGroat.Value.ToString("N2") kg</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-3">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Rendimiento</h4>
+                                        <div class="info">
+                                            <strong class="amount">@Model.ResumenDelDia.Rendimiento.Value.ToString("N2")%</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Envasado Hoj.</h4>
+                                        <div class="info">
+                                            <strong class="amount">@Model.ResumenDelDia.TotalEnvasadoHojuela.Value.ToString("N2") sac.</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-3">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Envasado Groat</h4>
+                                        <div class="info">
+                                            <strong class="amount">@Model.ResumenDelDia.TotalEnvasadoGroat.Value.ToString("N2") sac.</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-3">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Cáscara</h4>
+                                        <div class="info">
+                                            <strong class="amount">@Model.ResumenDelDia.TotalCascara.Value.ToString("N2") kg</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-3">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Subproducto</h4>
+                                        <div class="info">
+                                            <strong class="amount">@Model.ResumenDelDia.TotalSubproducto.Value.ToString("N2") kg</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-12 col-lg-12 col-xl-12">
+            <header class="panel-heading">
+                <h2 class="panel-title">Resumen Silos</h2>
+            </header>
+            <section class="panel">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h4>Planta</h4>
+                            <table class="table table-responsive-md table-striped mb-0" id="datatable3">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Correlativo</th>
+                                        <th>Silo</th>
+                                        <th>Operador</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.TotalPlantaDelDia.Count > 0)
+                                    {
+                                        foreach (var planta in Model.TotalPlantaDelDia)
+                                        {
+                                            <tr>
+                                                <td>@planta.IdRegistroTurno</td>
+                                                <td>@planta.Correlativo</td>
+                                                <td>@planta.Descripcion</td>
+                                                <td>@planta.FullName</td>
+                                                <td>@planta.TotalPlanta.Value.ToString("N0")</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5">
+                                                <p class="center">No hay registros</p>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-sm-6">
+                            <h4>Despacho</h4>
+                            <table class="table table-responsive-md table-striped mb-0" id="datatable4">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Correlativo</th>
+                                        <th>Silo</th>
+                                        <th>Operador</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.TotalDespachoDelDia.Count > 0)
+                                    {
+                                        foreach (var despacho in Model.TotalDespachoDelDia)
+                                        {
+                                            <tr>
+                                                <td>@despacho.IdRegistroTurno</td>
+                                                <td>@despacho.Correlativo</td>
+                                                <td>@despacho.Descripcion</td>
+                                                <td>@despacho.FullName</td>
+                                                <td>@despacho.TotalDespacho.Value.ToString("N0")</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5">
+                                                <p class="center">No hay registros</p>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</section>

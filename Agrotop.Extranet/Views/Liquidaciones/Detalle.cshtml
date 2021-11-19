@@ -1,0 +1,293 @@
+﻿@using Agrotop.Extranet.Models
+@using Agrotop.Extranet.AppLayer.Extensions
+
+@model Liquidacion
+@{
+    
+    ViewBag.Title = "Liquidación #" + Model.IdLiquidacion;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+
+    var dc = new AgrotopDBDataContext();
+    var monedas = dc.Moneda.ToList();
+    var clp = monedas.Single(m => m.IdMoneda == 1);
+
+    var propuesta = Model.PropuestaFacturacion();
+
+}
+
+
+<div class="titulo1-consubmenu">Liquidaciones @Model.Temporada.Nombre</div>
+
+<h2>@ViewBag.Title</h2>
+
+    <table class="tabla2">
+    <tr>
+        <td><label>Número</label></td>
+        <td>@Model.IdLiquidacion</td>
+        <td><label>Fecha</label></td>
+        <td>@Model.FechaHoraCreacion.Value.ToString("dd MMM yyyy")</td>
+    </tr>
+    <tr>
+        <td><label>Temporada</label></td>
+        <td>@Model.Temporada.Nombre</td>
+        <td><label>Empresa</label></td>
+        <td>@Model.Empresa.Nombre</td>
+    </tr>
+    <tr>
+        <td><label>Agricultor</label></td>
+        <td><b>@Model.Agricultor.Nombre</b></td>
+        <td><label>Rut</label></td>
+        <td>@Model.Agricultor.Rut</td>
+    </tr>
+    <tr valign="top">
+        <td><label style="margin-top: 7px">Ingresos</label></td>
+        <td colspan="3">
+            @if (Model.PrecioIngreso.Count > 0)
+            {
+                var parametros = ProcesoIngreso.GetParametrosAnalisisLiquidacion(Model.PrecioIngreso.First().ProcesoIngreso.CultivoContrato.IdCultivo);
+                var totalKg = 0;
+                <table class="form1" style="margin-bottom: 10px;">
+                <tr>
+                    <td class="label small" colspan="@(5 + parametros.Count)">Ingreso</td>
+                    <td class="label small" colspan="2">Contrato</td>
+                    <td class="label small" colspan="4">Convenio de Precio</td>
+                    <td class="label small" colspan="3">Liquidación</td>
+                    <td class="label small" colspan="2" rowspan="2">Pago</td>
+                </tr>
+                <tr>
+                    <td class="label small">Nro</td>
+                    <td class="label small">Fecha</td>
+                    <td class="label small">Planta</td>
+                    <td class="label small">Guía</td>
+                    <td class="label small">Kg Neto</td>
+                    @foreach (var par in parametros)
+                    {
+                        <td class="label small" align="right">@par.NombreCorto</td>
+                    }
+                    <td class="label small">Nro</td>
+                    <td class="label small">Agricultor</td>
+                    <td class="label small">Nro</td>
+                    <td class="label small" align="right">Precio / Kg</td>
+                    <td class="label small" align="right">Bono</td>
+                    <td class="label small" align="right">Dscto</td>
+                    <td class="label small" align="right">Kg</td>
+                    <td class="label small" align="right">Tasa Cambio</td>
+                    <td class="label small" align="right">Total CLP</td>
+                </tr>
+                    @foreach (var precio in Model.PrecioIngreso)
+                    {
+                        totalKg += precio.Cantidad;
+                        var monedaPago = monedas.Single(m => m.IdMoneda == precio.IdMonedaPago());
+                            
+                        <tr valign="top">
+                            <td class="small" align="left"><a href="@Url.Action("detalle", "recepciones", new { id = precio.IdProcesoIngreso })" class="command">@precio.IdProcesoIngreso</a></td>
+                            <td class="small" align="right">@precio.ProcesoIngreso.FechaHoraLlegada.Value.ToString("dd/MM")</td>
+                            <td class="small" align="left">@precio.ProcesoIngreso.Sucursal.Nombre</td>
+                            <td class="small" align="right">@precio.ProcesoIngreso.NumeroGuia</td>
+                            <td class="small" align="right">@precio.ProcesoIngreso.PesoBruto.Value.ToString("#,##0")</td>
+                            @foreach (var par in parametros)
+                            {
+                                var val = precio.ProcesoIngreso.ValorAnalisis.SingleOrDefault(va => va.IdProcesoIngreso == precio.IdProcesoIngreso && va.IdParametroAnalisis == par.IdParametroAnalisis);
+                                <td class="small" align="right" nowrap="nowrap">@(val != null ? val.ToString() : "")</td>
+                            }
+                            <td colspan="2" class="small">
+                                @precio.ItemContrato.Contrato.NumeroContrato<br />
+                                @precio.ItemContrato.Contrato.Agricultor.Nombre</td>
+                                    
+                            @if (precio.IdConvenioPrecio != null)
+                            {
+                                <td class="small" align="right">@precio.IdConvenioPrecio</td>
+                            }
+                            else
+                            {
+                                <td class="small" align="right">-</td>
+                            }
+                                    
+                            <td class="small" align="right">@String.Format(precio.Moneda.Formato, precio.PrecioUnidad)</td>
+                            <td class="small" align="right">@((precio.SobrePrecioPor * 100).ToString("#,##0.#####"))%</td>
+                            <td class="small" align="right">@((precio.DescuentoPor * 100).ToString("#,##0.#####"))%</td>
+                            <td class="small" align="right">@precio.Cantidad.ToString("#,##0")</td>
+                            <td class="small" align="right">@precio.TasaCambio.Value.ToString("#,##0.####")</td>
+                            <td class="small" align="right" nowrap="nowrap">@String.Format(Model.Moneda.Formato2, precio.TotalNeto)</td>
+                            <td class="small" align="right">@monedaPago.Simbolo</td>
+                            <td class="small" align="right">@String.Format(monedaPago.Formato2, precio.TotalMonedaPago())</td>
+                        </tr>
+                    }
+                <tr valign="top">
+                    <td colspan="4" class="label small" align="right">Total Kg Neto</td>
+                    <td class="label small" align="right" nowrap="nowrap">@Model.PesoBrutoIngresos().ToString("#,##0")</td>
+                    <td colspan="@(6 + parametros.Count)" class="label small" align="right">Total Kg Std</td>
+                    <td class="label small" align="right" nowrap="nowrap">@totalKg.ToString("#,##0")</td>
+                    <td class="label small" align="right">Total Neto</td>
+                    <td class="label small" align="right" nowrap="nowrap">@String.Format(Model.Moneda.Formato2, Model.TotalNeto)</td>
+                    <td class="label small" align="right" nowrap="nowrap" colspan="2" rowspan="3">
+                        @foreach (var total in Model.TotalesMonedaPago)
+                        {
+                            @String.Format(total.ValorFormateado)<br />
+                        }
+                    </td>
+                </tr>
+                @if (Model.TotalIvaRetenido != 0)
+                {
+                    <tr>
+                        <td colspan="@(13 + parametros.Count)" class="label small" align="right">@((Model.FactorIvaRetenido * 100).ToString("#,##0.##"))% Iva a Retener</td>
+                        <td class="label small" align="right" nowrap="nowrap">@String.Format(Model.Moneda.Formato2, Model.TotalIvaRetenido)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="@(13 + parametros.Count)" class="label small" align="right">@(((Model.FactorIva - Model.FactorIvaRetenido) * 100).ToString("#,##0.##"))% Iva a No Retenido</td>
+                        <td class="label small" align="right" nowrap="nowrap">@String.Format(Model.Moneda.Formato2, Model.TotalIvaNoRetenido)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="@(13 + parametros.Count)" class="label small" align="right">Subtotal</td>
+                        <td class="label small" align="right" nowrap="nowrap">@String.Format(Model.Moneda.Formato2, Model.TotalLiquidacion)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="@(13 + parametros.Count)" class="label small" align="right">@((Model.FactorIvaRetenido * 100).ToString("#,##0.##"))% Iva a Retener</td>
+                        <td class="label small" align="right" nowrap="nowrap">-@String.Format(Model.Moneda.Formato2, Model.TotalIvaRetenido)</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="@(13 + parametros.Count)" class="label small" align="right">@((Model.FactorIva * 100).ToString("#,##0.##"))% Iva</td>
+                        <td class="label small" align="right" nowrap="nowrap">@String.Format(Model.Moneda.Formato2, Model.TotalIva)</td>
+                    </tr>                        
+                }
+                <tr>
+                    <td colspan="@(13 + parametros.Count)" class="label small" align="right">Total Ingresos</td>
+                    <td class="label small" align="right" nowrap="nowrap">@String.Format(Model.Moneda.Formato2, Model.TotalPagar)</td>
+                </tr>
+                </table>
+            }
+            else
+            {
+                <text>-</text>
+            }
+        </td>
+    </tr>
+    <tr valign="top">
+        <td><label style="margin-top: 7px">Descuentos</label></td>
+        <td colspan="3">
+            @if (Model.DescuentoLiquidacion.Count > 0 || Model.SaldoCtaCteLiquidacion.Count > 0 || Model.TotalDescuentos.HasValue)
+            {
+                <table class="form1" style="margin-bottom: 10px;">
+                <tr>
+                        <td class="label">Nro</td>
+                        <td class="label">Agricultor</td>
+                        <td class="label">Tipo</td>
+                        <td class="label">Nro Doc</td>
+                        <td class="label">Insitución</td>
+                        <td class="label" align="right">Monto</td>
+                </tr>
+                @foreach (var d in Model.DescuentoLiquidacion)
+                {
+                    <tr valign="top">
+                        <td>@d.IdDescuento.ToString("#")</td>
+                        <td>@d.Descuento.Agricultor.Nombre<br />@d.Descuento.Agricultor.Rut</td>
+                        <td>@d.Descuento.TipoDescuento.Nombre</td>
+                        <td>@(d.Descuento.NumeroDocumento.HasValue ? d.Descuento.NumeroDocumento.Value.ToString("#") : "")</td>
+                        <td>@d.Descuento.Institucion</td>
+                        <td align="right">@String.Format(d.Descuento.Moneda.Formato2, d.Monto)</td>
+                    </tr>
+                }
+                @foreach (var d in Model.SaldoCtaCteLiquidacion)
+                {
+                    <tr valign="top">
+                        <td>-</td>
+                        <td>@d.SaldoCtaCte.Agricultor.Nombre<br />@d.SaldoCtaCte.Agricultor.Rut</td>
+                        <td>Saldo Cte Cte</td>
+                        <td>-</td>
+                        <td>@d.SaldoCtaCte.Empresa.Nombre</td>
+                        <td align="right">@String.Format(clp.Formato2, d.Monto)</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="5" class="label" align="right">Total Descuentos</td>
+                    <td class="label" align="right" nowrap="nowrap">@String.Format(Model.Moneda.Formato2, Model.TotalDescuentos.Value)</td>
+                </tr>
+                </table>                   
+            }
+            else
+            {
+                <text>-</text>
+            }
+        </td>
+    </tr>
+    <tr valign="top">
+        <td><label style="margin-top: 7px">Resumen</label></td>
+        <td colspan="3">
+            <table class="form1" style="margin-bottom: 10px;">
+            <tr>
+                <td class="label">Item</td>
+                <td class="label" align="right">Valor</td>
+            </tr>
+            <tr>
+                <td>Ingresos</td>
+                <td align="right">@String.Format(Model.Moneda.Formato2, Model.TotalLiquidacion)</td>
+            </tr>
+            <tr>
+                <td>Descuentos</td>
+                <td align="right">@(Model.TotalDescuentos.HasValue ? String.Format(Model.Moneda.Formato2, Model.TotalDescuentos.Value) : "-")</td>
+            </tr>
+            <tr>
+                <td class="label">Saldo</td>
+                <td class="label" align="right">@(Model.Saldo.HasValue ? String.Format(Model.Moneda.Formato2, Model.Saldo.Value) : "-")</td>
+            </tr>
+            </table>
+        </td>
+    </tr>
+    <tr valign="top">
+        <td><label style="margin-top: 7px">Propuesta Facturación</label></td>
+        <td colspan="3">
+            <table class="form1" style="margin-bottom: 10px;">
+            <tr>
+                <td class="label">Item</td>
+                <td class="label" align="right">Nro Doc</td>
+                <td class="label" align="right">Kg</td>
+                <td class="label" align="right">Precio CLP/Kg</td>
+                <td class="label" align="right">Neto</td>
+            </tr>
+            @foreach (var item in propuesta.Items)
+            {
+                <tr>
+                    <td>@item.Nombre</td>
+                    <td align="right">@item.NumeroDocumento.ToString("#")</td>
+                    <td align="right">@item.Peso.ToString("#,##0")</td>
+                    <td align="right">@item.PrecioUnidad.ToString("#,##0.00##")</td>
+                    <td align="right">@item.Neto.ToString("#,##0")</td>
+                </tr>
+            }
+            <tr>
+                <td class="label" colspan="2">Facturar</td>
+                <td class="label" align="right">@propuesta.PesoTotal.ToString("#,##0")</td>
+                <td class="label" align="right">@propuesta.PrecioUnidadTotal.ToString("#,##0.00##")</td>
+                <td class="label" align="right">@propuesta.NetoFacturado.ToString("#,##0")</td>
+            </tr>
+            @if (propuesta.AjusteTotal != 0)
+            {
+                <tr>
+                    <td class="label" colspan="2">Ajuste por diferencia de precios<br />(redondeo de decimales)</td>
+                    <td class="label"></td>
+                    <td class="label"></td>
+                    <td class="label" align="right">@propuesta.AjusteTotal.ToString("#,##0")</td>
+                </tr>
+                <tr>
+                    <td class="label" colspan="2">Total</td>
+                    <td class="label"></td>
+                    <td class="label"></td>
+                    <td class="label" align="right">@propuesta.NetoTotal.ToString("#,##0")</td>
+                </tr>
+            }
+            </table>
+        </td>
+    </tr>
+    <tr valign="top">
+        <td><label>Estado</label></td>
+        <td colspan="3">
+            <span class="estado" style="background-color: @Model.EstadoLiquidacion.Color; border: solid 1px  @Model.EstadoLiquidacion.Color">
+                <span class="estadoLabel">@Model.EstadoLiquidacion.Nombre</span>
+            </span>
+        </td>
+    </tr>
+    </table>
+    <p><a href="javascript:history.back(1);">&lt; Volver</a></p>

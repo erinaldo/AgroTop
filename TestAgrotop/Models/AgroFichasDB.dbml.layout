@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11.25, 22.5" name="AgroFichasDB">
+  <DataContextMoniker Name="/AgroFichasDBDataContext" />
+  <nestedChildShapes>
+    <classShape Id="59ebdf53-9ee0-488c-841f-35d620159fd1" absoluteBounds="3.5, 3.75, 2, 3.8862125650048256">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/Contrato" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6e0e5faf-6d80-4d16-87e3-b66fd00201ac" absoluteBounds="3.5150000005960464, 4.21000000089407, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="96e01b85-ff1d-42be-b1b9-7f8730253e34" absoluteBounds="0.75, 9.625, 2, 3.1170068364590406">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/Temporada" />
+      <nestedChildShapes>
+        <elementListCompartment Id="22af12e2-cc87-4e34-aa91-2a2e91c312ab" absoluteBounds="0.76500000059604645, 10.08500000089407, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.75 : 11.1835034182295); (3.88541416666667 : 11.1835034182295 : JumpStart); (4.05208083333333 : 11.1835034182295 : JumpEnd); (4.5 : 11.1835034182295); (4.5 : 7.63621256500483)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/Temporada/Temporada_Contrato" />
+      <nodes>
+        <classShapeMoniker Id="96e01b85-ff1d-42be-b1b9-7f8730253e34" />
+        <classShapeMoniker Id="59ebdf53-9ee0-488c-841f-35d620159fd1" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="9e217d2b-dff3-4deb-b74f-9798396feb1d" absoluteBounds="0.75, 13.5, 2, 8.69374837167561">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/Agricultor" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e98d6a26-693c-4f48-9946-9bd8ca724ce1" absoluteBounds="0.76500000059604645, 13.96000000089407, 1.9700000000000002, 8.1337483723958321" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.75 : 17.8468741858378); (3.9687475 : 17.8468741858378); (3.9687475 : 7.63621256500483)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/Agricultor/Agricultor_Contrato" />
+      <nodes>
+        <classShapeMoniker Id="9e217d2b-dff3-4deb-b74f-9798396feb1d" />
+        <classShapeMoniker Id="59ebdf53-9ee0-488c-841f-35d620159fd1" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="7a915fbc-5065-4e20-a98a-0f446ab50286" absoluteBounds="9, 4.25, 2, 2.9247054036458309">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/SolicitudContratoVariedad" />
+      <nestedChildShapes>
+        <elementListCompartment Id="301bd517-3d02-4c79-a715-ca054180d5cf" absoluteBounds="9.015, 4.7100000000000009, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="ab5ea372-6ace-4662-97b2-e830e7bb1cf0" absoluteBounds="6.25, 1.25, 2, 8.8860498046875023">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/SolicitudContrato" />
+      <nestedChildShapes>
+        <elementListCompartment Id="38f7fe7a-2d01-4ba8-87f6-6f1ca8859654" absoluteBounds="6.265, 1.71, 1.9700000000000002, 8.3260498046875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(8.25 : 5.71235270182292); (9 : 5.71235270182292)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/SolicitudContrato/SolicitudContrato_SolicitudContratoVariedad" />
+      <nodes>
+        <classShapeMoniker Id="ab5ea372-6ace-4662-97b2-e830e7bb1cf0" />
+        <classShapeMoniker Id="7a915fbc-5065-4e20-a98a-0f446ab50286" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 15.6421845929189); (3.88541416666667 : 15.6421845929189 : JumpStart); (4.05208083333333 : 15.6421845929189 : JumpEnd); (7.25 : 15.6421845929189); (7.25 : 10.1360498046875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/Agricultor/Agricultor_SolicitudContrato" />
+      <nodes>
+        <classShapeMoniker Id="9e217d2b-dff3-4deb-b74f-9798396feb1d" />
+        <classShapeMoniker Id="ab5ea372-6ace-4662-97b2-e830e7bb1cf0" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(5.5 : 5.69310628250241); (6.25 : 5.69310628250241)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/Contrato/Contrato_SolicitudContrato" />
+      <nodes>
+        <classShapeMoniker Id="59ebdf53-9ee0-488c-841f-35d620159fd1" />
+        <classShapeMoniker Id="ab5ea372-6ace-4662-97b2-e830e7bb1cf0" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 9.88052490234375); (3.88541416666667 : 9.88052490234375 : JumpStart); (4.05208083333333 : 9.88052490234375 : JumpEnd); (4.41666666666667 : 9.88052490234375 : JumpStart); (4.58333333333333 : 9.88052490234375 : JumpEnd); (6.25 : 9.88052490234375)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/Temporada/Temporada_SolicitudContrato" />
+      <nodes>
+        <classShapeMoniker Id="96e01b85-ff1d-42be-b1b9-7f8730253e34" />
+        <classShapeMoniker Id="ab5ea372-6ace-4662-97b2-e830e7bb1cf0" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="b8f4ca18-7e38-4a6d-adc3-aca46935030d" absoluteBounds="0.75, 4.125, 2, 3.1170068359375005">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/Empresa" />
+      <nestedChildShapes>
+        <elementListCompartment Id="bd799b34-dc30-4ec0-b382-7ae4f10cda46" absoluteBounds="0.76499999999999968, 4.585, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.75 : 5.68350341796875); (3.5 : 5.68350341796875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/Empresa/Empresa_Contrato" />
+      <nodes>
+        <classShapeMoniker Id="b8f4ca18-7e38-4a6d-adc3-aca46935030d" />
+        <classShapeMoniker Id="59ebdf53-9ee0-488c-841f-35d620159fd1" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.75 : 4.125); (1.75 : 2.46875); (6.25 : 2.46875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/Empresa/Empresa_SolicitudContrato" />
+      <nodes>
+        <classShapeMoniker Id="b8f4ca18-7e38-4a6d-adc3-aca46935030d" />
+        <classShapeMoniker Id="ab5ea372-6ace-4662-97b2-e830e7bb1cf0" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

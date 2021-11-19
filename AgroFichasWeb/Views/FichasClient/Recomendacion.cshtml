@@ -1,0 +1,49 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var tiposRecomendacion = TipoRecomendacion.SelectList(null);
+}
+<div id="recomendacionDialog" class="modal-block modal-block-primary mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Recomendación</h2>
+        </header>
+        <div class="panel-body">
+            <form id="recomendacionForm" class="form-horizontal mb-lg" novalidate="novalidate">
+                <input type="hidden" id="recId" />
+                <input type="hidden" id="recIdUM" />
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Tipo <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("idTipoRecomendacion", tiposRecomendacion)
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Químico <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <select name="idQuimico" id="idQuimico"></select>
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Dosis <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" id="dosisRecomendacion" name="dosis" /> <span id="umDosis"></span>
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Fecha Aplicación<span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="fecha" id="fechaaplicacion" class="form-control" data-plugin-datepicker />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-primary recomendacion-selector-confirm">Guardar</button>
+                    <button class="btn btn-default recomendacion-selector-dismiss">Cancelar</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>

@@ -1,0 +1,92 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_Pale
+@{
+    ViewBag.Title = "Sacos Dañados";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    var reprocesoSacosDañadosPallets = (CAL_ReprocesoSacosDañadosPallets)ViewData["reprocesoSacosDañadosPallets"];
+}
+@section VendorCSS
+{
+}
+@section VendorScripts
+{
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Usar este Pallet</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Pallet <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">@Model.CodigoInterno</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cantidad Disponible en el Pallet <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">@Model.GetCantidadDisponibleUsarEstePallet()</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Sacos Disponibles a Cargar <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">@reprocesoSacosDañadosPallets.SacosDisponibles</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cantidad Cargada <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("CntCargada", Model.CntCargada, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("CntCargada")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @Html.Hidden("IdPale", Model.IdPale)
+                @Html.Hidden("CntMax", Model.CntMax)
+                @Html.Hidden("IdReprocesoSacosDañadosPallets", Model.IdReprocesoSacosDañadosPallets)
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Usar este Pallet" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

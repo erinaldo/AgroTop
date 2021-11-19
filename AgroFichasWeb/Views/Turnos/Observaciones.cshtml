@@ -1,0 +1,71 @@
+﻿@using AgroFichasWeb.Models
+@model OPR_RegistroTurno
+
+@{
+    ViewBag.Title = "Registro de Turno";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+}
+
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+}
+
+@section CustomScripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+        $('#obs').summernote({
+            height: 500
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Registrar Observaciones del Turno #@Model.Correlativo @Model.OPR_Turno.OPR_TipoTurno.Descripcion</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Observaciones <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "summernote", id = "obs", name = "obs", @data_plugin_summernote = "{}" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Guardar" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

@@ -1,0 +1,27 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Previsualizar</title>
+    <style>
+        #wrapper {
+            display: block;
+            margin: 0 auto;
+            width: 900px;
+            height: auto;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        @Html.Raw(ViewData["html"]);
+    </div>
+</body>
+</html>

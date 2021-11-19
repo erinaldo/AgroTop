@@ -1,0 +1,129 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_OrdenProduccion
+@{
+    ViewBag.Title = "Órdenes de Producción";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    ViewBag.SubTitle = "Fechas de Producción";
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        jQuery.datetimepicker.setLocale('es');
+        jQuery('#InicioProduccion').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", (Model.InicioProduccion == null ? DateTime.Now : Model.InicioProduccion))',
+            weeks: true
+        });
+
+        jQuery('#TerminoProduccion').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", (Model.TerminoProduccion == null ? DateTime.Now : Model.TerminoProduccion))',
+            weeks: true
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Inicio Producción</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("InicioProduccion", Model.InicioProduccion, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("InicioProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Término Producción</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("TerminoProduccion", Model.TerminoProduccion, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("TerminoProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar estas Fechas de Producción" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

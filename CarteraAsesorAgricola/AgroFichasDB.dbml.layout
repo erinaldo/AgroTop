@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 16.25" name="AgroFichasDB">
+  <DataContextMoniker Name="/AgroFichasDBDataContext" />
+  <nestedChildShapes>
+    <classShape Id="ae1f53ca-4ca8-470c-a7d7-16ff2885b310" absoluteBounds="0.75, 9.75, 2, 6.1938297526041666">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/Agricultor" />
+      <nestedChildShapes>
+        <elementListCompartment Id="92970069-a5e9-466c-95ca-56a21f411e58" absoluteBounds="0.76499999999999968, 10.21, 1.9700000000000002, 5.6338297526041661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="5eccfe8f-9e70-44fb-a39e-b3d8dad0bd66" absoluteBounds="0.75, 1, 2, 3.6939111328124992">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/SYS_User" />
+      <nestedChildShapes>
+        <elementListCompartment Id="81473944-f0d7-4822-a001-4a24e28d502c" absoluteBounds="0.76499999999999968, 1.46, 1.9700000000000002, 3.1339111328125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="beb97b83-cebf-4f3c-bad6-af4598e558d2" absoluteBounds="3.5, 1.5, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/UsuarioAgricultor" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4775f46e-0b42-42a8-8ea9-47147a61524e" absoluteBounds="3.5149999999999997, 1.96, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.75 : 12.8469148763021); (4.5 : 12.8469148763021); (4.5 : 4.23240397135417)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/Agricultor/Agricultor_UsuarioAgricultor" />
+      <nodes>
+        <classShapeMoniker Id="ae1f53ca-4ca8-470c-a7d7-16ff2885b310" />
+        <classShapeMoniker Id="beb97b83-cebf-4f3c-bad6-af4598e558d2" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 2.86620198567708); (3.5 : 2.86620198567708)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/SYS_User/SYS_User_UsuarioAgricultor" />
+      <nodes>
+        <classShapeMoniker Id="5eccfe8f-9e70-44fb-a39e-b3d8dad0bd66" />
+        <classShapeMoniker Id="beb97b83-cebf-4f3c-bad6-af4598e558d2" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

@@ -1,0 +1,50 @@
+﻿@using AgroFichasWeb.Models
+@model AgroFichasWeb.AppLayer.Standarizadores.CalculatorResult
+@{
+    Layout = null;
+    var ingreso = (ProcesoIngreso)ViewData["ingreso"];
+    ViewBag.Title = "Estandarización Ingreso #" + ingreso.IdProcesoIngreso;
+}
+
+<h2>@ViewBag.Title </h2>
+
+<table border="1" cellpadding="4" cellspacing="4">
+    <tr>
+        <td><b>Parámeto</b></td>
+        <td align="right"><b>Valor</b></td>
+        <td align="right"><b>Factor</b></td>
+        <td align="right"><b>Bono (Aprox)</b></td>
+    </tr>
+    @foreach (var item in Model.Items)
+    {
+        <tr>
+            <td>@item.NombreParametro</td>
+            <td align="right">@item.ValorString</td>
+            <td align="right">@item.FactorString</td>
+            <td align="right">
+                @if (item.BonoAprox.HasValue)
+                {
+                    @item.BonoAprox.Value.ToString("#,##0.00 Kg")
+                }
+                else
+                {
+                    <text>-</text>
+                }
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="3" align="right"><b>Bonificación Total</b></td>
+        <td align="right">@Model.Bonificacion.ToString("#,##0 Kg")</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="right"><b>Peso Neto</b></td>
+        <td align="right">@Model.PesoBruto.ToString("#,##0 Kg")</td>
+    </tr>
+    <tr>
+        <td colspan="3" align="right"><b>Peso Standard</b></td>
+        <td align="right">@Model.PesoNormal.ToString("#,##0 Kg")</td>
+    </tr>
+
+</table>
+

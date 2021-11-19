@@ -1,0 +1,16 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model ProcesoIngreso
+@{
+
+    ViewBag.NombreSeccion = "Anular Cierre " + Model.Temporada.Nombre;
+    ViewBag.Title = "El cierre ha sido anulado con éxito";
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm">
+    @Html.Partial("Ingreso", Model)
+</fieldset>

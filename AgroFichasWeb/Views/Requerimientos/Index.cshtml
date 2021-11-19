@@ -1,0 +1,162 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<LOG_Requerimiento>
+
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    ViewBag.Title = "Administrar Requerimientos";
+
+    int Columnas = (int)ViewData["Columnas"];
+    bool MostrarAnular = (bool)ViewData["MostrarAnular"];
+    bool MostrarEditar = (bool)ViewData["MostrarEditar"];
+    bool MostrarLiquidar = (bool)ViewData["MostrarLiquidar"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "requerimientos", new { id = 0 }, FormMethod.Get))
+    {
+        <input type="text" name="key" value="@ViewData["key"]" /><input type="submit" value="Buscar" />
+    }
+</div>
+
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">Núm. Req.</th>
+        <th align="left">Empresa</th>
+        <th align="left">Movimiento</th>
+        <th align="center">Glosa</th>
+        <th align="center">Fecha</th>
+        <th align="center">Estado</th>
+        <th align="center">Detalle</th>
+        @if (MostrarEditar)
+        {
+            <th align="center">Editar</th>
+        }
+        @if (MostrarLiquidar)
+        {
+            <th align="center">Liquidar</th>
+        }
+        @if (MostrarAnular)
+        {
+            <th align="center">Anular</th>
+        }
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="@Columnas" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        <tr valign="top">
+            <td align="left">
+                <strong>@item.IdRequerimiento</strong>
+            </td>
+            <td align="left">
+                @item.Empresa.Nombre
+            </td>
+            <td align="left">
+                @item.LOG_TipoMovimiento.Descripcion
+            </td>
+            <td align="left">
+                @item.Glosa
+            </td>
+            <td align="left">
+                <strong>Inicio:</strong> @item.FechaInicio.ToString("dd/MM/yyyy hh:mm tt")<br />
+                <strong>Término:</strong> @item.FechaVencimiento.ToString("dd/MM/yyyy hh:mm tt")
+            </td>
+            @{
+                string backgroundColor = "";
+                string color = "";
+                switch (item.IdEstado)
+                {
+                    case 1:
+                        backgroundColor = "#ffff00";
+                        color = "#000000";
+                        break;
+                    case 2:
+                        backgroundColor = "#009900";
+                        color = "#ffffff";
+                        break;
+                    case 3:
+                        backgroundColor = "#009900";
+                        color = "#ffffff";
+                        break;
+                    case 99:
+                        backgroundColor = "#ff0000";
+                        color = "#ffffff";
+                        break;
+                }
+            }
+            <td align="center" style="background-color: @backgroundColor;vertical-align: middle;">
+                <span style="color: @color">@item.LOG_EstadoRequerimiento.Descripcion</span>
+            </td>
+            <td align="center">
+                @Html.ActionImage(Url.Content("~/Content/images/detalle.png"), "detalle", new { id = item.IdRequerimiento })
+            </td>
+            @if (MostrarEditar)
+            {
+                <td align="center">
+                    @if (item.IdEstado == 1)
+                    {
+                        @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "editar", new { id = item.IdRequerimiento })
+                    }
+                </td>
+            }
+            @if (MostrarLiquidar)
+            {
+                <td align="center">
+                    @if (item.IdEstado != 99 && item.IdEstado != 3)
+                    {
+                        @Html.ActionImage(Url.Content("~/Content/images/liquidar.png"), "liquidarindex", "liquidacionesfletes", new { id = item.IdRequerimiento }, new { })
+                    }
+                </td>
+            }
+            @if (MostrarAnular)
+            {
+                <td align="center">
+                    @if (item.IdEstado == 1)
+                    {
+                        @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "anular", new { id = item.IdRequerimiento })
+                    }
+                </td>
+            }
+        </tr>
+    }
+    <tr>
+        <td colspan="@Columnas" class="pager">
+            @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "requerimientos", ViewData["key"].ToString())
+        </td>
+    </tr>
+</table>

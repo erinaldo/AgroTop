@@ -1,0 +1,133 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Informes";
+    ViewBag.Title = "Visitas Por Semana, Cultivo y Agente " + temporada.Nombre;
+
+    var data = (List<rpt_VisitaPorSemanaCultivoAgente_DataResult>)ViewData["data"];
+    var semanas = (List<AgroFichasWeb.Controllers.SemanaAno>)ViewData["semanas"];
+    var meses = AgroFichasWeb.Controllers.MesAno.FromSemanas(semanas);
+
+    var dc = new AgroFichasDBDataContext();
+}
+
+@helper headerMeses(List<AgroFichasWeb.Controllers.MesAno> meses)
+{
+        foreach (var s in meses)
+        {
+            <td colspan="@s.CuentaSemanas" class="label mes">@(new DateTime(s.Ano, s.Mes, 1).ToString("MMM yy"))</td>
+    }
+}
+
+@helper headerSemanas(List<AgroFichasWeb.Controllers.SemanaAno> semanas)
+{
+    var lastMoth = -1;
+    var iSemana = 0;
+    foreach (var s in semanas)
+    {
+        if (s.Mes != lastMoth)
+        {
+            iSemana = 0;
+        }
+        lastMoth = s.Mes;
+        <td class="value">S@(++iSemana)</td>
+    }
+}
+
+@Html.Partial("Styles")
+
+<h2>@ViewBag.Title</h2>
+
+<div class="reportFilter">
+    @using (Html.BeginForm())
+    {
+        <select id="idTemporada" name="id">
+            @foreach (var t in temporadas)
+            {
+                <option value="@t.IdTemporada" @(t.IdTemporada == temporada.IdTemporada ? "selected" : "")>@t.Nombre</option>
+            }
+        </select>
+        <input type="submit" value="Ir" />
+    }
+    <div style="margin-top: 10px">
+        @Html.ActionLink("Exportar", "VisitasPorSemanaCultivoAgente_Excel", new { id = temporada.IdTemporada }, new { @class = "exportlink" })
+    </div>
+
+</div>
+
+<table border="0" cellpading="0" cellspacing="0" class="rep1">
+    @foreach (int? idCultivo in data.Select(d => d.IdCultivo).Distinct())
+    {
+        var cultivo = dc.Cultivo.SingleOrDefault(c => c.IdCultivo == idCultivo);
+        var nombreCultivo = cultivo != null ? cultivo.Nombre : "(Desconocido)";
+
+        <tr>
+            <td style="border: 0"><h3>@nombreCultivo</h3></td>
+        </tr>
+        <tr>
+            <td colspan="1"></td>
+            @headerMeses(meses)
+        </tr>
+        <tr>
+            <td class="label">Agente</td>
+            @headerSemanas(semanas)
+            <td class="label" style="text-align: center">Tot</td>
+        </tr>
+
+        var totalFilas = 0;
+        foreach (var row in data.Where(d => d.IdCultivo == idCultivo).Select(d => new { UserIns = d.UserIns, Agente = d.Agente }).Distinct().OrderBy(d => d.Agente))
+        {
+            <tr valign="top">
+                <td>
+                    @row.Agente
+                </td>
+                @{
+                    int totalAgente = 0;
+                    foreach (var s in semanas)
+                    {
+                        var d = data.SingleOrDefault(x => x.Semana == s.Semana && x.Ano == s.Ano && x.UserIns == row.UserIns && x.IdCultivo == idCultivo);
+                        <td class="value">
+                            @if (d != null)
+                            {
+                                totalAgente += d.Visitas.Value;
+                                @d.Visitas.ToString()
+                            }
+                        </td>
+                    }
+                    totalFilas += totalAgente;
+                }
+                <td class="labelc">@totalAgente</td>
+            </tr>
+        }
+
+        <tr>
+            <td class="label" colspan="1">Totales @nombreCultivo</td>
+            @{
+                int totalGeneral = 0;
+                foreach (var s in semanas)
+                {
+                    var d = data.Where(x => x.Semana == s.Semana && x.Ano == s.Ano && x.IdCultivo == idCultivo).Sum(x => x.Visitas);
+                    <td class="labelc">
+                        @if (d.HasValue != null)
+                        {
+                            totalGeneral += d.Value;
+                            <a href="#" class="cellValue" data-ida="0" data-sem="@s.Semana" data-ano="@s.Ano">@d.ToString()</a>
+                        }
+                    </td>
+                }
+            }
+            <td class="labelc" style="font-size:16px;">
+                @totalGeneral
+                @if (totalGeneral != totalFilas)
+                {
+                    <div style="color: red">Descuadrado. Filas suman @totalFilas.ToString()</div>
+                }
+            </td>
+        </tr>
+
+
+    }
+</table>

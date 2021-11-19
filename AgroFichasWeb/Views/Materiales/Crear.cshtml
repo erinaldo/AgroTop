@@ -1,0 +1,54 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model OC_Material
+
+@{
+    ViewBag.NombreSeccion = "Órdenes de Compra";
+    if (Model.IdMaterial == 0)
+    {
+        ViewBag.Title = "Crear Material";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Material";
+    }
+    var proyectosList = (IEnumerable<SelectListItem>)ViewData["proyectosList"];
+    var empresasList = (IEnumerable<SelectListItem>)ViewData["empresasList"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Proyecto</label>
+            @Html.DropDownList("IdProyecto", proyectosList, "-- Seleccione Proyecto --", new { @class = "std" })
+            @Html.ValidationMessage("IdProyecto", " ")
+        </p>
+        <p>
+            <label for="Titulo">Empresa</label>
+            @Html.DropDownList("IdEmpresa", empresasList, "-- Seleccione Empresa --", new { @class = "std" })
+            @Html.ValidationMessage("IdEmpresa", " ")
+        </p>
+        <p>
+            <label for="Titulo">Código Material</label>
+            @Html.TextBox("CodigoMaterial", Model.CodigoMaterial, new { @class = "std", maxlength = "50" })
+            @Html.ValidationMessage("CodigoMaterial", " ")
+        </p>
+        <p>
+            <label for="Titulo">Descripción</label>
+            @Html.TextBox("Descripcion", Model.Descripcion, new { @class = "std", maxlength = "100" })
+            @Html.ValidationMessage("Descripcion", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar este Material" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

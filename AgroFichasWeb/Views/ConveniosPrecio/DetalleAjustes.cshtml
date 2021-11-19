@@ -1,0 +1,47 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Liquidaciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model ConvenioPrecioViewModel
+
+@if (Model.Ajustes.Count > 0)
+{   <p>Este convenio de precios tiene los siguientes bonos y descuentos</p>
+    <table class="sublist2" style="margin-bottom: 10px;">
+        @foreach (var ajuste in Model.Ajustes)
+        {
+            <tr valign="top">
+                <td><b>Tipo</b></td>
+                <td><b>@(ajuste.PrecioUnidad > 0 ? "Bono" : "Descuento")</b></td>
+            </tr>
+            <tr valign="top">
+                <td><b>Motivo</b></td>
+                <td>@ajuste.NombreMotivoAjustePrecio</td>
+            </tr>
+            <tr valign="top">
+                <td><b>Precio</b></td>
+                <td>@ajuste.PrecioUnidad.ToString("#,##0.00##") @(Model.Moneda.Simbolo)/Kg</td>
+            </tr>
+            <tr valign="top">
+                <td><b>Cantidad</b></td>
+                <td>@ajuste.Cantidad.ToString("#,##0")  Kg</td>
+            </tr>
+            <tr valign="top">
+                <td><b>Sucursales</b></td>
+                <td>
+                    @foreach (var suc in ajuste.Sucursales.Where(s => s.Seleccionado))
+                    {
+                        @suc.NombreSucursal<text>&nbsp;</text>
+                    }
+                </td>
+            </tr>
+            <tr valign="top">
+                <td><b>Comentarios</b></td>
+                <td>@ajuste.Comentarios</td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <text>-</text>
+}

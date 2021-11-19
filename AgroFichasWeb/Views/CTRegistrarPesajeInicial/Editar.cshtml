@@ -1,0 +1,227 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_ControlTiempo
+
+@{
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = string.Format("Editar Control #{0}", Model.IdControlTiempo);
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var UserID = (int)ViewData["UserID"];
+}
+
+@section CustomScripts
+{
+    <script>
+        //_helpers: {
+        //    //Check is string null or empty
+        //    isStringNullOrEmpty: function (val) {
+        //        switch (val) {
+        //            case "":
+        //            case 0:
+        //            case "0":
+        //            case null:
+        //            case false:
+        //            case undefined:
+        //            case typeof this === 'undefined':
+        //                return true;
+        //            default: return false;
+        //        }
+        //    },
+
+        //    //Check is string null or whitespace
+        //    isStringNullOrWhiteSpace: function (val) {
+        //        return this.isStringNullOrEmpty(val) || val.replace(/\s/g, "") === '';
+        //    },
+
+        //    //If string is null or empty then return Null or else original value
+        //    nullIfStringNullOrEmpty: function (val) {
+        //        if (this.isStringNullOrEmpty(val)) {
+        //            return null;
+        //        }
+        //        return val;
+        //    }
+        //},
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        $(document).ready(function () {
+            DeleteClientes();
+            GetClientes();
+            DeleteProductos();
+            GetProductos();
+        });
+
+        $("#IdEmpresa").change(function () {
+            DeleteClientes();
+            DeleteProductos();
+            GetClientes();
+            GetProductos();
+        });
+
+        function GetProductos() {
+            var id = $('#IdEmpresa').val();
+            var idPlanta = $('#IdPlantaProduccion').val();
+
+            $.getJSON(uri + '/Productos/GetProductos?id=' + id + '&idPlanta=' + idPlanta)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                        DeleteProductos();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdProducto, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#IdProducto").html(options.join(''));
+
+                        var idProducto = '@(Model.IdProducto == 0 ? "" : Model.IdProducto.ToString())';
+                        var idEmpresa = '@(Model.IdEmpresa == 0 ? "" : Model.IdEmpresa.ToString())';
+                        var idPlanta1 = '@(Model.IdPlantaProduccion == 0 ? "" : Model.IdPlantaProduccion.ToString())';
+                        if (!$.isEmptyObject(idProducto) && id == idEmpresa && idPlanta == idPlanta1) {
+                            $("#IdProducto").val(idProducto);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function DeleteProductos() {
+            $("#IdProducto option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Producto)', '</option>');
+            $("#IdProducto").html(options.join(''));
+        }
+
+        function GetClientes() {
+            var id = $('#IdEmpresa').val();
+            $.getJSON(uri + '/Clientes/GetClientes?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay clientes disponibles");
+                        DeleteClientes();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Cliente)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdCliente, '">',
+                                result[i].RazonSocial, '</option>');
+                        }
+                        $("#IdCliente").html(options.join(''));
+
+                        var idCliente = '@(Model.IdCliente == 0 ? "" : Model.IdCliente.ToString())';
+                        var idEmpresa = '@(Model.IdEmpresa == 0 ? "" : Model.IdEmpresa.ToString())';
+                        if (!$.isEmptyObject(idCliente) && id == idEmpresa) {
+                            $("#IdCliente").val(idCliente);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function DeleteClientes() {
+            $("#IdCliente option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '-- Seleccione Cliente --', '</option>');
+            $("#IdCliente").html(options.join(''));
+        }
+
+        $("#IdEmpresa").change(function () {
+            DeleteClientes();
+            GetClientes();
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@String.Format("Editar el Control de Tiempo Núm. {0}", Model.IdControlTiempo)</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Producción <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdPlantaProduccion", Model.GetPlantaProduccion(Model.IdEmpresa, UserID), new { @class = "form-control", @readonly = "true" })
+                                            @Html.ValidationMessage("IdPlantaProduccion", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdEmpresa", Model.GetEmpresas(Model.IdEmpresa), "-- Seleccione Empresa --", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdEmpresa", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cliente <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdCliente", new List<SelectListItem>(), "-- Seleccione Cliente --", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdProducto", Model.GetProductos(Model.IdProducto), "-- Seleccione Producto --", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdProducto", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Editar" />
+                                <a onclick="window.location.href='@Url.Action("registrar", new { id = Model.IdControlTiempo })'" class="btn btn-danger"  >Cancelar</a>
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

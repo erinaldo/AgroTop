@@ -1,0 +1,196 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model LOG_Camion
+@{
+    string Action = "";
+    ViewBag.NombreSeccion = "Transportistas";
+    if (Model.IdCamion == 0)
+    {
+        ViewBag.Title = "Crear Camión";
+        Action = "crear";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Camión";
+        Action = "editar";
+    }
+    var marcasList = (IEnumerable<SelectListItem>)ViewData["marcasList"];
+    var tipoCamionList = (IEnumerable<SelectListItem>)ViewData["tipoCamionList"];
+    var tipoDescargasList = (IEnumerable<SelectListItem>)ViewData["tipoDescargasList"];
+}
+
+@section headSection {
+    <!-- this should go after your </body> -->
+    <link href="~/Scripts/datetimepicker-master/jquery.datetimepicker.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <style type="text/css">
+        .label {
+            display: inline-block;
+        }
+
+        .file {
+            display: block;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+            .file .title {
+                display: block;
+            }
+
+            .file .input {
+                display: block;
+            }
+    </style>
+    <script type="text/javascript" src="~/Scripts/datetimepicker-master/build/jquery.datetimepicker.full.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/validate.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var currentDate = new Date();
+            var day = currentDate.getDate();
+            var month = currentDate.getMonth() + 1;
+            var year = currentDate.getFullYear();
+            var startDate = year + "/" + month + "/" + day;
+            jQuery.datetimepicker.setLocale('es');
+            jQuery('#datetimepicker1').datetimepicker({
+                i18n: {
+                    de: {
+                        months: [
+                         'Januar', 'Februar', 'März', 'April',
+                         'Mai', 'Juni', 'Juli', 'August',
+                         'September', 'Oktober', 'November', 'Dezember',
+                        ],
+                        dayOfWeek: [
+                         "So.", "Mo", "Di", "Mi",
+                         "Do", "Fr", "Sa.",
+                        ]
+                    },
+                    es: {
+                        months: [
+                         'Enero', 'Febrero', 'Marzo', 'Abril',
+                         'Mayo', 'Junio', 'Julio', 'Agosto',
+                         'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                         "Do", "Lu", "Ma", "Mi",
+                         "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                dayOfWeekStart: 1,
+                startDate: new Date(),
+                format: 'Y/m/d H:i',
+                timepicker: true,
+                weeks: true,
+            });
+        });
+    </script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm(Action, "camiones", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <fieldset class="dataForm">
+        <div class="p">
+            <label for="Titulo">Transportista</label>
+            @Html.Partial("~/Views/Controls/TransportistaSelector.cshtml", new TransportistaSelectorViewModel() { IdTransportista = Model.IdTransportista, Nombre = (Model.LOG_Transportista != null ? Model.LOG_Transportista.Nombre : ""), RUT = (Model.LOG_Transportista != null ? Model.LOG_Transportista.RUT : "") })
+            @Html.ValidationMessage("IdTransportista", " ")
+            @Html.Hidden("IdTransportista", Model.IdTransportista)
+        </div>
+        <p>
+            <label for="Titulo">Patente</label>
+            @Html.TextBox("Patente", Model.Patente, new { @class = "heavy std", maxlength = "8" }) <em>(6 dígitos sin guiones)</em>
+            @Html.ValidationMessage("Patente", " ")
+        </p>
+        <p>
+            <label for="Titulo">Patente Carro</label>
+            @Html.TextBox("PatenteCarro", Model.PatenteCarro, new { @class = "heavy std", maxlength = "8" }) <em>(6 dígitos sin guiones)</em>
+        </p>
+        <p>
+            <label for="Titulo">Marca</label>
+            @Html.DropDownList("IdMarca", marcasList, "-- Seleccione --", new { @class = "heavy std" }) <em>(si no la posee seleccione <strong>Desconocida</strong>)</em>
+            @Html.ValidationMessage("IdMarca", " ")
+        </p>
+        <p>
+            <label for="Titulo">Modelo</label>
+            @Html.TextBox("Modelo", Model.Modelo, new { @class = "heavy std", maxlength = "50" }) <em>(si no lo posee deje el campo <strong>vacío</strong>)</em>
+        </p>
+        <p>
+            <label for="Titulo">Tipo Camión</label>
+            @Html.DropDownList("IdTipoCamion", tipoCamionList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdTipoCamion", " ")
+        </p>
+        <p>
+            <label for="Titulo">Tipo Descarga</label>
+            @Html.DropDownList("IdTipoDescarga", tipoDescargasList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdTipoDescarga", " ")
+        </p>
+        <p>
+            <label for="Titulo">Tara Máxima</label>
+            @Html.TextBox("TaraMaxima", Model.TaraMaxima, new { @class = "heavy std", maxlength = "50" })
+            @Html.ValidationMessage("TaraMaxima", " ")
+        </p>
+        <p>
+            <label for="Titulo">Seguro de Carga</label>
+            <span class="label">
+                <strong>Número de Póliza</strong>:<br />
+                @Html.TextBox("SC_NumeroPoliza", Model.SC_NumeroPoliza, new { @class = "heavy std", maxlength = "50" }) <em>(si no lo posee deje el campo en <strong>0</strong>)</em>
+                @Html.ValidationMessage("SC_NumeroPoliza", " ")<br /><br />
+                <strong>Fecha de Vencimiento de Póliza</strong>:<br />
+                @Html.TextBox("SC_FechaVencimientoPoliza", Model.SC_FechaVencimientoPoliza, new { @class = "heavy std", id = "datetimepicker1", maxlength = "50" })
+                @Html.ValidationMessage("SC_FechaVencimientoPoliza", " ")<br /><br />
+                <span class="file">
+                    <span class="title"><strong>Foto 1</strong>:</span>
+                    <input type="file" class="input" name="SC_Foto1" />
+                    @if (Model.SC_Foto1 != null && Model.SC_Foto1 != "")
+                    {
+                        <a href="@Url.Content(Model.SC_Foto1)">Ver Foto 1</a>
+                    }
+                </span>
+                <span class="file">
+                    <span class="title"><strong>Foto 2</strong>:</span>
+                    <input type="file" class="input" name="SC_Foto2" />
+                    @if (Model.SC_Foto2 != null && Model.SC_Foto2 != "")
+                    {
+                        <a href="@Url.Content(Model.SC_Foto2)">Ver Foto 2</a>
+                    }
+                </span>
+                <span class="file">
+                    <span class="title"><strong>Foto 3</strong>:</span>
+                    <input type="file" class="input" name="SC_Foto3" />
+                    @if (Model.SC_Foto3 != null && Model.SC_Foto3 != "")
+                    {
+                        <a href="@Url.Content(Model.SC_Foto3)">Ver Foto 3</a>
+                    }
+                </span>
+                <span class="file">
+                    <span class="title"><strong>Foto 4</strong>:</span>
+                    <input type="file" class="input" name="SC_Foto4" />
+                    @if (Model.SC_Foto4 != null && Model.SC_Foto4 != "")
+                    {
+                        <a href="@Url.Content(Model.SC_Foto4)">Ver Foto 4</a>
+                    }
+                </span>
+            </span>
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar este Camión" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}
+
+<script type="text/javascript">
+
+    function agsCallback(idAgricultor, nombre) {
+        $("#IdTransportista").val(idAgricultor);
+    }
+
+</script>   

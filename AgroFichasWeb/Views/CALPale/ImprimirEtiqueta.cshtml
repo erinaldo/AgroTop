@@ -1,0 +1,49 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_Pale
+@{
+    ViewBag.Title = "Etiqueta";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            font-size: large;
+        }
+
+        #qr-Container {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 250px;
+        }
+
+            #qr-Container img {
+                display: block;
+                text-align: center;
+            }
+
+            #qr-Container p {
+                display: block;
+                text-align: center;
+                word-break: break-word
+            }
+    </style>
+</head>
+<body>
+    <div id="qr-Container">
+        <img src="@Model.GetImgSrc()" width="250" />
+        <p><strong>@Model.CodigoInterno</strong></p>
+    </div>
+    <script>
+        window.print();
+        window.close();
+    </script>
+</body>
+</html>

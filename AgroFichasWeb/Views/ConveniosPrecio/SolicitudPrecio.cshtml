@@ -1,0 +1,92 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.AppLayer.Extensions
+@using AgroFichasWeb.ViewModels.Liquidaciones
+
+@model SolicitudPrecio
+@{
+    var dc = new AgroFichasDBDataContext();
+}
+<table class="procesoIngreso">
+    <tr>
+        <td><label>Número</label></td>
+        <td>@Model.IdSolicitudPrecio</td>
+        <td><label>Fecha</label></td>
+        <td>@Model.FechaHoraIns.ToString("dd MMM yyyy")</td>
+    </tr>
+    <tr>
+        <td><label>Cultivo</label></td>
+        <td>@Model.Cultivo.Nombre</td>
+        <td><label>Temporada</label></td>
+        <td>@Model.Temporada.Nombre</td>
+    </tr>
+    <tr>
+        <td><label>Agricultor</label></td>
+        <td><b>@Model.Agricultor.Nombre</b></td>
+        <td><label>Rut</label></td>
+        <td>@Model.Agricultor.Rut</td>
+    </tr>
+    <tr>
+        <td><label>Cantidad</label></td>
+        <td colspan="7">@Model.Cantidad.ToString("#,##0") Kg</td>
+    </tr>
+    <tr>
+        <td><label>Precio</label></td>
+        <td colspan="7">@String.Format(Model.Moneda.Formato2, Model.PrecioUnidad) @Model.Moneda.Simbolo / Kg </td>
+    </tr>
+    <tr>
+        <td><label>Sucursales de Entrega</label></td>
+        <td colspan="7">@String.Join(", ", Model.SolicitudPrecioSucursal.Select(s => s.Sucursal.Nombre))</td>
+    </tr>
+    @if (Model.IdConvenioPrecio.HasValue)
+    {
+        <tr>
+            <td><label>Convenio de Precio</label></td>
+            <td colspan="7">
+                @if (SYS_User.Current().HasPermiso(17))
+                {
+                    @Html.ActionLink(Model.IdConvenioPrecio.Value.ToString(), "editar", "conveniosprecio", new { id = Model.IdConvenioPrecio.Value }, new { })
+                }
+                else
+                {
+                    @Model.IdConvenioPrecio.Value
+                }
+
+            </td>
+        </tr>
+    }
+    @if (Model.IdConvenioPrecioAutorizacion.HasValue)
+    {
+        <tr>
+            <td><label>Autorización</label></td>
+            <td colspan="7">
+                @if (SYS_User.Current().HasPermiso(1025))
+                {
+                    @Html.ActionLink(Model.IdConvenioPrecioAutorizacion.Value.ToString(), "autorizacion", "conveniosprecio", new { id = Model.IdConvenioPrecioAutorizacion.Value }, new { })
+                }
+                else
+                {
+                    @Model.IdConvenioPrecioAutorizacion.Value
+                }
+
+            </td>
+        </tr>
+    }
+    <tr valign="top">
+        <td><label>Estado</label></td>
+        <td colspan="7">
+            <span style="background-color: @Model.ColorProceso" class="estado">@Model.EstadoProceso</span>
+
+            <table class="sublist">
+                <tr><td>Creación</td><td>@Model.FechaHoraIns.ToString("dd/MM/yy HH:mm")</td><td>@Model.UserIns</td></tr>
+                @if (Model.Procesado)
+                {
+                    <tr>
+                        <td>@Model.EstadoProceso</td>
+                        <td>@(Model.FechaHoraProc.Value.ToString("dd/MM/yy HH:mm"))</td>
+                        <td>@(Model.UserProc)</td>
+                    </tr>
+                }
+            </table>
+        </td>
+    </tr>
+</table>

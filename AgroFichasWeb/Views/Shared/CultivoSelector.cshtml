@@ -1,0 +1,16 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var idCultivo = (int)ViewData["idCultivo"];
+    var cultivos = (List<Cultivo>)ViewData["cultivos"];
+    var hideAll = ViewData["hideAllCultivos"] != null && ViewData["hideAllCultivos"] == "1";
+}
+<select id="idCultivo" name="idcultivo">
+    @if (!hideAll)
+    {
+        <option value="">(Todos los cultivos)</option>
+    }
+    @foreach (var t in cultivos)
+    {
+        <option value="@t.IdCultivo" @(t.IdCultivo == idCultivo ? "selected" : "")>@t.Nombre</option>
+    }
+</select>

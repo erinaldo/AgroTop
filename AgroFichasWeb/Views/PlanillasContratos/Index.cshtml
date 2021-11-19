@@ -1,0 +1,624 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.TrazaTop
+@model PlanillaContratoViewModel
+@{
+    ViewBag.Title = "Planillas de Contratos";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jQuery.ajaxQueue.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 50,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        var ERRMSG = "No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:";
+        var ERRMSG_GENERIC = "No fue posible procesar su solicitud.";
+
+        function GetPlanillasContratos(dataTable, idTemporada, idTipoContrato, idCultivo) {
+            $('#modalCargando').modal('show');
+
+            var t = $('#' + dataTable).DataTable();
+            t.clear().draw();
+            $.when(
+                $.getJSON(
+                    '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/GetPlanillasContratos',
+                    {
+                        IdTemporada: idTemporada,
+                        IdTipoContrato: idTipoContrato,
+                        IdCultivo: idCultivo
+                    }
+                )
+                    .done(function (result) {
+                        if (result.length != 0) {
+                            console.log('Planillas de Contratos -> ' + result.length + ' Ítems');
+                            for (var i = 0; i < result.length; i++) {
+                                var IdPlanillaContrato = result[i].IdPlanillaContrato;
+                                t.row.add([
+                                    '' + result[i].IdPlanillaContrato + '',
+                                    '' + result[i].Documento + '',
+                                    '' + result[i].Observacion + '',
+                                    '' + result[i].FechaHoraIns + '',
+                                    @if (Model.Permiso.Borrar)
+                                    {
+                                        @:'<button id="#" class="btn btn-default" data-toggle="tooltip" data-placement="top" onclick="EliminarPlanillaContrato(' + IdPlanillaContrato + ');"    title="Eliminar"> <i class="fa fa-trash"></i></button>'
+                                    }
+                                    else
+                                    {
+                                        @:''
+                                    }
+
+                                ]).draw(false);
+                            }
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(err);
+                    })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+            });
+        }
+
+        function MostrarFormulario(dataTable, idTemporada, idTipoContrato, idCultivo) {
+            LimpiarCamposFormulario();
+
+            $("#IdTemporada").val(idTemporada);
+            $("#IdTipoContrato").val(idTipoContrato);
+            $("#IdCultivo").val(idCultivo);
+            $("#DataTable").val(dataTable);
+            $("#iMsg").html('');
+
+            $('#modalSubirRTF').modal('show');
+        }
+
+        function SetPlanillaContrato() {
+            $('#modalCargando').modal('show');
+
+            var data = {
+                DocumentoN: $("#DocumentoN").val(),
+                DocumentoR: $("#DocumentoR").val(),
+                Observacion: $("#Observacion").val(),
+                IdTemporada: $("#IdTemporada").val(),
+                IdTipoContrato: $("#IdTipoContrato").val(),
+                IdCultivo: $("#IdCultivo").val(),
+                UserIns: $("#UserIns").val(),
+                FechaHoraIns: $("#FechaHoraIns").val(),
+                IpIns: $("#IpIns").val(),
+                UserUpd: $("#UserUpd").val(),
+                FechaHoraUpd: $("#FechaHoraUpd").val(),
+                IpUpd: $("#IpUpd").val(),
+                DataTable: $("#DataTable").val()
+            };
+
+            $.when(
+                $.ajax({
+                    url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/SetPlanillaContrato',
+                    type: 'POST',
+                    data: data
+                }).done(function (result) {
+                    var msjFinal = "";
+                    var obj = JSON.parse(JSON.stringify(result));
+                    if (obj.OK) {
+                        msjFinal = obj.Mensaje;
+                        $('#modalSubirRTF').modal('hide');
+
+                        //Actualiza Grilla
+                        GetPlanillasContratos(data.DataTable, data.IdTemporada, data.IdTipoContrato, data.IdCultivo);
+                    } else {
+                        msjFinal = ERRMSG + "\r\n";
+                        var objMsj = JSON.parse(obj.Mensaje);
+                        for (var i = 0; i < objMsj.length; i++) {
+                            for (var j = 0; j < objMsj[i].length; j++) {
+                                console.log(objMsj[i][j].ErrorMessage);
+                                msjFinal += objMsj[i][j].ErrorMessage + "\r\n";
+                            }
+                        }
+                    }
+
+                    alert(msjFinal);
+                })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+            });
+        }
+
+        function LimpiarCamposFormulario() {
+            $("#Documento").val('');
+            $("#Observacion").val('');
+            $("#DocumentoN").val('');
+            $("#DocumentoR").val('');
+            $("#IdTemporada").val('');
+            $("#IdTipoContrato").val('');
+            $("#IdCultivo").val('');
+            $("#DataTable").val('');
+        }
+
+        function CrearDataTableId(idTemporada, idTipoContrato, idCultivo) {
+            var iId = '';
+            if (idTipoContrato != null) {
+                switch (idTipoContrato) {
+                    case 1:
+                        iId += 'iAcuerdoComercial_' + idTemporada;
+                        break;
+                    case 2:
+                        iId += 'iContrato_' + idTemporada;
+                        break;
+                    case 3:
+                        iId += 'iCierreNegocio_' + idTemporada;
+                        break;
+                    case 4:
+                        iId += 'iCierrePrecio_' + idTemporada;
+                        break;
+                }
+            }
+
+            if (idCultivo != null) {
+                iId += 'iCultivo_' + idTemporada + '_' + idCultivo + '';
+            }
+
+            return iId;
+        }
+
+        function EliminarPlanillaContrato(idPlanillaContrato) {
+            $('#modalCargando').modal('show');
+
+            var aData = {
+                DataTable: '',
+                IdTemporada: 0,
+                IdTipoContrato: 0,
+                IdCultivo: 0
+            };
+
+            $.when(
+                //jQuery waiting for all ajax calls to complete b4 running
+                $.when(
+                    $.ajaxQueue({
+                        url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/GetPlanillaContrato',
+                        data: { IdPlanillaContrato: idPlanillaContrato },
+                        type: 'GET',
+                        success: function (result) {
+                            if (result.length != 0) {
+                                aData = {
+                                    DataTable: CrearDataTableId(result.IdTemporada, result.IdTipoContrato, result.IdCultivo),
+                                    IdTemporada: result.IdTemporada,
+                                    IdTipoContrato: result.IdTipoContrato,
+                                    IdCultivo: result.IdCultivo
+                                };
+                            }
+                        }
+                    })
+                ).done(function () {
+                    //this code is executed when all ajax calls are done
+                    var bData = {
+                        IdPlanillaContrato: idPlanillaContrato
+                    };
+
+                    $.ajax({
+                        url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/DelPlanillaContrato',
+                        type: 'POST',
+                        data: bData
+                    }).done(function (result) {
+                        var msjFinal = "";
+                        var obj = JSON.parse(JSON.stringify(result));
+                        if (obj.OK) {
+                            msjFinal = obj.Mensaje;
+
+                            //Actualiza Grilla
+                            GetPlanillasContratos(aData.DataTable, aData.IdTemporada, aData.IdTipoContrato, aData.IdCultivo);
+                        } else {
+                            msjFinal = ERRMSG + "\r\n" + obj.Mensaje;
+                        }
+
+                        alert(msjFinal);
+                    });
+                })
+            ).done(function () {
+                $('#modalCargando').modal('hide');
+            });
+        }
+
+        $(document).on('change', '#Documento', function () {
+            UploadFile();
+        });
+
+        function UploadFile() {
+            $('#modalCargando').modal('show');
+
+            // Checking whether FormData is available in browser
+            if (window.FormData !== undefined) {
+
+                var fileUpload = $("#Documento").get(0);
+                var files = fileUpload.files;
+
+                // Create FormData object
+                var fileData = new FormData();
+
+                // Looping over all files and add it to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].name, files[i]);
+                }
+
+                $.when(
+                    $.ajax({
+                        url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/UploadFile',
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        data: fileData
+                    }).done(function (result) {
+                        if (result != '') {
+                            $("#iMsg").html('' + result.FileName + ' OK.');
+                            //Binding
+                            $("#DocumentoN").val(result.FileName);
+                            $("#DocumentoR").val(result.FilePath);
+                        }
+                    })
+                ).done(function () {
+                    $('#modalCargando').modal('hide');
+                });
+            } else {
+                alert("FormData is not supported.");
+            }
+        }
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>}
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Planillas de Contratos</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Temporada</th>
+                    <th>Tipos de Contratos</th>
+                    <th>Anexos</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Temporada temporada in Model.Temporadas)
+                {
+                    <tr valign="top">
+                        <td>@temporada.IdTemporada</td>
+                        <td>@temporada.Nombre</td>
+                        <td>
+                            <span data-toggle="modal" data-target=".modalAcuerdoComercial_@temporada.IdTemporada">
+                                <button id="#" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Acuerdo Comercial" onclick="GetPlanillasContratos('iAcuerdoComercial_@temporada.IdTemporada', '@temporada.IdTemporada', 1, null)"> <i class="fa fa-file-text-o"></i></button>
+                            </span>
+                            <span data-toggle="modal" data-target=".modalContrato_@temporada.IdTemporada">
+                                <button id="#" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Contrato" onclick="GetPlanillasContratos('iContrato_@temporada.IdTemporada', '@temporada.IdTemporada', 2, null)"> <i class="fa fa-file-text-o"></i></button>
+                            </span>
+                            <span data-toggle="modal" data-target=".modalCierreNegocio_@temporada.IdTemporada">
+                                <button id="#" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Cierre de Negocio" onclick="GetPlanillasContratos('iCierreNegocio_@temporada.IdTemporada', '@temporada.IdTemporada', 3, null)"> <i class="fa fa-file-text-o"></i></button>
+                            </span>
+                            <span data-toggle="modal" data-target=".modalCierrePrecio_@temporada.IdTemporada">
+                                <button id="#" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Cierre de Precio" onclick="GetPlanillasContratos('iCierrePrecio_@temporada.IdTemporada', '@temporada.IdTemporada', 4, null)"> <i class="fa fa-file-text danger"></i></button>
+                            </span>
+                        </td>
+                        <td>
+                            @foreach (Cultivo cultivo in Model.Cultivos)
+                            {
+                                <span data-toggle="modal" data-target=".modalAnexo_@temporada.IdTemporada@cultivo.Nombre">
+                                    <button id="#" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Anexo @cultivo.Nombre" onclick="GetPlanillasContratos('@string.Format("iCultivo_{0}_{1}", temporada.IdTemporada, cultivo.IdCultivo)', '@temporada.IdTemporada', null, @cultivo.IdCultivo)"> <i class="fa fa-file-text"></i></button>
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->
+@foreach (Temporada temporada in Model.Temporadas)
+{
+    <div id="AcuerdoComercial_@temporada.IdTemporada" class="modal fade modalAcuerdoComercial_@temporada.IdTemporada" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-block modal-header-color modal-block-success modal-block-lg">
+            <section class="panel">
+                <header class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="panel-title">Planilla Acuerdo Comercial @temporada.Nombre</h2>
+                </header>
+                <div class="panel-body">
+                    @if (Model.Permiso.Crear)
+                    {
+                        <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                            <a href="#" class="btn btn-default" onclick="MostrarFormulario('iAcuerdoComercial_@temporada.IdTemporada', @temporada.IdTemporada, 1, null);"><i class="fa fa-upload"></i> Subir Formato RTF</a>
+                        </div>
+                    }
+                    <div class="modal-wrapper">
+                        <table class="table table-bordered table-striped mb-none" id="iAcuerdoComercial_@temporada.IdTemporada">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Documento</th>
+                                    <th>Observación</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </footer>
+            </section>
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div id="Contrato_@temporada.IdTemporada" class="modal fade modalContrato_@temporada.IdTemporada" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-block modal-header-color modal-block-danger modal-block-lg">
+            <section class="panel">
+                <header class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="panel-title">Planilla Contrato @temporada.Nombre</h2>
+                </header>
+                <div class="panel-body">
+                    @if (Model.Permiso.Crear)
+                    {
+                        <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                            <a href="#" class="btn btn-default" onclick="MostrarFormulario('iContrato_@temporada.IdTemporada', @temporada.IdTemporada, 2, null);"><i class="fa fa-upload"></i> Subir Formato RTF</a>
+                        </div>
+                    }
+                    <div class="modal-wrapper">
+                        <table class="table table-bordered table-striped mb-none" id="iContrato_@temporada.IdTemporada">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Documento</th>
+                                    <th>Observación</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </footer>
+            </section>
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div id="CierreNegocio_@temporada.IdTemporada" class="modal fade modalCierreNegocio_@temporada.IdTemporada" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-block modal-block-lg">
+            <section class="panel">
+                <header class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="panel-title">Planilla Cierre de Negocio @temporada.Nombre</h2>
+                </header>
+                <div class="panel-body">
+                    @if (Model.Permiso.Crear)
+                    {
+                        <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                            <a href="#" class="btn btn-default" onclick="MostrarFormulario('iCierreNegocio_@temporada.IdTemporada', @temporada.IdTemporada, 3, null);"><i class="fa fa-upload"></i> Subir Formato RTF</a>
+                        </div>
+                    }
+                    <div class="modal-wrapper">
+                        <table class="table table-bordered table-striped mb-none" id="iCierreNegocio_@temporada.IdTemporada">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Documento</th>
+                                    <th>Observación</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </footer>
+            </section>
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div id="CierrePrecio_@temporada.IdTemporada" class="modal fade modalCierrePrecio_@temporada.IdTemporada" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-block modal-header-color modal-block-warning modal-block-lg">
+            <section class="panel">
+                <header class="panel-heading">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="panel-title">Planilla Cierre de Precio @temporada.Nombre</h2>
+                </header>
+                <div class="panel-body">
+                    @if (Model.Permiso.Crear)
+                    {
+                        <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                            <a href="#" class="btn btn-default" onclick="MostrarFormulario('iCierrePrecio_@temporada.IdTemporada', @temporada.IdTemporada, 4, null);"><i class="fa fa-upload"></i> Subir Formato RTF</a>
+                        </div>
+                    }
+                    <div class="modal-wrapper">
+                        <table class="table table-bordered table-striped mb-none" id="iCierrePrecio_@temporada.IdTemporada">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Documento</th>
+                                    <th>Observación</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </footer>
+            </section>
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    foreach (Cultivo cultivo in Model.Cultivos)
+    {
+        <div id="Anexo_@temporada.IdTemporada@cultivo.Nombre" class="modal fade modalAnexo_@temporada.IdTemporada@cultivo.Nombre" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-block modal-block-lg">
+                <section class="panel">
+                    <header class="panel-heading">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h2 class="panel-title">Planilla Anexo @cultivo.Nombre @temporada.Nombre</h2>
+                    </header>
+                    <div class="panel-body">
+                        @if (Model.Permiso.Crear)
+                        {
+                            <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                                <a href="#" class="btn btn-default" onclick="MostrarFormulario('@string.Format("iCultivo_{0}_{1}", temporada.IdTemporada, cultivo.IdCultivo)', @temporada.IdTemporada, null, @cultivo.IdCultivo);"><i class="fa fa-upload"></i> Subir Formato RTF</a>
+                            </div>
+                        }
+                        <div class="modal-wrapper">
+                            <table class="table table-bordered table-striped mb-none" id="@string.Format("iCultivo_{0}_{1}", temporada.IdTemporada, cultivo.IdCultivo)">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Documento</th>
+                                        <th>Observación</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </footer>
+                </section>
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    }
+}
+
+<div class="modal fade" id="modalCargando" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <center>
+                    <img src="~/Content/images/Load_Icon.gif" />
+                </center>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalSubirRTF" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Subir RTF de Plantilla de Contrato</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Documento</label>
+                    <input type="file" id="Documento" name="Documento" accept="text/rtf,application/rtf,text/richtext" value="" />
+                    <span id="iMsg"></span>
+                </div>
+                <div class="form-group">
+                    <label>Observación</label>
+                    <input type="text" id="Observacion" name="Observacion" class="form-control" value="" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="DocumentoN" name="DocumentoN" value="" />
+                <input type="hidden" id="DocumentoR" name="DocumentoR" value="" />
+                <input type="hidden" id="IdTemporada" name="IdTemporada" value="" />
+                <input type="hidden" id="IdTipoContrato" name="IdTipoContrato" value="" />
+                <input type="hidden" id="IdCultivo" name="IdCultivo" value="" />
+                <input type="hidden" id="UserIns" name="UserIns" value="@Model.UserIns" />
+                <input type="hidden" id="FechaHoraIns" name="FechaHoraIns" value="@Model.FechaHoraIns" />
+                <input type="hidden" id="IpIns" name="IpIns" value="@Model.IpIns" />
+                <input type="hidden" id="UserUpd" name="UserUpd" value="@Model.UserUpd" />
+                <input type="hidden" id="FechaHoraUpd" name="FechaHoraUpd" value="@Model.FechaHoraUpd" />
+                <input type="hidden" id="IpUpd" name="IpUpd" value="@Model.IpUpd" />
+                <input type="hidden" id="DataTable" name="DataTable" value="" />
+                <button type="button" onclick="SetPlanillaContrato()" class="btn btn-default">Subir RTF</button>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

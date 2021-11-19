@@ -1,0 +1,121 @@
+﻿@using AgroFichasWeb.Models
+@model List<CAL_CertificadoEnvasado>
+@{
+    ViewBag.Title = "Certificados Envasado";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantaProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>$('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });</script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["errMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtros de Búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <div class="form-inline center">
+                    @using (Html.BeginForm("index", "CALCertificadosEnvasado", new { id = 0 }, FormMethod.Get))
+                    {
+                        <div class="form-group">
+                            @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                        </div>
+
+                        <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                        <input class="btn btn-default" type="submit" value="Buscar" />
+                        <div class="clearfix visible-xs mb-sm"></div>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Certificados</h2>
+        <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+            <a href="@Url.Action("Crear", "CALCertificadosEnvasado", new { })" class="btn btn-primary">Crear Certificado <i class="fa fa-plus"></i></a>
+        </div>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Certificado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdCertificadoEnvasado</td>
+                        <td>@string.Format("Certificado Calidad {0}/{1}", item.NCertificado, item.FechaHoraIns.Year)</td>
+                        <td>
+                            <button id="pdfcreator_@item.IdCertificadoEnvasado" onclick="window.location.href='@Url.Action("CrearPDF", new { id = item.IdCertificadoEnvasado })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Crear PDF"> <i class="fa fa-file-pdf-o"></i></button>
+                            <button id="controlversiones_@item.IdCertificadoEnvasado" onclick="window.location.href='@Url.Action("ControlVersiones", new { id = item.IdCertificadoEnvasado })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Control de Versiones"> <i class="fa fa-exchange"></i></button>
+                            @if (permisosUsuario.Borrar)
+                            {
+                                <button id="delete_@item.IdCertificadoEnvasado" onclick="window.location.href='@Url.Action("Eliminar", new { id = item.IdCertificadoEnvasado })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

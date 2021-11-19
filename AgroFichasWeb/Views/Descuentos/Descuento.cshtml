@@ -1,0 +1,134 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model Descuento
+
+@{
+    ViewBag.NombreSeccion = "Descuentos";
+
+    var dc = new AgroFichasDBDataContext();
+
+    if (Model.IdDescuento == 0)
+    {
+        ViewBag.Title = "Crear Descuento";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Descuento";
+    }
+
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery.ui.datepicker-es.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        @if (Model.IdDescuento > 0)
+        {
+        <p>
+            <label>Número</label>
+            @Model.IdDescuento
+        </p>
+        }
+        <p>
+            <label>Tipo</label>
+            @Model.TipoDescuento.Nombre
+            @Html.Hidden("IdTipoDescuento", Model.IdTipoDescuento)
+        </p>
+        <div class="p">
+            <label>Agricultor</label>
+            @Html.Partial("~/Views/Controls/AgricultorSelector.cshtml", new AgricultorSelectorViewModel() { IdAgricultor = Model.IdAgricultor, Nombre = (Model.Agricultor != null) ? Model.Agricultor.Nombre : "&nbsp;" })
+            @Html.ValidationMessage("IdAgricultor", ".")
+            @Html.Hidden("IdAgricultor", Model.IdAgricultor)
+        </div>
+        <p>
+            <label>Temporada</label>
+            @if (Model.IdDescuento == 0)
+            {
+                @Html.Partial("TemporadaSelector")
+            }
+            else
+            {
+                <text>@Model.Temporada.Nombre</text>
+                @Html.Hidden("IdTemporada", Model.IdTemporada)
+            }
+        </p>
+        <p>
+            <label for="Fecha">Fecha de Creación</label>
+            @Html.TextBox("Fecha", String.Format("{0:dd/MM/yyyy}", Model.Fecha), new { @class = "datebox" })
+            @Html.ValidationMessage("Fecha", ".")
+        </p>
+        <p>
+            <label for="Fecha">Fecha de Vencimiento</label>
+            @Html.TextBox("FechaVencimiento", String.Format("{0:dd/MM/yyyy}", Model.FechaVencimiento), new { @class = "datebox" })
+            @Html.ValidationMessage("FechaVencimiento", ".")
+        </p>
+
+        <p>
+            <label>Monto</label>
+            @Html.TextBox("Monto", Model.Monto, new { @class = "heavy std" })
+            @Html.Hidden("IdMoneda", Model.IdMoneda)
+            @Html.ValidationMessage("Monto", ".")
+        </p>
+        <p>
+            <label>Institución</label>
+            @Html.TextBox("Institucion", Model.Institucion, new { @class = "std" })
+            @Html.ValidationMessage("Institucion", ".")
+        </p>
+        <p>
+            <label>Nro Documento</label>
+            @Html.TextBox("NumeroDocumento", Model.NumeroDocumento, new { @class = "std" })
+            @Html.ValidationMessage("NumeroDocumento", ".")
+        </p>
+        @if (Model.IdTipoDescuento == 3 || Model.IdTipoDescuento == 4)
+        {
+        <p>
+            <label>Cantidad</label>
+            @Html.TextBox("Cantidad", Model.Cantidad, new { @class = "std" }) Kg
+            @Html.ValidationMessage("Cantidad", ".")
+        </p>
+        <p>
+            <label>Precio</label>
+            @Html.TextBox("PrecioUnidad", Model.PrecioUnidad, new { @class = "std" }) CLP/Kg
+            @Html.ValidationMessage("PrecioUnidad", ".")
+        </p>            
+        }
+        <p>
+            <label>Comentarios</label>
+            @Html.TextArea("Comentarios", Model.Comentarios, new { @class = "std", rows = 5 })
+            @Html.ValidationMessage("Comentarios", ".")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar Este Descuento" /> o @Html.ActionLink("Cancelar", "Index", (RouteValueDictionary)ViewData["indexRouteValues"])
+        </p>
+    </fieldset>
+
+}
+
+<script type="text/javascript">
+
+    function agsCallback(idAgricultor, nombre) {
+        $("#IdAgricultor").val(idAgricultor);
+    }
+
+    $.datepicker.setDefaults($.datepicker.regional["es"]);
+    $("#Fecha").datepicker({ showOn: 'button', buttonImage: '@Url.Content("~/Content/images/calendar.gif") ', buttonImageOnly: true });
+    $("#FechaVencimiento").datepicker({ showOn: 'button', buttonImage: '@Url.Content("~/Content/images/calendar.gif") ', buttonImageOnly: true });
+
+</script>   

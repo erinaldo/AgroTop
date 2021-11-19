@@ -1,0 +1,95 @@
+﻿@using Agrotop.Extranet.Models
+@{
+    var temporadas = (IEnumerable<Temporada>)ViewData["temporadas"];
+    var temporada = (Temporada)ViewData["temporada"];
+    var agricultor = (Agricultor)ViewData["agricultor"];
+    var recepciones = (IEnumerable<ProcesoIngreso>)ViewData["recepciones"];
+    
+    ViewBag.Title = "Recepciones " + temporada.Nombre;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+
+}
+
+<div class="titulo1-consubmenu">Recepciones @temporada.Nombre</div>
+<div class="submenu">
+    @foreach (var t in temporadas)
+    {
+        <div class="submenuitem">
+            @if (t.IdTemporada != temporada.IdTemporada)
+            {
+                @Html.ActionLink(t.Nombre, "index", new { id = t.IdTemporada })
+            }
+            else
+            {
+                <span class="submenuitem-selected">@t.Nombre</span>
+            }
+        </div>
+    }
+    <div style="clear: both"></div>
+</div>
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "recepciones", new { id = 0 }, FormMethod.Get))
+    {
+        <text><b>Cultivo:</b></text> @Html.Partial("CultivoSelector")
+        //<text><b>Nombre:</b></text><input type="text" name="key" value="@ViewData["key"]" />
+        <input type="submit" value="Buscar" />
+    }
+</div>
+<table class="tabla1" style="width: 100%; margin-top: 50px;">
+<tr class="header">
+    <td>Nro</td>
+    <td>Llegada</td>
+    <td>Sucursal</td>
+    <td>Cultivo</td>
+    <td>Guía</td>
+    <td>Razón Social</td>
+    <td>Vehículo</td>
+    <td>Neto</td>
+    <td>Standard</td>
+    <td>Estado</td>
+</tr>
+@foreach (var r in recepciones)
+{
+    <tr valign="top">
+        <td>@r.IdProcesoIngreso</td>
+        <td>@r.FechaHoraLlegada.Value.ToString("dd MMM HH:mm")</td>
+        <td>@r.Sucursal.Nombre</td>
+        <td>@r.CultivoContrato.Nombre</td>
+        <td>@r.NumeroGuia</td>
+        <td>@r.Agricultor.Nombre<br />@r.Agricultor.Rut</td>
+        <td>@r.TipoVehiculo.Nombre @r.Patente</td>
+        <td align="right" nowrap="nowrap">@(r.PesoBruto.HasValue ? r.PesoBruto.Value.ToString("#,##0.## Kg") : "-")</td>
+        <td align="right" nowrap="nowrap">@(r.PesoNormal.HasValue ? r.PesoNormal.Value.ToString("#,##0.## Kg") : "-")</td>
+        <td>@r.EstadoProcesoIngreso.Nombre</td>
+        <td>@Html.ActionLink("Detalle", "detalle", new { id = r.IdProcesoIngreso })</td>
+    </tr>
+}
+
+@if (recepciones.Count() != 0)
+{
+    var totales = (from r in recepciones
+                   group new { pb = r.PesoBruto, pn = r.PesoNormal } by new { IdCultivoContrato = r.IdCultivoContrato, Cultivo = r.CultivoContrato.Nombre } into g
+                   select new { IdCultivoContrato = g.Key.IdCultivoContrato, Cultivo = g.Key.Cultivo, PesoBruto = g.Sum(s => s.pb), PesoNormal = g.Sum(s => s.pn) }).ToList();    
+    foreach (var t in totales)
+    {
+    <tr class="header">
+        <td align="right" colspan="7">Total @t.Cultivo</td>
+        <td align="right" nowrap="nowrap">@(t.PesoBruto.Value.ToString("#,##0.## Kg"))</td>
+        <td align="right" nowrap="nowrap">@(t.PesoNormal.Value.ToString("#,##0.## Kg"))</td>
+        <td align="right" colspan="1">&nbsp;</td>
+    </tr>            
+    }
+}
+else
+{
+    <tr>
+        <td colspan="10" style="padding-top: 60px; text-align: center; font-style: italic">No hay recepciones para esta temporada</td>
+    </tr>
+}
+</table>
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".tabla1 tr:even").addClass("even");
+        });
+    </script>

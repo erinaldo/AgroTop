@@ -1,0 +1,35 @@
+﻿    <ul>
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(15))
+        {
+        <li><a href="@Url.Content("~/conveniosprecio")">Listado</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(16))
+        {
+        <li><a href="@Url.Content("~/conveniosprecio/crear")">Crear Convenio</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1027))
+        {
+            <li><a href="@Url.Content("~/conveniosprecio/solicitudes")">Solicitudes</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1026))
+        {
+            <li><a href="@Url.Content("~/conveniosprecio/ProcesarSolicitudPreciosIndex")">Procesar Solicitudes</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1023) || AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1024))
+        {
+            <li><a href="@Url.Content("~/conveniosprecio/autorizarpreciosindex")">Autorizar</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1025))
+        {
+            <li><a href="@Url.Content("~/conveniosprecio/autorizaciones")">Historia Autorizaciones</a></li>
+        }
+
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1021))
+        {
+            <li><a href="@Url.Content("~/conveniosprecio/rango/1")">Rango Gerencia</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1022))
+        {
+            <li><a href="@Url.Content("~/conveniosprecio/rango/2")">Rango Abastecimiento</a></li>
+        }
+    </ul>

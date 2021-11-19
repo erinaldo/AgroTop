@@ -1,0 +1,13 @@
+﻿@using AgroFichasWeb.Models
+@{
+}    
+    <ul>
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(55))
+        {
+        <li><a href="@Url.Content("~/tasascambio")">Listado</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(56))
+        {
+        <li><a href="@Url.Content("~/tasascambio/crear")">Crear Tasa de Cambio</a></li>
+        }
+    </ul>

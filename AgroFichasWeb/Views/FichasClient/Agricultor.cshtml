@@ -1,0 +1,441 @@
+﻿@using AgroFichasWeb.Models
+@model Agricultor
+
+@{
+    ViewBag.Title = "AgroFichas";
+    var temporada = Temporada.TemporadaActivaFichas();
+    var comunas = Comuna.SelectList(-1);
+    var cultivos = Cultivo.SelectListParaIntencionSiembra(-1);
+}
+
+@section VendorCSS
+{
+
+}
+
+@section VendorScripts
+{
+}
+
+@section CustomScripts {
+
+<script> //PREDIOS
+        //Create
+        $('#addItemPredio').click(function () {
+            loadItemPredio({
+                Id: 0,
+                Nombre: '',
+                IdComuna: -1
+            });
+        });
+
+        //Edit
+        $("#datatable-predio tbody").on("click", ".editItemPredio", function (e) {
+
+            e.preventDefault();
+            var idItem = $(this).attr("data-id");
+
+            $("#editButtonPredio-" + idItem).hide();
+            $("#editSpinnerPredio-" + idItem).show();
+
+            var jqxhr = $.post('@Url.Action("getpredio")', { id: idItem },
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showDangerPopUp(data.msg);
+                        }
+                        else {
+                            loadItemPredio(data.item);
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showDangerPopUp(parsePostFail(jqXHR, errorThrown));
+                    })
+                    .always(function () {
+                        $("#editButtonPredio-" + idItem).show();
+                        $("#editSpinnerPredio-" + idItem).hide();
+                    });
+
+            });
+
+            //Load Data
+            function loadItemPredio(item) {
+
+                $("#validationErrorsPredio").hide();
+                $("#footerButtonsPredio").show();
+                $("#footerSpinnerPredio").hide();
+
+
+                $("#idPredio").val(item.Id);
+                $("#nombre").val(item.Nombre);
+                $("#idcomunapredio").val(item.IdComuna);
+
+                $("#formTitlePredio").html((item.Id== 0 ? "Nuevo" : "Editar") + " Predio");
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#modalFormPredio', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            //Save
+            $('.modal-confirmPredio').click(function (e) {
+                e.preventDefault();
+
+                $("#validationErrorsPredio").hide();
+                $("#footerButtonsPredio").hide();
+                $("#footerSpinnerPredio").show();
+
+                var idItem = $("#idPredio").val();
+                var postUrl = idItem == 0 ? '@Url.Action("createpredio")' : '@Url.Action("editpredio")';
+
+                var jqxhr = $.post(postUrl, $("#formItemPredio").serialize(),
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showValidationErrors(data.msg, data.errors, "#validationErrorsPredio");
+                        }
+                        else {
+                            $.magnificPopup.close();
+
+                            new PNotify({
+                                title: 'Predio',
+                                text: data.msg,
+                                type: 'success'
+                            });
+
+                            if (idItem != 0) {
+                                $("#itemRowPredio-" + idItem).replaceWith(data.view);
+                            }
+                            else {
+                                $("#datatable-predio tbody").append(data.view);
+                            }
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showValidationErrors(parsePostFail(jqXHR, errorThrown), null, "#validationErrorsPredio");
+                    })
+                    .always(function () {
+                        $("#footerSpinnerPredio").hide();
+                        $("#footerButtonsPredio").show();
+                    });
+            });
+
+            //Close
+            $('.modal-dismissPredio').click(function (e) {
+                e.preventDefault();
+                $.magnificPopup.close();
+            });
+
+    </script>
+
+<script>
+ //IntencionSiembra
+        //Create
+        $('#addItemIntencionSiembra').click(function () {
+            loadItemIntencionSiembra({
+                Id: 0,
+                IdCultivo: -1,
+                IdComuna: -1,
+                Superficie: null,
+                Cantidad: null,
+                PuntoEntrega: '',
+                Observaciones: ''
+            });
+        });
+
+        //Edit
+        $("#datatable-intencionsiembra tbody").on("click", ".editItemIntencionSiembra", function (e) {
+
+            e.preventDefault();
+            var idItem = $(this).attr("data-id");
+
+            $("#editButtonIntencionSiembra-" + idItem).hide();
+            $("#editSpinnerIntencionSiembra-" + idItem).show();
+
+            var jqxhr = $.post('@Url.Action("getintencionsiembra")', { id: idItem },
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showDangerPopUp(data.msg);
+                        }
+                        else {
+                            loadItemIntencionSiembra(data.item);
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showDangerPopUp(parsePostFail(jqXHR, errorThrown));
+                    })
+                    .always(function () {
+                        $("#editButtonIntencionSiembra-" + idItem).show();
+                        $("#editSpinnerIntencionSiembra-" + idItem).hide();
+                    });
+
+            });
+
+            //Load Data
+            function loadItemIntencionSiembra(item) {
+
+                $("#validationErrorsIntencionSiembra").hide();
+                $("#footerButtonsIntencionSiembra").show();
+                $("#footerSpinnerIntencionSiembra").hide();
+
+
+                $("#idIntencionSiembra").val(item.Id);
+                $("#idCultivo").val(item.IdCultivo);
+                $("#idcomunaintencionsiembra").val(item.IdComuna);
+                $("#superficie").val(item.Superficie);
+                $("#cantidad").val(item.Cantidad);
+                $("#puntoentrega").val(item.PuntoEntrega);
+                $("#observaciones").val(item.Observaciones);
+
+                $("#formTitleIntencionSiembra").html((item.Id== 0 ? "Nueva" : "Editar") + " Intencion de Siembra");
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#modalFormIntencionSiembra', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            //Save
+            $('.modal-confirmIntencionSiembra').click(function (e) {
+                e.preventDefault();
+
+                $("#validationErrorsIntencionSiembra").hide();
+                $("#footerButtonsIntencionSiembra").hide();
+                $("#footerSpinnerIntencionSiembra").show();
+
+                var idItem = $("#idIntencionSiembra").val();
+                var postUrl = idItem == 0 ? '@Url.Action("createintencionsiembra")' : '@Url.Action("editintencionsiembra")';
+
+                var jqxhr = $.post(postUrl, $("#formItemIntencionSiembra").serialize(),
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showValidationErrors(data.msg, data.errors, "#validationErrorsIntencionSiembra");
+                        }
+                        else {
+                            $.magnificPopup.close();
+
+                            new PNotify({
+                                title: 'Intención de Siembra',
+                                text: data.msg,
+                                type: 'success'
+                            });
+
+                            if (idItem != 0) {
+                                $("#itemRowIntencionSiembra-" + idItem).replaceWith(data.view);
+                            }
+                            else {
+                                $("#datatable-intencionsiembra tbody").append(data.view);
+                            }
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showValidationErrors(parsePostFail(jqXHR, errorThrown), null, "#validationErrorsIntencionSiembra");
+                    })
+                    .always(function () {
+                        $("#footerSpinnerIntencionSiembra").hide();
+                        $("#footerButtonsIntencionSiembra").show();
+                    });
+            });
+
+            //Close
+            $('.modal-dismissIntencionSiembra').click(function (e) {
+                e.preventDefault();
+                $.magnificPopup.close();
+            });
+
+</script>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@Model.Nombre</h2>
+                <p class="panel-subtitle">Predios</p>
+                <div class="panel-actions" style="top: 5px">
+                    <button type="button" id="addItemPredio" class="mb-xs mt-xs mr-xs btn btn-primary">Crear Predio</button>
+                </div>
+            </header>
+            <div class="panel-body">
+
+                <table class="table table-bordered table-striped mb-none" id="datatable-predio">
+                    <thead>
+                        <tr>
+                            <th>Predio</th>
+                            <th>Comuna</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Predio.OrderBy(p => p.Nombre))
+                        {
+                            @Html.Partial("ItemRowPredio", item)
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Intención de Siembra</h2>
+                <p class="panel-subtitle">@temporada.Nombre</p>
+                <div class="panel-actions" style="top: 5px">
+                    <button type="button" id="addItemIntencionSiembra" class="mb-xs mt-xs mr-xs btn btn-primary">Crear Intención de Siembra</button>
+                </div>
+            </header>
+            <div class="panel-body">
+
+                <table class="table table-bordered table-striped mb-none" id="datatable-intencionsiembra">
+                    <thead>
+                        <tr>
+                            <th>Cultivo</th>
+                            <th>Comuna</th>
+                            <th class="text-right">Há</th>
+                            <th class="text-right">Ton</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.IntencionSiembra.Where(i => i.IdTemporada == temporada.IdTemporada))
+                        {
+                            @Html.Partial("ItemRowIntencionSiembra", item)
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Modal Form - Predio -->
+<div id="modalFormPredio" class="modal-block modal-block-primary mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title" id="formTitlePredio">Titulo</h2>
+        </header>
+        <div class="panel-body">
+            <form id="formItemPredio" class="form-horizontal mb-lg" novalidate="novalidate">
+                <div class="validation-summary-errors" id="validationErrorsPredio" style="display: none;">
+
+                </div>
+                <input type="hidden" value="" name="idPredio" id="idPredio" />
+                <input type="hidden" name="idAgricultor" value="@Model.IdAgricultor" />
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Nombre <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="nombre" id="nombre" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Comuna <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("IdComuna", comunas, new { id = "idcomunapredio" })
+                    </div>
+                </div>
+            </form>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-center" id="footerSpinnerPredio" style="display: none;">
+                    <img id="spinnerImagePredio" src="~/Content/spinner.svg" height="34" />
+                </div>
+                <div class="col-md-12 text-right" id="footerButtonsPredio">
+                    <button class="btn btn-primary modal-confirmPredio">Guardar</button>
+                    <button class="btn btn-default modal-dismissPredio">Cancelar</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>
+
+<!-- Modal Form - IntencionSiembra -->
+<div id="modalFormIntencionSiembra" class="modal-block modal-block-primary mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title" id="formTitleIntencionSiembra">Titulo</h2>
+        </header>
+        <div class="panel-body">
+            <form id="formItemIntencionSiembra" class="form-horizontal mb-lg" novalidate="novalidate">
+                <div class="validation-summary-errors" id="validationErrorsIntencionSiembra" style="display: none;">
+
+                </div>
+                <input type="hidden" value="" name="idIntencionSiembra" id="idIntencionSiembra" />
+                <input type="hidden" name="idAgricultor" value="@Model.IdAgricultor" />
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Cultivo <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("IdCultivo", cultivos)
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Comuna <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("IdComuna", comunas, new { id = "idcomunaintencionsiembra" })
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Superficie (há) <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="superficie" id="superficie" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Cantidad (Kg) <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="cantidad" id="cantidad" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Punto de Entrega</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="puentoentrega" id="puentoentrega" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Observaciones</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="observaciones" id="observaciones" class="form-control" required />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-center" id="footerSpinnerIntencionSiembra" style="display: none;">
+                    <img id="spinnerImageIntencionSiembra" src="~/Content/spinner.svg" height="34" />
+                </div>
+                <div class="col-md-12 text-right" id="footerButtonsIntencionSiembra">
+                    <button class="btn btn-primary modal-confirmIntencionSiembra">Guardar</button>
+                    <button class="btn btn-default modal-dismissIntencionSiembra">Cancelar</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>
+
+
+@Html.Partial("~/Views/Controls/ModalDanger.cshtml")

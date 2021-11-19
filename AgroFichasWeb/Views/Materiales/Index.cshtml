@@ -1,0 +1,88 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<OC_Material>
+
+@{
+    ViewBag.NombreSeccion = "Órdenes de Compra";
+    ViewBag.Title = "Administrar Materiales";
+    var puedeEditar = (bool)ViewData["puedeEditar"];
+    var puedeEliminar = (bool)ViewData["puedeEliminar"];
+    var columnas = (int)ViewData["columnas"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">#</th>
+        <th align="left">Proyecto</th>
+        <th align="left">Empresa</th>
+        <th align="left">Código</th>
+        <th align="left">Descripción</th>
+        @if (puedeEditar)
+        {
+            <th align="center">Editar</th>
+        }
+        @if (puedeEliminar)
+        {
+            <th align="center">Eliminar</th>
+        }
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="@columnas" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        <tr valign="top">
+            <td align="left">@item.IdMaterial</td>
+            <td align="left">@item.OC_Proyecto.Descripcion</td>
+            <td align="left">@item.Empresa.Nombre</td>
+            <td align="left">@item.CodigoMaterial</td>
+            <td align="left">@item.Descripcion</td>
+            @if (puedeEditar)
+            {
+                <td align="center">@Html.ActionImage(Url.Content("~/Content/images/editar.png"), "editar", new { id = item.IdMaterial })</td>
+            }
+            @if (puedeEliminar)
+            {
+                <td align="center">@Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "eliminar", new { id = item.IdMaterial })</td>
+            }
+        </tr>
+    }
+    <tr>
+        <td colspan="@columnas" class="pager">
+            @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "materiales")
+        </td>
+    </tr>
+</table>

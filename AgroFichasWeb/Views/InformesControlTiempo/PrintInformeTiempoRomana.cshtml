@@ -1,0 +1,116 @@
+﻿@using AgroFichasWeb.Models
+
+@model List<rpt_CTR_DetalleControlDiarioRomanaPorEmpresaResult>
+@{
+    ViewBag.Title = "Informe General";
+    Layout = "~/Views/Shared/_ResponsiveLayoutPrint.cshtml";
+    var controlTiempo = (CTR_ControlTiempo)ViewData["controlTiempo"];
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+}
+@section VendorCSS
+{
+    <!-- Invoice Print Style -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/stylesheets/invoice-print.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        window.print();
+                //window.close();</script>
+}
+
+<div class="invoice">
+    <header class="clearfix">
+        <div class="row">
+            <div class="col-sm-8 mt-md">
+                <h2 class="h2 mb-sm text-dark text-weight-bold">INFORME DIARIO DE ESPERA DE CAMIONES EN PLANTA</h2>
+            </div>
+            <div class="col-sm-4 text-right mt-md mb-md">
+                <address class="ib mr-xlg">
+                    @controlTiempo.GetEmpresa(controlTiempo.IdEmpresa.Value).Nombre
+                    <br />
+                    Fecha @string.Format("{0:dd/MM/yy}", controlTiempo.FechaHoraIns)
+                </address>
+                @*<div class="ib">
+                        <img src="@Url.Content("~/Content/images/avenatop.png")" alt="Agrotop" />
+                    </div>*@
+            </div>
+        </div>
+    </header>
+    <header class="clearfix">
+        <div class="bill-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bill-to">
+                        <div class="text-left">
+                            <table class="table h5 text-dark" style="border: none">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Envase</th>
+                                        <th>Ent. Romana</th>
+                                        <th>Sal. Romana</th>
+                                        <th>Tiempo Romana</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr valign="top">
+                                            <td>@item.Producto</td>
+                                            <td>@item.Envase</td>
+                                            <td>@string.Format("{0:dd/MM/yy HH:mm:ss}", item.FechaPesajeInicial)</td>
+                                            <td>@string.Format("{0:dd/MM/yy HH:mm:ss}", item.FechaPesajeFinal)</td>
+                                            <td>@TimeSpan.FromMinutes(item.Romana)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <header class="clearfix">
+        <div class="bill-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bill-to">
+                        <div class="text-left">
+                            <table class="table h5 text-dark" style="border: none">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Envase</th>
+                                        <th>N° Camiones</th>
+                                        <th>Tiempo Prom. Romana</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (rpt_CTR_ResumenControlDiarioRomanaPorEmpresaResult item in controlTiempo.GetResumenDiario())
+                                    {
+                                        <tr valign="top">
+                                            <td>@item.Producto</td>
+                                            <td>@item.Envase</td>
+                                            <td>@item.NControles</td>
+                                            <td>@TimeSpan.FromMinutes(item.Romana.Value)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>

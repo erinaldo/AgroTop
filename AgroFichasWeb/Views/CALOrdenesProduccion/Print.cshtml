@@ -1,0 +1,282 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@model CAL_OrdenProduccion
+@{
+    ViewBag.Title = string.Format("Orden de Producción N° {0}", Model.LoteComercial);
+    Layout = "~/Views/Shared/_ResponsiveLayoutPrint.cshtml";
+    List<CAL_DetalleOrdenProduccion> detalleOrdenProduccionList = Model.GetDetalleOrdenProduccion();
+}
+@section VendorCSS
+{
+    <!-- Invoice Print Style -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/stylesheets/invoice-print.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        window.print();
+        //window.close(); 
+    </script>
+}
+
+<div class="invoice">
+    <header class="clearfix">
+        <div class="row">
+            <div class="col-sm-6 mt-md">
+                <h2 class="h2 mb-sm text-dark text-weight-bold">ORDEN DE PRODUCCIÓN</h2>
+            </div>
+            <div class="col-sm-6 text-right mt-md mb-md">
+                <address class="ib mr-xlg">
+                    Orden de Producción
+                    <br />
+                    Código #AT-CE-RPG-01
+                    <br />
+                    Versión #04
+                    <br />
+                    Fecha 11-03-19
+                </address>
+                <div class="ib">
+                    <img src="@Url.Content("~/Content/images/avenatop.png")" alt="Agrotop" />
+                </div>
+            </div>
+        </div>
+    </header>
+    <header class="clearfix">
+        <div class="bill-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bill-to">
+                        <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">RESPONSABLES DE ÁREA:</h3>
+                        <div class="text-left">
+                            <table class="table h5 text-dark" style="border: none">
+                                <tbody>
+                                    @foreach (vw_CAL_ResponsableArea responsableArea in Model.GetResponsablesArea())
+                                    {
+                                        <tr class="b-top-none">
+                                            <td colspan="2"><span class="text-dark text-weight-semibold">@responsableArea.Area:</span></td>
+                                            <td class="text-left"><span class="value">@responsableArea.Responsable</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="bill-info">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="bill-to">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">ORDEN DE PRODUCCIÓN N° @Model.LoteComercial</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">FECHA:</span></td>
+                                    <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yyyy}", Model.Fecha)</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">INICIO DE PRODUCCIÓN:</span></td>
+                                    <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yyyy}", Model.InicioProduccion)</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">TERMINO DE PRODUCCIÓN:</span></td>
+                                    <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yyyy}", Model.TerminoProduccion)</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">EMBARCADOR:</span></td>
+                                    <td class="text-left"><span class="value">@Model.CAL_Exportador.Nombre</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">CONSIGNATARIO:</span></td>
+                                    <td class="text-left"><span class="value">@Model.GetCliente(Model.IdCliente).RazonSocial</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">PAIS DE DESTINO:</span></td>
+                                    <td class="text-left"><span class="value">@Model.GetPais(Model.PaisCodigo).PaisNombreLocal</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">CARRIER:</span></td>
+                                    <td class="text-left"><span class="value">@Model.Carrier.Nombre</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">BARCO:</span></td>
+                                    <td class="text-left"><span class="value">@Model.Barco.Nombre</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">CÓDIGO DEL VIAJE:</span></td>
+                                    <td class="text-left"><span class="value">@Model.NumeroViaje</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">FECHA DE ZARPE:</span></td>
+                                    <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yyyy}", Model.FechaZarpe)</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">TRANSPORTE TERRESTRE:</span></td>
+                                    <td class="text-left">
+                                        @foreach (CAL_GetTransportistasPorOrdenProduccionResult transporteTerrestre in Model.GetTransporteTerrestre())
+                                        {
+                                            <span class="value" style="display: block">@transporteTerrestre.Nombre</span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">ESPECIFICACIÓN TECNICA PRODUCTO:</span></td>
+                                    <td class="text-left"><span class="value">@Model.FichaTecnica</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">LOTE COMERCIAL:</span></td>
+                                    <td class="text-left"><span class="value"><strong>@Model.LoteComercial</strong></span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">INSPECCION SAG:</span></td>
+                                    <td class="text-left"><span class="value">@(Model.InspeccionSAG ? "Sí" : "No")</span></td>
+                                </tr>
+                                @if (Model.Fumigacion)
+                                {
+                                    <tr>
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">FUMIGACIÓN:</span></td>
+                                        <td class="text-left"><span class="value"><strong>Adicional</strong></span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (Model.CAL_TipoOrdenProduccion.IdTipoOrdenProduccion == 1)
+                        {
+                            <div class="bill-info">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="bill-to">
+                                            <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PRODUCTOS</h3>
+                                            <div class="text-left">
+                                                <table class="table h5 text-dark" style="border: none">
+                                                    <tbody>
+                                                        <tr class="b-top-none">
+                                                            <td><span class="text-dark text-weight-semibold">PRODUCTO</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">CNT. DE PRODUCTO</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">ESPESOR</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">SACO</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">PESO DE SACOS</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">CNT. DE SACOS</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">CONT.</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">CNT. DE CONT.</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">SACOS X CONT.</span></td>
+                                                        </tr>
+                                                        @foreach (CAL_DetalleOrdenProduccion detalleOrdenProduccion in Model.GetDetalleOrdenProduccion())
+                                                        {
+                                                            <tr>
+                                                                <td class="text-left">
+                                                                    <span class="value" style="display: block">@detalleOrdenProduccion.CAL_Producto.Nombre</span>
+                                                                    <small>@detalleOrdenProduccion.CAL_Subproducto.Nombre</small>
+                                                                </td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0:N2} tn", detalleOrdenProduccion.CantidadProducto)</span></td>
+                                                                <td class="text-left"><span class="value">@(detalleOrdenProduccion.IdEspesorProducto.HasValue ? string.Format("{0:N2}-{1:N2} mm", detalleOrdenProduccion.CAL_EspesorProducto.Min, detalleOrdenProduccion.CAL_EspesorProducto.Max) : "(No tiene Espesor)")</span></td>
+                                                                <td class="text-left"><span class="value">@detalleOrdenProduccion.CAL_Saco.Nombre</span></td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0:N2} kg"  , (detalleOrdenProduccion.IdPesoSaco.HasValue ? detalleOrdenProduccion.CAL_PesoSaco.Peso : 0))</span></td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0:N0}"     , detalleOrdenProduccion.CantidadSacos.Value)</span></td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0} ft"     , detalleOrdenProduccion.CAL_Contenedor.Tamaño)</span></td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0:N0}"     , detalleOrdenProduccion.CantidadContenedores)</span></td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0:N0}"     , detalleOrdenProduccion.SacosPorContenedor.Value)</span></td>
+                                                            </tr>
+                                                        }
+                                                        <tr>
+                                                            <td><strong>TOTALES</strong>:</td>
+                                                            <td class="text-left"><strong>@string.Format("{0:N2} tn", detalleOrdenProduccionList.Sum(X => X.CantidadProducto))</strong></td>
+                                                            <td class="text-left">&mdash;</td>
+                                                            <td class="text-left">&mdash;</td>
+                                                            <td class="text-left">&mdash;</td>
+                                                            <td class="text-left"><strong>@string.Format("{0:N0}", detalleOrdenProduccionList.Sum(X => X.CantidadSacos).Value)</strong></td>
+                                                            <td class="text-left">&mdash;</td>
+                                                            <td class="text-left"><strong>@string.Format("{0:N0}", detalleOrdenProduccionList.Sum(X => X.CantidadContenedores))</strong></td>
+                                                            <td class="text-left">&mdash;</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.CAL_TipoOrdenProduccion.IdTipoOrdenProduccion == 2)
+                        {
+                            <div class="bill-info">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="bill-to">
+                                            <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PRODUCTOS</h3>
+                                            <div class="text-left">
+                                                <table class="table h5 text-dark" style="border: none">
+                                                    <tbody>
+                                                        <tr class="b-top-none">
+                                                            <td><span class="text-dark text-weight-semibold">PRODUCTO</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">CNT. DE PRODUCTO</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">CONT.</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">CNT. X CONT.</span></td>
+                                                            <td><span class="text-dark text-weight-semibold">CNT. DE CONT.</span></td>
+                                                        </tr>
+                                                        @foreach (CAL_DetalleOrdenProduccion detalleOrdenProduccionGranel in Model.GetDetalleOrdenProduccion())
+                                                        {
+                                                            <tr>
+                                                                <td class="text-left">
+                                                                    <span class="value" style="display: block">@detalleOrdenProduccionGranel.CAL_Producto.Nombre</span>
+                                                                    <small>@detalleOrdenProduccionGranel.CAL_Subproducto.Nombre</small>
+                                                                </td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0:N0} kg", detalleOrdenProduccionGranel.CantidadProducto)</span></td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0} ft"   , detalleOrdenProduccionGranel.CAL_Contenedor.Tamaño)</span></td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0:N0} kg", detalleOrdenProduccionGranel.CantidadPorContenedor)</span></td>
+                                                                <td class="text-left"><span class="value">@string.Format("{0:N2}"   , detalleOrdenProduccionGranel.CantidadContenedores)</span></td>     
+                                                            </tr>
+                                                        }
+                                                        <tr>
+                                                            <td><strong>TOTALES</strong>:</td>
+                                                            <td class="text-left"><strong>@string.Format("{0:N0} kg", detalleOrdenProduccionList.Sum(X => X.CantidadProducto))</strong></td>
+                                                            <td class="text-left">&mdash;</td>
+                                                            <td class="text-left"><strong>@string.Format("{0:N0} kg", detalleOrdenProduccionList.Sum(X => X.CantidadPorContenedor))</strong></td>
+                                                            <td class="text-left"><strong>@string.Format("{0:N2}"   , detalleOrdenProduccionList.Sum(X => X.CantidadContenedores))</strong></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="bill-to">
+                            <table class="table h5 text-dark" style="border: none">
+                                <tr>
+                                    <td><strong>OBSERVACIONES</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>@Model.Observaciones</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="bill-to">
+                            <table class="table h5 text-dark" style="border: none">
+                                <tr>
+                                    <td>Elaborado por: <strong>@Model.GetUser(Model.UserIns).FullName</strong></td>
+                                    <td>Revisado y Aprobado por: <span class="@Model.GetCssStyleAutorizado(Model.Autorizado)"><strong>@((Model.Autorizado.HasValue || Model.AutorizadoAuto.HasValue) && (Model.Autorizado.Value || Model.AutorizadoAuto.Value) ? Model.GetUser(Model.UserAutoriza).FullName : "NO AUTORIZADO")</strong></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Fecha de Creación: <strong>Mayo 2013</strong></td>
+                                    <td>Fecha de Actualización: <strong>Marzo 2019</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

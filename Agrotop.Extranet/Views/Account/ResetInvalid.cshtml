@@ -1,0 +1,21 @@
+﻿@model Agrotop.Extranet.Models.PasswordResetRequest
+@{
+    ViewBag.Title = "Crear o Recuperar Contraseña";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    
+    <div class="titulo1">Crear o Recuperar Contraseña</div>
+
+    <h2>
+	    El link que utilizó ya no es válido.  Con el fin de proteger su cuenta, sólo estuvo vigente por 24 horas.
+    </h2>
+    <p>Puede:</p>
+    <ul>
+	    <li style="margin-bottom: 20px">@Html.ActionLink("Solicitar otra vez", "initrecovery")  una nueva contraseña, o</li>
+	    <li>
+            Contactar a nuestro servicio de atención a cliente:
+            <p><b>+56 (45) 2377025</b></p>
+            <p><a href="mailto:servicioalcliente@empresasagrotop.cl">servicioalcliente@@empresasagrotop.cl</a></p>
+        </li>
+    </ul>
+    <p>&nbsp;</p>

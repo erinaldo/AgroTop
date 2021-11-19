@@ -1,0 +1,82 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_FTFrecuenciaAnalisis
+@{
+    ViewBag.Title = "Frecuencias de Análisis";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    if (Model.Editar)
+    {
+        ViewBag.SubTitle = "Editar Frecuencia de Análisis";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Crear Frecuencia de Análisis";
+    }
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+    <link href="@Url.Content("~/Content/porto/vendor/magnific-popup/magnific-popup.css")" rel="stylesheet" />
+    <link href="~/Content/porto/vendor/bootstrap-fileupload/bootstrap-fileupload.min.css" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/magnific-popup/jquery.magnific-popup.js")"></script>
+    <script src="~/Content/porto/vendor/bootstrap-fileupload/bootstrap-fileupload.min.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Tipo</label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdTipoAnalisis", Model.GetTiposAnalisis(Model.IdTipoAnalisis), "(Seleccione Tipo de Análisis)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdTipoAnalisis")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Frecuencia</label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdFrecuenciaAnalisis", Model.GetFrecuenciasAnalisis(Model.IdFrecuenciaAnalisis), "(Seleccione Frecuencia de Análisis)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdFrecuenciaAnalisis")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="@(Model.Editar ? "Editar" : "Guardar") esta Frecuencia de Análisis" />
+                        </div>
+                    </div>
+                </footer>
+                @Html.Hidden("IdFichaTecnica", Model.IdFichaTecnica)
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

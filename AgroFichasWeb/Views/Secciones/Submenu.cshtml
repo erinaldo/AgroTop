@@ -1,0 +1,6 @@
+﻿<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1008))
+    {
+        <li><a href="@Url.Content("~/secciones/crear")">Crear Sección</a></li>
+    }
+</ul>

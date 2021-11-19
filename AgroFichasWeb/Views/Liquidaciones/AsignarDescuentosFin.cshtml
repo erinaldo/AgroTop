@@ -1,0 +1,31 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model Liquidacion
+@{
+
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "Los descuentos se han asignado con éxito";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm">
+    @Html.Partial("Liquidacion", Model)
+    <p class="okcancel">
+        <input type="submit" value="Imprimir Esta Liquidación" id="btnPrint" onclick="javascript: printLiquidacion(1);" /> o @Html.ActionLink("Registrar descuentos a otra liquidación", "asignardescuentosindex", "liquidaciones")
+    </p>
+</fieldset>
+
+<script type="text/javascript">
+
+        function printIngreso(copias) {
+            window.open('@Url.Action("printliquidacion", "liquidaciones", new { id = Model.IdLiquidacion, copias = "cpis" })'.replace('cpis', copias));
+        }
+
+</script>    

@@ -1,0 +1,90 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<Proveedor>
+
+@{
+    ViewBag.NombreSeccion = "Proveedores";
+    ViewBag.Title = "Administrar Proveedores";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>Administrar Proveedores</h2>
+
+    @Html.ValidationSummary("No fue posible procesar su solicitud")
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="left">
+                Nombre
+            </th>
+            <th align="left">
+                Email
+            </th>
+            <th align="left">
+                Fono
+            </th>
+            <th align="center">
+                Habilitado
+            </th>
+            <th align="center">
+                Agricultores
+            </th>
+            <th align="center">
+                Editar
+            </th>
+            <th align="center">
+                Eliminar
+            </th>
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="7" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+        
+        @foreach (var item in Model) 
+        {
+            <tr valign="top">
+                <td align="left">
+                    @item.Nombre
+                </td>
+                <td align="left">
+                    @item.Email
+                </td>
+                <td align="left">
+                    @item.Telefono1
+                </td>
+                <td align="center">
+                    @Html.ListCheckBox(item.Habilitado)
+                </td>
+                <td align="center">
+                    @Html.ActionLink(item.Agricultor.Count() + " asignado(s)", "Agricultores", new {id=item.IdProveedor})
+                </td>
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "Editar", new { id = item.IdProveedor })
+                </td>
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "Eliminar", new { id = item.IdProveedor })
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="7" class="pager">
+                @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "Proveedores", "")
+            </td>
+        </tr>
+
+    </table>

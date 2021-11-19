@@ -1,0 +1,97 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model LOG_Pedido
+
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    if (Model.IdPedido == 0)
+    {
+        ViewBag.Title = "Crear Pedido";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Pedido";
+    }
+
+    var cultivosList = (IEnumerable<SelectListItem>)ViewData["cultivosList"];
+    var envasesList = (IEnumerable<SelectListItem>)ViewData["envasesList"];
+    var bodegasOrigenList = (IEnumerable<SelectListItem>)ViewData["bodegasOrigenList"];
+    var bodegasDestinoList = (IEnumerable<SelectListItem>)ViewData["bodegasDestinoList"];
+    var estadosList = (IEnumerable<SelectListItem>)ViewData["estadosList"];
+    var tipoPedidosList = (IEnumerable<SelectListItem>)ViewData["tipoPedidosList"];
+    var IdRequerimiento = (int)ViewData["IdRequerimiento"];
+
+    var DC = new AgroFichasDBDataContext();
+    var requerimiento = (from x in DC.LOG_Requerimiento
+                        where x.IdRequerimiento == IdRequerimiento
+                        select x).Single();
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Cultivo</label>
+            @Html.DropDownList("IdCultivo", cultivosList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdCultivo", " ")
+        </p>
+        <p>
+            <label for="Titulo">Tipo Pedido</label>
+            @Html.DropDownList("IdTipoPedido", tipoPedidosList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdTipoPedido", " ")
+        </p>
+        <p>
+            <label for="Titulo">Envase</label>
+            @Html.DropDownList("IdEnvase", envasesList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdEnvase", " ")
+        </p>
+        <p>
+            <label for="Titulo">Cantidad Unitaria</label>
+            @Html.TextBox("CantidadUnitariaKg", Model.CantidadUnitariaKg, new { @class = "heavy std", maxlength = "17" }) <em>en kilogramos</em>
+            @Html.ValidationMessage("CantidadUnitariaKg", " ")
+        </p>
+        @if (requerimiento.IdTipoMovimiento == 1)//Interno
+        {
+            <p>
+                <label for="Titulo">Origen</label>
+                @Html.DropDownList("Origen", bodegasOrigenList, "-- Seleccione --", new { @class = "heavy std" })
+            </p>
+            <p>
+                <label for="Titulo">Destino</label>
+                @Html.DropDownList("Destino", bodegasDestinoList, "-- Seleccione --", new { @class = "heavy std" })
+            </p>
+        }
+        else//Externo-Otro
+        {
+            <p>
+                <label for="Titulo">Origen</label>
+                @Html.TextBox("OtroOrigen", Model.OtroOrigen, new { @class = "heavy std", maxlength = "50" })
+            </p>
+            <p>
+                <label for="Titulo">Destino</label>
+                @Html.TextBox("OtroDestino", Model.OtroDestino, new { @class = "heavy std", maxlength = "50" })
+            </p>
+        }
+        <p>
+            <label for="Titulo">Estado</label>
+            @Html.DropDownList("IdEstado", estadosList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdEstado", " ")
+        </p>
+        <p>
+            <label for="Titulo">Observación</label>
+            @Html.TextArea("Observacion", Model.Observacion, new { @class = "heavy std", maxlength = "100" })
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar este Pedido" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+    <input type="hidden" name="IdRequerimiento" value="@IdRequerimiento" />
+}

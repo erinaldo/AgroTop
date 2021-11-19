@@ -1,0 +1,65 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model Agricultor
+
+@{
+    ViewBag.NombreSeccion = "Recepciones";
+    if (Model.IdAgricultor == 0)
+    {
+        ViewBag.Title = "Crear Agricultor";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Agricultor";
+    }
+}
+
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Nombre</label>
+            @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "100" })
+            @Html.ValidationMessage("Nombre", ".")
+        </p>
+        <p>
+            <label for="Fecha">Rut</label>
+            @Html.Hidden("IsNew", Model.IsNew)
+            @if (Model.IsNew)
+            {
+                @Html.TextBox("Rut", Model.Rut, new { @class = "std" })
+                @Html.ValidationMessage("Rut", ".")
+            }
+            else
+            {
+                @Model.Rut
+                @Html.Hidden("Rut", Model.Rut)
+            }
+        </p>
+        <p>
+            <label for="Fono1">Fono 1</label>
+            @Html.TextBox("Fono1", Model.Fono1, new { @class = "std" })
+            @Html.ValidationMessage("Fono1", ".")
+        </p>
+        <p>
+            <label for="Fono2">Fono 2</label>
+            @Html.TextBox("Fono2", Model.Fono2, new { @class = "std" })
+            @Html.ValidationMessage("Fono2", ".")
+        </p>        
+        <p>
+            <label for="Fecha">Email</label>
+            @Html.TextBox("Email", Model.Email, new { @class = "std" })
+            @Html.ValidationMessage("Email", ".")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar Este Agricultor" />
+        </p>
+    </fieldset>
+}
+

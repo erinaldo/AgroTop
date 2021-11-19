@@ -1,0 +1,211 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_CertificadoVidaUtil
+@{
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    ViewBag.Title = "Certificado de Vida Útil";
+    ViewBag.SubTitle = "Crear Certificado de Vida Útil";
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link href="~/Content/porto/vendor/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/moment/moment.js")"></script>
+    <script src="~/Content/porto/vendor/select2/js/select2.min.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        // Llamado al API de Empresas Agrotop
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="', '', '">', 'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        function SetReserva() {
+            $("#Reserva").val("");
+
+            var id = $('#IdOrdenProduccion').val();
+            $.getJSON(uri + '/OrdenProduccion/GetReserva?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (jQuery.isEmptyObject(result)) {
+                        alert("No hay reserva disponible");
+                    }
+                    else {
+                        $("#Reserva").val(result);
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function DeleteProductos() {
+            $("#IdDetalleOrdenProduccion option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Producto)', '</option>');
+            $("#IdDetalleOrdenProduccion").html(options.join(''));
+        }
+
+        function GetProducto() {
+            var id = $('#IdOrdenProduccion').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdDetalleOrdenProduccion'));
+            }
+            $.getJSON(uri + '/OrdenProduccion/GetProductosConDetalle?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                        DeleteClientes();
+                    }
+                    else {
+                        options.push('<option value="','', '">','(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="'+ result[i].IdDetalleOrdenProduccion +'">',
+                                result[i].Nombre,'</option>');
+                        }
+                        $("#IdDetalleOrdenProduccion").html(options.join(''));
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdOrdenProduccion").change(function () {
+            DeleteProductos();
+            GetProducto();
+            SetReserva();
+        });
+
+        jQuery.datetimepicker.setLocale('es');
+        jQuery('#FechaEmbarque').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: false,
+            timepicker: false,
+            todayButton: true,
+            value: '',
+            weeks: true
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Lote Comercial <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdOrdenProduccion", Model.GetLotesPallets(Model.IdOrdenProduccion), "(Seleccione Lote Comercial)", new { @class = "form-control populate", @data_plugin_selectTwo = "" })
+                                        @Html.ValidationMessage("IdOrdenProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdDetalleOrdenProduccion", new List<SelectListItem>(), "(Seleccione Producto)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdDetalleOrdenProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Reserva <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Reserva", Model.Reserva, new { @class = "form-control", maxlength = "32" })
+                                        @Html.ValidationMessage("Reserva")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Número de Certificado <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("NCertificado", Model.NCertificado, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("NCertificado")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fecha de Embarque</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("FechaEmbarque", Model.FechaEmbarque, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("FechaEmbarque")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Certificado" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

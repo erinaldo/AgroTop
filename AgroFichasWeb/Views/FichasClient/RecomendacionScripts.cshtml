@@ -1,0 +1,141 @@
+﻿@using AgroFichasWeb.Models
+@{ 
+    var quimicos = Quimico.GetAll(null);
+}
+
+<script>
+
+    var quimicos = [];
+    @foreach (var q in quimicos)
+    {
+        <text>quimicos.push({
+        id: @q.IdQuimico,
+        nombre: '@q.Nombre',
+        um: '@q.UM.Nombre',
+        idUM: @q.UM.IdUM,
+        dosis: @q.Dosis,
+        habilitado: @(q.Habilitado ? "true" : "false"),
+        idTipoRecomendacion: @q.IdTipoRecomendacion
+        });</text>
+    }
+
+    $("#idTipoRecomendacion").change(function () {
+        fillQuimicos(-1, null);
+    });
+
+    $("#idQuimico").change(function () {
+        setDosisUM(null);
+    });
+
+    function fillQuimicos(idQuimico, dosis) {
+
+        $("#idQuimico").empty();
+
+        var idTipo = $("#idTipoRecomendacion").val();
+
+        for (var i = 0; i < quimicos.length; i++) {
+            var q = quimicos[i];
+            if (q.idTipoRecomendacion == idTipo && (q.habilitado || q.id == idQuimico)) {
+                $('#idQuimico').append($('<option>', {
+                    value: q.id,
+                    text: q.nombre
+                }));
+            }
+        }
+
+        if (idQuimico > 0)
+            $("#idQuimico").val(idQuimico);
+
+        setDosisUM(dosis);
+    }
+
+    function setDosisUM(dosis) {
+        var idQuimico = $("#idQuimico").val();
+        for (var i = 0; i < quimicos.length; i++) {
+            var q = quimicos[i];
+            if (q.id == idQuimico) {
+                if (dosis != null)
+                    $("#dosisRecomendacion").val(dosis);
+                else
+                    $("#dosisRecomendacion").val(q.dosis);
+
+                $("#umDosis").html(q.um);
+                $("#recIdUM").val(q.idUM);
+                break;
+            }
+        }
+    }
+
+    function recSetRecomendacion(subItem) {
+
+        $("#idTipoRecomendacion").val(subItem.IdTipoRecomendacion);
+        $("#dosisRecomendacion").val(subItem.Dosis);
+        $("#recId").val(subItem.Id);
+        $("#fechaaplicacion").val(subItem.FechaAplicacion);
+
+        if (subItem.Id == 0) {
+            fillQuimicos(-1, null);
+        }
+        else {
+            fillQuimicos(subItem.IdQuimico, subItem.Dosis);
+        }
+    }
+
+    var recRequestCode = '';
+    /*
+    Modal Dismiss
+    */
+    $(document).on('click', '.recomendacion-selector-dismiss', function (e) {
+        e.preventDefault();
+        recCancel();
+    });
+
+    /*
+    Modal Confirm
+    */
+    $(document).on('click', '.recomendacion-selector-confirm', function (e) {
+        e.preventDefault();
+
+        var result = {
+            Id: $("#recId").val(), 
+            IdTipoRecomendacion: $("#idTipoRecomendacion").val(),
+            IdQuimico: $("#idQuimico").val(),
+            Dosis: parseFloat($("#dosisRecomendacion").val()),
+            IdUM: $("#recIdUM").val(),
+            FechaAplicacion: $("#fechaaplicacion").val(),
+            NombreTipoRecomendacion: $("#idTipoRecomendacion option:selected").text(),
+            NombreQuimico: $("#idQuimico option:selected").text(),
+            NombreUM: $("#umDosis").html(),
+            FerN: 0,
+            FerP2O5: 0,
+            FerKO2: 0,
+            FerMgO: 0,
+            FerS: 0,
+            FerB: 0,
+            FerZn: 0,
+            FerCaO: 0
+        };
+
+        var errorList = [];
+
+        if (result.IdTipoRecomendacion == null)
+            errorList.push("Seleccione el Tipo.");
+
+        if (result.IdQuimico == null)
+            errorList.push("Seleccione el Químico.");
+
+        if (isNaN(result.Dosis) || result.Dosis <= 0)
+            errorList.push("La Dosis no es válida.");
+
+        if (!EsFecha(result.FechaAplicacion))
+            errorList.push("La Fecha no es válida.");
+
+        if (errorList.length > 0) {
+            alertValidationErrors(errorList);
+        }
+        else {
+            recCallback(result);
+        }
+    });
+
+</script>

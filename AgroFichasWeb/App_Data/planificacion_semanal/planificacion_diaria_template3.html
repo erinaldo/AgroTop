@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Planificación de la Semana N° ***SEMANA*** del ***AÑO***</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- Web Fonts  -->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet" type="text/css">
+
+		<!-- Vendor CSS -->
+		<link rel="stylesheet" href="D:\sites\AgroFichasRoot\AgroFichas\wwwroot\App_Data\planificacion_semanal\content\assets\vendor\bootstrap\css\bootstrap.css" />
+
+		<!-- Invoice Print Style -->
+		<link rel="stylesheet" href="D:\sites\AgroFichasRoot\AgroFichas\wwwroot\App_Data\planificacion_semanal\content\assets\stylesheets\invoice-print.css" />
+		<style>
+        .ct-HayTraslados {
+            background-color: lightgreen;
+            text-align: center;
+        }
+
+        .ct-NoHayTraslados {
+            background-color: lightgoldenrodyellow;
+            text-align: center;
+        }
+		</style>
+	</head>
+	<body>
+		<div class="invoice">
+			<header class="clearfix">
+				<div class="row">
+					<div class="col-sm-6 mt-md">
+						<h2 class="h2 mt-none mb-sm text-dark text-weight-bold">PLANIFICACIÓN DIARIA</h2>
+						<h4 class="h4 m-none text-dark text-weight-bold">Semana # ***SEMANA***</h4>
+					</div>
+					<div class="col-sm-6 text-right mt-md mb-md">
+						<div class="ib">
+							<img src="D:\sites\AgroFichasRoot\AgroFichas\wwwroot\App_Data\planificacion_semanal\content\assets\images\at_logo.png" alt="Agrotop" />
+						</div>
+					</div>
+				</div>
+			</header>
+			<div class="bill-info">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="bill-to">
+
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="bill-data text-right">
+							<p class="mb-none">
+								<span class="text-dark">Día:</span>
+								<span class="value">***DIA***</span>
+							</p>
+							<p class="mb-none">
+								<span class="text-dark">Año:</span>
+								<span class="value">***AÑO***</span>
+							</p>
+							<p class="mb-none">
+								<span class="text-dark">Fecha de Creación:</span>
+								<span class="value">***DATETIME***</span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="">
+				<table class="table invoice-items" id="datatable" style="margin-bottom: 0;">
+                    <thead>
+					<tr class="h4 text-dark" style="font-size: 1.4rem;">
+                        <th>Semana</th>
+                        <th>Empresa</th>
+                        <th>Producto</th>
+                        <th>Envase</th>
+                        <th>Cliente</th>
+                        <th>Destino/Puerto Embarque</th>
+                        <th>País</th>
+                        <th>O/C<br />O/V</th>
+                        <th>L/C<br />Requerida</th>
+                        <th>Lote</th>
+                        <th>D.U.S.</th>
+                        <th>Reserva</th>
+                        <th align="center" style="text-align: center">
+                            ***FECHADIA***<br />
+                            ***DIA***
+                        </th>
+                    </tr>
+					</thead>
+                    ***PLANIFICACIONES***
+                    <tr>
+                        <td colspan="12" style="font-weight: bold; text-align: right">TOTAL DE TRASLADOS:</td>
+                        <td class="***CLASSTOTALDIA***">***TOTALDIA***</td>
+                    </tr>
+                </table>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,378 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_ControlTiempo
+
+@{
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = "Registrar Llegada";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var UserID = (int)ViewData["UserID"];
+}
+
+@section CustomScripts
+{
+    <script>
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function GetClientes() {
+            var id = $('#IdEmpresa').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdCliente'));
+            }
+            $.getJSON(uri + '/Clientes/GetClientes?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay clientes disponibles");
+                        DeleteClientes();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Cliente)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdCliente, '">',
+                                result[i].RazonSocial, '</option>');
+                        }
+                        $("#IdCliente").html(options.join(''));
+
+                        var idCliente = '@(!Model.IdCliente.HasValue ? "" : Model.IdCliente.Value.ToString())';
+                        var idEmpresa = '@(!Model.IdEmpresa.HasValue ? "" : Model.IdEmpresa.Value.ToString())';
+                        if (!$.isEmptyObject(idCliente) && id == idEmpresa) {
+                            $("#IdCliente").val(idCliente);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetProductos() {
+            var id = $('#IdEmpresa').val();
+            var idPlanta = $('#IdPlantaProduccion').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdProducto'));
+            }
+            $.getJSON(uri + '/Productos/GetProductos?id=' + id + '&idPlanta=' + idPlanta)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                        DeleteProductos();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdProducto, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#IdProducto").html(options.join(''));
+
+                        var idProducto = '@(Model.IdProducto == 0 ? "" : Model.IdProducto.ToString())';
+                        var idEmpresa = '@(Model.IdEmpresa == 0 ? "" : Model.IdEmpresa.ToString())';
+                        if (!$.isEmptyObject(idProducto) && id == idEmpresa) {
+                            $("#IdProducto").val(idProducto);
+
+                            DeleteEnvases();
+                            GetEnvases();
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetEnvases() {
+            var id = $('#IdProducto').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdEnvase'));
+            }
+            $.getJSON(uri + '/Productos/GetEnvases?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay envases disponibles");
+                        DeleteEnvases();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Envase)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdEnvase, '">',
+                                result[i].Descripcion, '</option>');
+                        }
+                        $("#IdEnvase").html(options.join(''));
+
+                        var idEnvase = '@(Model.IdEnvase == 0 ? "" : Model.IdEnvase.ToString())';
+                        if (!$.isEmptyObject(idEnvase)) {
+                            $("#IdEnvase").val(idEnvase);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function DeleteClientes() {
+            $("#IdCliente option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Cliente)', '</option>');
+            $("#IdCliente").html(options.join(''));
+        }
+
+        function DeleteProductos() {
+            $("#IdProducto option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Producto)', '</option>');
+            $("#IdProducto").html(options.join(''));
+        }
+
+        function DeleteEnvases() {
+            $("#IdEnvase option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Envase)', '</option>');
+            $("#IdEnvase").html(options.join(''));
+        }
+
+        function SetCargando(element)
+        {
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+
+
+
+        $("#IdEmpresa").change(function () {
+            DeleteClientes();
+            DeleteProductos();
+            DeleteEnvases();
+            GetClientes();
+            GetProductos();
+        });
+
+        $("#IdProducto").change(function () {
+            DeleteEnvases();
+            GetEnvases();
+        });
+
+        $("#IdPlantaProduccion").change(function () {
+            DeleteProductos();
+            GetProductos();
+        });
+
+        $(document).ready(function () {
+            if ($("#IdEmpresa").val() != "")
+            {
+                DeleteClientes();
+                GetClientes();
+
+                DeleteProductos();
+                DeleteEnvases();
+                GetProductos();
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Producción <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdPlantaProduccion", Model.GetPlantaProduccion(Model.IdPlantaProduccion, UserID), new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdPlantaProduccion", " ")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdEmpresa", Model.GetEmpresas(Model.IdEmpresa), "(Seleccione Empresa)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdEmpresa")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cliente <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdCliente", new List<SelectListItem>(), "(Seleccione Cliente)", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdProducto", new List<SelectListItem>(), "(Seleccione Producto)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdProducto")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Envase <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdEnvase", new List<SelectListItem>(), "(Seleccione Envase)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdEnvase")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">RUT de la Empresa de Transporte <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("RutTransportista", Model.RutTransportista, new { @class = "form-control", maxlength = "10", placeholder = "Ingrese RUT sin puntos y con guíon" })
+                                            @Html.ValidationMessage("RutTransportista")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Nombre de la Empresa de Transporte <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("NombreTransportista", Model.NombreTransportista, new { @class = "form-control", maxlength = "200" })
+                                            @Html.ValidationMessage("NombreTransportista")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Patente del Camión <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Patente", Model.Patente, new { @class = "form-control", maxlength = "8" })
+                                            @Html.ValidationMessage("Patente")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Nombre del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("NombreChofer", Model.NombreChofer, new { @class = "form-control", maxlength = "200" })
+                                            @Html.ValidationMessage("NombreChofer")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Teléfono del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("TelefonoChofer", Model.TelefonoChofer, new { @class = "form-control", maxlength = "100", required = "required" })
+                                            @Html.ValidationMessage("TelefonoChofer")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Rut del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("RutChofer", Model.RutChofer, new { @class = "form-control", maxlength = "10", required = "required", placeholder = "Ingrese RUT sin puntos y con guíon" })
+                                            @Html.ValidationMessage("RutChofer")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Email del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("EmailChofer", Model.EmailChofer, new { @class = "form-control", maxlength = "100", type = "email", required = "required" })
+                                            @Html.ValidationMessage("EmailChofer")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Tipo de camion <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("TipoCamion", Model.TipoCamion, new { @class = "form-control", maxlength = "100", required = "required" })
+                                            @Html.ValidationMessage("TipoCamion")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Registrar Llegada" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

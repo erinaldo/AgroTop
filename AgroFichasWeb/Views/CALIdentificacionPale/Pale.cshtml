@@ -1,0 +1,382 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.SoftwareCalidad
+@model PaleViewModel
+@{
+    ViewBag.Title = string.Format("Pallet N° {0}", Model.Pale.IdPale);
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    //327 Ver pallets a analizar
+    //328 Crear análisis de pallet
+    //329 Editar análisis de pallet
+    //330 Eliminar análisis de pallet
+    AgroFichasDBDataContext dataContext = new AgroFichasDBDataContext();
+
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <style>
+
+        #tbl-QRCode {
+            border-spacing: 5px 5px 5px 0;
+            border-collapse: separate;
+        }
+
+            #tbl-QRCode .QRCode {
+                padding: 5px 5px 5px 0;
+            }
+
+            #tbl-QRCode .QRCodeImg {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                position: relative;
+                width: 100px;
+            }
+
+            #tbl-QRCode .QRCodeData {
+                font-family: 'Courier New';
+                font-weight: bold
+            }
+    </style>
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+        @if (ViewBag.Section != null)
+        {
+            @:$(document).ready(function () {
+                @:var anchor = document.getElementById('@ViewBag.Section');
+                @:anchor.scrollIntoView(true);
+            @:});
+        }
+    </script>
+}
+
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Detalle de Pallet</h2>
+        @if (permisosUsuario.CrearAnalisisPallet && Model.Pale.NoEstaAnalizado(Model.Pale.IdPale))
+        {
+            <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                <a href="@Url.Action("Crear", "CALAnalisisPallets", new { id = Model.Pale.IdPale })" class="btn btn-primary">Crear Análisis de Pallet <i class="fa fa-plus"></i></a>
+            </div>
+        }
+    </header>
+    <div class="panel-body">
+        <div class="invoice">
+            <header class="clearfix">
+                <div class="row">
+                    <div class="col-sm-6 mt-md">
+                        <h2 class="h2 mb-sm text-dark text-weight-bold">
+                            PALLET N° <span style="font-family: Consolas">@Model.Pale.IdPale</span>
+                        </h2>
+                        <h2 class="h2 mb-sm text-dark text-weight-bold">
+                            @{ PlantaProduccion plantaProduccion = dataContext.PlantaProduccion.Where(X => X.IdPlantaProduccion == Model.Pale.CAL_DetalleOrdenProduccion.CAL_OrdenProduccion.IdPlanta).FirstOrDefault(); }
+                            Planta productiva: <span style="font-family: Consolas">@plantaProduccion.Nombre</span>
+                        </h2>
+                    </div>
+                    <div class="col-sm-6 text-right mt-md mb-md">
+                        <address class="ib mr-xlg">
+                        </address>
+                        <div class="ib">
+                            <img src="@Model.Pale.GetImgSrc()" alt="QR-Code" width="200" />
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <header class="clearfix">
+                <div class="bill-info">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="bill-to">
+                                <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">ANTECEDENTES PRELIMINARES:</h3>
+                                <div class="text-left">
+                                    <table class="table h5 text-dark" style="border: none">
+                                        <tbody>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">LOTE COMERCIAL:</span></td>
+                                                <td class="text-left"><span class="value">@Model.OrdenProduccion.LoteComercial</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">PRODUCTO:</span></td>
+                                                <td class="text-left"><span class="value">@Model.Producto.Nombre</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">ESPESOR:</span></td>
+                                                <td class="text-left"><span class="value">@(Model.EspesorProducto != null ? string.Format("{0:N2}-{1:N2} mm", Model.EspesorProducto.Min, Model.EspesorProducto.Max) : "(No tiene Espesor)")</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">SACO:</span></td>
+                                                <td class="text-left"><span class="value">@Model.Saco.Nombre</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="bill-info">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="bill-to">
+                                <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">SACOS</h3>
+                                <div class="text-left">
+                                    <table class="table h5 text-dark" style="border: none" id="tbl-QRCode">
+                                        <tbody>
+                                            <tr class="b-top-none">
+                                                <th>Saco</th>
+                                                <th>QR-CODE</th>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td class="text-left">
+                                                    <span class="value" style="display: block">@Model.Saco.Nombre</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    @for (int I = 1; I <= Model.Pale.CantidadPaletizada; I++)
+                                                    {
+                                                        <div class="col-md-4">
+                                                            <div class="QRCodeImg">
+                                                                <img src="@Model.CALIdentificacionPale.CreateQRCode(Model.CALIdentificacionPale.CreateQRCodeData(Model.Pale, I))" width="100" />
+                                                            </div>
+                                                            <span class="QRCodeData" style="word-break: break-word">@Model.CALIdentificacionPale.CreateQRCodeData(Model.Pale, I)</span>
+                                                        </div>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+
+            </header>
+            <div class="bill-info" style="margin-top: 20px;">
+                <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PALLET</h3>
+                <div class="text-left">
+                    <table class="table h5 text-dark" style="border: none">
+                        <thead>
+                            <tr>
+                                <th style="word-break: break-word">Nº CORRELATIVO</th>
+                                <th style="word-break: break-word">CÓDIGO</th>
+                                <th style="word-break: break-word">TIPO</th>
+                                <th style="word-break: break-word">CANTIDAD PALETIZADA</th>
+                                <th style="word-break: break-word">CONTROL DE FECHADO</th>
+                                <th style="word-break: break-word">TURNO</th>
+                                <th style="word-break: break-word">ENVASADORES</th>
+                                <th style="word-break: break-word">FECHA DE CREACIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="b-top-none">
+                                <td class="text-left"><span class="value">@Model.Pale.IdPale</span></td>
+                                <td class="text-left"><span class="value" style="word-break: break-word">@Model.Pale.CodigoInterno</span></td>
+                                <td class="text-left"><span class="value">@Model.Pale.CAL_TipoPale.Descripcion</span></td>
+                                <td class="text-left"><span class="value">@Model.Pale.CantidadPaletizada sac</span></td>
+                                <td class="text-left">
+                                    <span class="value">
+                                        @if (Model.Pale.IdControlFechado.HasValue)
+                                        {
+                                            @Model.Pale.CAL_FTSacoControlFechado.Descripcion
+                                        }
+                                    </span>
+                                </td>
+                                <td class="text-left">
+                                    <span class="value">
+                                        @if (Model.GrupoEnvasador != null)
+                                        {
+                                            <span style="display: block"><small>POR TURNO DE ENVASADORES</small>:</span>
+                                            <span>@string.Format("{0} de {1} a {2} de {3:dd/MM/yyyy}", Model.Turno2.CAL_TipoTurno.Descripcion, Model.Turno2.InicioTurno, Model.Turno2.FinTurno, Model.GrupoEnvasador.FechaHoraIns)</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="display: block"><small>POR FECHA DE CREACIÓN DEL PALLET</small>:</span>
+                                            <span>@string.Format("{0} de {1} a {2} de {3:dd/MM/yyyy}", Model.Turno2.CAL_TipoTurno.Descripcion, Model.Turno2.InicioTurno, Model.Turno2.FinTurno, Model.Pale.FechaHoraIns)</span>
+                                        }
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (Model.GrupoEnvasador != null)
+                                    {
+                                        <ul>
+                                            @foreach (CAL_Envasador envasador in Model.GetEnvasadores(Model.GrupoEnvasador.IdGrupoEnvasador))
+                                            {
+
+                                                <li><small>@envasador.GetEnvasador(envasador.UserID).FullName</small></li>
+
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <small>No disponible</small>
+                                    }
+                                </td>
+                                <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yyyy HH:mm}", Model.Pale.FechaHoraIns)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @if (!Model.Pale.NoEstaAnalizado(Model.Pale.IdPale))
+            {
+                <div class="bill-info" style="margin-top: 20px;" id="ResultadoAnalisis">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">RESULTADO DE ANÁLISIS</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">FECHA DEL ANÁLISIS:</span></td>
+                                    <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yyyy}", Model.AnalisisPale.FechaHoraIns)</span></td>
+                                </tr>
+                                <tr class="b-top-none">
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">ANALISTA:</span></td>
+                                    <td class="text-left">
+                                        <span class="value">
+                                            @if (Model.AnalisisPale.GetAnalista(Model.AnalisisPale.UserIns) != null)
+                                            {
+                                                @Model.AnalisisPale.GetAnalista(Model.AnalisisPale.UserIns).FullName
+                                            }
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr class="b-top-none">
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">TURNO:</span></td>
+                                    <td class="text-left"><span class="value">@string.Format("{0} de {1} a {2} de {3:dd/MM/yyyy}", Model.Turno2.CAL_TipoTurno.Descripcion, Model.Turno2.InicioTurno, Model.Turno2.FinTurno, Model.AnalisisPale.FechaHoraIns)</span></td>
+                                </tr>
+                                <tr class="b-top-none">
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">FECHA DE ETIQUETADO:</span></td>
+                                    <td class="text-left"><span class="value">@string.Format("{0:dd/MM/yyyy}", Model.AnalisisPale.FechaEtiquetado)</span></td>
+                                </tr>
+                                <tr class="b-top-none">
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">SACOS DETECTOR DE METALES:</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.SacosDetectorMetales</span></td>
+                                </tr>
+                                <tr class="b-top-none">
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">OBSERVACIONES:</span></td>
+                                    <td class="text-left"><span class="value">@Html.Raw(Model.AnalisisPale.Observaciones)</span></td>
+                                </tr>
+                                <tr class="b-top-none">
+                                    <td colspan="2"><span class="text-dark text-weight-semibold">RETENIDO:</span></td>
+                                    <td class="text-left">
+                                        @if (!Model.AnalisisPale.RetenidoAut.Value && !Model.AnalisisPale.Retenido)
+                                        {
+                                            <span class="label label-@(!Model.AnalisisPale.Retenido && !Model.AnalisisPale.RetenidoAut.Value ? "success" : "")" style="display: block">
+                                                Liberado Sincronizado
+                                            </span>
+                                        }
+                                        else if (Model.AnalisisPale.Liberado)
+                                        {
+                                            <span class="label label-@(Model.AnalisisPale.Liberado ? "success" : "")" style="display: block">
+                                                Liberado
+                                            </span>
+                                        }
+                                        else if (Model.AnalisisPale.RetenidoAut.Value)
+                                        {
+                                            <span class="label label-danger" style="display: block">
+                                                Retenido Automático
+                                            </span>
+                                        }
+                                        else if (Model.AnalisisPale.Retenido || !Model.AnalisisPale.Retenido)
+                                        {
+                                            <span class="label label-@(Model.AnalisisPale.Retenido ? "danger" : "success")" style="display: block">
+                                                @(Model.AnalisisPale.Retenido ? "Retenido Analista" : "Liberado Analista")
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="bill-info" style="margin-top: 20px;">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">MUESTRA ESPESORES</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <thead>
+                                <tr>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                    <th>9</th>
+                                    <th>10</th>
+                                    <th>PROMEDIO</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="b-top-none">
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor1.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor2.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor3.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor4.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor5.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor6.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor7.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor8.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor9.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value">@Model.AnalisisPale.MuestraEspesor10.ToString("N2") mm</span></td>
+                                    <td class="text-left"><span class="value"><b>@Model.AnalisisPale.PromedioMuestraEspesor.Value.ToString("N2") mm</b></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="bill-info" style="margin-top: 20px;">
+                    <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS</h3>
+                    <div class="text-left">
+                        <table class="table h5 text-dark" style="border: none">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">Parámetro</th>
+                                    <th>Mínimo</th>
+                                    <th>Máximo</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (CAL_AnalisisPaleTest cAL_AnalisisPaleTest in Model.AnalisisPaleTestList)
+                                {
+                                    <tr class="b-top-none">
+                                        <td colspan="2"><span class="text-dark text-weight-semibold">@cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.Nombre.ToUpper() (@cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.UM.ToUpper()):</span></td>
+                                        <td>@Formatter.Format(cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.MinValidValue.Value, cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.UM, cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.FormatString)</td>
+                                        <td>@Formatter.Format(cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.MaxValidValue.Value, cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.UM, cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.FormatString)</td>
+                                        <td class="text-left"><span class="value @(cAL_AnalisisPaleTest.ValidValue.Value ? "cal-ValidValue" : "cal-NoValidValue")">@Formatter.Format(cAL_AnalisisPaleTest.Value, cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.UM, cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.FormatString)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+        @*<div class="text-right mr-lg">
+            <a href="@Url.Action("Imprimir", "CALIdentificacionPale", new {id = Model.Pale.IdPale })" target="_blank" class="btn btn-primary ml-sm"><i class="fa fa-print"></i> Imprimir</a>
+        </div>*@
+    </div>
+</section>

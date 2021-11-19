@@ -1,0 +1,206 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model AgroFichasWeb.Controllers.PaginatedList<ProcesoIngreso>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Recepciones";
+    ViewBag.Title = "Administrar Recepciones " + temporada.Nombre;
+
+    
+    
+    var puedeAnular = SYS_User.Current().HasPermiso(25);
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>@ViewBag.Title</h2>
+
+    <div style="margin: 20px 0px">
+        @using(Html.BeginForm("index", "recepciones", new { id = 0 }, FormMethod.Get)) {
+            @Html.Partial("TemporadaSelector")
+            @Html.Partial("EmpresaSelector")
+            @Html.Partial("CultivoSelector")
+            @*<select name="idCultivoContrato" id="idCultivoContrato">
+                <option value="0">(Todos los Cultivos)</option>
+            </select>*@
+            @Html.Partial("SucursalSelector")
+            @Html.Partial("EstadoIngresoSelector")
+            <input type="text" name="key" value="@ViewData["key"]" />
+            <input type="submit" value="Buscar" />
+        }
+        <div style="margin-top: 10px">
+            @Html.ActionLink("Exportar", "indexexport", new { idTemporada = temporada.IdTemporada, idEstadoIngreso = ViewData["idEstadoIngreso"], idEmpresa = ViewData["idEmpresa"], idSucursal = ViewData["idSucursal"], key = ViewData["key"] }, new { @class = "exportlink" })
+        </div>
+    </div>
+
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="center">
+                Estado
+            </th>    
+            <th align="left">
+                Planta
+            </th>
+            <th align="left">
+                Número
+            </th>
+            <th align="left">
+                Llegada
+            </th>                           
+            <th align="left">
+                Nombre
+            </th>
+            <th align="left">
+                Guía
+            </th>
+            <th align="left">
+                Cultivo
+            </th>
+            <th align="right">
+                Neto
+            </th>
+            <th align="right">
+                Standard
+            </th>
+            <th align="center">
+                Detalle
+            </th>
+            @if (puedeAnular) {
+            <th align="center">
+                Anular
+            </th>
+            }
+        </tr>
+        <tr>
+            <th colspan="7" style="background-color:transparent;"></th>
+            <th align="right">@(((int)ViewData["totalBrulto"]).ToString("#,##0"))</th>
+            <th align="right">@(((int)ViewData["totalNormal"]).ToString("#,##0"))</th>
+            <th colspan="2" style="background-color:transparent;"></th>
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="11" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+        
+        @foreach (var item in Model) 
+        {
+            var itemParams = Model.RouteValues(new RouteValueDictionary() { {"id", item.IdProcesoIngreso} });
+            
+            <tr valign="top">
+                <td align="center" style="color:#000000; background-color: @item.EstadoProcesoIngreso.Color" >
+                    @item.EstadoProcesoIngreso.Nombre
+                </td>
+                <td align="left">
+                    @item.Sucursal.Nombre
+                </td>
+                <td align="left">
+                    @item.IdProcesoIngreso
+                </td>
+                <td align="left">
+                    @item.FechaHoraLlegada.Value.ToString("dd/MM/yy HH:mm")
+                </td>
+                <td align="left">
+                    @item.Agricultor.Nombre
+                </td>
+                <td align="left">
+                    @item.NumeroGuia
+                </td>
+                <td align="left" class="cultivo-@item.CultivoContrato.IdCultivo" style="color: white">
+                    @item.CultivoEmpresa
+                </td>
+                <td align="right">
+                    @(item.PesoBruto.HasValue ? item.PesoBruto.Value.ToString("#,##0.##") : "-")
+                </td>
+                <td align="right">
+                    @(item.PesoNormal.HasValue ? item.PesoNormal.Value.ToString("#,##0.##") : "-")
+                </td>
+                <td align="center">
+                    @Html.ActionLink("Detalle", "DetalleIngreso", new { id = item.IdProcesoIngreso }, new { @class = "command" })
+                </td>
+                @if (puedeAnular)
+                {
+                    <td align="center">
+                        @if (item.EsAnulable())
+                        {
+                            <a href="#" class="command2 anular" data-id="@item.IdProcesoIngreso">Anular</a> 
+                        }
+                    </td>
+                }
+            </tr>
+        }
+        <tr>
+            <td colspan="11" class="pager">
+                @Model.Paginator("index", "recepciones", ViewContext.RequestContext)
+            </td>
+        </tr>
+    </table>
+
+
+    @if (puedeAnular)
+    {
+    <script>
+
+        $(document).ready(function () {
+
+            $(".anular").click(function () {
+                var id = $(this).attr("data-id");
+                if (confirm("¿Está seguro de que desea anular el ingreso #" + id)) {
+                    window.location.href = '@Url.Action("anular", Model.RouteValues(new RouteValueDictionary() { {"id", "idpi"} })).ToMvcHtmlString()'.replace("idpi", id);
+                }
+                return false;
+            });
+
+        });
+
+    </script>
+    }
+
+<script>
+    var cultivos = @(new MvcHtmlString(ViewData["cultivoContratoList"].ToString()));
+    var idCultivoInicial = @(ViewData["idCultivoContratoSelect"] ?? 0);
+
+    //alert(idCultivoInicial);
+
+    $(document).ready(function () {
+        fillCultivos();
+        $("#idCultivoContrato").val(idCultivoInicial);
+    });
+
+    $("#idEmpresa").change(function () {
+        fillCultivos();
+    });
+
+    function fillCultivos()
+    {
+        $("#idCultivoContrato").empty();
+        $("#idCultivoContrato").append('<option value="0">(Todos los Cultivos)</option>');
+        var idEmpresa = $("#idEmpresa").val();
+        for (i in cultivos)
+        {
+            if (cultivos[i].IdEmpresa == idEmpresa)
+            {
+                $("#idCultivoContrato").append('<option value="'+ cultivos[i].IdCultivoContrato +'">'+ cultivos[i].Nombre +'</option>');
+            }
+        }
+    }
+</script>

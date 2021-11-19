@@ -1,0 +1,19 @@
+﻿@using AgroFichasWeb.ViewModels.Liquidaciones
+
+@model AutorizarPreciosViewModel
+
+@{
+    ViewBag.NombreSeccion = "Convenios de Precio";
+    ViewBag.Title = "Autorización requerida";
+}
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm">
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+    @Html.Partial("ConvenioPrecioAutorizacion", Model)
+</fieldset>

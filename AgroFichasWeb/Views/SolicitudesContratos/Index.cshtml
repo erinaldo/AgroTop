@@ -1,0 +1,744 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@{ ViewBag.Title = "Solicitudes de Contratos";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml"; }
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+    <style>
+        #verificarFICHAS input, #verificarFICHAS select {
+            width: auto !important;
+            height: 34px;
+        }
+    </style>
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 50,
+            "paging": false,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        $('#verificarCRM').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 10,
+            "paging": false,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        $('#verificarFICHAS').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 10,
+            "paging": false,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        function DeleteOptions(selector, key, selectLabel) {
+            console.log("[" + selector + "][" + key + "] Deleting Options");
+
+            $("#" + selector + " option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                selectLabel, '</option>');
+            $("#" + selector).html(options.join(''));
+        }
+
+        function GetRegionesProvinciasComunas(tipo, selector, key) {
+            console.log("[" + tipo + "][" + selector + "][" + key + "] Obteniendo " + tipo);
+            var idRegion = $('#IdRegion_' + key + '').val();
+            if (idRegion == "") {
+                var idProvinciaKey = 'IdProvincia_' + key;
+                var idComunaKey = 'IdComuna_' + key;
+                DeleteOptions(idProvinciaKey, key, '(Seleccione Provincia)');
+                DeleteOptions(idComunaKey, key, '(Seleccione Comuna)');
+            }
+
+            switch (tipo) {
+                case "Provincias":
+                    var idRegion = $('#IdRegion_' + key + '').val();
+                    var idComunaKey = 'IdComuna_' + key;
+                    DeleteOptions(idComunaKey, key, '(Seleccione Comuna)');
+                    GetProvincias(selector, idRegion, null);
+                    break;
+                case "Comunas":
+                    var idProvincia = $('#IdProvincia_' + key + '').val();
+                    GetComunas(selector, idProvincia, null);
+                    break;
+            }
+        }
+
+        function GetRegiones(selector, idRegion) {
+            console.log("[" + selector + "][R" + idRegion + "] Obteniendo Regiones en API");
+            $.getJSON('@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetRegiones')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        console.log("[" + selector + "][R" + idRegion + "] Regiones " + result.length);
+                        options.push('<option value="', '', '">','(Seleccione Región)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdRegion, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idRegion != null) {
+                            $("#" + selector).val(idRegion);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function GetProvincias(selector, idRegion, idProvincia) {
+            console.log("[" + selector + "][R" + idRegion + "][P" + idProvincia + "] Obteniendo Provincias en API");
+            $.getJSON(
+                '@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetProvincias',
+                {
+                    'IdRegion': idRegion
+                }
+            )
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        console.log("[" + selector + "][R" + idRegion + "][P" + idProvincia + "] Provincias " + result.length);
+                        options.push('<option value="', '', '">','(Seleccione Provincia)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdProvincia, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idProvincia != null) {
+                            $("#" + selector).val(idProvincia);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function GetComunas(selector, idProvincia, idComuna) {
+            console.log("[" + selector + "][P" + idProvincia + "][C" + idComuna + "] Obteniendo Comunas en API");
+            $.getJSON(
+                '@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetComunas',
+                {
+                    'IdProvincia': idProvincia
+                }
+            )
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        console.log("[" + selector + "][P" + idProvincia + "][C" + idComuna + "] Comunas " + result.length);
+                        options.push('<option value="', '', '">','(Seleccione Comuna)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdComuna, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idComuna != null) {
+                            $("#" + selector).val(idComuna);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function GetTituloExplotacion(selector, idTituloExplotacion) {
+            console.log("[" + selector + "][T" + idTituloExplotacion + "] Obteniendo Título Habilitante a la Explotación en API");
+            $.getJSON('@Request.Url.GetLeftPart(UriPartial.Authority)/api/Comunes/GetTituloExplotacion')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length != 0) {
+                        console.log("[" + selector + "][T" + idTituloExplotacion + "] Título Habilitante a la Explotación " + result.length);
+                        options.push('<option value="', '', '">','(Seleccione Título Habilitante a la Explotación)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdTituloExplotacion, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#" + selector).html(options.join(''));
+
+                        if (idTituloExplotacion != null) {
+                            $("#" + selector).val(idTituloExplotacion);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+        }
+
+        function GetValue(obj) {
+            if (obj != null) {
+                return obj;
+            } else {
+                return "";
+            }
+        }
+
+        function GetValueCheckbox(obj) {
+            if (obj != null) {
+                if (obj) {
+                    return "checked=\"checked\"";
+                } else {
+                    return "";
+                }
+                return obj;
+            } else {
+                return "";
+            }
+        }
+
+        var ERRMSG = "No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:";
+
+        function EnviarNotificacionDatosFICHAS(lineKey) {
+            var data = {
+                Mensaje: $("#Mensaje_" + lineKey).val(),
+                IdSolicitudContrato: $("#IdSolicitudContrato_" + lineKey).val(),
+                Tipo: "Datos FICHAS"
+            };
+            console.log(data);
+
+            if (data.Mensaje == null || data.Mensaje == '')
+                alert(ERRMSG + "\r\n" + "Debe escribir un mensaje");
+            else {
+                $.ajax({
+                    url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/NotificarVerificarDatos',
+                    type: 'POST',
+                    data: data,
+                    statusCode: {
+                        200: function () {
+                            console.log("[200] Notificación Datos Fichas");
+                        },
+                        400: function () {
+                            console.log("[400] Error en Notificación Datos Fichas");
+                        }
+                    }
+                }).done(function (result) {
+                    console.log(result);
+                    var obj = JSON.parse(JSON.stringify(result));
+                    if (obj.OK) {
+                        console.log("[200] Notificación Datos Fichas Enviada");
+                    } else {
+                        console.log("[200] Notificación Datos Fichas Error");
+                        console.log(obj.Mensaje);
+                    }
+
+                    alert(obj.Mensaje);
+                });
+            }
+        }
+
+        function EnviarNotificacionDatosCRM(lineKey) {
+            var data = {
+                Mensaje: $("#CRM_Mensaje_" + lineKey).val(),
+                IdSolicitudContrato: $("#CRM_IdSolicitudContrato_" + lineKey).val(),
+                Tipo: "Datos ForceManager CRM"
+            };
+            console.log(data);
+
+            if (data.Mensaje == null || data.Mensaje == '')
+                alert(ERRMSG + "\r\n" + "Debe escribir un mensaje");
+            else {
+                $.ajax({
+                    url: '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/NotificarVerificarDatos',
+                    type: 'POST',
+                    data: data,
+                    statusCode: {
+                        200: function () {
+                            console.log("[200] Notificación Datos Fichas");
+                        },
+                        400: function () {
+                            console.log("[400] Error en Notificación Datos Fichas");
+                        }
+                    }
+                }).done(function (result) {
+                    console.log(result);
+                    var obj = JSON.parse(JSON.stringify(result));
+                    if (obj.OK) {
+                        console.log("[200] Notificación Datos Fichas Enviada");
+                    } else {
+                        console.log("[200] Notificación Datos Fichas Error");
+                        console.log(obj.Mensaje);
+                    }
+
+                    alert(obj.Mensaje);
+                });
+            }
+        }
+
+        function NotificarVerificarDatosFICHAS(lineKey) {
+            if ($("#modalNotificarDatosFICHAS_" + lineKey).html() == undefined) {
+                var modal = '<div class="modal fade" id="modalNotificarDatosFICHAS_' + lineKey + '" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Notificar al Asesor</h4></div><div class="modal-body"><div class="form-group"> <label>Mensaje</label><textarea id="Mensaje_' + lineKey + '" class="form-control" maxlength="50"></textarea></div></div><div class="modal-footer"> <button type="button" onclick="EnviarNotificacionDatosFICHAS(\'' + lineKey + '\')" class="btn btn-default" data-dismiss="modal">Enviar</button></div></div></div></div>';
+                $("body").append(modal);
+                console.log('[' + lineKey + '] Modal Creado ' + lineKey);
+            }
+
+            console.log('[' + lineKey + '] Toggle Modal ' + lineKey);
+        }
+
+        function NotificarVerificarDatosCRM(lineKey) {
+            if ($("#modalNotificarDatosCRM_" + lineKey).html() == undefined) {
+                var modal = '<div class="modal fade" id="modalNotificarDatosCRM_' + lineKey + '" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"> <button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Notificar al Asesor</h4></div><div class="modal-body"><div class="form-group"> <label>Mensaje</label><textarea id="CRM_Mensaje_' + lineKey + '" class="form-control" maxlength="50"></textarea></div></div><div class="modal-footer"> <button type="button" onclick="EnviarNotificacionDatosCRM(\'' + lineKey + '\')" class="btn btn-default" data-dismiss="modal">Enviar</button></div></div></div></div>';
+                $("body").append(modal);
+                console.log('[' + lineKey + '] Modal Creado ' + lineKey);
+            }
+
+            console.log('[' + lineKey + '] Toggle Modal ' + lineKey);
+        }
+
+        function VerificarDatosFICHAS(lineKey) {
+            var data = {
+                IdAgricultor: $("#IdAgricultor_" + lineKey).val(),
+                Rut: $("#Rut_" + lineKey).val(),
+                Nombre: $("#Nombre_" + lineKey).val(),
+                RutRepresentate: $("#RutRepresentate_" + lineKey).val(),
+                NombreRepresentate: $("#NombreRepresentate_" + lineKey).val(),
+                IdRegion: $("#IdRegion_" + lineKey).val(),
+                IdProvincia: $("#IdProvincia_" + lineKey).val(),
+                IdComuna: $("#IdComuna_" + lineKey).val(),
+                Direccion: $("#Direccion_" + lineKey).val(),
+                Email: $("#Email_" + lineKey).val(),
+                RolAvaluo: $("#RolAvaluo_" + lineKey).val(),
+                InscripcionFS: $("#InscripcionFS_" + lineKey).val(),
+                InscripcionNum: $("#InscripcionNum_" + lineKey).val(),
+                InscripcionAno: $("#InscripcionAno_" + lineKey).val(),
+                CoberturaSeguro: $("#CoberturaSeguro_" + lineKey).is(":checked"),
+                IdTituloExplotacion: $("#IdTituloExplotacion_" + lineKey).val(),
+                IdSolicitudContrato: $("#IdSolicitudContrato_" + lineKey).val(),
+            };
+            console.log(data);
+        }
+
+        $(document).ready(function () {
+            var t = $('#datatable').DataTable();
+            $.getJSON('@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/GetSolicitudContrato')
+                .done(function (result) {
+                    if (result.length != 0) {
+                        for (var i = 0; i < result.length; i++) {
+                            t.row.add([
+                                '' + result[i].IdSolicitudContrato + '',
+                                '' + result[i].Rut + '',
+                                '' + result[i].NombreProveedor + '',
+                                '' + result[i].Cultivo + '',
+                                '' + result[i].PrecioCierre + '',
+                                '' + result[i].ToneladasCierre + '',
+                                '' + result[i].TipoContrato + '',
+                                '' + result[i].ComunaOrigen + '',
+                                '' + result[i].SucursalEntrega + '',
+                                '' + result[i].Hectareas + '',
+                                '' + result[i].ToneladasTotales + '',
+                                '' + (result[i].VerificadoCRM == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                '' + (result[i].VerificadoFichas == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                '' + (result[i].ContratoCreado == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                '<button id="#" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Anular CRM"> <i class="fa fa-ban"></i></button><button id="#" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Anular FICHAS"> <i class="fa fa-ban"></i></button><button id="#" class="btn btn-tertiary" data-toggle="tooltip" data-placement="top" title="Anular Contrato" style="background-color:#0088cc;color: white"> <i class="fa fa-ban"></i></button><button id="#" class="btn btn-tertiary" data-toggle="tooltip" data-placement="top" title="Crear Contrato" style="background-color:#0088cc;color: white"> <i class="fa fa-magic"></i></button><button id="#" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Borrador Contrato"> <i class="fa fa-eye"></i></button>',
+                            ]).draw(false);
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(err);
+                });
+
+            $("#btnVerificarDatosCRM").click(function () {
+                $('#modalCargando').modal('show');
+
+                var t = $('#verificarCRM').DataTable();
+                t.clear().draw();
+                $.getJSON(
+                    '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/VerificarDatosCRM',
+                    {
+                        'IsDevelopment': '@HttpContext.Current.Request.Url.AbsoluteUri.Contains("localhost")'
+                    }
+                )
+                    .done(function (result) {
+                        if (result.length == 0) {
+                            alert("No hay solicitudes de contratos disponibles");
+                        }
+                        else {
+                            for (var i = 0; i < result.length; i++) {
+                                var lineKey = result[i].IdSolicitudContrato;
+                                t.row.add([
+                                    '' + result[i].IdSolicitudContrato + '',
+                                    '' + result[i].Rut + '',
+                                    '' + result[i].NombreProveedor + '',
+                                    '' + result[i].Cultivo + '',
+                                    '' + result[i].PrecioCierre + '',
+                                    '' + result[i].ToneladasCierre + '',
+                                    '' + result[i].TipoContrato + '',
+                                    '' + result[i].ComunaOrigen + '',
+                                    '' + result[i].SucursalEntrega + '',
+                                    '' + result[i].Hectareas + '',
+                                    '' + result[i].ToneladasTotales + '',
+                                    '' + (result[i].VerificadoCRM == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                    '' + (result[i].VerificadoFichas == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                    '' + (result[i].ContratoCreado == true ? '<i class="fa fa-square"></i>' : '<i class="fa fa-square-o"></i>') + '',
+                                    '<input type="hidden" id="CRM_IdSolicitudContrato_' + lineKey + '" class="form-control" value="' + lineKey + '" /><span data-toggle="modal" data-target="#modalNotificarDatosCRM_' + lineKey + '"><button id="btnNotificarVerificarDatosCRM_' + lineKey + '" class="btn btn-default" onclick="NotificarVerificarDatosCRM(\'' + lineKey + '\')" data-toggle="tooltip" data-placement="top" title="Notificar"> <i class="fa fa-envelope"></i></button></span><button id="#" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Verificar"> <i class="fa fa-check-square"></i></button>',
+                                ]).draw(false);
+                            }
+
+                            $('#modalCargando').modal('hide');
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(err);
+                    });
+            });
+
+            $("#btnVerificarDatosFICHAS").click(function () {
+                $('#modalCargando').modal('show');
+
+                var t = $('#verificarFICHAS').DataTable();
+                t.clear().draw();
+                $.getJSON(
+                    '@Request.Url.GetLeftPart(UriPartial.Authority)/api/TrazaTop/VerificarDatosFICHAS',
+                    {
+                        'IsDevelopment': '@HttpContext.Current.Request.Url.AbsoluteUri.Contains("localhost")'
+                    }
+                )
+                    .done(function (result) {
+                        if (result.length == 0) {
+                            alert("No hay agricultores disponibles");
+                        }
+                        else {
+                            for (var i = 0; i < result.length; i++) {
+                                var lineKey = result[i].IdSolicitudContrato;
+                                var idRegionKey = 'IdRegion_' + lineKey + '';
+                                var idProvinciaKey = 'IdProvincia_' + lineKey;
+                                var idComunaKey = 'IdComuna_' + lineKey;
+                                var inscripcionAnoKey = 'InscripcionAno_' + lineKey;
+                                var idTituloExplotacionKey = 'IdTituloExplotacion_' + lineKey + '';
+                                t.row.add([
+                                    '<input type="text" size="10" id="IdAgricultor_' + lineKey + '" class="form-control" disabled="disabled" value="' + result[i].IdAgricultor + '" />',
+                                    '<input type="text" size="15" id="Rut_' + lineKey + '" class="form-control" value="' + GetValue(result[i].Rut) + '" />',
+                                    '<input type="text" size="30" id="Nombre_' + lineKey + '" class="form-control" value="' + GetValue(result[i].Nombre) + '" />',
+                                    '<input type="text" size="15" id="RutRepresentate_' + lineKey + '" class="form-control" value="' + GetValue(result[i].RutRepresentate) + '" />',
+                                    '<input type="text" size="30" id="NombreRepresentate_' + lineKey + '" class="form-control" value="' + GetValue(result[i].NombreRepresentate) + '" />',
+                                    '<select onchange="GetRegionesProvinciasComunas(\'Provincias\', \'' + idProvinciaKey + '\', ' + lineKey + ')" id="IdRegion_' + lineKey + '" name="IdRegion_' + lineKey + '" class="form-control"></select>',
+                                    '<select onchange="GetRegionesProvinciasComunas(\'Comunas\', \'' + idComunaKey + '\', ' + lineKey + ')" id="IdProvincia_' + lineKey + '" name="IdProvincia_' + lineKey + '" class="form-control"></select>',
+                                    '<select id="IdComuna_' + lineKey + '" name="IdComuna_' + lineKey + '" class="form-control"></select>',
+                                    '<input type="text" size="30" id="Direccion_' + lineKey + '" class="form-control" value="' + GetValue(result[i].Direccion) + '" />',
+                                    '<input type="text" size="30" id="Email_' + lineKey + '" class="form-control" value="' + GetValue(result[i].Email) + '" />',
+                                    '<input type="text" size="15" id="RolAvaluo_' + lineKey + '" class="form-control" value="' + GetValue(result[i].RolAvaluo) + '" />',
+                                    '<input type="text" size="15" id="InscripcionFS_' + lineKey + '" class="form-control" value="' + GetValue(result[i].InscripcionFS) + '" />',
+                                    '<input type="text" size="15" id="InscripcionNum_' + lineKey + '" class="form-control" value="' + GetValue(result[i].InscripcionNum) + '" />',
+                                    '<input type="text" size="15" id="InscripcionAno_' + lineKey + '" class="form-control" value="" />',
+                                    '<input type="checkbox" id="CoberturaSeguro_' + lineKey + '" name="CoberturaSeguro_' + lineKey + '" ' + GetValueCheckbox(result[i].CoberturaSeguro) + ' value="' + GetValue(result[i].CoberturaSeguro) + '" />',
+                                    '<select id="IdTituloExplotacion_' + lineKey + '" name="IdTituloExplotacion_' + lineKey + '" class="form-control"></select>',
+                                    '<input type="hidden" id="IdSolicitudContrato_' + lineKey + '" class="form-control" value="' + lineKey + '" /><span data-toggle="modal" data-target="#modalNotificarDatosFICHAS_' + lineKey + '"><button id="btnNotificarVerificarDatosFICHAS_' + lineKey + '" class="btn btn-default" onclick="NotificarVerificarDatosFICHAS(\'' + lineKey + '\')" data-toggle="tooltip" data-placement="top" title="Notificar"> <i class="fa fa-envelope"></i></button></span><button id="#" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Verificar" onclick="VerificarDatosFICHAS(\'' + lineKey + '\')"> <i class="fa fa-check-square"></i></button>',
+                                ]).draw(false);
+
+                                $('#modalCargando').modal('hide');
+
+                                var idRegion = result[i].IdRegion;
+                                GetRegiones(idRegionKey, idRegion);
+                                if (idRegion != null) {
+                                    var idProvincia = result[i].IdProvincia;
+                                    GetProvincias(idProvinciaKey, idRegion, idProvincia);
+                                }
+                                if (idProvincia != null) {
+                                    var idComuna = result[i].IdComuna;
+                                    GetComunas(idComunaKey, idProvincia, idComuna);
+                                }
+
+                                $('#' + inscripcionAnoKey).datepicker();
+                                if (GetValue(result[i].InscripcionAno) != "") {
+                                    var date = new Date(GetValue(result[i].InscripcionAno))
+                                    console.log("[" + date + "][1] Inscripción Prop. Fecha " + date.toLocaleDateString("en-US"));
+                                    $('#' + inscripcionAnoKey).val(date.toLocaleDateString("en-US"));
+                                } else {
+                                    var date = new Date('@string.Format("{0:yyyy/MM/dd}", DateTime.Now)');
+                                    console.log("[" + date + "][0] Inscripción Prop. Fecha " + date.toLocaleDateString("en-US"));
+                                    $('#' + inscripcionAnoKey).val(date.toLocaleDateString("en-US"));
+                                }
+
+                                var idTituloExplotacion = result[i].IdTituloExplotacion;
+                                GetTituloExplotacion(idTituloExplotacionKey, idTituloExplotacion);
+                            }
+                        }
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(err);
+                    });
+            });
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtros de Búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <div class="form-inline center">
+                    @using (Html.BeginForm("index", "solicitudesContratos", new { id = 0 }, FormMethod.Get))
+                    {
+                        <div class="form-group">
+                            @Html.DropDownList("IdTemporada", new List<SelectListItem>(), "(Todas las Temporadas)", new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            @Html.DropDownList("IdEmpresa", new List<SelectListItem>(), "(Todas las Empresas)", new { @class = "form-control" })
+                        </div>
+                        <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                        <input type="text" name="key" class="form-control" value="@ViewData["key"]" /> <input class="btn btn-default" type="submit" value="Buscar" />
+                        <div class="clearfix visible-xs mb-sm"></div>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Solicitudes de Contratos</h2>
+
+        <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+            <span data-toggle="modal" data-target=".modalCRM_1">
+                <a href="#" class="btn btn-warning" id="btnVerificarDatosCRM"><i class="fa fa-refresh"></i> Verificar Datos CRM</a>
+            </span>
+            <span data-toggle="modal" data-target=".modalFICHAS_1">
+                <a href="#" class="btn btn-success" id="btnVerificarDatosFICHAS"><i class="fa fa-refresh"></i> Verificar Datos FICHAS</a>
+            </span>
+        </div>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Rut</th>
+                    <th>Proveedor</th>
+                    <th>Cultivo</th>
+                    <th>Precio Cierre</th>
+                    <th>Ton. Cierre</th>
+                    <th>Tipo Contrato</th>
+                    <th>Comuna Origen</th>
+                    <th>Sucursal Enterga</th>
+                    <th>Há</th>
+                    <th>Toneladas</th>
+                    <th>Verificada CRM</th>
+                    <th>Verificada FICHAS</th>
+                    <th>Contrato</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->
+<div id="verificarCRM_1" class="modal fade modalCRM_1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-block modal-header-color modal-block-warning modal-block-full">
+        <section class="panel">
+            <header class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="panel-title">Verificar Datos CRM</h2>
+            </header>
+            <div class="panel-body">
+                <div class="modal-wrapper">
+                    <table class="table table-bordered table-striped mb-none" id="verificarCRM">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Rut</th>
+                                <th>Proveedor</th>
+                                <th>Cultivo</th>
+                                <th>Variedad</th>
+                                <th>Precio Cierre</th>
+                                <th>Ton. Cierre</th>
+                                <th>Tipo Contrato</th>
+                                <th>Comuna Origen</th>
+                                <th>Sucursal Enterga</th>
+                                <th>Há</th>
+                                <th>Toneladas</th>
+                                <th>Predio</th>
+                                <th>Asesor</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </footer>
+        </section>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div id="verificarFICHAS_1" class="modal fade modalFICHAS_1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-block modal-header-color modal-block-success modal-block-full">
+        <section class="panel">
+            <header class="panel-heading">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="panel-title">Verificar Datos FICHAS</h2>
+            </header>
+            <div class="panel-body">
+                <div class="modal-wrapper">
+                    <table class="table table-bordered table-striped mb-none" id="verificarFICHAS">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Rut</th>
+                                <th>Proveedor</th>
+                                <th>Rut Representate</th>
+                                <th>Representate</th>
+                                <th>Región</th>
+                                <th>Provincia</th>
+                                <th>Comuna</th>
+                                <th>Domicilio</th>
+                                <th>Email</th>
+                                <th>Rol Avalúo</th>
+                                <th>Inscripción Prop. FS</th>
+                                <th>Inscripción Prop. N°</th>
+                                <th>Inscripción Prop. Fecha</th>
+                                <th>Cobertura Seguro</th>
+                                <th>Título Habilitante a la Explotación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </footer>
+        </section>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalCargando" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <center>
+                    <img src="~/Content/images/Load_Icon.gif" />
+                </center>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="modalNotificar" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Notificar al Asesor</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Mensaje</label>
+                    <textarea id="" class="form-control" maxlength="50"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="EnviarNotificacion()" class="btn btn-default" data-dismiss="modal">Enviar</button>
+            </div>
+        </div>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

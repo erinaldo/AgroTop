@@ -1,0 +1,94 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<vw_FichasInbox>
+
+@{
+    ViewBag.NombreSeccion = "Movimientos Recientes";
+    ViewBag.Title = "Administrar Agricultores";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>Movimientos Recientes</h2>
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="left">
+                Fecha
+            </th>
+            <th align="left">
+                ID
+            </th>
+            <th align="left">
+                Usuario
+            </th>
+            <th align="left">
+                Tipo
+            </th>
+            <th align="left">
+                Agricultor
+            </th>
+            <th align="left">
+                Predio
+            </th>
+            <th align="center">
+                Descargas
+            </th>
+            <th align="left">
+                Temporada
+            </th>
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="6" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+        
+        @foreach (var item in Model) 
+        {
+            <tr valign="top">
+                <td align="left">
+                    @item.FechaHora.ToString("dd MMM hh:mm")
+                </td>
+                <td align="left">
+                    @item.ID
+                </td>
+                <td align="left">
+                    @item.Usuario
+                </td>
+                <td align="left">
+                    @item.Descripcion
+                </td>
+                <td align="left">
+                    @Html.ActionLink(item.Agricultor, "fichas", new { id = item.IdAgricultor })
+                </td>
+                <td align="left">
+                    @item.Predio
+                </td>
+                <td align="center">
+                    @(item.Descargas.HasValue ? item.Descargas.Value.ToString("#,##0") : "-")
+                </td>
+                <td align="left">
+                    @item.NombreTemporada.Replace("Temporada", "").Trim()
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="8" class="pager">
+                @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "Agricultores", "", "Recientes")
+            </td>
+        </tr>
+
+    </table>

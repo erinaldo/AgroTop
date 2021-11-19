@@ -1,0 +1,41 @@
+﻿/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error {
+    color: #f00;
+    display: none;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+/*.input-validation-error {
+    border: 1px solid #f00;
+    background-color: #fee;
+}*/
+
+.validation-summary-errors {
+    background-color: #ffffaa;
+    font-weight: bold;
+    color: #f00;
+    margin: 20px 0px 20px 0px;
+    padding: 20px;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.validation-summary-oks {
+    background-color: #ffffaa;
+    font-weight: bold;
+    color: green;
+    margin: 20px 0px 20px 0px;
+    padding: 20px;
+}
+
+
+
+.input-validation-error {
+    border-bottom: 2px solid #ed6b75 !important;
+}

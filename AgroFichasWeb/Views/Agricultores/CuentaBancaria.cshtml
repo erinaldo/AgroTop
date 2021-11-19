@@ -1,0 +1,81 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+@{
+    var bancos = from c in ((List<Banco>)ViewData["bancos"])
+                 select new SelectListItem() { Text = c.Nombre, Value = c.IdBanco.ToString(), Selected = false };
+
+    var tipos = from c in ((List<TipoCuentaBancaria>)ViewData["tiposCuenta"])
+                select new SelectListItem() { Text = c.Nombre, Value = c.IdTipoCuentaBancaria.ToString(), Selected = false };
+
+}
+
+<div id="culcon-window" style="display: none" title="Cuenta Bancaria">
+    <div id="culcon-content">
+        <input type="hidden" id="culcon-id" value="" />
+        <table class="form1" style="width: 100%; text-align: left;">
+            <tr>
+                <td class="label">Banco:</td>
+                <td>@Html.DropDownList("culcon-idBanco", bancos)</td>
+            </tr>
+            <tr>
+                <td class="label">Tipo:</td>
+                <td>@Html.DropDownList("culcon-idTipoCuentaBancaria", tipos)</td>
+            </tr>
+            <tr>
+                <td class="label">Número Cuenta:</td>
+                <td><input type="text" id="culcon-numeroCuenta" style="width: 200px" /></td>
+            </tr>
+            <tr>
+                <td class="label">Comentarios:</td>
+                <td><input type="text" id="culcon-comentarios" style="width: 200px" /></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    function culconShow(cuentaBancaria) {
+
+        $("#culcon-id").val(cuentaBancaria.id);
+        $("#culcon-idBanco").val(cuentaBancaria.idBanco);
+        $("#culcon-idTipoCuentaBancaria").val(cuentaBancaria.idTipoCuentaBancaria);
+        $("#culcon-numeroCuenta").val(cuentaBancaria.numeroCuenta);
+        $("#culcon-comentarios").val(cuentaBancaria.comentarios);
+
+        $("#culcon-window").dialog({
+            width: 400,
+            modal: true,
+            buttons: {
+                Aceptar: function () {
+                    if ($("#culcon-numeroCuenta").val() == "") {
+                        alert('Ingrese el Número de Cuenta');
+                        return;
+                    }
+
+                    var result = {
+                        idBanco: $("#culcon-idBanco").val(),
+                        idTipoCuentaBancaria: $("#culcon-idTipoCuentaBancaria").val(),
+                        numeroCuenta: $("#culcon-numeroCuenta").val(),
+                        comentarios: $("#culcon-comentarios").val(),
+                        nombreBanco: $("#culcon-idBanco :selected").text(),
+                        nombreTipoCuentaBancaria: $("#culcon-idTipoCuentaBancaria :selected").text(),
+                        id: $("#culcon-id").val()
+                    };
+
+                    culconCallback(result);
+                    $(this).dialog("close");
+                },
+                Cancelar: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+                $('#ags-results').html("");
+            }
+        });
+
+    }
+</script>

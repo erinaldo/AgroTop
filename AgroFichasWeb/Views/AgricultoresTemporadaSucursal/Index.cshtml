@@ -1,0 +1,608 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<AgricultoresTemporadaSucursalResult>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Agricultores";
+    ViewBag.Title = "Agricultores " + temporada.Nombre;
+
+    var puedeEditar = false;
+
+    var soloACubrir = (bool)ViewData["soloACubrir"];
+
+    var intencionesSiembra = (List<CRM_Objetivos>)ViewData["intencionesSiembra"];
+
+    var intSiembraRaps = intencionesSiembra.Sum(X => X.HectareasRaps);
+    var intSiembraTrigo = intencionesSiembra.Sum(X => X.HectareasTrigo);
+    var intSiembraAvena = intencionesSiembra.Sum(X => X.HectareasAvena);
+    var intSiembraLupino = intencionesSiembra.Sum(X => X.HectareasLupino);
+    var intSiembraMaiz = intencionesSiembra.Sum(X => X.HectareasMaiz);
+
+    var rapIntTotal = 0;
+    var rapContTotal = 0;
+    var rapConvTotal = 0;
+    var rapIngTotal = 0;
+
+    var trigoIntTotal = 0;
+    var trigoContTotal = 0;
+    var trigoConvTotal = 0;
+    var trigoIngTotal = 0;
+
+    var avenaIntTotal = 0;
+    int avenaContTotal = 0;
+    var avenaConvTotal = 0;
+    var avenaIngTotal = 0;
+
+    var lupinoIntTotal = 0;
+    var lupinoContTotal = 0;
+    var lupinoConvTotal = 0;
+    var lupinoIngTotal = 0;
+
+    var maizIntTotal = 0;
+    var maizContTotal = 0;
+    var maizConvTotal = 0;
+    var maizIngTotal = 0;
+
+    var rut1 = "";
+    var rut2 = "";
+
+}
+
+
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "agricultorestemporada", new { id = 0 }, FormMethod.Get))
+    {
+        @Html.Partial("TemporadaSelector")
+        @Html.Partial("EmpresaSelector")
+        <input type="text" name="key" value="@ViewData["key"]" />
+        <input type="checkbox" value="True" name="soloACubrir" @(soloACubrir ? "checked=\"checked\"" : "") /><text>Sólo "A Cubrir"</text>
+        <input type="submit" value="Buscar" />
+    }
+<div style="margin-top: 10px">
+    @*@Html.ActionLink("Exportar", "indexexport", new { idTemporada = temporada.IdTemporada, idEmpresa = ViewData["idEmpresa"], key = ViewData["key"], soloACubrir = ViewData["soloACubrir"] }, new { @class = "exportlink" })*@
+    @Html.ActionLink("Exportar Excel", "exportarExcel", new { idTemporada = temporada.IdTemporada, idEmpresa = ViewData["idEmpresa"], totalIntRaps = intSiembraRaps, totalIntTrigo = intSiembraTrigo, totalIntAvena = intSiembraAvena, totalIntLupino = intSiembraLupino, totalIntMaiz = intSiembraMaiz, intSiembra = intencionesSiembra, key = ViewData["key"], soloACubrir = ViewData["soloACubrir"] }, new { @class = "exportlink" })
+</div>
+</div>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th colspan="3" style="background-color: transparent">
+
+        </th>
+        <th align="center" colspan="5">
+            Ton Raps
+        </th>
+        <th align="center" colspan="5">
+            Ton Trigo
+        </th>
+        <th align="center" colspan="5">
+            Ton Avena
+        </th>
+        <th align="center" colspan="6">
+            Ton Lupino
+        </th>
+        <th align="center" colspan="6">
+            Ton Maíz
+        </th>
+        @*<th align="center" colspan="4">
+            Ton Linaza
+        </th>*@
+    </tr>
+    <tr>
+        <th align="left">
+            Rut
+        </th>
+        <th align="left">
+            Nombre
+        </th>
+        <th align="left">
+            Centro
+        </th>
+        <th align="right">
+            Int
+        </th>
+        <th align="right">
+            Cont
+        </th>
+        <th align="right">
+            Conv
+        </th>
+        <th align="right">
+            Ing
+        </th>
+        <th align="right">
+            Cubrir
+        </th>
+        <th align="right">
+            Int
+        </th>
+        <th align="right">
+            Cont
+        </th>
+        <th align="right">
+            Conv
+        </th>
+        <th align="right">
+            Ing
+        </th>
+        <th align="right">
+            Cubrir
+        </th>
+        <th align="right">
+            Int
+        </th>
+        <th align="right">
+            Cont
+        </th>
+        <th align="right">
+            Conv
+        </th>
+        <th align="right">
+            Ing
+        </th>
+        <th align="right">
+            Cubrir
+        </th>
+        <th align="right">
+            Int
+        </th>
+        <th align="right">
+            Cont
+        </th>
+        <th align="right">
+            Conv
+        </th>
+        <th align="right">
+            Ing
+        </th>
+        <th align="right">
+            Cubrir
+        </th>
+        <th align="right">
+            Int
+        </th>
+        <th align="right">
+            Cont
+        </th>
+        <th align="right">
+            Conv
+        </th>
+        <th align="right">
+            Ing
+        </th>
+        <th align="right">
+            Cubrir
+        </th>
+        @*<th align="right">
+            Cont
+        </th>
+        <th align="right">
+            Conv
+        </th>
+        <th align="right">
+            Ing
+        </th>
+        <th align="right">
+            Cubrir
+        </th>*@
+    </tr>
+    <tr>
+        <th align="left">
+        </th>
+        <th align="left">
+        </th>
+        <th align="left">
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", intencionesSiembra.Sum(X => X.HectareasRaps))
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ContratadoRaps).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ConvenioRaps).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.IngresosRaps).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ACubrirRaps).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", intencionesSiembra.Sum(X => X.HectareasTrigo))
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ContratadoTrigo).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ConvenioTrigo).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.IngresosTrigo).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ACubrirTrigo).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", intencionesSiembra.Sum(X => X.HectareasAvena))
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ContratadoAvena).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ConvenioAvena).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.IngresosAvena).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ACubrirAvena).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", intencionesSiembra.Sum(X => X.HectareasLupino))
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ContratadoLupino).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ConvenioLupino).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.IngresosLupino).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ACubrirLupino).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", intencionesSiembra.Sum(X => X.HectareasMaiz))
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ContratadoMaiz).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ConvenioMaiz).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.IngresosMaiz).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ACubrirMaiz).Sum().Value / 1000M)
+        </th>
+        @*<th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ContratadoLinaza).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ConvenioLinaza).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.IngresosLinaza).Sum().Value / 1000M)
+        </th>
+        <th align="right">
+            @String.Format("{0:#,##0}", Model.Source.Select(i => i.ACubrirLinaza).Sum().Value / 1000M)
+        </th>*@
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="9" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+
+
+        var itemParams = Model.RouteValues(new RouteValueDictionary() { { "id", item.IdAgricultor } });
+
+        var cubrirRaps = (item.ConvenioRaps ?? 0) - (item.IngresosRaps ?? 0);
+        cubrirRaps = cubrirRaps < 0 ? -cubrirRaps : 0;
+
+        var cubrirAvena = (item.ConvenioAvena ?? 0) - (item.IngresosAvena ?? 0);
+        cubrirAvena = cubrirAvena < 0 ? -cubrirAvena : 0;
+
+        var cubrirTrigo = (item.ConvenioTrigo ?? 0) - (item.IngresosTrigo ?? 0);
+        cubrirTrigo = cubrirTrigo < 0 ? -cubrirTrigo : 0;
+
+        var cubrirLupino = (item.ConvenioLupino ?? 0) - (item.IngresosLupino ?? 0);
+        cubrirLupino = cubrirLupino < 0 ? -cubrirLupino : 0;
+
+        var cubrirLinaza = (item.ConvenioLinaza ?? 0) - (item.ConvenioLinaza ?? 0);
+        cubrirLinaza = cubrirLinaza < 0 ? -cubrirLinaza : 0;
+
+        var cubrirMaiz = (item.ConvenioMaiz ?? 0) - (item.ConvenioMaiz ?? 0);
+        cubrirMaiz = cubrirMaiz < 0 ? -cubrirMaiz : 0;
+
+        var intRaps = 0;
+        var intAvena = 0;
+        var intTrigo = 0;
+        var intLupino = 0;
+        var intMaiz = 0;
+        var intencion = intencionesSiembra.FirstOrDefault(X => item.IdForceManager.HasValue && X.ID == item.IdForceManager.Value);
+        if (intencion != null)
+        {
+            intRaps = intencion.HectareasRaps;
+            intAvena = intencion.HectareasAvena;
+            intTrigo = intencion.HectareasTrigo;
+            intLupino = intencion.HectareasLupino;
+            intMaiz = intencion.HectareasMaiz;
+        }
+
+
+
+
+
+
+
+        rut1 = item.Rut;
+
+        if (!(rut2.Equals("")) && !(rut2.Equals(rut1)))
+
+        {
+<TR>
+    <td align="center" nowrap="nowrap" colspan="3">
+        <b> Totales</b>
+    </td>
+
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", rapIntTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", rapContTotal)</b>
+    </td>
+    <td align="right">
+        <b> @String.Format("{0:#,##0}", rapConvTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", rapIngTotal)</b>
+    </td>
+    <td align="right">
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", trigoIntTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", trigoContTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", trigoConvTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", trigoIngTotal)</b>
+    </td>
+    <td align="right">
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", avenaIntTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", avenaContTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", avenaConvTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", avenaIngTotal)</b>
+    </td>
+    <td align="right">
+    </td>
+    <td align="right">
+        <b> @String.Format("{0:#,##0}", lupinoIntTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", lupinoContTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", lupinoConvTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", lupinoIngTotal)</b>
+    </td>
+    <td align="right">
+    </td>
+    <td align="right">
+        <b> @String.Format("{0:#,##0}", maizIntTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", maizContTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", maizConvTotal)</b>
+    </td>
+    <td align="right">
+        <b>@String.Format("{0:#,##0}", maizIngTotal)</b>
+    </td>
+    <td align="right">
+    </td>
+</TR> 
+
+
+            rapIntTotal = 0;
+            rapContTotal = 0;
+            rapConvTotal = 0;
+            rapIngTotal = 0;
+
+            trigoIntTotal = 0;
+            trigoContTotal = 0;
+            trigoConvTotal = 0;
+            trigoIngTotal = 0;
+
+            avenaIntTotal = 0;
+            avenaContTotal = 0;
+            avenaConvTotal = 0;
+            avenaIngTotal = 0;
+
+            lupinoIntTotal = 0;
+            lupinoContTotal = 0;
+            lupinoConvTotal = 0;
+            lupinoIngTotal = 0;
+
+            maizIntTotal = 0;
+            maizContTotal = 0;
+            maizConvTotal = 0;
+            maizIngTotal = 0;
+
+        }
+        rut2 = item.Rut;
+
+        rapIntTotal += intRaps == 0 ? 0 : Convert.ToInt32(intRaps);
+        rapContTotal += item.ContratadoRaps == 0 ? 0 : Convert.ToInt32(item.ContratadoRaps / 1000M);
+        rapConvTotal += item.ConvenioRaps == 0 ? 0 : Convert.ToInt32(item.ConvenioRaps / 1000M);
+        rapIngTotal += item.IngresosRaps == 0 ? 0 : Convert.ToInt32(item.IngresosRaps / 1000M);
+
+        trigoIntTotal += intTrigo == 0 ? 0 : Convert.ToInt32(intTrigo);
+        trigoContTotal += item.ContratadoTrigo == 0 ? 0 : Convert.ToInt32(item.ContratadoTrigo / 1000M);
+        trigoConvTotal += item.ConvenioTrigo == 0 ? 0 : Convert.ToInt32(item.ConvenioTrigo / 1000M);
+        trigoIngTotal += item.IngresosTrigo == 0 ? 0 : Convert.ToInt32(item.IngresosTrigo / 1000M);
+
+        avenaIntTotal += intAvena == 0 ? 0 : Convert.ToInt32(intAvena);
+        avenaContTotal += item.ContratadoAvena == 0 ? 0 : Convert.ToInt32(item.ContratadoAvena / 1000M);
+        avenaConvTotal += item.ConvenioAvena == 0 ? 0 : Convert.ToInt32(item.ConvenioAvena / 1000M);
+        avenaIngTotal += item.IngresosAvena == 0 ? 0 : Convert.ToInt32(item.IngresosAvena / 1000M);
+
+        lupinoIntTotal += intLupino == 0 ? 0 : Convert.ToInt32(intLupino);
+        lupinoContTotal += item.ContratadoLupino == 0 ? 0 : Convert.ToInt32(item.ContratadoLupino / 1000M);
+        lupinoConvTotal += item.ConvenioLupino == 0 ? 0 : Convert.ToInt32(item.ConvenioLupino / 1000M);
+        lupinoIngTotal += item.IngresosLupino == 0 ? 0 : Convert.ToInt32(item.IngresosLupino / 1000M);
+
+        maizIntTotal += intMaiz == 0 ? 0 : Convert.ToInt32(intMaiz);
+        maizContTotal += item.ContratadoMaiz == 0 ? 0 : Convert.ToInt32(item.ContratadoMaiz / 1000M);
+        maizConvTotal += item.ConvenioMaiz == 0 ? 0 : Convert.ToInt32(item.ConvenioMaiz / 1000M);
+        maizIngTotal += item.IngresosMaiz == 0 ? 0 : Convert.ToInt32(item.IngresosMaiz / 1000M);
+
+<TR>
+    <td align="left" class="small" nowrap="nowrap">
+        @item.Rut
+    </td>
+    <td align="left">
+        @item.Nombre
+    </td>
+    <td>
+        @item.Sucursal
+    </td>
+    <td align="right">
+        @intRaps
+    </td>
+    <td align="right">
+        @(item.ContratadoRaps.HasValue ? String.Format("{0:#,##0}", item.ContratadoRaps / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.ConvenioRaps.HasValue ? String.Format("{0:#,##0}", item.ConvenioRaps / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.IngresosRaps.HasValue ? String.Format("{0:#,##0}", item.IngresosRaps / 1000M) : "")
+    </td>
+    <td align="right">
+        @(String.Format("{0:#,###}", cubrirRaps / 1000M))
+    </td>
+    <td align="right">
+        @intTrigo
+    </td>
+    <td align="right">
+        @(item.ContratadoTrigo.HasValue ? String.Format("{0:#,##0}", item.ContratadoTrigo / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.ConvenioTrigo.HasValue ? String.Format("{0:#,##0}", item.ConvenioTrigo / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.IngresosTrigo.HasValue ? String.Format("{0:#,##0}", item.IngresosTrigo / 1000M) : "")
+    </td>
+    <td align="right">
+        @(String.Format("{0:#,###}", cubrirTrigo / 1000M))
+    </td>
+    <td align="right">
+        @intAvena
+    </td>
+    <td align="right">
+        @(item.ContratadoAvena.HasValue ? String.Format("{0:#,##0}", item.ContratadoAvena / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.ConvenioAvena.HasValue ? String.Format("{0:#,##0}", item.ConvenioAvena / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.IngresosAvena.HasValue ? String.Format("{0:#,##0}", item.IngresosAvena / 1000M) : "")
+    </td>
+    <td align="right">
+        @(String.Format("{0:#,###}", cubrirAvena / 1000M))
+    </td>
+    <td align="right">
+        @intLupino
+    </td>
+    <td align="right">
+        @(item.ContratadoLupino.HasValue ? String.Format("{0:#,##0}", item.ContratadoLupino / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.ConvenioLupino.HasValue ? String.Format("{0:#,##0}", item.ConvenioLupino / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.IngresosLupino.HasValue ? String.Format("{0:#,##0}", item.IngresosLupino / 1000M) : "")
+    </td>
+    <td align="right">
+        @(String.Format("{0:#,###}", cubrirLupino / 1000M))
+    </td>
+    <td align="right">
+        @intMaiz
+    </td>
+    <td align="right">
+        @(item.ContratadoMaiz.HasValue ? String.Format("{0:#,##0}", item.ContratadoMaiz / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.ConvenioMaiz.HasValue ? String.Format("{0:#,##0}", item.ConvenioMaiz / 1000M) : "")
+    </td>
+    <td align="right">
+        @(item.IngresosMaiz.HasValue ? String.Format("{0:#,##0}", item.IngresosMaiz / 1000M) : "")
+    </td>
+    <td align="right">
+        @(String.Format("{0:#,###}", cubrirMaiz / 1000M))
+    </td>
+</TR>
+
+        <tr valign="top">
+
+
+
+
+
+            @*<td align="right">
+                    @(item.ContratadoLinaza.HasValue ? String.Format("{0:#,##0}", item.ContratadoLinaza / 1000M) : "")
+                </td>
+                <td align="right">
+                    @(item.ConvenioLinaza.HasValue ? String.Format("{0:#,##0}", item.ConvenioLinaza / 1000M) : "")
+                </td>
+                <td align="right">
+                    @(item.IngresosLinaza.HasValue ? String.Format("{0:#,##0}", item.IngresosLinaza / 1000M) : "")
+                </td>
+                <td align="right">
+                    @(String.Format("{0:#,###}", cubrirLinaza / 1000M))
+                </td>*@
+
+            @if (puedeEditar)
+            {
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "Editar", itemParams)
+                </td>
+            }
+        </tr>
+    }
+    <tr>
+        <td colspan="23" class="pager">
+            @Model.Paginator("index", "agricultorestemporada", ViewContext.RequestContext)
+        </td>
+    </tr>
+</table>

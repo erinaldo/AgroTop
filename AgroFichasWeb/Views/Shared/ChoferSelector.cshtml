@@ -1,0 +1,6 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var choferesList = (IEnumerable<SelectListItem>)ViewData["choferesList"];
+}
+
+@Html.DropDownList("idChofer", choferesList, "Seleccione Chofer", new { @class = "heavy std" })

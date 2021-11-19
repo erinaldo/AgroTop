@@ -1,0 +1,487 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    text-align:center;
+    font-family:  Trebuchet MS;
+    font-size: 14px;
+    color: #7f7f7f;
+    background: #fff url(img/bg_top.png) repeat-x;
+
+}
+
+a {
+    color: #e6181a; 
+}
+
+header, footer, nav, section {
+    display: block;
+}
+
+h2
+{
+}
+
+.wrapper
+{
+    width: 1020px;
+    margin: 0 auto;
+    text-align:left;    
+}
+
+.un-TopBar 
+{
+    margin: 30px 0px 50px 0px;
+    position: relative;
+}
+.un-TopBar-Logo
+{
+    position:absolute;
+    left: 25px;
+    top: 0px;
+    z-index: 20;
+}
+
+.un-TopBar-Content
+{
+    padding: 0px 0px 0px 150px;
+    position: relative;
+    top: 8px;
+    height: 33px;
+    background-color: #d32e12;
+}
+
+.un-TopMenu {
+    margin: 4px 0px 0px 25px;
+    padding: 0px 0px 0px 0px;   
+    list-style: none;
+    float: left;
+}
+
+.un-TopMenu  li
+{
+    float: left;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 16px 0px 16px;
+    display: block;
+}
+
+.un-TopMenu  li a
+{
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+}
+
+.un-TopMenu  li a:hover
+{
+    text-decoration: underline;
+}
+
+.un-TopBar  .logout
+{
+    float: right;
+    margin: 20px 0px 0px 0px;
+}
+
+.un-TopBar  .logout a
+{
+    color: #e6181a;
+    text-decoration: none;
+}
+
+.un-TopBar  .logout a:hover
+{
+    text-decoration: underline;
+}
+
+.titulo1
+{
+    color: #E6181A;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: bold;
+    border-bottom: dashed 1px #ffb09c;
+    margin: 0px 0px 20px 0px;
+}
+
+.titulo1-consubmenu
+{
+    color: #E6181A;
+    font-style: italic;
+    font-size: 24px;
+    font-weight: bold;
+    border-bottom: dashed 1px #ffb09c;
+    margin: 0px 0px 10px 0px;
+}
+
+.titulo2
+{
+    color: #4c4c4c;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: bold;
+    border-bottom: dashed 1px #ffb09c;
+    margin: 20px 0px 20px 0px;
+}
+
+.submenu 
+{
+    background-color: #e5e5e5;
+    padding: 5px 10px;
+}
+
+.submenuitem 
+{
+    float: left;
+    margin: 0px 20px 0px 0px;
+    color: #4c4c4c;
+}
+
+.submenuitem  a
+{
+    color: #4c4c4c;
+    text-decoration: none;
+    padding: 1px 5px;
+}
+
+.submenuitem  a:hover
+{
+    background-color: #4C4C4C;
+    color: #fff;
+}
+.submenuitem-selected
+{
+    color: #a5a5a5;
+}
+
+.genContentText {
+    line-height: 1.5em;
+    font-size: 15px;
+}
+/* LOGIN */
+
+#login-Box
+{
+    float:left; 
+    width: 35%; 
+    background-color: #e5e5e5;
+}
+
+#login-Instrucciones
+{
+    float:right; 
+    width: 60%;
+}
+
+#login-Margin
+{
+    margin: 20px 0px 60px 40px;
+}
+
+#login-Box .botonx
+{
+    background-color: #78AE1C;
+    color: #fff;
+    width: 250px;
+    border: solid 1px #78AE1C;
+    margin-top: 20px;
+    padding: 3px 3px 3px 3px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#login-Box input.caxa
+{
+    border: solid 1px #b2b2b2;
+    padding: 3px 0px 3px 0px;
+    width: 250px;
+}
+
+#login-Box label
+{
+    font-size: 14px;
+    display: block;
+    color: #525252;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+
+#login-Box ul
+{
+    list-style: none;
+    color: #dc342f;
+    margin: 0px;
+    padding: 0px;
+}
+
+#login-Box li
+{
+    margin: 0px;
+    padding: 0px 40px 0px 30px;
+    background: url(img/error_icon.png) no-repeat left center;
+}
+
+.tabla1
+{
+    color: #333333;
+}
+
+.tabla1 td
+{
+    padding: 4px;
+}
+
+.tabla1 tr.header td
+{
+    background-color: #78ae1c; 
+    color: #fff;
+}
+
+.tabla1 tr.alt td
+{
+    background-color: #e5e5e5;
+}
+
+.tabla1 tr.alt2 td, .tabla1 tr.even
+{
+    background-color: #f7f6f3;
+}
+
+#tablaDatosSiembra
+{
+    float: left;
+    width: 300px;
+}
+
+#fertilizante {
+    background-color: #fff;
+    margin: 10px 10px;
+}
+
+#fertilizante tr.header td {
+    font-weight: bold;
+    color: #000;
+    
+}
+
+#fertilizante td
+{
+    text-align: center;
+    border: solid 1px #fff;
+}
+
+
+
+#quimicos {
+    background-color: #fff;
+    margin: 10px 10px;
+}
+
+#quimicos tr.header td {
+    font-weight: bold;
+    color: #000;
+}
+
+#quimicos td
+{
+    border: solid 1px #fff;
+}
+
+#tablaFichas
+{
+    float: left;
+    width: 700px;
+}
+
+
+.tabla2
+{
+    border: none;
+    width: 100%;
+    color: #333333;
+}
+
+.tabla2 p, .tabla2 div.p, .tabla2 td
+{
+    border-bottom: solid 1px #d5dfe5;
+    padding: 0px 0px 10px 0px;
+    margin: 0px 0px 10px 0px;
+}
+
+.tabla2 label
+{
+    width: 100px;
+    display: inline-block;
+    text-align: left;
+    padding: 0px 10px 0px 0px;
+    vertical-align: top;
+    /*background-color: #78ae1c;
+    color: #ffffff;*/
+    font-weight: bold;
+}
+
+.tabla2 table.sublist td
+{
+    border-bottom: none;
+    padding: 5px 5px 5px 0px;
+    margin: 0px 0px 10px 0px;
+}
+
+.tabla2 table.sublist2 td
+{
+    padding: 5px 10px 5px 0px;
+    margin: 0px 0px 10px 0px;
+}
+
+.tabla2 .estado {
+    display: inline-block;
+    margin-top: 7px;
+}
+
+.tabla2 .estadoLabel {
+    background-color: #ffffff;
+    margin: 0px 0px 0px 10px;
+    padding: 2px 5px 2px 5px;
+    display: inline-block;
+}
+
+table.form1 
+{
+    
+}
+table.form1 tr.title, table.form1 td.title
+{
+    font-weight: bold;
+    color: #ffffff;
+    background: #7f7f7f;    
+}
+table.form1 td
+{
+    padding: 4px 4px 4px 4px;
+}
+table.form1 td.label
+{
+    font-weight: bold;
+    color: #333333;
+    background: #e5e5e5;
+}
+
+table.form1 td.small
+{
+    font-size: 11px;
+    padding: 2px 2px 2px 2px;
+}
+table.form1 td.nopad td
+{
+    padding: 0px 0px 0px 0px;
+}
+
+table.form1 td.idins
+{
+    font-style: italic;
+}
+
+table.form1 tr.inlineForm td
+{
+    background-color: #ffc800;
+}
+
+    table.form1 td.small {
+        font-size: 12px;
+    }
+table.form1 td.buttons
+{
+    border-top: solid 1px #7f7f7f;
+    text-align: right;
+}
+
+table.form1-sublist td
+{
+    font-size: 10px;
+    padding: 2px 2px 2px 2px;
+}
+
+table.form1-sublist input
+{
+    font-size: 10px;
+}
+table.form1-sublist td.label
+{
+    background: transparent;
+    font-weight: bold;
+    font-size: 10px;
+}
+
+table.form1-sublist tr.title
+{
+    font-weight: bold;
+    color: #ffffff;
+    background: #7f7f7f;    
+}
+
+/* Styles for basic forms
+-----------------------------------------------------------*/
+fieldset {
+    border: 1px solid #ddd;
+    padding: 0 1.4em 1.4em 1.4em;
+    margin: 0 0 1.5em 0;
+}
+
+legend {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+textarea {
+    min-height: 75px;
+}
+
+.editor-label {
+    margin: 1em 0 0 0;
+}
+
+.editor-field {
+    margin: 0.5em 0 0 0;
+}
+
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error {
+    color: #f00;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.input-validation-error {
+    border: 1px solid #f00;
+    background-color: #fee;
+}
+
+.validation-summary-errors {
+    font-weight: bold;
+    color: #f00;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.recomendaciones {
+    background-color: #fff;
+    margin: 10px 10px;
+}
+
+    .recomendaciones tr.header td {
+        font-weight: bold;
+        color: #000;
+    }
+
+    .recomendaciones td {
+        text-align: center;
+        border: solid 1px #fff;
+    }

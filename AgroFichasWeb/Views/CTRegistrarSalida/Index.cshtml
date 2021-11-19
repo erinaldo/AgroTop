@@ -1,0 +1,176 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model List<CTR_ControlTiempo>
+@{
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = "Registrar Salida";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantasProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+
+    <meta http-equiv="refresh" content="60">
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": false,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    @if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+    {
+        <div class="row">
+            @if (!string.IsNullOrEmpty(Request["errMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["errMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Request["okMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["okMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Filtros de Búsqueda</h2>
+                </header>
+                <div class="panel-body">
+                    <div class="form-inline center">
+                        @using (Html.BeginForm("index", "CTRegistrarSalida", new { id = 0 }, FormMethod.Get))
+                        {
+                            <div class="form-group">
+                                @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                            </div>
+
+                            <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                            <input class="btn btn-default" type="submit" value="Buscar" />
+                            <div class="clearfix visible-xs mb-sm"></div>
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">@ViewBag.SubTitle</h2>
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>Núm. Control</th>
+                        <th>Planta Producción</th>
+                        <th>Empresa</th>
+                        <th>RUT</th>
+                        <th>Transportista</th>
+                        <th>Patente</th>
+                        <th>Chofer</th>
+                        <th>Tel. Chofer</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Núm. Guía</th>
+                        <th>D.U.S.</th>
+                        <th>Reserva</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr valign="top">
+                        <td>@item.IdControlTiempo</td>
+                        <td>@item.PlantaProduccion.Nombre</td>
+                        <td>@item.Empresa.Nombre</td>
+                        <td>@item.RutTransportista</td>
+                        <td>@item.NombreTransportista</td>
+                        <td>@item.Patente</td>
+                        <td>@item.NombreChofer</td>
+                        <td>@item.TelefonoChofer</td>
+                        @if (!item.IdCliente.HasValue)
+                        {
+                            <td>&mdash;</td>
+                        }
+                        else
+                        {
+                            <td>@item.Cliente.RazonSocial</td>
+                        }
+                        <td>@item.CTR_Producto.Nombre</td>
+
+                        @if (item.NumeroGuia == null || item.NumeroGuia == 0)
+                        {
+                            <td>&mdash;</td>
+                        }
+                        else
+                        {
+                            <td>@item.NumeroGuia</td>
+                        }
+
+
+                        @if (string.IsNullOrEmpty(item.DUS))
+                        {
+                            <td>&mdash;</td>
+                        }
+                        else
+                        {
+                            <td>@item.DUS</td>
+                        }
+                        @if (string.IsNullOrEmpty(item.Reserva))
+                        {
+                            <td>&mdash;</td>
+                        }
+                        else
+                        {
+                            <td>@item.Reserva</td>
+                        }
+                        <td><span class="@item.CreateCSSClassResponsive()">@item.CTR_Estado.Descripcion</span></td>
+                        <td>
+                            <button id="edit_@item.IdControlTiempo" onclick="window.location.href='@Url.Action("registrar", new { id = item.IdControlTiempo })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Registrar Salida"> <i class="fa fa-edit"></i></button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- end: page -->
+</section>

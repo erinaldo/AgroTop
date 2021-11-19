@@ -1,0 +1,117 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model ExportBatch
+@{
+    <script>
+
+        function PostBatch() {
+            $.post({
+                url: '@Url.Action("BatchRecepcionesSAP", new { id = Model.IdExportBatch })',
+                success: function (dataJSON) {
+                    dataJSON.forEach(elementos => {
+                        $.ajax({
+                                 type: 'POST',
+                                 url: 'https://localhost:44309/ImportSap/AddBatch',
+                                 data:elementos,
+                                 contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            statusCode: {
+                                200: function () {
+                                    alert("OK")
+                                },
+                                400: function () {
+                                    lert("Falló la exportacón a SAP")
+                                }
+                            }
+                        });
+                        console.log(elementos);
+                    })
+                }
+            });
+        }
+
+    </script>
+}
+
+<table class="procesoIngreso">
+    <tr>
+        <td><label>Número</label></td>
+        <td>
+            @Model.IdExportBatch
+        </td>
+    <tr>
+        <td><label>Empresa</label></td>
+        <td>@Model.Empresa.Nombre</td>
+    </tr>
+    <tr>
+        <td><label>Temporada</label></td>
+        <td>@Model.Temporada.Nombre</td>
+    </tr>
+    <tr>
+        <td><label>Tipo</label></td>
+        <td><b>@Model.TipoExportBatch.Nombre</b></td>
+    </tr>
+    <tr>
+        <td><label>Archivos</label></td>
+        <td>
+            @Html.ActionLink("Encabezado", "ExportEncabezado", new { id = Model.IdExportBatch }, new { @class = "command" })
+            @Html.ActionLink("Detalle", "ExportDetalle", new { id = Model.IdExportBatch }, new { @class = "command" })
+        </td>
+    </tr>
+    <tr>
+        <td><label>Exportar a SAP</label></td>
+        <td>
+            <a class="command" href="#" onclick="PostBatch()" data-dismiss="modal">Enviar</a>
+
+        </td>
+    </tr>
+    <tr valign="top">
+        <td><label style="margin-top: 7px">Ingresos</label></td>
+        <td colspan="1">
+            @if (Model.ProcesoIngreso.Count > 0)
+            {
+                <table class="form1" style="margin-bottom: 10px;">
+                    <tr>
+                        <td class="label small" colspan="1">Nro</td>
+                        <td class="label small" colspan="1">Agricultor</td>
+                        <td class="label small" colspan="1">Sucursal</td>
+                        <td class="label small" colspan="1">Bodega</td>
+                        <td class="label small" colspan="1">Cultivo</td>
+                        <td class="label small" colspan="1" align="right">Kg Std</td>
+                        <td class="label small" colspan="1">Estado</td>
+                    </tr>
+                    @foreach (var ingreso in Model.ProcesoIngreso)
+                    {
+                        <tr valign="top">
+                            <td>@ingreso.IdProcesoIngreso</td>
+                            <td>@ingreso.Agricultor.Nombre</td>
+                            <td>@ingreso.Sucursal.Nombre</td>
+                            <td>@ingreso.Bodega.Nombre</td>
+                            <td>@ingreso.CultivoContrato.Nombre</td>
+                            <td align="right">@ingreso.PesoNormal.Value.ToString("#,##0")</td>
+                            <td>@ingreso.EnSap</td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <text>-</text>
+            }
+        </td>
+    </tr>
+    <tr valign="top">
+        <td><label>Estado</label></td>
+        <td colspan="1">
+            <span style="background-color: @(Model.Nulo ? "#ff8e73" : "#83f03c")" class="estado">@(Model.Nulo ? "Nulo" : "Vigente")</span>
+            <table class="sublist">
+                <tr><td>Creado</td><td>@Model.FechaHoraIns.ToString("dd/MM/yy HH:mm")</td><td>@Model.UserIns</td></tr>
+                @if (Model.Nulo)
+                {
+                    <tr><td>Anulado</td><td>@Model.FechaHoraNulo.Value.ToString("dd/MM/yy HH:mm")</td><td>@Model.UserNulo</td></tr>
+                }
+            </table>
+        </td>
+    </tr>
+</table>

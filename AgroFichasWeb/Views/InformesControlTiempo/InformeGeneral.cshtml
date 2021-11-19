@@ -1,0 +1,100 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.ControlTiempo
+
+@model InformeGeneralViewModel
+@{
+    ViewBag.Title = "Informe General";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantasProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": false,
+            "iDisplayLength": 25,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            },
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Filtros de Búsqueda</h2>
+                </header>
+                <div class="panel-body">
+                    <div class="form-inline center">
+                        @using (Html.BeginForm("InformeGeneral", "InformesControlTiempo", FormMethod.Get))
+                        {
+                            <div class="form-group">
+                                @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                @Html.DropDownList("IdEstado", Model.GetEstados(Model.IdEstado), "Seleccione un Estado", new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                @Html.DropDownList("IdIncremento", Model.GetIncrementos(Model.IdIncremento), "Seleccione un Intervalo de Días", new { @class = "form-control" })
+                            </div>
+                            <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                            <input class="btn btn-default" type="submit" value="Filtrar" />
+                            <div class="clearfix visible-xs mb-sm"></div>
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <section class="panel">
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>Glosa</th>
+                        <th>N° Camiones</th>
+                        <th>Promedio de Tiempo</th>
+                        <th>N° Camiones ≤ a 2 hrs.</th>
+                        <th>N° Camiones > a 2 hrs. ≤ a 4 hrs.</th>
+                        <th>N° Camiones > 4 hrs.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.InformeGeneral)
+                    {
+                        <tr valign="top">
+                            <td>@item.Glosa</td>
+                            <td>@item.NumeroDeCamiones</td>
+                            @*<td>@Html.Raw(item.Promedio.HasValue ? string.Format("{0:dd\\d hh:mm:ss}", item.Promedio.Value) : "&mdash;")</td>*@
+                            <td>@Model.GetPromedio(item.Promedio_Minuto.Value)</td>
+                            <td>@item.Menor2</td>
+                            <td>@item.Mayor2Menor4</td>
+                            <td>@item.Mayor4</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- end: page -->
+</section>

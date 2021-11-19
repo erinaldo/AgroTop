@@ -1,0 +1,12 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var idSucursal = (int)ViewData["idSucursal"];
+    var sucursales = (List<Sucursal>)ViewData["sucursales"];
+}
+<select id="idSucursal" name="idSucursal">
+    <option value="">(Todas las Plantas)</option>
+    @foreach (var t in sucursales)
+    {
+        <option value="@t.IdSucursal" @(t.IdSucursal == idSucursal ? "selected" : "")>@t.Nombre</option>
+    }
+</select>

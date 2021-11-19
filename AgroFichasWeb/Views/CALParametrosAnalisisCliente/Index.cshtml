@@ -1,0 +1,131 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Models.SoftwareCalidad
+@using AgroFichasWeb.ViewModels.SoftwareCalidad
+@model AsociarParametrosAnalisisClienteViewModel
+@{
+    ViewBag.Title = "Parámetros de Análisis";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/greyGridTable.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/tables/row.with.details_PAC.js")"></script>
+}
+@section CustomScripts
+{
+
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Parámetros de Análisis Asociados a Clientes</h2>
+        @if (permisosUsuario.Crear)
+        {
+            <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                <a href="@Url.Action("Asociar", "CALParametrosAnalisisCliente", new { })" class="btn btn-primary">Asociar Parámetro de Análisis a Cliente <i class="fa fa-plus"></i></a>
+            </div>
+        }
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Acciones</th>
+                    <th class="hidden">Parámetros de Análisis</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Clientes)
+                {
+                    <tr valign="top">
+                        <td>@item.RazonSocial</td>
+                        <td></td>
+                        <td class="hidden">
+                            <div class="divTableBody">
+                                @foreach (CAL_ParametroAnalisisCliente parametroAnalisisCliente in Model.GetParametrosAnalisis(item.IdCliente))
+                                {
+                                    <div class="divTableRow">
+                                        <div class="divTableCell">
+                                            @if (parametroAnalisisCliente.IdSubproducto.HasValue)
+                                            {
+                                                @Html.Raw(parametroAnalisisCliente.CAL_Subproducto.Nombre)
+                                            }
+                                        </div>
+                                        <div class="divTableCell">@parametroAnalisisCliente.CAL_ParametroAnalisis.Nombre</div>
+                                        @if (parametroAnalisisCliente.CAL_ParametroAnalisis.UM == "%")
+                                        {
+                                            <div class="divTableCell">@((parametroAnalisisCliente.MinValidValue / 100).ToString(parametroAnalisisCliente.CAL_ParametroAnalisis.FormatString))</div>
+                                            <div class="divTableCell">@((parametroAnalisisCliente.MaxValidValue / 100).ToString(parametroAnalisisCliente.CAL_ParametroAnalisis.FormatString))</div>
+                                            <div class="divTableCell">@((parametroAnalisisCliente.MinAutValue.Value / 100).ToString(parametroAnalisisCliente.CAL_ParametroAnalisis.FormatString))</div>
+                                            <div class="divTableCell">@((parametroAnalisisCliente.MaxAutValue.Value / 100).ToString(parametroAnalisisCliente.CAL_ParametroAnalisis.FormatString))</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="divTableCell">@parametroAnalisisCliente.MinValidValue.ToString(parametroAnalisisCliente.CAL_ParametroAnalisis.FormatString)</div>
+                                            <div class="divTableCell">@parametroAnalisisCliente.MaxValidValue.ToString(parametroAnalisisCliente.CAL_ParametroAnalisis.FormatString)</div>
+                                            <div class="divTableCell">@parametroAnalisisCliente.MinAutValue.Value.ToString(parametroAnalisisCliente.CAL_ParametroAnalisis.FormatString)</div>
+                                            <div class="divTableCell">@parametroAnalisisCliente.MaxAutValue.Value.ToString(parametroAnalisisCliente.CAL_ParametroAnalisis.FormatString)</div>
+                                        }
+                                        <div class="divTableCell">@parametroAnalisisCliente.AccionAutValue</div>
+                                        <div class="divTableCell"><span class="@parametroAnalisisCliente.GetCssStyleMostrarParametroAnalisis(parametroAnalisisCliente.MostrarParametroAnalisis)">@(parametroAnalisisCliente.MostrarParametroAnalisis ? "Sí" : "No")</span></div>
+                                        <div class="divTableCell"><span class="@parametroAnalisisCliente.GetCssStyleRequerido(parametroAnalisisCliente.Requerido)">@(parametroAnalisisCliente.Requerido ? "Sí" : "No")</span></div>
+                                        <div class="divTableCell">
+                                            @if (permisosUsuario.Actualizar)
+                                            {
+                                                <button id="@string.Format("edit_{0}_{1}_{2}", parametroAnalisisCliente.IdParametroAnalisis, parametroAnalisisCliente.IdCliente, parametroAnalisisCliente.IdSubproducto)" onclick="window.location.href='@Url.Action("Editar", new { id = parametroAnalisisCliente.IdParametroAnalisis, IdCliente = parametroAnalisisCliente.IdCliente, IdSubproducto = parametroAnalisisCliente.IdSubproducto })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                                            }
+                                            @if (permisosUsuario.Borrar)
+                                            {
+                                                <button id="@string.Format("delete_{0}_{1}_{2}", parametroAnalisisCliente.IdParametroAnalisis, parametroAnalisisCliente.IdCliente, parametroAnalisisCliente.IdSubproducto)" onclick="window.location.href='@Url.Action("Eliminar", new { id = parametroAnalisisCliente.IdParametroAnalisis, IdCliente = parametroAnalisisCliente.IdCliente, IdSubproducto = parametroAnalisisCliente.IdSubproducto })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

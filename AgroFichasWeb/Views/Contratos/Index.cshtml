@@ -1,0 +1,314 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model AgroFichasWeb.Controllers.PaginatedList<Contrato>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    var puedeAdministrarDocumentosContratos = SYS_User.Current().HasPermiso(1006);
+    var puedeEditar = SYS_User.Current().HasPermiso(13);
+    var puedeElimimar = SYS_User.Current().HasPermiso(14);
+
+    ViewBag.Title = "Contratos";
+    ViewBag.NombreSeccion = "Administrar Contratos " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml"; 
+    }
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 50,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+</script>
+}
+
+@if (!string.IsNullOrEmpty(Request["msgerr"]) || !string.IsNullOrEmpty(Request["msgok"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["msgok"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["msgok"]
+                    </div>
+                </div>
+            </div>}
+        @if (!string.IsNullOrEmpty(Request["msgerr"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["msgerr"]))
+                    </div>
+                </div>
+            </div>}
+    </div>}
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Filtros de Búsqueda</h2>
+                </header>
+                <div class="panel-body">
+                    <div class="form-inline center">
+                        @using(Html.BeginForm("index", "contratos", new { id = 0 }, FormMethod.Get)) 
+                        {
+                        <div class="form-group">
+                            @Html.Partial("TemporadaSelector")
+                        </div>
+                        <div class="form-group">
+                            @Html.Partial("EmpresaSelector")
+                        </div>
+                            <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                            <input type="text" name="key" class="form-control" value="@ViewData["key"]" /> <input class="btn btn-default" type="submit" value="Buscar" />
+                            <div class="clearfix visible-xs mb-sm"></div>
+                        }
+                    <div class="" style="margin-top: 10px">
+                        @Html.ActionLink("Exportar", "indexexport", new { idTemporada = temporada.IdTemporada, idEmpresa = ViewData["idEmpresa"], key = ViewData["key"] }, new { @class = "" })
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">@ViewBag.NombreSeccion</h2>
+            @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(12))
+            {
+                <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+
+                    <a href="@Url.Action("crear", "contratos")" class="btn btn-primary" id="addSilo">Crear Contrato <i class="fa fa-plus"></i></a>
+                </div>
+            }
+            <br />
+            <div>
+                <h2 class="panel-title">Totales:</h2>
+                <br />
+                <span class="text-dark">Total convenio de precios en toneladas: @(((int)ViewData["totalToneladas"]).ToString("#,##0"))</span><br />
+                <span class="text-dark">Total convenio de precios en hectáreas: @(((int)ViewData["totalToneladas"]).ToString("#,##0"))</span><br />
+                <span class="text-dark">Total de toneladas: @(((int)ViewData["totalToneladas"]).ToString("#,##0"))</span><br />
+                <span class="text-dark">Total de hectáreas: @(((int)ViewData["totalToneladas"]).ToString("#,##0"))</span><br />
+            </div>
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th align="center">
+                            Habilitado
+                        </th>
+                        <th align="left">
+                            Número
+                        </th>
+                        <th align="left">
+                            Nombre
+                        </th>
+                        <th align="left">
+                            Empresa
+                        </th>
+                        <th align="left">
+                            Asesor
+                        </th>
+                        <th align="left">
+                            Cultivo
+                        </th>
+                        <th align="left">
+                            Provincia
+                        </th>
+                        <th align="left">
+                            Comuna
+                        </th>
+                        <th align="right">
+                            Ton
+                        </th>
+                        <th align="left">
+                            Convenio de Precio
+                        </th>
+                        <th align="left">
+                            Sucursal de Entrega
+                        </th>
+                        <th align="left">
+                            Tipo
+                        </th>
+                        <th align="right">
+                            Doctos
+                        </th>
+                        <th align="right">
+                            Acciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr valign="top">
+                            <td align="center">
+                                @if (item.Habilitado)
+                                {
+                                    <span class="fa fa-check-square"></span> }
+                                else
+                                {
+                                    <span class="fa fa-square"></span>}
+                            </td>
+                            <td align="left">
+                                @item.NumeroContrato
+                            </td>
+                            <td align="left">
+                                @item.Agricultor.Nombre
+                            </td>
+                            <td align="left">
+                                @item.Empresa.Nombre
+                            </td>
+                            <td align="left">
+                                @if (item.Agricultor.UsuarioAgricultor.Count > 0)
+                                {
+                                    foreach (var user in item.Agricultor.UsuarioAgricultor)
+                                    {
+                                        @(user.SYS_User.UserName) <br />
+                                    }
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
+                            </td>
+                            <td align="left">
+                                @item.DescripcionCultivos("<br />").ToMvcHtmlString()
+                            </td>
+                            <td align="left">
+                                @item.Comuna.Provincia.Nombre
+                            </td>
+                            <td>
+                                @item.Comuna.Nombre
+                            </td>
+                            <td align="right">
+                                @String.Format("{0:#,##0}", item.ItemContrato.Sum(ic => ic.Cantidad) / 1000M)
+                            </td>
+                            <td align="right">
+                                @String.Format("{0:#,##0}", item.ConvenioPrecio.Sum(ic => ic.PrecioUnidad))
+                            </td>
+                            <td align="left">
+                                @if (item.IdSucursal.HasValue)
+                                {
+                                    @item.Sucursal.Nombre
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
+
+                            </td>
+
+                            <td align="left">
+                                @if (item.IdTipoContrato.HasValue)
+                                {
+                                    <span>@item.TipoContrato.Descripcion</span>
+                                }
+                            </td>
+                            <td align="right">
+                                @item.DoctoContrato.Count(X => X.DoctoValido == true)
+                            </td>
+                            <td>
+                                @if (puedeAdministrarDocumentosContratos)
+                                {
+                                    <button id="#" onclick="window.location.href='@Url.Action("doctos", "contratos", new { id = item.IdContrato })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Documentos"> <i class="fa fa-file-text-o"></i></button>
+                                }
+                                @if (puedeEditar)
+                                {
+                                    <button id="#" onclick="window.location.href='@Url.Action("editar", "contratos", new { id = item.IdContrato })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                                }
+                                @if (puedeElimimar)
+                                {
+                                    <button id="#" onclick="window.location.href='@Url.Action("eliminar", "contratos", new { id = item.IdContrato })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash"></i></button>
+                                }
+                                @*<span data-toggle="modal" data-target=".modalInfo_@item.IdPlanificacionSemanal"><button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Más Información"> <i class="fa fa-info"></i></button></span>*@
+                                <span data-toggle="modal" data-target=".modalInfo_@item.IdContrato"><button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Más Información"> <i class="fa fa-info"></i></button></span>
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @foreach (var item in Model)
+        {
+            <div id="info_@item.IdContrato" class="modal fade modalInfo_@item.IdContrato" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h4 class="modal-title" id="myLargeModalLabel"><i class="fa fa-info fa-1x"></i> Más información</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="panel-body">
+                                <div class="tm-title">
+                                    <h3 class="h5 text-uppercase">@(item.Agricultor == null ? "" : item.Agricultor.Nombre)</h3>
+                                </div>
+                                <br />
+                                <div class="tm-body col-md-12">
+                                    <div class="col-md-4">
+                                        <span>Rut</span>
+                                        <input id="txtRut" class="form-control" value="@item.Agricultor.Rut" readonly />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span>Spot</span>
+                                        <input id="txtSpot" class="form-control" value="" readonly />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span>Toneladas Cerradas Fijo</span>
+                                        <input id="txtTon" class="form-control" value="" readonly />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span>Precio Fijo</span>
+                                        <input id="txtPrecio" class="form-control" value="" readonly />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span>Bono</span>
+                                        <input id="txtBono" class="form-control" value="" readonly />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <span class="text-dark">Precio Total</span>
+                                        <input id="txtPrecioTotal" class="form-control" value="" readonly />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            
+        }
+    </section>

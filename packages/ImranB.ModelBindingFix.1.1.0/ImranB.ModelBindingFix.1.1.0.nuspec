@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>ImranB.ModelBindingFix</id>
+    <version>1.1.0</version>
+    <title>ImranB.ModelBindingFix</title>
+    <authors>Imran Baloch</authors>
+    <owners>Imran Baloch</owners>
+    <projectUrl>http://weblogs.asp.net/imranbaloch/archive/2012/12/08/fixing-model-the-binding-issue-of-asp-net-mvc-and-asp-net-web-api.aspx</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This package will fix a model binding issue which available in ASP.NET MVC 4 and ASP.NET Web API.</description>
+    <dependencies>
+      <group targetFramework=".NETFramework4.0-Client">
+        <dependency id="Microsoft.AspNet.Mvc" version="4.0.20710.0" />
+        <dependency id="Microsoft.AspNet.WebApi" version="4.0.20710.0" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

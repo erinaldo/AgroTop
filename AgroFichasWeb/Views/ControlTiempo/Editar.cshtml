@@ -1,0 +1,347 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_ControlTiempo
+
+@{
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = string.Format("Editar Control #{0}", Model.IdControlTiempo);
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var UserID = (int)ViewData["UserID"];
+}
+
+@section CustomScripts
+{
+    <script>
+        //_helpers: {
+        //    //Check is string null or empty
+        //    isStringNullOrEmpty: function (val) {
+        //        switch (val) {
+        //            case "":
+        //            case 0:
+        //            case "0":
+        //            case null:
+        //            case false:
+        //            case undefined:
+        //            case typeof this === 'undefined':
+        //                return true;
+        //            default: return false;
+        //        }
+        //    },
+
+        //    //Check is string null or whitespace
+        //    isStringNullOrWhiteSpace: function (val) {
+        //        return this.isStringNullOrEmpty(val) || val.replace(/\s/g, "") === '';
+        //    },
+
+        //    //If string is null or empty then return Null or else original value
+        //    nullIfStringNullOrEmpty: function (val) {
+        //        if (this.isStringNullOrEmpty(val)) {
+        //            return null;
+        //        }
+        //        return val;
+        //    }
+        //},
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+        var uriSAP = 'http://190.13.134.173/Soindus/SoindusApi/RegCom/BALANZA2';
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+            DeleteClientes();
+            GetClientes();
+        });
+
+        function getPesoInicial() {
+            $('#PesoInicial').val('Cargando. . .');
+            $.getJSON(uriSAP, function (data) {
+                $('#PesoInicial').val(data["StrValue"])
+            });
+        }
+        function getPesoFinal() {
+            $('#PesoFinal').val('Cargando. . .');
+
+            $.getJSON(uriSAP)
+                .done(function (result) {
+                    $('#PesoFinal').val(result["StrValue"]);
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err)
+                    alert("Ha ocurrido un error a la hora de traer el pesaje, por favor ingreselo manualmente.")
+                    $('#PesoFinal').val(0);
+                });
+        }
+
+        function getNumeroGuia() {
+            /* $.getJSON('http://190.13.134.173/Soindus/SoindusApi/EntregaSBO')
+                 .done(function (result) {
+                    // console.log(result);
+                     sendDocNum(result['DocNum']);
+                 })
+                 .fail(function (jqXHR, textStatus, err) {
+                     console.log(err)
+                 });*/
+
+
+            $.getJSON('http://190.13.134.173/Soindus/SoindusApi/EntregaSBO')
+                .done(function (result) {
+                    console.log(result);
+                    $('#NumeroGuia').val(result['DocNum'])
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err)
+                });
+        }
+
+        function GetClientes() {
+
+            var id = $('#IdEmpresa').val();
+            $.getJSON(uri + '/Clientes/GetClientes?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay clientes disponibles");
+                        DeleteClientes();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Cliente)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdCliente, '">',
+                                result[i].RazonSocial, '</option>');
+                        }
+                        $("#IdCliente").html(options.join(''));
+
+                        var idCliente = '@(Model.IdCliente == 0 ? "" : Model.IdCliente.ToString())';
+                        var idEmpresa = '@(Model.IdEmpresa == 0 ? "" : Model.IdEmpresa.ToString())';
+                        if (!$.isEmptyObject(idCliente) && id == idEmpresa) {
+                            $("#IdCliente").val(idCliente);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function DeleteClientes() {
+            $("#IdCliente option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Cliente)', '</option>');
+            $("#IdCliente").html(options.join(''));
+        }
+
+        $("#IdEmpresa").change(function () {
+            DeleteClientes();
+            GetClientes();
+        });
+    </script>
+ 
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@String.Format("Editar el Control de Tiempo Núm. {0}", Model.IdControlTiempo)</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Producción <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdPlantaProduccion", Model.GetPlantaProduccion(Model.IdEmpresa, UserID), new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdPlantaProduccion")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdEmpresa", Model.GetEmpresas(Model.IdEmpresa), "-- Seleccione Empresa --", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdEmpresa")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cliente <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdCliente", new List<SelectListItem>(), "-- Seleccione Cliente --", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdProducto", Model.GetProductos(Model.IdProducto), "-- Seleccione Producto --", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdProducto")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">RUT de la Empresa de Transporte <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("RutTransportista", Model.RutTransportista, new { @class = "form-control", maxlength = "10", placeholder = "Ingrese RUT sin puntos y con guíon" })
+                                            @Html.ValidationMessage("RutTransportista")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Nombre de la Empresa de Transporte <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("NombreTransportista", Model.NombreTransportista, new { @class = "form-control", maxlength = "40" })
+                                            @Html.ValidationMessage("NombreTransportista")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Patente del Camión <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Patente", Model.Patente, new { @class = "form-control" })
+                                            @Html.ValidationMessage("Patente")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Nombre del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("NombreChofer", Model.NombreChofer, new { @class = "form-control", maxlength = "200" })
+                                            @Html.ValidationMessage("NombreChofer")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Teléfono del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("TelefonoChofer", Model.TelefonoChofer, new { @class = "form-control", maxlength = "100" })
+                                            @Html.ValidationMessage("TelefonoChofer")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Rut del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("RutChofer", Model.RutChofer, new { @class = "form-control", maxlength = "10", placeholder = "Ingrese RUT sin puntos y con guíon" })
+                                            @Html.ValidationMessage("RutChofer")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Email del Chofer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("EmailChofer", Model.EmailChofer, new { @class = "form-control", maxlength = "100" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Tipo de camion <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("TipoCamion", Model.TipoCamion, new { @class = "form-control", maxlength = "100" })
+                                            @Html.ValidationMessage("TipoCamion")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">D.U.S.</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("DUS", Model.DUS, new { @class = "form-control" })
+                                            @Html.ValidationMessage("DUS")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Reserva</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("Reserva", Model.Reserva, new { @class = "form-control" })
+                                            @Html.ValidationMessage("Reserva")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Estado</label>
+                                        <div class="col-sm-6">
+                                            <span class="@Model.CreateCSSClassResponsive()">@Model.CTR_Estado.Descripcion</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Observaciones</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "form-control" })
+                                            @Html.ValidationMessage("Observaciones")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Editar" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

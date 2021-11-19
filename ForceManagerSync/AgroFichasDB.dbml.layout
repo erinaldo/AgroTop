@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 24" name="AgroFichasDB">
+  <DataContextMoniker Name="/AgroFichasDBDataContext" />
+  <nestedChildShapes>
+    <classShape Id="874770b7-da44-4712-811f-efa5552610c9" absoluteBounds="6.75, 0.75, 2, 6.1938297526041666">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/Agricultor" />
+      <nestedChildShapes>
+        <elementListCompartment Id="58b9fffe-5c1d-4a9b-b4b7-9937219f47cb" absoluteBounds="6.765, 1.21, 1.9700000000000002, 5.6338297526041661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="38607a97-46e4-49ba-aa8d-46c20ed03430" absoluteBounds="0.75, 0.75, 2, 1.7708968098958327">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/ForceManager" />
+      <nestedChildShapes>
+        <elementListCompartment Id="88c5cb42-6e18-47f5-a446-3df3a09fdd62" absoluteBounds="0.76500000000000057, 1.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="2d59fe7b-33e1-4e50-9935-b7adeae96576" absoluteBounds="3.5, 19.125, 2, 4.6554182942708309">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/CRM_DatosContacto" />
+      <nestedChildShapes>
+        <elementListCompartment Id="9f41fc85-a8ba-470b-b42d-582c929ebed5" absoluteBounds="3.5150000005960464, 19.58500000089407, 1.9700000000000002, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="30f8c26b-1a4c-4479-b63a-0572111649c1" absoluteBounds="3.5, 5.25, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/CRM_DatosFiscales" />
+      <nestedChildShapes>
+        <elementListCompartment Id="20a2e13b-ce36-4c1f-ab80-eaf657871bcf" absoluteBounds="3.5150000005960464, 5.71000000089407, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="40fc3c3e-d193-4f40-bbfe-2b85cb2d4c70" absoluteBounds="3.5, 8.75, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/CRM_General" />
+      <nestedChildShapes>
+        <elementListCompartment Id="9b5d0df5-25ed-46d8-b483-8e76b83abbe4" absoluteBounds="3.5150000005960464, 9.21000000089407, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d2a5e1d7-d7cf-4ce1-993d-5343b5b9cd7e" absoluteBounds="6.5, 8, 2, 6.1938297526041666">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/CRM_Objetivos" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ff21c35d-a050-4e8e-ace2-03232772efc9" absoluteBounds="6.5150000005960464, 8.46000000089407, 1.9700000000000002, 5.6338297526041661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="fd6666d2-124f-4cb2-b728-525ed12e4656" absoluteBounds="3.75, 12.625, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/Temporada" />
+      <nestedChildShapes>
+        <elementListCompartment Id="74038edd-0d73-4c5f-8494-4fe7f3b9a63b" absoluteBounds="3.7650000005960464, 13.08500000089407, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(5.75 : 13.4094148763021); (6.5 : 13.4094148763021)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/Temporada/Temporada_CRM_Objetivos" />
+      <nodes>
+        <classShapeMoniker Id="fd6666d2-124f-4cb2-b728-525ed12e4656" />
+        <classShapeMoniker Id="d2a5e1d7-d7cf-4ce1-993d-5343b5b9cd7e" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="e3cf6f40-99a0-4116-a024-978e1388abfe" absoluteBounds="0.75, 8.125, 2, 5.8092268880208309">
+      <DataClassMoniker Name="/AgroFichasDBDataContext/CRM_Informacion" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8b4f41c1-8ef5-4157-bae4-39c5bfb471c8" absoluteBounds="0.76500000059604645, 8.58500000089407, 1.9700000000000002, 5.249226888020833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(1.75 : 13.9342268880208); (1.75 : 21.4527091471354); (3.5 : 21.4527091471354)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/CRM_Informacion/CRM_Informacion_CRM_DatosContacto" />
+      <nodes>
+        <classShapeMoniker Id="e3cf6f40-99a0-4116-a024-978e1388abfe" />
+        <classShapeMoniker Id="2d59fe7b-33e1-4e50-9935-b7adeae96576" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.75 : 8.125); (1.75 : 6.61620198567708); (3.5 : 6.61620198567708)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/CRM_Informacion/CRM_Informacion_CRM_DatosFiscales" />
+      <nodes>
+        <classShapeMoniker Id="e3cf6f40-99a0-4116-a024-978e1388abfe" />
+        <classShapeMoniker Id="30f8c26b-1a4c-4479-b63a-0572111649c1" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 10.1162019856771); (3.5 : 10.1162019856771)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/CRM_Informacion/CRM_Informacion_CRM_General" />
+      <nodes>
+        <classShapeMoniker Id="e3cf6f40-99a0-4116-a024-978e1388abfe" />
+        <classShapeMoniker Id="40fc3c3e-d193-4f40-bbfe-2b85cb2d4c70" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 12.0537019856771); (6.5 : 12.0537019856771)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/AgroFichasDBDataContext/CRM_Informacion/CRM_Informacion_CRM_Objetivos" />
+      <nodes>
+        <classShapeMoniker Id="e3cf6f40-99a0-4116-a024-978e1388abfe" />
+        <classShapeMoniker Id="d2a5e1d7-d7cf-4ce1-993d-5343b5b9cd7e" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

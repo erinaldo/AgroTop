@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="agrofichas" Class="AgrofichasDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=JFERNANDEZ;Initial Catalog=agrofichas;Persist Security Info=True;User ID=SA" SettingsObjectName="Agrotop.PROCEA.Properties.Settings" SettingsPropertyName="agrofichasConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Liquidacion" Member="Liquidacion">
+    <Type Name="Liquidacion">
+      <Column Name="IdLiquidacion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdTemporada" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdAgricultor" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdMoneda" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TotalNeto" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalIva" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalIvaRetenido" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalIvaNoRetenido" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalLiquidacion" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalPagar" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="FactorIva" Type="System.Decimal" DbType="Decimal(6,4) NOT NULL" CanBeNull="false" />
+      <Column Name="FactorIvaRetenido" Type="System.Decimal" DbType="Decimal(6,4) NOT NULL" CanBeNull="false" />
+      <Column Name="AutorizadaIngresos" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UserAutIng" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraAutIng" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpAutIng" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ObservacionesAutIng" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="AutorizadaDescuentos" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="UserAutDes" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraAutDes" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpAutDes" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ObservacionesAutDes" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="UserCreacion" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraCreacion" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpCreacion" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ObservacionesCreacion" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Nulo" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="TotalDescuentos" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserDescuentos" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraDescuentos" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpDescuentos" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ObservacionesDescuentos" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" IsDbGenerated="true" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Retenida" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="RetenidaMemo" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="UserRetenida" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraRetenida" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpDetenida" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="UserNulo" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraNulo" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpNulo" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="TotalFacturado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OC" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Empresa_Liquidacion" Member="Empresa" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="Empresa" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LOG_Liquidacion" Member="LOG_Liquidacion">
+    <Type Name="LOG_Liquidacion">
+      <Column Name="IdLiquidacion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdRequerimiento" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NumeroFactura" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ProntoPago" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PP_TotalNeto" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PP_IVA" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PP_TotalBruto" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="DiferenciaPesaje" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DP_TotalNeto" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="DP_IVA" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="DP_TotalBruto" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="TotalNeto" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="IVA" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="TotalBruto" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="Liquidacion" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="GUID" Type="System.String" DbType="VarChar(36) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="PropuestaLiquidacion" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="OC" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="LOG_Requerimiento_LOG_Liquidacion" Member="LOG_Requerimiento" ThisKey="IdRequerimiento" OtherKey="IdRequerimiento" Type="LOG_Requerimiento" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OC_Estado" Member="OC_Estado">
+    <Type Name="OC_Estado">
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="OC_Estado_OC_OrdenCompra" Member="OC_OrdenCompra" ThisKey="IdEstado" OtherKey="IdEstado" Type="OC_OrdenCompra" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OC_Material" Member="OC_Material">
+    <Type Name="OC_Material">
+      <Column Name="IdMaterial" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdProyecto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CodigoMaterial" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OC_Material_OC_OrdenCompra" Member="OC_OrdenCompra" ThisKey="IdMaterial" OtherKey="IdMaterial" Type="OC_OrdenCompra" />
+      <Association Name="OC_Proyecto_OC_Material" Member="OC_Proyecto" ThisKey="IdProyecto" OtherKey="IdProyecto" Type="OC_Proyecto" IsForeignKey="true" />
+      <Association Name="Empresa_OC_Material" Member="Empresa" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="Empresa" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OC_OrdenCompra" Member="OC_OrdenCompra">
+    <Type Name="OC_OrdenCompra">
+      <Column Name="IdOrdenCompra" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdProyecto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdLiquidacion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaDocumento" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdProveedor" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdCentroCosto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdMaterial" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Moneda" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="Cantidad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PrecioUnitario" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PrecioTotal" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CondicionPago" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="OC" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Firma" Type="System.String" DbType="VarChar(8) NOT NULL" CanBeNull="false" />
+      <Association Name="OC_Estado_OC_OrdenCompra" Member="OC_Estado" ThisKey="IdEstado" OtherKey="IdEstado" Type="OC_Estado" IsForeignKey="true" />
+      <Association Name="OC_Material_OC_OrdenCompra" Member="OC_Material" ThisKey="IdMaterial" OtherKey="IdMaterial" Type="OC_Material" IsForeignKey="true" />
+      <Association Name="OC_Proyecto_OC_OrdenCompra" Member="OC_Proyecto" ThisKey="IdProyecto" OtherKey="IdProyecto" Type="OC_Proyecto" IsForeignKey="true" />
+      <Association Name="Empresa_OC_OrdenCompra" Member="Empresa" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="Empresa" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OC_Proyecto" Member="OC_Proyecto">
+    <Type Name="OC_Proyecto">
+      <Column Name="IdProyecto" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="OC_Proyecto_OC_Material" Member="OC_Material" ThisKey="IdProyecto" OtherKey="IdProyecto" Type="OC_Material" />
+      <Association Name="OC_Proyecto_OC_OrdenCompra" Member="OC_OrdenCompra" ThisKey="IdProyecto" OtherKey="IdProyecto" Type="OC_OrdenCompra" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Empresa" Member="Empresa">
+    <Type Name="Empresa">
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Sigla" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Empresa_Liquidacion" Member="Liquidacion" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="Liquidacion" />
+      <Association Name="Empresa_OC_Material" Member="OC_Material" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="OC_Material" />
+      <Association Name="Empresa_OC_OrdenCompra" Member="OC_OrdenCompra" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="OC_OrdenCompra" />
+      <Association Name="Empresa_LOG_Requerimiento" Member="LOG_Requerimiento" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="LOG_Requerimiento" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LOG_Requerimiento" Member="LOG_Requerimiento">
+    <Type Name="LOG_Requerimiento">
+      <Column Name="IdRequerimiento" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdTipoMovimiento" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Glosa" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaInicio" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaVencimiento" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="CantidadTotalKg" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="LOG_Requerimiento_LOG_Liquidacion" Member="LOG_Liquidacion" ThisKey="IdRequerimiento" OtherKey="IdRequerimiento" Type="LOG_Liquidacion" />
+      <Association Name="Empresa_LOG_Requerimiento" Member="Empresa" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="Empresa" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

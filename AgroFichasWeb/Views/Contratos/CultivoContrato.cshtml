@@ -1,0 +1,77 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+@{
+    
+    var cultivos = from c in ((List<CultivoContrato>)ViewData["cultivos"])
+                   select new SelectListItem() { Text = c.Nombre, Value = c.IdCultivoContrato.ToString(), Selected = false };
+}
+
+<div id="culcon-window" style="display: none" title="Cultivo de Contrato">
+    <div id="culcon-content">
+        <input type="hidden" id="culcon-id" value="" />
+        <table class="form1" style="width: 100%; text-align: left;">
+            <tr>
+                <td class="label">Cultivo:</td>
+                <td>@Html.DropDownList("culcon-idCultivo", cultivos)</td>
+            </tr>
+            <tr>
+                <td class="label">Superficie:</td>
+                <td><input type="text" id="culcon-superficie" style="width: 200px" /> (há)</td>
+            </tr>
+            <tr>
+                <td class="label">Cantidad:</td>
+                <td><input type="text" id="culcon-cantidad" style="width: 200px" /> (Kg)</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    function culconShow(cultivoContrato) {
+
+        $("#culcon-id").val(cultivoContrato.id);
+        $("#culcon-idCultivo").val(cultivoContrato.idCultivo);
+        $("#culcon-superficie").val(cultivoContrato.superficie);
+        $("#culcon-cantidad").val(cultivoContrato.cantidad);
+
+        $("#culcon-window").dialog({
+            width: 400,
+            modal: true,
+            buttons: {
+                Aceptar: function () {
+
+                    if (!jqEsTextoEntero($("#culcon-superficie"), false, 1, NaN)) {
+                        alert('Ingrese la Superficie (Número Entero)');
+                        return;
+                    }
+
+                    if (!jqEsTextoEntero($("#culcon-cantidad"), false, 1, NaN)) {
+                        alert('Ingrese la Cantidad (Número Entero)');
+                        return;
+                    }
+
+                    var result = { 
+                        superficie: parseInt($("#culcon-superficie").val(), 10),
+                        cantidad: parseInt($("#culcon-cantidad").val(), 10),
+                        idCultivo: $("#culcon-idCultivo").val(),
+                        nombreCultivo: $("#culcon-idCultivo :selected").text(),
+                        id: $("#culcon-id").val()
+                    };
+
+                    culconCallback(result);
+                    $(this).dialog("close");
+                },
+                Cancelar: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+                $('#ags-results').html("");
+            }
+        });
+
+    }
+</script>

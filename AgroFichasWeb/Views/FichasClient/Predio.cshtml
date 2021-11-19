@@ -1,0 +1,186 @@
+﻿@using AgroFichasWeb.Models
+@model Predio
+
+@{
+    ViewBag.Title = "AgroFichas";
+    var temporada = Temporada.TemporadaActivaFichas();
+}
+
+@section CustomScripts {
+
+@Html.Partial("PotreroScripts")
+
+@Html.Partial("SiembraScripts")
+    
+@Html.Partial("FichaPreSiembraScripts")
+
+@Html.Partial("FichaScripts")
+
+@Html.Partial("FotoFichaScripts")
+
+@Html.Partial("RecomendacionScripts")
+
+@Html.Partial("FertilizanteScripts")
+
+}
+<!-- Potreros -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Predio: @Model.Nombre - @Model.Agricultor.Nombre</h2>
+                <p class="panel-subtitle">Potreros</p>
+                <div class="panel-actions" style="top: 5px">
+                    <button type="button" id="addItemPotrero" class="mb-xs mt-xs mr-xs btn btn-primary">Crear Potrero</button>
+                </div>
+            </header>
+            <div class="panel-body">
+
+                <table class="table table-bordered table-striped mb-none" id="datatable-potrero">
+                    <thead>
+                        <tr>
+                            <th>Potrero</th>
+                            <th class="text-right">Superficie (há)</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Potrero.OrderBy(p => p.Nombre))
+                        {
+                            @Html.Partial("ItemRowPotrero", item)
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Fichas de Pre-Siembra -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Fichas de Pre-Siembra</h2>
+                <p class="panel-subtitle">@temporada.Nombre</p>
+                <div class="panel-actions" style="top: 5px">
+                    <button type="button" id="addItemPreSiembra" class="mb-xs mt-xs mr-xs btn btn-primary">Crear Ficha de Pre-Siembra</button>
+                </div>
+            </header>
+            <div class="panel-body">
+
+                <table class="table table-bordered table-striped mb-none" id="datatable-presiembra">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Potreros</th>
+                            <th>Asesor</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.FichaPreSiembra.Where(i => i.IdTemporada == temporada.IdTemporada))
+                        {
+                            @Html.Partial("ItemRowPreSiembra", item)
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Datos de Siembra -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Siembra</h2>
+                <p class="panel-subtitle">@temporada.Nombre</p>
+                <div class="panel-actions" style="top: 5px">
+                    <button type="button" id="addItemSiembra" class="mb-xs mt-xs mr-xs btn btn-primary">Crear Dato de Siembra</button>
+                </div>
+            </header>
+            <div class="panel-body">
+
+                <table class="table table-bordered table-striped mb-none" id="datatable-siembra">
+                    <thead>
+                        <tr>
+                            <th>Cultivo</th>
+                            <th>Variedad</th>
+                            <th>Potreros</th>
+                            <th class="text-right">Superficie (há)</th>
+                            <th>Asesor</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Siembra.Where(i => i.IdTemporada == temporada.IdTemporada))
+                        {
+                            @Html.Partial("ItemRowSiembra", item)
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Fichas de Visita -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Fichas de Visita</h2>
+                <p class="panel-subtitle">@temporada.Nombre</p>
+                <div class="panel-actions" style="top: 5px">
+                    <button type="button" id="addItemFicha" class="mb-xs mt-xs mr-xs btn btn-primary">Crear Ficha de Visita</button>
+                </div>
+            </header>
+            <div class="panel-body">
+
+                <table class="table table-bordered table-striped mb-none" id="datatable-ficha">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Etapa</th>
+                            <th>Potreros</th>
+                            <th>Asesor</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Ficha.Where(i => i.IdTemporada == temporada.IdTemporada))
+                        {
+                            @Html.Partial("ItemRowFicha", item)
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+        </section>
+    </div>
+</div>
+
+@Html.Partial("Potrero")
+
+@Html.Partial("Siembra")
+
+@Html.Partial("FichaPreSiembra")
+
+@Html.Partial("Ficha")
+
+@Html.Partial("FotoFicha")
+
+@Html.Partial("Recomendacion")
+
+@Html.Partial("Fertilizante")
+
+@Html.Partial("~/Views/Controls/ModalDanger.cshtml")

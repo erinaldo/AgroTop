@@ -1,0 +1,169 @@
+﻿@using AgroFichasWeb.ViewModels.Operaciones
+@model TurnoViewModel
+
+@{
+    ViewBag.Title = "Turnos";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    @if (false == string.IsNullOrWhiteSpace(Model.MensajeError) || false == string.IsNullOrWhiteSpace(Model.MensajeExito))
+    {
+        <div class="row">
+            @if (false == string.IsNullOrWhiteSpace(Model.MensajeError))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Model.MensajeError
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (false == string.IsNullOrWhiteSpace(Model.MensajeExito))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Model.MensajeExito
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Administrar Turnos</h2>
+            @if (Model.PuedeCrear)
+            {
+                <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                    @using (Html.BeginForm("Index", "Turnos", FormMethod.Post))
+                    {
+                        <button id="addTurno" class="btn btn-primary" type="submit">Nuevo Turno <i class="fa fa-plus"></i></button>
+                    }
+                </div>
+            }
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Turno</th>
+                        <th>Operador</th>
+                        <th>Horas Turno</th>
+                        <th>Inicio Turno</th>
+                        <th>Fin Turno</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var registroTurno in Model.RegistroTurnos)
+                    {
+                        <tr role="row" class="odd">
+                            <td class="sorting_1">@registroTurno.Correlativo</td>
+                            <td>@registroTurno.Descripcion</td>
+                            <td>
+                                @if (!!!!!(registroTurno.UserIns == "automatico"))
+                                {
+                                    <span>@Model.GetOperador(registroTurno.UserID)</span>
+                                }
+                                else
+                                {
+                                    <span>Automático<br /><small><em>(creado en el turno de @Model.GetOperador(registroTurno.UserID))</em></small></span>
+                                }
+                            </td>
+                            <td>@registroTurno.Horas</td>
+                            <td>@Model.GetFechaHora(registroTurno.FechaHoraIns, registroTurno.InicioTurno)</td>
+                            <td>@Model.GetFechaHora(registroTurno.FechaHoraIns, registroTurno.FinTurno)</td>
+                            <td class="actions">
+                                @if (Model.PuedeVerSilos)
+                                {
+                                    <button id="addSilo_@registroTurno.IdRegistroTurno" onclick="window.location.href='@Url.Action("Index", "RegistroSilo", new { id = registroTurno.IdRegistroTurno })'" class="btn btn-primary">
+                                        <span>
+                                            Silos
+                                        </span>
+                                    </button>
+                                }
+                                @if (Model.PuedeVerBalanzas)
+                                {
+                                    <button id="addBalanza_@registroTurno.IdRegistroTurno" onclick="window.location.href='@Url.Action("Index", "RegistroBalanza", new { id = registroTurno.IdRegistroTurno })'" class="btn btn-primary">
+                                        <span>
+                                            Balanzas
+                                        </span>
+                                    </button>
+                                }
+                                @if (Model.PuedeVerDetenciones)
+                                {
+                                    <button id="addDetenciones_@registroTurno.IdRegistroTurno" onclick="window.location.href='@Url.Action("Index", "RegistroDetencion", new { id = registroTurno.IdRegistroTurno })'" class="btn btn-primary">
+                                        <span>Detenciones</span>
+                                    </button>
+                                }
+                                @if (Model.PuedeVerEnvasado)
+                                {
+                                    <button id="addEnvasado_@registroTurno.IdRegistroTurno" onclick="window.location.href='@Url.Action("Index", "RegistroEnvasado", new { id = registroTurno.IdRegistroTurno })'" class="btn btn-primary">Envasado</button>
+                                }
+                                @if (Model.PuedeVerGeneracionMaxisacos)
+                                {
+                                    <button id="addGeneracionMaxisacos_@registroTurno.IdRegistroTurno" onclick="window.location.href='@Url.Action("Index", "RegistroGeneracionMaxisacos", new { id = registroTurno.IdRegistroTurno })'" class="btn btn-primary">Subproducto</button>
+                                }
+                                @if (Model.PuedeVerProductividad)
+                                {
+                                    <button id="addProductividad_@registroTurno.IdRegistroTurno" onclick="window.location.href='@Url.Action("Index", "RegistroProductividad", new { id = registroTurno.IdRegistroTurno })'" class="btn btn-primary">Reporte</button>
+                                }
+                                <button id="addObservaciones_@registroTurno.IdRegistroTurno" onclick="window.location.href='@Url.Action("Observaciones", "Turnos", new { id = registroTurno.IdRegistroTurno })'" class="btn btn-info"> <i class="fa fa-commenting"></i></button>
+                                @if (!string.IsNullOrEmpty(registroTurno.Observaciones))
+                                {
+                                    <button id="createPdf_@registroTurno.IdRegistroTurno" onclick="window.location.href='@Url.Action("CrearPdfObservaciones", "Turnos", new { id = registroTurno.IdRegistroTurno })'" class="btn btn-default"> <i class="fa fa-file-pdf-o"></i></button>
+                                }
+                                @if (Model.PuedeEliminar)
+                                {
+                                    <button id="delete_@registroTurno.IdRegistroTurno" onclick="window.location.href='@Url.Action("Eliminar", "Turnos", new { id = registroTurno.IdRegistroTurno })'" class="btn btn-default"> <i class="fa fa-trash-o"></i></button>
+                                }
+                                @if (registroTurno.UserIns == "automatico")
+                                {
+                                    <span class="label label-danger">Automático</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- end: page -->
+</section>

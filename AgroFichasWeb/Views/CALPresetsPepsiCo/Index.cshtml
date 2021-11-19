@@ -1,0 +1,81 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@{
+    ViewBag.Title = "PepsiCo";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Scripts/datetimepicker-master/build/jquery.datetimepicker.full.min.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        $('#datatable-pepsico').dataTable({
+            "ordering": false,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Presets</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable-pepsico">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Parámetros de Análisis</td>
+                    <td><button onclick="window.location.href='@Url.Action("IndexParametrosAnalisis", "CALPresetsPepsiCo")'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title=""><i class="fa fa-eye"></i></button></td>
+                </tr>
+                <tr>
+                    <td>Parámetros de Pesticidas</td>
+                    <td><button onclick="window.location.href='@Url.Action("IndexParametrosPesticidas", "CALPresetsPepsiCo")'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title=""><i class="fa fa-eye"></i></button></td>
+                </tr>
+                <tr>
+                    <td>Parámetros de Metales Pesados</td>
+                    <td><button onclick="window.location.href='@Url.Action("IndexParametrosMetalesPesados", "CALPresetsPepsiCo")'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title=""><i class="fa fa-eye"></i></button></td>
+                </tr>
+                <tr>
+                    <td>Parámetros de Micotoxinas</td>
+                    <td><button onclick="window.location.href='@Url.Action("IndexParametrosMicotoxinas", "CALPresetsPepsiCo")'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title=""><i class="fa fa-eye"></i></button></td>
+                </tr>
+                <tr>
+                    <td>Parámetros de Microbiología</td>
+                    <td><button onclick="window.location.href='@Url.Action("IndexParametrosMicrobiologia", "CALPresetsPepsiCo")'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title=""><i class="fa fa-eye"></i></button></td>
+                </tr>
+                <tr>
+                    <td>Parámetros Nutricionales</td>
+                    <td><button onclick="window.location.href='@Url.Action("IndexParametrosNutricionales", "CALPresetsPepsiCo")'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title=""><i class="fa fa-eye"></i></button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>

@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.NombreSeccion = "Informes de Fichas";
+    ViewBag.Title = "Seleccione el Informe";
+}
+<style>
+    ul.inpagemenu li {
+        margin: 20px 0px;
+    }
+</style>
+<h2>@ViewBag.Title</h2>
+<ul class="inpagemenu">
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(10))
+    {
+        <li><a class="command" href="@Url.Action("visitasporsemana")">Visitas por Semana</a></li>
+        <li><a class="command" href="@Url.Action("VisitasPorSemanaAgenteAsignado")">Visitas por Semana Según Agente Asignado</a></li>
+        <li><a class="command" href="@Url.Action("VisitasPorSemanaAgenteIngreso")">Visitas por Semana Según Agente que las Ingresa</a></li>
+        <li><a class="command" href="@Url.Action("VisitasPorSemanaCultivoAgente")">Visitas por Semana, Cultivo y Agente</a></li>
+        <li><a class="command" href="@Url.Action("Recomendaciones")">Recomendaciones</a></li>
+        <li><a class="command" href="@Url.Action("MapaPredios")">Mapa de Predios</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(142))
+    {
+        <li><a class="command" href="@Url.Action("AgricultoresRelacionados")">Agricultores Relacionados</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(223))
+    {
+        <li><a class="command" href="@Url.Action("VisitasPorSemanaAgenteIngresoPorAgente")">Visitas Por Semana a agricultores ingresadas por el Asesor</a></li>
+    }
+</ul>

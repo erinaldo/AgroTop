@@ -1,0 +1,310 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Liquidaciones
+@using AgroFichasWeb.AppLayer.Extensions;
+
+@model IntencionContratoPrecioIngresosViewModel
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.Title = "Intención / Contratado / Cerrado / Recibido " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+
+    var sucursales = (from item in Model.Items
+                      select new { IdSucursal = item.IdSucursal, Nombre = item.Sucursal }).Distinct();
+
+    var semanas = ((List<AgroFichasWeb.Controllers.SemanaAno>)ViewData["semanas"]).OrderByDescending(s => s.Semana).OrderByDescending(s => s.Mes).OrderByDescending(s => s.Ano).ToList();
+    var meses = AgroFichasWeb.Controllers.MesAno.FromSemanas(semanas);
+    var cps = (List<rpt_ConvenioPreciosPorSemanaResult>)ViewData["conveniosPorSemana"];
+    var ips = (List<rpt_IngresosPorSemanaResult>)ViewData["ingresosPorSemana"];
+}
+
+
+@section filter {
+    @using (Html.BeginForm())
+    {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("CultivoSelector")</td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+}
+
+@section scripts {
+    <style>
+        .toggleComuna, .toggleSucursal, .toggleProvincia {
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
+    @Scripts.Render("~/bundles/jquery")
+}
+
+@helper headerMeses(List<AgroFichasWeb.Controllers.MesAno> meses)
+{
+    foreach (var s in meses.OrderByDescending(x => x.Mes).OrderByDescending(x => x.Ano))
+    {
+        <td colspan="@(s.CuentaSemanas * 5)" class="RptEncabezadoListadoGrupo" align="center">@(new DateTime(s.Ano, s.Mes, 1).ToString("MMM yy"))</td>
+    }
+}
+
+@helper headerSemanas(List<AgroFichasWeb.Controllers.SemanaAno> semanas)
+{
+    var lastMoth = semanas.First().Mes;
+    var lastYear = semanas.First().Ano;
+    var iSemana = semanas.Where(x => x.Mes == lastMoth && x.Ano == lastYear).Count();
+    foreach (var s in semanas)
+    {
+        if (s.Mes != lastMoth)
+        {
+            iSemana = semanas.Where(x => x.Mes == s.Mes && x.Ano == s.Ano).Count();
+        }
+        lastMoth = s.Mes;
+        lastYear = s.Ano;
+        <td class="RptEncabezadoListadoGrupo" colspan="5" align="center">S@(iSemana--)</td>
+    }
+}
+
+@helper renderLineaAcumulada(IEnumerable<rpt_IntencionContratoPrecioIngresosResult> data, IEnumerable<IngresoValorizadoViewModel> ingresosValorizados)
+{
+
+    <td align="right">
+        @String.Format("{0:#,##0}", data.Sum(m => m.IntencionSup))
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0}", data.Sum(m => m.IntencionQty) / 1000)
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0}", data.Sum(m => m.ContratoSup))
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0}", data.Sum(m => m.ContratoQty) / 1000)
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0}", data.Sum(m => m.PrecioQty) / 1000)
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0.00}", data.Sum(m => m.PrecioNetoCLP).DivideByInt(data.Sum(m => m.PrecioQtyCLP)))
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0.00}", data.Sum(m => m.PrecioNetoUSD).DivideByInt(data.Sum(m => m.PrecioQtyUSD)))
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0}", data.Sum(m => m.IngresoQty) / 1000)
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0.00}", ingresosValorizados.Sum(m => m.Neto).DivideByInt(ingresosValorizados.Sum(m => m.Cantidad)))<br />
+    </td>
+}
+
+@helper renderLineaSemana(IEnumerable<rpt_ConvenioPreciosPorSemanaResult> convenios, IEnumerable<rpt_IngresosPorSemanaResult> ingresos, IEnumerable<IngresoValorizadoViewModel> ingresosValorizados)
+{
+
+    <td align="right">
+        @String.Format("{0:#,##0}", convenios.Sum(m => m.PrecioQty) / 1000)
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0.00}", convenios.Sum(m => m.PrecioNetoCLP).DivideByInt(convenios.Sum(m => m.PrecioQtyCLP.Value)))
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0.00}", convenios.Sum(m => m.PrecioNetoUSD).DivideByInt(convenios.Sum(m => m.PrecioQtyCLP.Value)))
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0}", ingresos.Sum(m => m.IngresoQty) / 1000)
+    </td>
+    <td align="right">
+        @String.Format("{0:#,##0.00}", ingresosValorizados.Sum(m => m.Neto).DivideByInt(ingresosValorizados.Sum(m => m.Cantidad)))<br />
+    </td>
+}
+
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Cultivo:</td>
+        <td nowrap="nowrap">@ViewData["cultivoLabel"]</td>
+    </tr>
+</table>
+
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptEncabezadoListado" rowspan="2">&nbsp;</td>
+        <td class="RptEncabezadoListadoGrupo" colspan="9" rowspan="2" align="center">Acumulado a la Fecha</td>
+        @headerMeses(meses)
+    </tr>
+    <tr>
+        @headerSemanas(semanas)
+    </tr>
+    <tr>
+        <td class="RptEncabezadoListado">&nbsp;</td>
+        <td class="RptEncabezadoListadoGrupo" align="center" colspan="2">Intención</td>
+        <td class="RptEncabezadoListadoGrupo" align="center" colspan="2">Contratado</td>
+        <td class="RptEncabezadoListadoGrupo" align="center" colspan="3">Cerrado</td>
+        <td class="RptEncabezadoListadoGrupo" align="center" colspan="2">Recibido</td>
+        @foreach (var s in semanas)
+        {
+            <td class="RptEncabezadoListadoGrupo" align="center" colspan="3">Cerrado</td>
+            <td class="RptEncabezadoListadoGrupo" align="center" colspan="2">Recibido</td>
+        }
+    </tr>
+    <tr>
+        <td class="RptEncabezadoListado">Item</td>
+        <td class="RptEncabezadoListado" align="right">Há</td>
+        <td class="RptEncabezadoListado" align="right">Ton</td>
+        <td class="RptEncabezadoListado" align="right">Há</td>
+        <td class="RptEncabezadoListado" align="right">Ton</td>
+        <td class="RptEncabezadoListado" align="right">Ton</td>
+        <td class="RptEncabezadoListado" align="right">CLP/Kg</td>
+        <td class="RptEncabezadoListado" align="right">USD/Kg</td>
+        <td class="RptEncabezadoListado" align="right">Ton</td>
+        <td class="RptEncabezadoListado" align="right">CLP/Kg</td>
+        @foreach (var s in semanas)
+        {
+            <td class="RptEncabezadoListado" align="right">Ton</td>
+            <td class="RptEncabezadoListado" align="right">CLP/Kg</td>
+            <td class="RptEncabezadoListado" align="right">USD/Kg</td>
+            <td class="RptEncabezadoListado" align="right">Ton</td>
+            <td class="RptEncabezadoListado" align="right">CLP/Kg</td>
+        }
+    </tr>
+    @foreach (var sucursal in sucursales)
+    {
+        var provincias = (from item in Model.Items
+                          where item.IdSucursal == sucursal.IdSucursal
+                          select new { IdProvincia = item.IdProvincia, Nombre = item.Provincia }).Distinct();
+
+        <tr class="RptItemListado">
+            <td nowrap="nowrap"><a href="#" class="toggleSucursal" data-id="@sucursal.IdSucursal">+</a> @sucursal.Nombre</td>
+
+            @renderLineaAcumulada(Model.Items.Where(m => m.IdSucursal == sucursal.IdSucursal), Model.IngresosValorizados.Where(m => m.IdSucursal == sucursal.IdSucursal))
+
+            @foreach (var s in semanas)
+            {
+                var convenios = cps.Where(m => m.IdSucursal == sucursal.IdSucursal && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                //var convenios = cps.Where(m => m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                var ingresos = ips.Where(m => m.IdSucursal == sucursal.IdSucursal && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                var valorizados = Model.IngresosValorizados.Where(m => m.IdSucursal == sucursal.IdSucursal && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                @renderLineaSemana(convenios, ingresos, valorizados)
+            }
+        </tr>
+
+        foreach (var provincia in provincias)
+        {
+            var comunas = (from item in Model.Items
+                           where item.IdSucursal == sucursal.IdSucursal
+                              && item.IdProvincia == provincia.IdProvincia
+                           select new { IdComuna = item.IdComuna, Nombre = item.Comuna }).Distinct();
+
+            <tr class="RptItemListado hijoSucursal-@sucursal.IdSucursal" style="display: none;">
+                <td nowrap="nowrap" style="padding-left: 20px"><a href="#" class="toggleProvincia  hijoSucursal3-@sucursal.IdSucursal" data-id="@sucursal.IdSucursal-@provincia.IdProvincia">+</a> Provincia de @provincia.Nombre</td>
+                @renderLineaAcumulada(Model.Items.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia), Model.IngresosValorizados.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia))
+                @foreach (var s in semanas)
+                {
+                    var convenios = cps.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                    var ingresos = ips.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                    var valorizados = Model.IngresosValorizados.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+
+                    @renderLineaSemana(convenios, ingresos, valorizados)
+                }
+            </tr>
+
+            foreach (var comuna in comunas)
+            {
+                var agricultores = (from item in Model.Items
+                                    where item.IdSucursal == sucursal.IdSucursal
+                                      && item.IdProvincia == provincia.IdProvincia
+                                      && item.IdComuna == comuna.IdComuna
+                                    select new { IdAgricultor = item.IdAgricultor, Nombre = item.Agricultor }).Distinct();
+
+                <tr class="RptItemListado hijoProvincia-@sucursal.IdSucursal-@provincia.IdProvincia hijoSucursal2-@sucursal.IdSucursal" style="display: none;">
+                    <td nowrap="nowrap" style="padding-left: 40px"><a href="#" class="toggleComuna hijoSucursal3-@sucursal.IdSucursal hijoProvincia3-@sucursal.IdSucursal-@provincia.IdProvincia" data-id="@sucursal.IdSucursal-@provincia.IdProvincia-@comuna.IdComuna">+</a> Comuna de @comuna.Nombre</td>
+                    @renderLineaAcumulada(Model.Items.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna), Model.IngresosValorizados.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna))
+                    @foreach (var s in semanas)
+                    {
+                        var convenios = cps.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                        var ingresos = ips.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                        var valorizados = Model.IngresosValorizados.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                        @renderLineaSemana(convenios, ingresos, valorizados)
+                    }
+                </tr>
+
+                foreach (var agricultor in agricultores)
+                {
+                    <tr class="RptItemListado hijoComuna-@sucursal.IdSucursal-@provincia.IdProvincia-@comuna.IdComuna hijoSucursal2-@sucursal.IdSucursal hijoProvincia2-@sucursal.IdSucursal-@provincia.IdProvincia" style="display: none;">
+                        <td nowrap="nowrap" style="padding-left: 60px">@*@sucursal.IdSucursal -> @provincia.IdProvincia -> @comuna.IdComuna -> @agricultor.IdAgricultor ->*@ @agricultor.Nombre</td>
+                        @renderLineaAcumulada(Model.Items.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna && m.IdAgricultor == agricultor.IdAgricultor), Model.IngresosValorizados.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna && m.IdAgricultor == agricultor.IdAgricultor))
+                        @foreach (var s in semanas)
+                        {
+                            var convenios = cps.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna && m.IdAgricultor == agricultor.IdAgricultor && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                            var ingresos = ips.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna && m.IdAgricultor == agricultor.IdAgricultor && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                            var valorizados = Model.IngresosValorizados.Where(m => m.IdSucursal == sucursal.IdSucursal && m.IdProvincia == provincia.IdProvincia && m.IdComuna == comuna.IdComuna && m.IdAgricultor == agricultor.IdAgricultor && m.Ano == s.Ano && m.Mes == s.Mes && m.Semana == s.Semana);
+                            @renderLineaSemana(convenios, ingresos, valorizados)
+                        }
+                    </tr>
+                }
+            }
+
+        }
+    }
+
+</table>
+<script>
+
+
+    $(document).ready(function () {
+        $(".toggleSucursal").click(function (e) {
+            e.preventDefault();
+
+            var isClosed = $(this).html() == "+";
+            var idSucursal = $(this).attr("data-id");
+
+            if (isClosed) {
+                $(".hijoSucursal-" + idSucursal).show();
+                $(this).html("-");
+            }
+            else {
+                $(".hijoSucursal-" + idSucursal).hide();
+                $(".hijoSucursal2-" + idSucursal).hide();
+                $(".hijoSucursal3-" + idSucursal).html("+");
+                $(this).html("+");
+            }
+        });
+
+        $(".toggleProvincia").click(function (e) {
+            e.preventDefault();
+
+            var isClosed = $(this).html() == "+";
+            var idProvincia = $(this).attr("data-id");
+
+            if (isClosed) {
+                $(".hijoProvincia-" + idProvincia).show();
+                $(this).html("-");
+            }
+            else {
+                $(".hijoProvincia-" + idProvincia).hide();
+                $(".hijoProvincia2-" + idProvincia).hide();
+                $(".hijoProvincia3-" + idProvincia).html("+");
+                $(this).html("+");
+            }
+        });
+
+        $(".toggleComuna").click(function (e) {
+            e.preventDefault();
+
+            var isClosed = $(this).html() == "+";
+            var idComuna = $(this).attr("data-id");
+            if (isClosed) {
+                $(".hijoComuna-" + idComuna).show();
+                $(this).html("-");
+            }
+            else {
+                $(".hijoComuna-" + idComuna).hide();
+                $(this).html("+");
+            }
+        });
+    });
+
+</script>

@@ -1,0 +1,135 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<Agricultor>
+
+@{
+    var adminTodos = (bool)ViewData["adminTodos"];
+    
+    ViewBag.NombreSeccion = "Agricultores";
+    ViewBag.Title = "Administrar Agricultores - " + (adminTodos ? "Todos" : "Sólo asignados");
+
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>@ViewBag.Title</h2>
+
+    <div style="margin: 20px 0px">
+        @using (Html.BeginForm("index", "agricultores", new { id = 0 }, FormMethod.Get))
+        {
+            <input type="text" name="key" value="@ViewData["key"]" /><input type="submit" value="Buscar" />
+        }
+        <div style="margin-top: 10px">
+            @Html.ActionLink("Exportar", "indexexport", new { }, new { @class = "exportlink" })
+        </div>
+    </div>
+
+    @if (Request["msgerr"] != null && Request["msgerr"] != "")
+    {
+        <div class="validation-summary-errors">
+            @Request["msgerr"]
+        </div>
+    }
+
+    @if (Request["msgok"] != null && Request["msgok"] != "")
+    {
+        <div class="validation-summary-oks">
+            @Request["msgok"]
+        </div>
+    }
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="center">
+                Habilitado
+            </th>            
+            <th align="left">
+                Nombre
+            </th>
+            <th align="left">
+                Email
+            </th>
+            <th align="left">
+                Fonos
+            </th>
+            <th align="left" colspan="2">
+                Usuarios con Acceso
+            </th>
+            <th align="center">
+                Fichas
+            </th>
+            <th align="center">
+                Editar
+            </th>
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="9" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+        
+        @foreach (var item in Model) 
+        {
+            <tr valign="top">
+                <td align="center">
+                    @Html.ListCheckBox(item.Habilitado)
+                </td>
+                <td align="left">
+                    @item.Nombre
+                </td>
+                <td align="left">
+                    @item.Email
+                    @if (!String.IsNullOrEmpty(item.Email))
+                    {
+                        <br />@Html.ActionLink("Enviar nueva contraseña", "sendpassword", new { id = item.IdAgricultor, key = ViewData["key"].ToString(), pageIndex = Model.PageIndex }, new { @class="piola" })
+                    }
+                </td>
+                <td align="left">
+                    @item.Fono1<br />@item.Fono2
+                </td>
+                <td>
+                    @if (item.UsuarioAgricultor.Count > 0)
+                    {
+                        foreach (var user in item.UsuarioAgricultor)
+                        {
+                            @(user.SYS_User.UserName) <br />
+                        }
+                    }
+                    else 
+                    {
+                        <text>-</text>   
+                    }
+                </td>
+                <td>
+                @if (adminTodos)
+                {
+                    @Html.ActionLink("Asignar", "Usuarios", new { id=item.IdAgricultor })
+                }
+                </td>
+                <td align="center">
+                    @Html.ActionLink("Fichas", "Fichas", new {id=item.IdAgricultor})
+                </td>
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "Editar", new { id = item.IdAgricultor, key = ViewData["key"].ToString(), pageIndex = Model.PageIndex })
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="9" class="pager">
+                @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "Agricultores", ViewData["key"].ToString())
+            </td>
+        </tr>
+
+    </table>

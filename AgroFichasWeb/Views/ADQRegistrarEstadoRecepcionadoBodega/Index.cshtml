@@ -1,0 +1,141 @@
+﻿@using AgroFichasWeb.Models
+
+@model List<ADQ_SolicitudCompra>
+@{
+    ViewBag.Title = "Registrar Estado: Recepcionado en Bodega";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVien.cshtml";
+
+    var solicitudCompra = (ADQ_SolicitudCompra)ViewData["solicitudCompra"];
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var user = SYS_User.Current();
+
+}
+@section VendorCSS
+{
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+}
+
+@section CustomScripts
+{
+    @foreach (var item in Model)
+    {
+        <script>
+            $("#delete_@item.IdSolicitud").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas Anular esta solicitud de orden de compra?",
+                    text: "ID: " +@item.IdSolicitud+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Anular!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Anular", new { id = item.IdSolicitud })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+        </script>
+    }
+    <script>
+        $('#datatable').dataTable({
+            "ordering": false,
+            "order": [0, 'asc'],
+            "searching": false,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    @if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+    {
+        <div class="row">
+            @if (!string.IsNullOrEmpty(Request["errMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger rounded">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["errMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Request["okMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success rounded">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["okMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    @section CustomButton {
+
+    }
+    <div class="row mb-4">
+        <div class="col-12 data-tables-hide-filter">
+            <div class="card">
+                <div class="card-body">
+
+                    <table class="data-table data-tables-pagination responsive nowrap"
+                           data-order="[[ 0, &quot;desc&quot; ]]">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>Tipo Compra</th>
+                                <th>Centro Costo</th>
+                                <th>Empresa</th>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr valign="top">
+                                    <td>@item.IdSolicitud</td>
+                                    <td>@item.GetCliente(item.UserIns).FullName</td>
+                                    <td>@item.ADQ_TipoCompra.Nombre</td>
+                                    <td>@item.ADQ_CentroCosto.Nombre</td>
+                                    <td>@item.Empresa.Nombre</td>
+                                    @foreach (var detalle in item.ADQ_DetalleSolicitudCompra.Take(1))
+                                    {
+                                        <td>@string.Format("{0} {1}...", detalle.Cantidad, detalle.Descripcion.Substring(0, (detalle.Descripcion.Length > 20) ? 20 : detalle.Descripcion.Length))</td>
+                                    }
+                                    <td><span class="@item.CreateCSSClassResponsive()">@item.ADQ_Estado.Descripcion</span></td>
+                                    <td>
+                                        <span data-toggle="modal" data-target=".modalInfo_@item.IdSolicitud"><button class="btn btn-info btn-sm mb-1" data-toggle="tooltip" data-placement="top" title="Detalle"> <i class="simple-icon-eye"></i></button></span>
+                                        <button onclick="window.location.href='@Url.Action("Registrar", "ADQRegistrarEstadoRecepcionadoBodega", new { id = item.IdSolicitud })'" class="btn btn-primary btn-sm mb-1" data-toggle="tooltip" data-placement="top" title="Registrar: Recepcionado en Bodega"> <i class="simple-icon-check"></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>
+
+@Html.Partial("../ADQOrdenesCompra/DetalleInvoice", Model)

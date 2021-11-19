@@ -1,0 +1,339 @@
+﻿@using AgroFichasWeb.Models.Logistica.Utilidades
+@using AgroFichasWeb.ViewModels.Logistica
+
+@model DetallePedidoViewModel
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    ViewBag.Title = "Detalle Pedido";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm">
+    <table class="procesoIngreso">
+        <tbody>
+            <tr>
+                <td style="width:100px;"><label>Núm. Ped.</label></td>
+                <td>@Model.Pedido.IdPedido</td>
+            </tr>
+            <tr>
+                <td style="width:100px;"><label>Cultivo</label></td>
+                <td>@Model.Pedido.Cultivo.Nombre</td>
+            </tr>
+            <tr>
+                <td><label>Cantidad</label></td>
+                <td>@Model.Pedido.CantidadUnitariaKg.ToString("N0") kg (@((Model.Pedido.CantidadUnitariaKg / 1000).ToString("N0")) Tn)</td>
+            </tr>
+            <tr>
+                <td><label>Tipo Pedido</label></td>
+                <td>@Model.Pedido.LOG_TipoPedido.Descripcion</td>
+            </tr>
+            <tr>
+                <td><label>Envase</label></td>
+                <td>@(Model.Pedido.LOG_Envase == null ? "(No tiene envase)" : Model.Pedido.LOG_Envase.Descripcion)</td>
+            </tr>
+            <tr>
+                <td><label>Origen</label></td>
+                <td>@LogisticaHelper.GetSucursal(Model.Pedido.IdPedido, LogisticaHelper.Proviene.Origen) (@LogisticaHelper.GetBodega(Model.Pedido.IdPedido, LogisticaHelper.Proviene.Origen))</td>
+            </tr>
+            <tr>
+                <td><label>Destino</label></td>
+                <td>@LogisticaHelper.GetSucursal(Model.Pedido.IdPedido, LogisticaHelper.Proviene.Destino) (@LogisticaHelper.GetBodega(Model.Pedido.IdPedido, LogisticaHelper.Proviene.Destino))</td>
+            </tr>
+            <tr>
+                <td><label>Estado</label></td>
+                <td><span class="@CssClasses.GetEstadoPedido(Model.Pedido.IdPedido)">@Model.Pedido.LOG_EstadoPedido.Descripcion</span></td>
+            </tr>
+            <tr>
+                <td><label>Camión Asignado</label></td>
+                <td>
+                    @{
+                        if (Model.CamionAsignado == null)
+                        {
+                            @Html.Raw("(No tiene camión asignado)")
+                        }
+                        else
+                        {
+                            <table class="smallDataList">
+                                <tr>
+                                    <th>Transportista</th>
+                                    <th>Teléfono Transportista</th>
+                                    <th>Chofer</th>
+                                    <th>Teléfono Chofer</th>
+                                    <th>Camión</th>
+                                </tr>
+                                <tr>
+                                    <td>@Model.CamionAsignado.LOG_Chofer.LOG_Transportista.Nombre</td>
+                                    <td>@Model.CamionAsignado.LOG_Chofer.LOG_Transportista.Telefono</td>
+                                    <td>@Model.CamionAsignado.LOG_Chofer.Nombre</td>
+                                    <td>@Model.CamionAsignado.LOG_Chofer.Telefono</td>
+                                    <td>@Model.CamionAsignado.LOG_Camion.Patente</td>
+                                </tr>
+                            </table>
+                            if (Model.Pedido.IdEstado != 6 && Model.Pedido.IdEstado != 7)
+                            {
+                                @Html.ActionLink("Editar Asignación", "editarasignacionpaso1", "camiones", new { id = Model.CamionAsignado.IdPedido, IdRequerimiento = Model.Requerimiento.IdRequerimiento }, null)
+                            }
+                        }
+                    }
+                </td>
+            </tr>
+            @if (Model.Movimiento != null)
+            {
+                <tr>
+                    <td><label>Datos Útiles</label></td>
+                    <td>
+                        <div class="smallDataListContainer">
+                            <span><strong>Condiciones de Despacho</strong></span>
+                            <table class="smallDataList">
+                                <tr>
+                                    <th>Limpio</th>
+                                    <th>Libre de Plaga</th>
+                                    <th>Seco</th>
+                                    <th>Con Sello</th>
+                                    <th>Número Sello</th>
+                                    <th>Condición General del Camión</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @switch (Model.Movimiento.CCD_Limpio)
+                                        {
+                                            case 1:
+                                                @Html.Raw("Sí")
+                                                break;
+                                            case 2:
+                                                @Html.Raw("No")
+                                                break;
+                                            case 3:
+                                                @Html.Raw("No aplica")
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @switch (Model.Movimiento.CCD_LibrePlaga)
+                                        {
+                                            case 1:
+                                                @Html.Raw("Sí")
+                                                break;
+                                            case 2:
+                                                @Html.Raw("No")
+                                                break;
+                                            case 3:
+                                                @Html.Raw("No aplica")
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @switch (Model.Movimiento.CCD_Seco)
+                                        {
+                                            case 1:
+                                                @Html.Raw("Sí")
+                                                break;
+                                            case 2:
+                                                @Html.Raw("No")
+                                                break;
+                                            case 3:
+                                                @Html.Raw("No aplica")
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @switch (Model.Movimiento.CCD_ConSello)
+                                        {
+                                            case 1:
+                                                @Html.Raw("Sí")
+                                                break;
+                                            case 2:
+                                                @Html.Raw("No")
+                                                break;
+                                            case 3:
+                                                @Html.Raw("No aplica")
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model.Movimiento.CCD_NumeroSerieSello.HasValue)
+                                        {
+                                            @Model.Movimiento.CCD_NumeroSerieSello.Value
+                                        }
+                                    </td>
+                                    <td>
+                                        @switch (Model.Movimiento.CCD_CondicionCamion)
+                                        {
+                                            case 1:
+                                                @Html.Raw("Excelente")
+                                                break;
+                                            case 2:
+                                                @Html.Raw("Regular")
+                                                break;
+                                            case 3:
+                                                @Html.Raw("Malo")
+                                                break;
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="smallDataListContainer">
+                            <span><strong>Movimientos</strong></span>
+                            <table class="smallDataList">
+                                <tr>
+                                    <th>Núm. Movimiento</th>
+                                    <th>Núm. Guía</th>
+                                    <th>Fecha Salida</th>
+                                    <th>Fecha Llegada</th>
+                                    <th>Pesaje Salida</th>
+                                    <th>Pesaje Llegada</th>
+                                    <th>Valor Flete</th>
+                                    <th>Tol</th>
+                                    <th>Dif</th>
+                                    <th>Merma</th>
+                                    <th>Neto</th>
+                                    <th>IVA</th>
+                                    <th>Bruto</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @Model.Movimiento.IdMovimiento
+                                    </td>
+                                    <td>
+                                        @Model.Movimiento.NumeroGuia
+                                    </td>
+                                    <td>
+                                        @Model.Movimiento.FechaSalida.ToString("dd/MM/yyyy hh:mm")
+                                    </td>
+                                    <td>
+                                        @if (Model.Movimiento.FechaLlegada.HasValue)
+                                        {
+                                        @Model.Movimiento.FechaLlegada.Value.ToString("dd/MM/yyyy hh:mm")
+                                        }
+                                    </td>
+                                    <td>
+                                        @Model.Movimiento.PesajeSalidaKg.ToString("N0")
+                                    </td>
+                                    <td>
+                                        @if (Model.Movimiento.PesajeLlegadaKg.HasValue)
+                                        {
+                                        @Model.Movimiento.PesajeLlegadaKg.Value.ToString("N0")
+                                        }
+                                    </td>
+                                    <td>
+                                        @Model.Movimiento.ValorFletePorKgTransportado.ToString("C2")
+                                    </td>
+                                    <td>
+                                        @Model.Movimiento.Tolerancia kg
+                                    </td>
+                                    <td>
+                                        @if (Model.Movimiento.PesajeLlegadaKg.HasValue)
+                                        {
+                                        @((Model.Movimiento.PesajeSalidaKg - Model.Movimiento.PesajeLlegadaKg.Value).ToString("N0"))
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model.Movimiento.Merma.HasValue)
+                                        {
+                                        @Model.Movimiento.Merma
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model.Movimiento.TotalNeto.HasValue)
+                                        {
+                                        @Model.Movimiento.TotalNeto.Value.ToString("C0")
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model.Movimiento.IVA.HasValue)
+                                        {
+                                        @Model.Movimiento.IVA.Value.ToString("C0")
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Model.Movimiento.TotalBruto.HasValue)
+                                        {
+                                        @Model.Movimiento.TotalBruto.Value.ToString("C0")
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td><label>Observación</label></td>
+                <td>@Model.Pedido.Observacion</td>
+            </tr>
+            @if (Model.Controles.Count != 0)
+            {
+                <tr>
+                    <td style="vertical-align:top"><label>Controles</label></td>
+                    <td>
+                        <div class="smallDataListContainer">
+                            <span><strong>Control</strong></span>
+                            <table class="smallDataList">
+                                <thead>
+                                    <tr>
+                                        <th>Núm. Control</th>
+                                        <th>Camión</th>
+                                        <th>Estado</th>
+                                        <th>Ingresado Por</th>
+                                        <th>Fecha</th>
+                                        <th>Firma</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Controles.Count == 0)
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="norecords">
+                                                No se ha realizado ningun control
+                                            </td>
+                                        </tr>
+                                    }
+                                    @foreach (var control in Model.Controles)
+                                    {
+                                        <tr>
+                                            <td>@control.IdControlCamionPlanta</td>
+                                            <td>@control.LOG_Camion.Patente</td>
+                                            <td>@control.LOG_EstadoControlCamionPlanta.Descripcion</td>
+                                            <td>@control.UserIns</td>
+                                            <td style="background-color: lightgreen">@control.FechaHoraIns.ToString("dd/MM/yyyy hh:mm:ss")</td>
+                                            <td>@control.Firma</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="smallDataListContainer">
+                            <span><strong>Timing</strong></span>
+                            <table class="smallDataList">
+                                <thead>
+                                    <tr>
+                                        <th>Tiempo en Planta de Origen</th>
+                                        <th>Tiempo de Carga en Origen</th>
+                                        <th>Tiempo en Planta de Destino</th>
+                                        <th>Tiempo de Carga en Destino</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>@(Model.TiempoTotalCamionPlantaOrigen == null ? "" : Model.TiempoTotalCamionPlantaOrigen.ToReadableSpanishString())</td>
+                                        <td>@(Model.TiempoTotalCamionCargaOrigen == null ? "" : Model.TiempoTotalCamionCargaOrigen.ToReadableSpanishString())</td>
+                                        <td>@(Model.TiempoTotalCamionPlantaDestino == null ? "" : Model.TiempoTotalCamionPlantaDestino.ToReadableSpanishString())</td>
+                                        <td>@(Model.TiempoTotalCamionCargaDestino == null ? "" : Model.TiempoTotalCamionCargaDestino.ToReadableSpanishString())</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a class="command" href="javascript:window.history.back();">Volver</a>
+</fieldset>

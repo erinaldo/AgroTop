@@ -1,0 +1,16 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model Liquidacion
+@{
+
+    ViewBag.NombreSeccion = "Anular Descuentos de Liquidación " + Model.Temporada.Nombre;
+    ViewBag.Title = "Los descuentos de la liquidación han sido anulados con éxito";
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm">
+    @Html.Partial("Liquidacion", Model)
+</fieldset>

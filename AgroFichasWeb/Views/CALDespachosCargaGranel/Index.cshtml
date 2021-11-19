@@ -1,0 +1,251 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@model List<CAL_DespachoCargaGranel>
+@{
+    ViewBag.Title = "Despachos Carga a Granel";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantasProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    @foreach (var item in Model)
+    {
+        <script>
+            $("#reprocess_@item.IdDespachoCargaGranel").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas reprocesar este despacho?",
+                    text: "ID: " +@item.IdDespachoCargaGranel+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SÍ, Reprocesar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Reprocesar", new { id = item.IdDespachoCargaGranel })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+        </script>
+        <script>
+            $("#setfree_@item.IdDespachoCargaGranel").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas liberar este despacho?",
+                    text: "ID: " +@item.IdDespachoCargaGranel+ "",
+                    type: "success",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SÍ, Liberar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Liberar", new { id = item.IdDespachoCargaGranel })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+        </script>
+        <script>
+            $("#delete_@item.IdDespachoCargaGranel").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas eliminar este despacho?",
+                    text: "ID: " +@item.IdDespachoCargaGranel+ "",
+                    type: "error",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SÍ, Eliminar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Eliminar", new { id = item.IdDespachoCargaGranel })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+        </script>
+    }
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtros de Búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <div class="form-inline center">
+                    @using (Html.BeginForm("index", "caldespachoscargagranel", new { id = 0 }, FormMethod.Get))
+                    {
+                        <div class="form-group">
+                            @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                        </div>
+
+                        <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                        <input class="btn btn-default" type="submit" value="Buscar" />
+                        <div class="clearfix visible-xs mb-sm"></div>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Despachos Carga a Granel</h2>
+        @if (permisosUsuario.Crear)
+        {
+            <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                <a href="@Url.Action("VerOP", "CALDespachosCargaGranel")" class="btn btn-primary">Crear Despacho <i class="fa fa-plus"></i></a>
+            </div>
+        }
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cliente</th>
+                    <th>Fecha Despacho</th>
+                    <th>Lote</th>
+                    <th>Silos de Alimentación</th>
+                    <th>Contenedor</th>
+                    <th>Nº de Contenedor Diario</th>
+                    <th>Producto</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+
+                {
+                    <tr valign="top">
+                        <td>@item.IdDespachoCargaGranel</td>
+                        <td>@item.CAL_OrdenProduccion.GetCliente(item.CAL_OrdenProduccion.IdCliente).RazonSocial</td>
+                        <td>@string.Format("{0:dd/MM/yyyy}", item.FechaHoraIns)</td>
+                        <td>@item.CAL_OrdenProduccion.LoteComercial</td>
+                        <td>
+                            @foreach (CAL_DespachoCargaGranelSilo siloAlimentacion in item.GetSilos())
+                            {
+                                @item.GetSilo(siloAlimentacion.IdSilo)<br />
+                            }
+                        </td>
+                        <td>@(item.IdContenedor.HasValue ? item.CAL_RITContenedor.NContenedor : "")</td>
+                        <td>@item.NContainerDiario.ToString("N0")</td>
+                        <td>
+                            @item.CAL_DetalleOrdenProduccion.CAL_Producto.Nombre<br />
+                            <small>@item.CAL_DetalleOrdenProduccion.CAL_Subproducto.Nombre</small>
+                        </td>
+                        <td>
+                            @if (item.Reproceso)
+                            {
+                                <span class="label label-@(item.Reproceso ? "warning" : "")" style="display: block">@(item.Reproceso ? "Reprocesado" : "")</span>
+                            }
+                            else if (!item.RetenidoAut.Value && !item.Retenido.Value && !item.Liberado)
+                            {
+                                <span class="label label-@(!item.Retenido.Value && !item.RetenidoAut.Value ? "success" : "")" style="display: block">Liberado Sincronizado</span>
+                            }
+                            else if (item.Liberado)
+                            {
+                                <span class="label label-@(item.Liberado ? "success" : "")" style="display: block">Liberado</span>
+                            }
+                            else if (item.RetenidoAut.Value)
+                            {
+                                <span class="label label-@(item.RetenidoAut.Value ? "danger" : "success")" style="display: block">@(item.RetenidoAut.Value ? "Retenido Automático" : "Liberado Automático")</span>
+                            }
+                            else if (item.Retenido.Value || !item.Retenido.Value)
+                            {
+                                <span class="label label-@(item.Retenido.Value ? "danger" : "success")" style="display: block">@(item.Retenido.Value ? "Retenido Analista" : "Liberado Analista")</span>
+                            }
+                        </td>
+                        <td>
+                            <button id="@string.Format("view_{0}", item.IdDespachoCargaGranel)" onclick="window.location.href='@Url.Action("VerDespacho", new { id = item.IdDespachoCargaGranel })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Análisis y Despacho"> <i class="fa fa-eye"></i></button>
+                            @if (permisosUsuario.Actualizar && !item.Liberado && !item.Reproceso)
+                            {
+                                <button id="edit_@item.IdDespachoCargaGranel" onclick="window.location.href='@Url.Action("Editar", new { id = item.IdDespachoCargaGranel })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                            }
+                            @if (permisosUsuario.LiberarDespachosCargaGranel && !item.Liberado && !item.Reproceso)
+                            {
+                                <button id="setfree_@item.IdDespachoCargaGranel" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Liberar"> <i class="fa fa-unlock-alt"></i></button>
+                            }
+                            @if (permisosUsuario.ReprocesarDespachosCargaGranel && !item.Liberado && !item.Reproceso)
+                            {
+                                <button id="reprocess_@item.IdDespachoCargaGranel" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reprocesar"> <i class="fa fa-recycle"></i></button>
+                            }
+                            @if (permisosUsuario.Borrar && !item.Liberado && !item.Reproceso)
+                            {
+                                <button id="delete_@item.IdDespachoCargaGranel" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

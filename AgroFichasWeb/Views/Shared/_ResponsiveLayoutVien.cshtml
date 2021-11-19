@@ -1,0 +1,37 @@
+﻿@using AgroFichasWeb.Models
+@{
+    Layout = "_ResponsiveLayoutBaseVien.cshtml";
+
+}
+@section VendorCSS {
+    @RenderSection("VendorCSS", required: false)
+}
+@section VendorScripts {
+    @RenderSection("VendorScripts", required: false)
+}
+@section CustomScripts {
+    <script src="~/Scripts/validate.js"></script>
+    @RenderSection("CustomScripts", required: false)
+}
+<section class="body">
+    @Html.Partial("_ResponsiveMenuVien")
+    <main>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <h1>@ViewBag.Title</h1>
+                    <nav class="breadcrumb-container d-none d-sm-block d-lg-inline-block" aria-label="breadcrumb">
+                        <ol class="breadcrumb pt-0">
+                            @RenderSection("CustomBreadcrumb", required: false)
+                        </ol>
+                    </nav>
+                    <div class="top-right-button-container">
+                        @RenderSection("CustomButton", required: false)
+                    </div>
+                    <div class="separator mb-5"></div>
+                </div>
+            </div>
+            @RenderBody()
+        </div>
+    </main>
+</section>

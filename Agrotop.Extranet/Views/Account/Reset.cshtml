@@ -1,0 +1,40 @@
+﻿@model Agrotop.Extranet.Models.PasswordResetRequest
+@{
+    ViewBag.Title = "Crear o Recuperar Contraseña";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    
+    <div class="titulo1">Crear o Recuperar Contraseña</div>
+
+    <div id="login-Box">
+        <div id="login-Margin">
+            <div id="loginError">
+                @Html.ValidationSummary()
+            </div>
+            <div class="box">
+                <p>Ingrese su nueva contraseña:</p>
+                @using (Html.BeginForm())
+                {
+                    <p>
+                        <label>Rut</label>
+                        @Model.Agricultor.Rut
+                    </p>
+                    <p>
+                        <label>Contraseña</label>
+                        @Html.Password("password1", "", new { @class = "caxa" })
+                    </p>                    
+                    <p>
+                        <label>Confirmar Contraseña</label>
+                        @Html.Password("password2", "", new { @class = "caxa" })
+                    </p>                    
+                    <p>
+                        <input type="submit" value="Crear Nueva Contraseña" class="botonx" />
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="login-Instrucciones" class="genContentText">
+        
+    </div>
+    <div style="clear:both" />

@@ -1,0 +1,456 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Operaciones
+@using System.Linq;
+
+@model InformeDiarioViewModel
+
+@{
+    DateTime dateTime = (DateTime)ViewData["dateTime"];
+    ViewBag.Title = string.Format("Informe Diario del día {0:dd/MM/yyyy}", dateTime);
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+}
+
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/chartist/chartist.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/morris.js/morris.css")" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+}
+
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/chartist/chartist.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.categories.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.pie.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.resize.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot.tooltip/flot.tooltip.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/gauge/gauge.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery.easy-pie-chart/jquery.easy-pie-chart.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-appear/jquery-appear.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-sparkline/jquery-sparkline.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/liquid-meter/liquid.meter.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/morris.js/morris.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/raphael/raphael.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/snap.svg/snap.svg.js")"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        //DATETIMEPICKER
+        jQuery.datetimepicker.setLocale('es');
+        jQuery('#dateTime').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            step: 1,
+            timepicker: false,
+            todayButton: true,
+            value: null,
+            weeks: true
+        });
+
+        //GRÁFICOS
+        (function () {
+            if ($('#chartist-produccion').get(0)) {
+                var data = {
+                    labels: [
+                        @foreach (var label in Model.EvolucionProduccionesDiarias)
+                        {
+                            @Html.Raw(string.Format("{0}, ", label.Fecha.Value.Day));
+                        }
+                    ],
+                    series: [[
+                        @foreach (var label in Model.EvolucionProduccionesDiarias)
+                        {
+                            @Html.Raw(string.Format("{0:N2}, ", label.Produccion));
+                        }
+                    ], []],
+                };
+
+                var options = {
+                    seriesBarDistance: 37
+                };
+
+                var responsiveOptions = [
+                    ['screen and (max-width: 640px)', {
+                        seriesBarDistance: 50,
+                        axisX: {
+                            labelInterpolationFnc: function (value) {
+                                return value[0];
+                            }
+                        }
+                    }]
+                ];
+
+                new Chartist.Bar('#chartist-produccion', data, options, responsiveOptions);
+            }
+        })();
+
+        (function () {
+            if ($('#chartist-cumplimiento').get(0)) {
+                var data = {
+                    labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31'],
+                    series: [[], []]
+
+                };
+
+                var options = {
+                    seriesBarDistance: 37
+                };
+
+                var responsiveOptions = [
+                    ['screen and (max-width: 640px)', {
+                        seriesBarDistance: 50,
+                        axisX: {
+                            labelInterpolationFnc: function (value) {
+                                return value[0];
+                            }
+                        }
+                    }]
+                ];
+
+                new Chartist.Bar('#chartist-cumplimiento', data, options, responsiveOptions);
+            }
+        })();
+
+        (function () {
+            if ($('#chartist-consumo-diario').get(0)) {
+                var data = {
+                    labels: [@foreach (var label in Model.ConsumosDiariosMateriaPrima)
+                        {
+                            @Html.Raw(string.Format("{0}, ", label.Fecha.Value.Day));
+                        }],
+                    series: [[
+                        @foreach (var label in Model.ConsumosDiariosMateriaPrima)
+                        {
+                            @Html.Raw(string.Format("{0:N0}, ", label.ConsumoMP));
+                        }
+                    ], []]
+                };
+
+                var options = {
+                    seriesBarDistance: 37
+                };
+
+                var responsiveOptions = [
+                    ['screen and (max-width: 640px)', {
+                        seriesBarDistance: 50,
+                        axisX: {
+                            labelInterpolationFnc: function (value) {
+                                return value[0];
+                            }
+                        }
+                    }]
+                ];
+                new Chartist.Bar('#chartist-consumo-diario', data, options, responsiveOptions);
+            }
+        })();
+
+        (function () {
+            if ($('#chartist-consumo-acumulado').get(0)) {
+                new Chartist.Line('#chartist-consumo-acumulado', {
+                    labels: [@foreach (var label in Model.ConsumoAcumuladoMateriaPrima)
+                        {
+                            @Html.Raw(string.Format("{0}, ", label.Fecha.Value.Day));
+                        }],
+                    series: [[
+                        @foreach (var label in Model.ConsumoAcumuladoMateriaPrima)
+                        {
+                            @Html.Raw(string.Format("{0:N2}, ", label.ConsumoMPAcumulado.Value.ToString().Replace(",", ".")));
+                        }
+                        ],
+                        [],
+                    ]
+                });
+            }
+        })();
+    </script>
+    <script>
+        $(function () {
+            $("#dialog").dialog({
+                autoOpen: false,
+                width: 250,
+                height: 90,
+                closeText: "hide",
+                closeOnEscape: false
+            });
+
+            $("#btnFiltrar").on("click", function () {
+                $("#dialog").dialog("open");
+                //$("#btnFiltrar").attr('disabled', 'disabled');
+            });
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtrar Dashboard</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fecha</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="dateTime" class="form-control" id="dateTime" value="@string.Format("{0:yyyy/MM/dd}", dateTime)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" id="btnFiltrar" class="btn btn-primary" value="Filtrar" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <section class="panel">
+            <header class="panel-heading">
+                <div class="panel-actions">
+                </div>
+
+                <h2 class="panel-title">Producción en Planta</h2>
+            </header>
+            <div class="panel-body">
+                <table class="table table-bordered table-striped mb-none col-md-6" id="datatable-produccion">
+                    <thead>
+                        <tr>
+                            <th>Ítem</th>
+                            <th>24horas</th>
+                            <th>Ayer</th>
+                            <th>Mes</th>
+                            <th>Presupuestado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr role="row" class="odd">
+                            <td>Producción Total</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").ProduccionTotal.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Ayer").ProduccionTotal.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Mes").ProduccionTotal.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").PM_ProduccionTotal.Value.ToString("N0")</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td>Producción Hojuela</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").ProduccionHojuela.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Ayer").ProduccionHojuela.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Mes").ProduccionHojuela.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").PM_ProduccionHojuela.Value.ToString("N0")</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td>Producción Harina</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").ProduccionHarina.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Ayer").ProduccionHarina.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Mes").ProduccionHarina.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").PM_ProduccionHarina.Value.ToString("N0")</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td>Producto Retenido</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").ProductoRetenido.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Ayer").ProductoRetenido.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Mes").ProductoRetenido.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").PM_ProductoRetenido.Value.ToString("N0")</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td>Producto Rechazado</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").ProductoRechazado.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Ayer").ProductoRechazado.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Mes").ProductoRechazado.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").PM_ProductoRechazado.Value.ToString("N0")</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td>Consumo de Avena</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").ConsumoAvena.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Ayer").ConsumoAvena.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Mes").ConsumoAvena.Value.ToString("N0")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").PM_ConsumoAvena.Value.ToString("N0")</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td>Rendimiento Teórico (%)*</td>
+                            <td>@string.Format("{0}%", Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").RendimientoTeorico.Value.ToString("N2"))</td>
+                            <td>@string.Format("{0}%", Model.ProduccionEnPlanta.Single(X => X.Titulo == "Ayer").RendimientoTeorico.Value.ToString("N2"))</td>
+                            <td>@string.Format("{0}%", Model.ProduccionEnPlanta.Single(X => X.Titulo == "Mes").RendimientoTeorico.Value.ToString("N2"))</td>
+                            <td>@string.Format("{0}%", Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").PM_RendimientoTeorico.Value.ToString("N2"))</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td>Producción Ton/h</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").ProduccionTnPorH.Value.ToString("N2")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Ayer").ProduccionTnPorH.Value.ToString("N2")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "Mes").ProduccionTnPorH.Value.ToString("N2")</td>
+                            <td>@Model.ProduccionEnPlanta.Single(X => X.Titulo == "24horas").PM_ProduccionTnPorH.Value.ToString("N2")</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-6">
+        <section class="panel">
+            <header class="panel-heading">
+                <div class="panel-actions">
+                </div>
+                <h2 class="panel-title">Detenciones</h2>
+            </header>
+            <div class="panel-body">
+                <table class="table table-bordered table-striped mb-none col-md-6" id="datatable-detenciones">
+                    <thead>
+                        <tr>
+                            <th>Ítem</th>
+                            <th>24horas</th>
+                            <th>Ayer</th>
+                            <th>Mes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr role="row" class="odd">
+                            <td><strong>Hrs Detenciones Totales</strong></td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "24horas").MinDetTotales.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Ayer").MinDetTotales.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Mes").MinDetTotales.Value)</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td style="padding-left: 20px;">Hrs Detenciones Totales Mant.</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "24horas").MinDetTotalesMant.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Ayer").MinDetTotalesMant.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Mes").MinDetTotalesMant.Value)</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td style="padding-left: 20px;">Hrs Detenciones Totales Externo</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "24horas").MinDetTotalesExterno.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Ayer").MinDetTotalesExterno.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Mes").MinDetTotalesExterno.Value)</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td style="padding-left: 20px;">Hrs Detenciones Totales Prod.</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "24horas").MinDetTotalesProd.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Ayer").MinDetTotalesProd.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Mes").MinDetTotalesProd.Value)</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td><strong>Hrs Detenciones Parciales</strong></td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "24horas").MinDetParciales.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Ayer").MinDetParciales.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Mes").MinDetParciales.Value)</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td style="padding-left: 20px;">Hrs Detenciones Parciales Mant.</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "24horas").MinDetParcialesMant.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Ayer").MinDetParcialesMant.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Mes").MinDetParcialesMant.Value)</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td style="padding-left: 20px;">Hrs Detenciones Parciales Prod.</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "24horas").MinDetParcialesProd.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Ayer").MinDetParcialesProd.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Mes").MinDetParcialesProd.Value)</td>
+                        </tr>
+                        <tr role="row" class="odd">
+                            <td style="padding-left: 20px;">Hrs Detenciones Parciales Externo</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "24horas").MinDetParcialesExterno.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Ayer").MinDetParcialesExterno.Value)</td>
+                            <td>@Model.ConvertMinutosAHoras(Model.Detenciones.Single(X => X.Titulo == "Mes").MinDetParcialesExterno.Value)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <section class="panel">
+            <header class="panel-heading">
+                <div class="panel-actions">
+                </div>
+
+                <h2 class="panel-title">Evolución de Producciones Diarias del Mes (Ton. Producto / Día)</h2>
+            </header>
+            <div class="panel-body">
+                <div id="chartist-produccion" class="ct-chart ct-perfect-fourth ct-golden-section"></div>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-6">
+        <section class="panel">
+            <header class="panel-heading">
+                <div class="panel-actions">
+                </div>
+
+                <h2 class="panel-title">Cumplimento de Programa de Despachos (Ton. Despachadas / Ton. Programadas)</h2>
+            </header>
+            <div class="panel-body">
+                <div id="chartist-cumplimiento" class="ct-chart ct-perfect-fourth ct-golden-section"></div>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <section class="panel">
+            <header class="panel-heading">
+                <div class="panel-actions">
+                </div>
+
+                <h2 class="panel-title">Consumos Diarios de Materia Prima (Ton.)</h2>
+            </header>
+            <div class="panel-body">
+                <div id="chartist-consumo-diario" class="ct-chart ct-perfect-fourth ct-golden-section"></div>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-6">
+        <section class="panel">
+            <header class="panel-heading">
+                <div class="panel-actions">
+                </div>
+
+                <h2 class="panel-title">Consumo Acumulado de Materia Prima (Ton.)</h2>
+            </header>
+            <div class="panel-body">
+                <div id="chartist-consumo-acumulado" class="ct-chart ct-perfect-fourth ct-golden-section"></div>
+            </div>
+        </section>
+    </div>
+</div>
+<div id="dialog" title="Cargando...">
+    <p style="text-align: center"><img src="@Url.Content("~/Content/images/loadingAnimation.gif")" /></p>
+</div>

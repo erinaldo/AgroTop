@@ -1,0 +1,25 @@
+﻿@using AgroFichasWeb.Models
+@model Liquidacion
+@{
+   
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "Detalle de la Liquidación";
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+
+    <h2>@ViewBag.Title</h2>
+
+
+    <fieldset class="dataForm">
+        @Html.Partial("Liquidacion", Model)
+        <p class="okcancel">
+            <a href="@Url.Action("printliquidacion", "liquidaciones", new { id = Model.IdLiquidacion })" target="_blank">Imprimir</a>
+        </p>
+    </fieldset>
+
+    

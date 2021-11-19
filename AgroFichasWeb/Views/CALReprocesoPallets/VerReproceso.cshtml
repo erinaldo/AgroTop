@@ -1,0 +1,191 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.SoftwareCalidad
+@model ReprocesoViewModel
+@{
+    ViewBag.Title = "Reproceso de Pallet";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    CAL_ReprocesoPallets reproceso = (CAL_ReprocesoPallets)ViewData["reproceso"];
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        $("#autorizar_@reproceso.IdReprocesoPalet").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas autorizar este reproceso?",
+                    text: "ID: " +@reproceso.IdReprocesoPalet+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Autorizar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Autorizar", "CALReprocesoPallets", new { id = reproceso.IdReprocesoPalet })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                        });
+            });
+    </script>
+}
+
+<section class="panel col-sm-6">
+    <div class="panel-body">
+        <div class="invoice">
+            <header class="clearfix panel-featured panel-featured-primary" >
+                <div class="row">
+                    <div class="col-sm-6 mt-md">
+                        <h2 class="h2 mb-sm text-dark text-weight-bold">
+                            Pallet #<span style="font-family: Consolas">@Model.CALPale.IdPale</span>
+                        </h2>
+                    </div>
+                    <div class="col-sm-6 text-right mt-md mb-md">
+                        <address class="ib mr-xlg">
+                        </address>
+                        <div class="ib">
+                            @*<img src="@Model.GetImgSrc()" alt="QR-Code" width="200" />*@
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <header class="clearfix">
+                <div class="bill-info">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="bill-to">
+                                <div class="text-left">
+                                    <table class="table h5 text-dark" style="border: none">
+                                        <tbody>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">LOTE COMERCIAL:</span></td>
+                                                <td class="text-left"><span class="value">@Model.GetLote(Model.CALOrdenProduccion.IdOrdenProduccion).LoteComercial</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">CLIENTE:</span></td>
+                                                <td class="text-left"><span class="value">@Model.GetCliente(Model.Cliente.IdCliente).RazonSocial</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">PRODUCTO:</span></td>
+                                                <td class="text-left"><span class="value">@Model.GetSubproducto(Model.CALDetalleOrdenProduccion.IdSubproducto).Nombre</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">ENVASE:</span></td>
+                                                <td class="text-left"><span class="value">@Model.GetEnvase(Model.CALOrdenProduccion.IdOrdenProduccion).Descripcion</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">CANTIDAD PALETIZADA:</span></td>
+                                                <td class="text-left"><span class="value">@Model.CALPale.CantidadPaletizada</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="text-right mr-lg">
+            @*<a href="@Url.Action("Imprimir", "CALIdentificacionPale", new {id = Model.Pale.IdPale })" target="_blank" class="btn btn-primary ml-sm"><i class="fa fa-print"></i> Imprimir</a>*@
+        </div>
+    </div>
+</section>
+<section class="panel col-sm-6">
+    <div class="panel-body">
+        <div class="invoice">
+            <header class="clearfix panel-featured panel-featured-warning">
+                <div class="row">
+                    <div class="col-sm-6 mt-md">
+                        <h2 class="h2 mb-sm text-dark text-weight-bold">
+                            Reproceso #<span style="font-family: Consolas">@reproceso.IdReprocesoPalet</span>
+                        </h2>
+                    </div>
+                    <div class="col-sm-6 text-right mt-md mb-md">
+                        <address class="ib mr-xlg">
+                        </address>
+                        <div class="ib">
+                            @if (reproceso.Autorizado == true)
+                            {
+                            <button id="autorizar_@reproceso.IdReprocesoPalet" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="" data-original-title="Autorizar" disabled> <i class="fa fa-check-circle-o"></i> Autorizar Reproceso</button>
+                            }
+                            else
+                            {
+                            <button id="autorizar_@reproceso.IdReprocesoPalet" class="btn" style="background-color:#0088cc;color: white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Autorizar"> <i class="fa fa-check-circle-o"></i> Autorizar Reproceso</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <header class="clearfix">
+                <div class="bill-info">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="bill-to">
+                                <div class="text-left">
+                                    <table class="table h5 text-dark" style="border: none">
+                                        <tbody>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">LOTE COMERCIAL:</span></td>
+                                                <td class="text-left"><span class="value">@Model.GetLote(reproceso.IdOrdenProduccion).LoteComercial</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">CLIENTE:</span></td>
+                                                <td class="text-left"><span class="value">@Model.GetCliente(reproceso.IdCliente).RazonSocial</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">PRODUCTO:</span></td>
+                                                <td class="text-left"><span class="value">@Model.GetSubproducto(reproceso.IdSubproducto).Nombre</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">ENVASE:</span></td>
+                                                <td class="text-left"><span class="value">@Model.GetEnvase(reproceso.IdOrdenProduccion).Descripcion</span></td>
+                                            </tr>
+                                            <tr class="b-top-none">
+                                                <td colspan="2"><span class="text-dark text-weight-semibold">CANTIDAD PALETIZADA:</span></td>
+                                                <td class="text-left"><span class="value">@reproceso.CantidadPaletizada</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="text-right mr-lg">
+            @*<a href="@Url.Action("Imprimir", "CALIdentificacionPale", new {id = Model.Pale.IdPale })" target="_blank" class="btn btn-primary ml-sm"><i class="fa fa-print"></i> Imprimir</a>*@
+        </div>
+    </div>
+</section>

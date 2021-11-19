@@ -1,0 +1,117 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_FTParametroMicrobiologia
+@{
+    ViewBag.Title = "Parámetros de Microbiología para Fichas Técnicas";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    ViewBag.SubTitle = "Editar Parámetro de Microbiología";
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Parámetro de Microbiología</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control">@Model.CAL_ParametroMicrobiologia.Nombre</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">MinValidValue</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("MinValidValue", Model.MinValidValue, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("MinValidValue")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">MaxValidValue</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("MaxValidValue", Model.MaxValidValue, new { @class = "form-control", maxlength = "20" })
+                                        @Html.ValidationMessage("MaxValidValue")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">MinAutValue</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("MinAutValue", Model.MinAutValue, new { @class = "form-control", maxlength = "20" })
+                                        @Html.ValidationMessage("MinAutValue")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">MaxAutValue</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("MaxAutValue", Model.MaxAutValue, new { @class = "form-control", maxlength = "20" })
+                                        @Html.ValidationMessage("MaxAutValue")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">AccionAutValue</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("AccionAutValue", Model.AccionAutValue, new { @class = "form-control", maxlength = "50" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">N/A (no aplica)</label>
+                                    <div class="col-sm-6">
+                                        @Html.CheckBox("NoAplica", Model.NoAplica)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Editar este Parámetro de Microbiología" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

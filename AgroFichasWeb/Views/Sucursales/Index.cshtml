@@ -1,0 +1,90 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<Sucursal>
+
+@{
+    ViewBag.NombreSeccion = "Sucursales";
+    ViewBag.Title = "Administrar Sucursales";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "sucursales", new { id = 0 }, FormMethod.Get))
+    {
+        <input type="text" name="key" value="@ViewData["key"]" /><input type="submit" value="Buscar" />
+    }
+</div>
+
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">
+            Nombre
+        </th>
+        <th align="left">
+            Comuna
+        </th>
+        <th align="center">
+            Editar
+        </th>
+        <th align="center">
+            Eliminar
+        </th>
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="9" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        <tr valign="top">
+            <td align="left">
+                @item.Nombre
+            </td>
+            <td align="left">
+                @item.Comuna.Nombre
+            </td>
+            <td align="center">
+                @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "editar", new { id = item.IdSucursal })
+            </td>
+            <td align="center">
+                @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "eliminar", new { id = item.IdSucursal })
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="9" class="pager">
+            @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "sucursales", ViewData["key"].ToString())
+        </td>
+    </tr>
+</table>

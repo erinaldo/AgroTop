@@ -1,0 +1,77 @@
+﻿@using AgroFichasWeb.Models
+@using MoreLinq
+@model List<CAL_Pale>
+@{
+    ViewBag.Title = "Pallets";
+    Layout = "~/Views/Shared/_OperadorLayout.cshtml";
+
+    var turno = (CAL_Turno2)ViewData["turno"];
+    var fecha = ViewData["fecha"];
+    var TurnoAnteriorSiguiente = (CAL_GetTurno2AnteriorSiguienteResult)ViewData["TurnoAnteriorSiguiente"];
+    var lotes = Model.Select(X => X.CAL_DetalleOrdenProduccion.CAL_OrdenProduccion).DistinctBy(X => X.LoteComercial);
+
+    ViewBag.Turno = Html.Raw("TURNO <u>" + turno.CAL_TipoTurno.Descripcion + "</u> desde <u>" + @turno.InicioTurno + "</u> hasta <u>" + @turno.FinTurno + "</u>");
+    ViewBag.Jornada = Html.Raw("Jornada <strong>" + turno.CAL_TipoTurno.CAL_TipoJornada.Descripcion + "</strong>");
+    ViewBag.FechaHora = TurnoAnteriorSiguiente.FAct/*DateTime.Now.ToString("dd/MM/yyyy")*/;
+    ViewBag.TurnoAnterior = TurnoAnteriorSiguiente.TAnt;
+    ViewBag.TurnoSiguiente = TurnoAnteriorSiguiente.TSig;
+    ViewBag.FAnterior = TurnoAnteriorSiguiente.FAnt;
+    ViewBag.FSiguiente = TurnoAnteriorSiguiente.FSig;
+}
+
+<!-- Example row of columns -->
+@foreach (var lote in lotes)
+{
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h2>Lote @lote.LoteComercial</h2>
+        </div>
+        <div class="col-lg-12 text-center">
+            @if (!string.IsNullOrEmpty(ViewData["okMsg"].ToString()))
+            {
+                <div class="isa_success">
+                    <i class="fa fa-check"></i>
+                    @ViewData["okMsg"]
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(ViewData["errMsg"].ToString()))
+            {
+                <div class="isa_error">
+                    <i class="fa fa-times-circle"></i>
+                    @ViewData["errMsg"]
+                </div>
+            }
+        </div>
+        @foreach (var pale in Model.Where(X => X.CAL_DetalleOrdenProduccion.CAL_OrdenProduccion.IdOrdenProduccion == lote.IdOrdenProduccion).OrderBy(X => X.IdDetalleOrdenProduccion))
+        {
+            <div class="col-lg-4 text-center @(pale.FechaCargaHoraIns.HasValue ? "cal-PalletCargado" : "cal-PalletPendiente")">
+                <h4 style="margin-bottom: 0px;">Pallet @pale.IdPale</h4>
+                <span>
+                    Canitdad Sacos @pale.CantidadPaletizada
+                </span>
+                <p class="text-danger text-center">
+                    <img src="@pale.GetImgSrc()" width="200" />
+                    <div style="clear: both"></div>
+                    <span style="font-family: Consolas">@pale.CodigoInterno</span>
+                    <div style="clear: both"></div>
+                    @if (pale.FechaCargaHoraIns.HasValue)
+                    {
+                        <span>Elaborado el @pale.FechaCargaHoraIns.Value.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                    }
+                    else
+                    {
+                        <span><em>Pendiente</em></span>
+                    }
+                    <div style="clear: both"></div>
+                </p>
+                <p class="text-center">
+                    @using (Html.BeginForm())
+                    {
+                        <input type="hidden" name="IdPale" value="@pale.IdPale" />
+                        <input type="submit" class="btn btn-primary" value="Paletizar @pale.IdPale" />
+                    }
+                </p>
+            </div>
+        }
+    </div>
+}

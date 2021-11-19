@@ -1,0 +1,140 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using System.Collections
+
+@model List<CAL_DetalleOrdenProduccion>
+@{
+    ViewBag.Title = "Órdenes de Producción";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Asociar Fichas Técnicas a Productos de la O/P N° @ordenProduccion.LoteComercial</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Ficha Técnica</th>
+                    <th>Versión</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdDetalleOrdenProduccion</td>
+                        <td>
+                            <span>@item.CAL_Producto.Nombre</span>
+                            <div style="clear: both"></div>
+                            <small>@item.CAL_Subproducto.Nombre</small>
+                        </td>
+                        <td>
+                            @if (item.CAL_FT != null)
+                            {
+                                <span>@item.CAL_FT.Codigo</span>
+                            }
+                            else
+                            {
+                                <span>&mdash;</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.CAL_FT != null)
+                            {
+                                <span>@item.CAL_FT.Version</span>
+                            }
+                            else
+                            {
+                                <span>&mdash;</span>
+                            }
+                        </td>
+                        <td>
+                            <button id="@string.Format("edit_{0}", item.IdDetalleOrdenProduccion)" onclick="window.location.href='@Url.Action("Editar", new { id = item.IdDetalleOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                            <button id="@string.Format("delete_{0}", item.IdDetalleOrdenProduccion)" onclick="window.location.href='@Url.Action("Eliminar", new { id = item.IdDetalleOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Vista Previa</h4>
+            </div>
+            <div class="modal-body">
+                <div id="divDocViewer">
+                    <div id="div_@ViewBag.ViewerID"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

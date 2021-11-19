@@ -1,0 +1,280 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@model CAL_ReprocesoPallets
+@{
+    ViewBag.Title = "Reproceso de Pallets";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    PlantaProduccion plantaProduccion = (PlantaProduccion)ViewData["plantaProduccion"];
+    if (Model.IdReprocesoPalet == 0)
+    {
+        ViewBag.SubTitle = "Crear Reproceso de Pallet";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Reproceso de Pallet";
+    }
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+
+}
+@section CustomScripts
+{
+    <script>
+        $('#Observacion').summernote({
+            height: 500
+        });
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="', '', '">', 'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        function DeleteClientes() {
+            $("#IdCliente option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Cliente)', '</option>');
+            $("#IdCliente").html(options.join(''));
+        }
+
+        function GetCliente() {
+            var id = $('#IdOrdenProduccion').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdCliente'));
+            }
+            $.getJSON(uri + '/OrdenProduccion/GetCliente?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay clientes disponibles");
+                        DeleteClientes();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Cliente)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdCliente, '">',
+                                result[i].RazonSocial, '</option>');
+                            document.getElementById("IdCliente").value = result[i].RazonSocial;
+                            document.getElementById("idCliente").value = result[i].IdCliente;
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdOrdenProduccion").change(function () {
+            DeleteClientes();
+            GetCliente();
+            DeleteProductos();
+            GetProducto();
+
+            var idOrdenProduccion = $("#IdOrdenProduccion option:selected").val();
+            document.getElementById("op").value = idOrdenProduccion;
+        });
+
+        $("#IdSubproducto").change(function () {
+            var idSubproducto = $("#IdSubproducto option:selected").val();
+            var idDetalleOP = $("#IdSubproducto option:selected").attr('data-bruto')
+            document.getElementById("subproducto").value = idSubproducto;
+            document.getElementById("detalleOP").value = idDetalleOP;
+        });
+
+        function DeleteProductos() {
+            $("#IdSubproducto option").remove();
+            document.getElementById('subproducto').value = "";
+            document.getElementById('detalleOP').value = "";
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Producto)', '</option>');
+            $("#IdSubproducto").html(options.join(''));
+        }
+
+        function GetProducto() {
+            var id = $('#IdOrdenProduccion').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdSubproducto'));
+            }
+            $.getJSON(uri + '/OrdenProduccion/GetProductosConDetalle?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                        DeleteClientes();
+                    }
+                    else {
+                        options.push('<option value="','', '">','(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="', result[i].IdProducto, '"data-bruto="',result[i].IdDetalleOrdenProduccion,'">',
+                                result[i].Nombre,'</option>');
+                        }
+                        $($("#IdSubproducto")).html(options.join(''));
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        //function GetDetalleOP() {
+        //    var id = $('#IdSubproducto').val();
+        //    if (!jQuery.isEmptyObject(id)) {
+        //        SetCargando($('#IdSubproducto'));
+        //    }
+        //    $.getJSON(uri + '/OrdenProduccion/GetDetalleOP?id=' + IdSubproducto'&'+IdSaco)
+        //        .done(function (result) {
+        //            var options = [];
+
+        //            if (result.length == 0) {
+        //                alert("No hay productos disponibles");
+        //                DeleteClientes();
+        //            }
+        //            else {
+        //                options.push('<option value="', '', '">', '(Seleccione Producto)', '</option>');
+        //                for (var i = 0; i < result.length; i++) {
+        //                    options.push('<option value="', result[i].IdProducto, '"data-bruto="', result[i].IdDetalleOrdenProduccion, '">',
+        //                        result[i].Nombre, '</option>');
+        //                }
+        //                $($("#IdSubproducto")).html(options.join(''));
+        //            }
+
+        //        })
+        //        .fail(function (jqXHR, textStatus, err) {
+        //            console.log(err);
+        //        });
+        //}
+    </script>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm((Model.IdReprocesoPalet == 0 ? "CrearReproceso" : "EditarReproceso"), "CALReprocesoPallets", FormMethod.Post))
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Planta producción</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">@plantaProduccion.Nombre</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Pallet Reproceso</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">@Model.IdPale</span>
+                                        @Html.Hidden("IdPale", Model.IdPale)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Lote Comercial <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdOrdenProduccion", Model.GetLotes(Model.IdOrdenProduccion), "(Seleccione Lote Comercial)", new { @class = "form-control", data_plugin_selectTwo = "" })
+                                        @Html.ValidationMessage("IdOrdenProduccion")
+                                        @Html.Hidden("op", Model.GetLote(Model.IdOrdenProduccion).IdOrdenProduccion)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cliente <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("IdCliente", Model.GetCliente(Model.IdCliente).RazonSocial, new { @class = "form-control", disabled = "" })
+                                        @Html.ValidationMessage("IdCliente")
+                                        @Html.Hidden("idCliente", Model.GetCliente(Model.IdCliente).IdCliente)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Producto <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdSubproducto", Model.GetSubproductos(Model.IdOrdenProduccion, Model.IdSubproducto), "(Seleccione Producto)", new { @class = "form-control", data_plugin_selectTwo = "" })
+                                        @Html.ValidationMessage("IdSubproducto")
+                                        @Html.Hidden("IdSubproductoOrigen", Model.IdSubproductoOrigen)
+                                        @Html.Hidden("subproducto", Model.IdSubproducto)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Observaciones <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "summernote", @data_plugin_summernote = "{}" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar Reproceso" />
+                        </div>
+                    </div>
+                </footer>
+                @Html.Hidden("CantidadPaletizada", Model.CantidadPaletizada)
+                @Html.Hidden("detalleOP",Model.GetDetallePale(Model.IdPale).IdDetalleOrdenProduccion)
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

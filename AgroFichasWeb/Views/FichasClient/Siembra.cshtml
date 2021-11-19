@@ -1,0 +1,76 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var temporada = Temporada.TemporadaActivaFichas();
+    var variedades = Variedad.SelectList(-1);
+    var tiposSiembra = TipoSiembra.SelectList(-1);
+    var cultivos = Cultivo.SelectList(-1);
+}
+<!-- Modal Form - Siembra -->
+<div id="modalFormSiembra" class="modal-block modal-block-primary mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title" id="formTitleSiembra">Titulo</h2>
+        </header>
+        <div class="panel-body">
+            <form id="formItemSiembra" class="form-horizontal mb-lg" novalidate="novalidate">
+                <div class="validation-summary-errors" id="validationErrorsSiembra" style="display: none;">
+
+                </div>
+                <input type="hidden" value="" name="idSiembra" id="idSiembra" />
+                <input type="hidden" name="idPredio" value="@Model.IdPredio" />
+                <input type="hidden" name="idTemporada" value="@temporada.IdTemporada" />
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Potreros <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <table id="tblPotrerosSiembra" class="table table-bordered table-striped mb-none">
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Variedad <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("idvariedad", variedades)
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Dosis <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="dosis" id="dosis" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Tipo de Siembra <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("idtiposiembra", tiposSiembra)
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Fecha de Siembra <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="fechasiembra" id="fechasiembra" class="form-control" data-plugin-datepicker />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Cultivo Anterior <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("idcultivoanterior", cultivos)
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-center" id="footerSpinnerSiembra" style="display: none;">
+                    <img id="spinnerImageSiembra" src="~/Content/spinner.svg" height="34" />
+                </div>
+                <div class="col-md-12 text-right" id="footerButtonsSiembra">
+                    <button class="btn btn-primary modal-confirmSiembra">Guardar</button>
+                    <button class="btn btn-default modal-dismissSiembra">Cancelar</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>

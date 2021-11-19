@@ -1,0 +1,161 @@
+﻿@using AgroFichasWeb.Models
+@model List<CAL_RIT>
+@{
+    ViewBag.Title = "Registros de Inspección de Transporte";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var plantas = (IEnumerable<SelectListItem>)ViewData["plantas"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 50,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["errMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtros de Búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <div class="form-inline center">
+                    @using (Html.BeginForm("index", "calrit", new { id = 0 }, FormMethod.Get))
+                    {
+                        <div class="form-group">
+                            @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                        </div>
+
+                        <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                        <input class="btn btn-default" type="submit" value="Buscar" />
+                        <div class="clearfix visible-xs mb-sm"></div>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Registros de Inspección de Transporte</h2>
+        @if (permisosUsuario.Crear)
+        {
+            <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                <a href="@Url.Action("VerOP", "CALRIT", new { })" class="btn btn-primary">Crear Registro de Inspección de Transporte <i class="fa fa-plus"></i></a>
+            </div>
+        }
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Lote</th>
+                    <th>Contenedor</th>
+                    <th>Patente</th>
+                    <th>Aprobado</th>
+                    <th>Verificado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdRIT</td>
+                        <td>@item.CAL_OrdenProduccion.LoteComercial</td>
+                        <td>@item.CAL_RITContenedor.NContenedor</td>
+                        <td>@item.Patente</td>
+                        <td><span class="value @(item.Aprobado ? "cal-ValidValue" : "cal-NoValidValue")">@(item.Aprobado ? "Sí" : "No")</span></td>
+                        <td>
+                            @if (item.Verificado.HasValue && item.Verificado.Value)
+                            {
+                                <span class="value @(item.Verificado.HasValue && item.Verificado.Value ? "cal-ValidValue" : "cal-NoValidValue")">
+                                    @if (item.GetVerificador(item.UserInsVerificacion) != null)
+                                    {
+                                        @Html.Raw(string.Format("{0}<br />{1:dd/MM/yyyy}", item.GetVerificador(item.UserInsVerificacion).FullName, item.FechaHoraInsVerificacion.Value));
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(string.Format("(Desconocido)<br />{0:dd/MM/yyyy}", item.FechaHoraInsVerificacion));
+                                    }
+                                </span>
+                            }
+                            else
+                            {
+                                @:<em>No ha sido verificado</em>
+                            }
+                        </td>
+                        <td>
+                            <button id="@string.Format("view_{0}", item.IdRIT)" onclick="window.location.href='@Url.Action("VerRIT", new { id = item.IdRIT })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Registro de Inspección de Transporte"> <i class="fa fa-eye"></i></button>
+                            <button id="edit_@item.IdRIT" onclick="window.location.href='@Url.Action("AgregarSelloTara", new { id = item.IdRIT })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Sello y Tara"> <i class="fa fa-truck"></i></button>
+                            @if (permisosUsuario.VerificarRIT)
+                            {
+                                <button id="edit_@item.IdRIT" onclick="window.location.href='@Url.Action("Verificar", new { id = item.IdRIT })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Verificar"> <i class="fa fa-check"></i></button>
+                            }
+                            @if (permisosUsuario.Actualizar)
+                            {
+                                <button id="edit_@item.IdRIT" onclick="window.location.href='@Url.Action("Editar", new { id = item.IdRIT })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                            }
+                            @if (permisosUsuario.Borrar)
+                            {
+                                <button id="delete_@item.IdRIT" onclick="window.location.href='@Url.Action("Eliminar", new { id = item.IdRIT })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

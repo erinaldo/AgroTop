@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.NombreSeccion = "Control del Camión en Planta";
+    ViewBag.Title = "Registrar Pasos en Planta de Origen Paso 1";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@if (ViewData["msgerr"] != null && ViewData["msgerr"] != "")
+{
+    <style>
+        .validation-summary-errors ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+    </style>
+    <div class="validation-summary-errors">
+        @(Html.Raw(ViewData["msgerr"]))
+    </div>
+}
+
+@if (ViewData["msgok"] != null && ViewData["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @ViewData["msgok"]
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Cod. Barra</label>
+            @Html.TextBox("Firma", null, new { @class = "heavy std", maxlength = "8" })
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Siguiente" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

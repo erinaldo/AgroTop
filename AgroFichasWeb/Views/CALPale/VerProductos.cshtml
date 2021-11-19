@@ -1,0 +1,205 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Models.SoftwareCalidad
+@using AgroFichasWeb.Views
+@model List<CAL_DetalleOrdenProduccion>
+@{
+    ViewBag.Title = "Paletización";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+    AgroFichasDBDataContext dc = new AgroFichasDBDataContext();
+    PlantaProduccion planta = dc.PlantaProduccion.Where(X => X.IdPlantaProduccion == ordenProduccion.IdPlanta).FirstOrDefault();
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            },
+            "pageLength": 100
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">O/P N° @ordenProduccion.LoteComercial  | @planta.Nombre</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Espesor</th>
+                    <th>Saco</th>
+                    <th>Sacos Requeridos / Sacos Envasados</th>
+                    <th>Porcentaje Avance Envasado</th>
+                    <th>Sacos Liberados</th>
+                    <th>Porcentaje Avance Liberado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.CAL_Subproducto.Nombre.ToUpper()</td>
+                        <td>@(item.IdEspesorProducto.HasValue ? string.Format("{0:N2}-{1:N2} mm", item.CAL_EspesorProducto.Min, item.CAL_EspesorProducto.Max) : "(No tiene Espesor)")</td>
+                        <td>@item.CAL_Saco.Nombre</td>
+                        <td>@string.Format("{0:N0}", item.CantidadSacos) / @string.Format("{0:N0}", item.GetPaletizado())</td>
+                        <td>
+                            @if (item.GetPorcentajeAvance() > 100)
+                            {
+                                <div class="alert alert-success">
+                                    El porcentaje de avance del envasado es de @string.Format("{0:N2}%", item.GetPorcentajeAvance()).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvance());">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvance())
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (item.GetPorcentajeAvance() == 100)
+                            {
+                                <div class="alert alert-success">
+                                    El porcentaje de avance del envasado es de @string.Format("{0:N2}%", item.GetPorcentajeAvance()).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvance());">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvance())
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (item.GetPorcentajeAvance() == 0)
+                            {
+                                <div class="alert alert-danger">
+                                    El porcentaje de avance del envasado es de @string.Format("{0:N2}%", item.GetPorcentajeAvance()).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvance());">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvance())
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (item.GetPorcentajeAvance() > 0 && item.GetPorcentajeAvance() < 100)
+                            {
+                                <div class="alert alert-warning">
+                                    El porcentaje de avance del envasado es de @string.Format("{0:N2}%", item.GetPorcentajeAvance()).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvance());">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvance())
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </td>
+                        <td>@string.Format("{0:N0}", item.GetPaletizadoLiberado(item.IdDetalleOrdenProduccion))</td>
+                        <td>
+                            @if (item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion) > 100)
+                            {
+                                <div class="alert alert-success">
+                                    El porcentaje liberado es de @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion)).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion))" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion));">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion))
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion) == 100)
+                            {
+                                <div class="alert alert-success">
+                                    El porcentaje liberado es de @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion)).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion))" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion));">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion))
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion) == 0)
+                            {
+                                <div class="alert alert-danger">
+                                    El porcentaje liberado es de @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion)).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion))" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion));">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion))
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion) > 0 && item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion) < 100)
+                            {
+                                <div class="alert alert-warning">
+                                    El porcentaje liberado es de @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion)).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion))" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion));">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvanceLiberado(item.IdDetalleOrdenProduccion))
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <button id="@string.Format("view_{0}", item.IdOrdenProduccion)" onclick="window.location.href='@Url.Action("VerPales", new { id = item.IdDetalleOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Pallets"> <i class="fa fa-eye"></i></button>
+                            @if (permisosUsuario.Crear)
+                            {
+                                if (!item.CAL_OrdenProduccion.Terminada)
+                                {
+                                    <button id="@string.Format("createPallet_{0}", item.IdDetalleOrdenProduccion)" onclick="window.location.href='@Url.Action("crearpale", new { id = item.IdOrdenProduccion, idDetalleOrdenProduccion = item.IdDetalleOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Crear Pallet"> <i class="fa fa-plus"></i></button>
+                                }
+                            }
+                            <a href="@Url.Action("ImprimirEtiquetas", "CALPale", new {id = item.IdDetalleOrdenProduccion })" target="_blank" class="btn btn-default"><i class="fa fa-print"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

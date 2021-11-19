@@ -1,0 +1,12 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var idTipoDescuento = (int)ViewData["idTipoDescuento"];
+    var tipos = (List<TipoDescuento>)ViewData["tiposDescuento"];
+}
+<select id="idTipoDescuento" name="idTipoDescuento">
+    <option value="">(Todos los Tipos de Descuento)</option>
+    @foreach (var t in tipos)
+    {
+        <option value="@t.IdTipoDescuento" @(t.IdTipoDescuento == idTipoDescuento ? "selected" : "")>@t.Nombre</option>
+    }
+</select>

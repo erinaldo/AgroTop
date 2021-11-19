@@ -1,0 +1,14 @@
+﻿@model AgroFichasWeb.Models.IntencionSiembra
+<tr id="itemRowIntencionSiembra-@Model.IdIntencionSiembra">
+    <td>@Model.Cultivo.Nombre</td>
+    <td>@Model.Comuna.Nombre</td>
+    <td class="text-right">@Model.Superficie.ToString("#,##0")</td>
+    <td class="text-right">@((Model.Cantidad / 1000).ToString("#,##0"))</td>
+    <td class="actions text-center">
+        @if (true)
+        {
+            <img id="editSpinnerIntencionSiembra-@Model.IdIntencionSiembra" src="~/Content/spinner.svg" height="18" style="display: none; margin-right:10px" />
+            <a href="#" id="editButtonIntencionSiembra-@Model.IdIntencionSiembra" class="editItemIntencionSiembra" data-id="@Model.IdIntencionSiembra" style="margin-right:10px"><i class="fa fa-pencil"></i></a>
+        }
+    </td>
+</tr>

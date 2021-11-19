@@ -1,0 +1,830 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="agrofichas" Class="SoftwareCalidadDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=DESKTOP-06BQI0O\SQLEXPRESS;Initial Catalog=agrofichas;Integrated Security=True" SettingsObjectName="AgrotopApi.Properties.Settings" SettingsPropertyName="AgroFichasConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.CAL_Exportador" Member="CAL_Exportador">
+    <Type Name="CAL_Exportador">
+      <Column Name="IdExportador" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(75) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_Exportador_CAL_OrdenProduccion" Member="CAL_OrdenProduccion" ThisKey="IdExportador" OtherKey="IdExportador" Type="CAL_OrdenProduccion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_TipoSaco" Member="CAL_TipoSaco">
+    <Type Name="CAL_TipoSaco">
+      <Column Name="IdTipoSaco" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_TipoSaco_CAL_PesoTipoSaco" Member="CAL_PesoTipoSaco" ThisKey="IdTipoSaco" OtherKey="IdTipoSaco" Type="CAL_PesoTipoSaco" />
+      <Association Name="CAL_TipoSaco_CAL_Saco" Member="CAL_Saco" ThisKey="IdTipoSaco" OtherKey="IdTipoSaco" Type="CAL_Saco" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_PesoTipoSaco" Member="CAL_PesoTipoSaco">
+    <Type Name="CAL_PesoTipoSaco">
+      <Column Name="IdTipoSaco" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdPesoSaco" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_TipoSaco_CAL_PesoTipoSaco" Member="CAL_TipoSaco" ThisKey="IdTipoSaco" OtherKey="IdTipoSaco" Type="CAL_TipoSaco" IsForeignKey="true" />
+      <Association Name="CAL_PesoSaco_CAL_PesoTipoSaco" Member="CAL_PesoSaco" ThisKey="IdPesoSaco" OtherKey="IdPesoSaco" Type="CAL_PesoSaco" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Barco" Member="Barco">
+    <Type Name="Barco">
+      <Column Name="IdBarco" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdCarrier" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Barco_CAL_LECargaGranel" Member="CAL_LECargaGranel" ThisKey="IdBarco" OtherKey="IdBarco" Type="CAL_LECargaGranel" />
+      <Association Name="Barco_CAL_LEPallets" Member="CAL_LEPallets" ThisKey="IdBarco" OtherKey="IdBarco" Type="CAL_LEPallets" />
+      <Association Name="Barco_CAL_OrdenProduccion" Member="CAL_OrdenProduccion" ThisKey="IdBarco" OtherKey="IdBarco" Type="CAL_OrdenProduccion" />
+      <Association Name="Carrier_Barco" Member="Carrier" ThisKey="IdCarrier" OtherKey="IdCarrier" Type="Carrier" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Carrier" Member="Carrier">
+    <Type Name="Carrier">
+      <Column Name="IdCarrier" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Carrier_Barco" Member="Barco" ThisKey="IdCarrier" OtherKey="IdCarrier" Type="Barco" />
+      <Association Name="Carrier_CAL_LECargaGranel" Member="CAL_LECargaGranel" ThisKey="IdCarrier" OtherKey="IdCarrier" Type="CAL_LECargaGranel" />
+      <Association Name="Carrier_CAL_LEPallets" Member="CAL_LEPallets" ThisKey="IdCarrier" OtherKey="IdCarrier" Type="CAL_LEPallets" />
+      <Association Name="Carrier_CAL_OrdenProduccion" Member="CAL_OrdenProduccion" ThisKey="IdCarrier" OtherKey="IdCarrier" Type="CAL_OrdenProduccion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_TransporteTerrestre" Member="CAL_TransporteTerrestre">
+    <Type Name="CAL_TransporteTerrestre">
+      <Column Name="IdOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdTransportista" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_OrdenProduccion_CAL_TransporteTerrestre" Member="CAL_OrdenProduccion" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_OrdenProduccion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_EspesorProducto" Member="CAL_EspesorProducto">
+    <Type Name="CAL_EspesorProducto">
+      <Column Name="IdEspesorProducto" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Min" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Max" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Avg" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Observaciones" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_EspesorProducto_CAL_DetalleOrdenProduccion" Member="CAL_DetalleOrdenProduccion" ThisKey="IdEspesorProducto" OtherKey="IdEspesorProducto" Type="CAL_DetalleOrdenProduccion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_Saco" Member="CAL_Saco">
+    <Type Name="CAL_Saco">
+      <Column Name="IdSaco" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="IdTipoSaco" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdTipoArteSaco" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdTipoColorHiloSaco" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Recubierto" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_Saco_CAL_DetalleOrdenProduccion" Member="CAL_DetalleOrdenProduccion" ThisKey="IdSaco" OtherKey="IdSaco" Type="CAL_DetalleOrdenProduccion" />
+      <Association Name="CAL_TipoSaco_CAL_Saco" Member="CAL_TipoSaco" ThisKey="IdTipoSaco" OtherKey="IdTipoSaco" Type="CAL_TipoSaco" IsForeignKey="true" />
+      <Association Name="CAL_TipoColorHiloSaco_CAL_Saco" Member="CAL_TipoColorHiloSaco" ThisKey="IdTipoColorHiloSaco" OtherKey="IdTipoColorHiloSaco" Type="CAL_TipoColorHiloSaco" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_Contenedor" Member="CAL_Contenedor">
+    <Type Name="CAL_Contenedor">
+      <Column Name="IdContenedor" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Tamaño" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="AptoParaAlimentos" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_Contenedor_CAL_DetalleOrdenProduccion" Member="CAL_DetalleOrdenProduccion" ThisKey="IdContenedor" OtherKey="IdContenedor" Type="CAL_DetalleOrdenProduccion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_Subproducto" Member="CAL_Subproducto">
+    <Type Name="CAL_Subproducto">
+      <Column Name="IdSubproducto" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_Subproducto_CAL_FT" Member="CAL_FT" ThisKey="IdSubproducto" OtherKey="IdSubproducto" Type="CAL_FT" />
+      <Association Name="CAL_Subproducto_CAL_DetalleOrdenProduccion" Member="CAL_DetalleOrdenProduccion" ThisKey="IdSubproducto" OtherKey="IdSubproducto" Type="CAL_DetalleOrdenProduccion" />
+      <Association Name="CAL_Producto_CAL_Subproducto" Member="CAL_Producto" ThisKey="IdProducto" OtherKey="IdProducto" Type="CAL_Producto" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_Producto" Member="CAL_Producto">
+    <Type Name="CAL_Producto">
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_Producto_CAL_Subproducto" Member="CAL_Subproducto" ThisKey="IdProducto" OtherKey="IdProducto" Type="CAL_Subproducto" />
+      <Association Name="CAL_Producto_CAL_FT" Member="CAL_FT" ThisKey="IdProducto" OtherKey="IdProducto" Type="CAL_FT" />
+      <Association Name="CAL_Producto_CAL_DetalleOrdenProduccion" Member="CAL_DetalleOrdenProduccion" ThisKey="IdProducto" OtherKey="IdProducto" Type="CAL_DetalleOrdenProduccion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_CAL_Producto" Member="vw_CAL_Producto">
+    <Type Name="vw_CAL_Producto">
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Familia" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdSubproducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Producto" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_PesoSaco" Member="CAL_PesoSaco">
+    <Type Name="CAL_PesoSaco">
+      <Column Name="IdPesoSaco" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Peso" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_PesoSaco_CAL_PesoTipoSaco" Member="CAL_PesoTipoSaco" ThisKey="IdPesoSaco" OtherKey="IdPesoSaco" Type="CAL_PesoTipoSaco" />
+      <Association Name="CAL_PesoSaco_CAL_DetalleOrdenProduccion" Member="CAL_DetalleOrdenProduccion" ThisKey="IdPesoSaco" OtherKey="IdPesoSaco" Type="CAL_DetalleOrdenProduccion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_TipoOrdenProduccion" Member="CAL_TipoOrdenProduccion">
+    <Type Name="CAL_TipoOrdenProduccion">
+      <Column Name="IdTipoOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_TipoOrdenProduccion_CAL_OrdenProduccion" Member="CAL_OrdenProduccion" ThisKey="IdTipoOrdenProduccion" OtherKey="IdTipoOrdenProduccion" Type="CAL_OrdenProduccion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_TipoColorHiloSaco" Member="CAL_TipoColorHiloSaco">
+    <Type Name="CAL_TipoColorHiloSaco">
+      <Column Name="IdTipoColorHiloSaco" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_TipoColorHiloSaco_CAL_Saco" Member="CAL_Saco" ThisKey="IdTipoColorHiloSaco" OtherKey="IdTipoColorHiloSaco" Type="CAL_Saco" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_Pale" Member="CAL_Pale">
+    <Type Name="CAL_Pale">
+      <Column Name="IdPale" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdTipoPale" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdDetalleOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CantidadPaletizada" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CodigoInterno" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="QR_CODE" Type="System.Data.Linq.Binary" DbType="Image" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IdCuadrilla" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="CAL_Pale_CAL_DespachoPale" Member="CAL_DespachoPale" ThisKey="IdPale" OtherKey="IdPale" Type="CAL_DespachoPale" />
+      <Association Name="CAL_TipoPale_CAL_Pale" Member="CAL_TipoPale" ThisKey="IdTipoPale" OtherKey="IdTipoPale" Type="CAL_TipoPale" IsForeignKey="true" />
+      <Association Name="CAL_DetalleOrdenProduccion_CAL_Pale" Member="CAL_DetalleOrdenProduccion" ThisKey="IdDetalleOrdenProduccion" OtherKey="IdDetalleOrdenProduccion" Type="CAL_DetalleOrdenProduccion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_TipoPale" Member="CAL_TipoPale">
+    <Type Name="CAL_TipoPale">
+      <Column Name="IdTipoPale" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CntMax" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_TipoPale_CAL_Pale" Member="CAL_Pale" ThisKey="IdTipoPale" OtherKey="IdTipoPale" Type="CAL_Pale" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_LECargaGranelContenedor" Member="CAL_LECargaGranelContenedor">
+    <Type Name="CAL_LECargaGranelContenedor">
+      <Column Name="IdLECargaGranel" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdDespachoCargaGranel" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NGuiaDespacho" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NContenedor" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="SelloLinea" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="PesoNeto" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PesoBruto" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Tara" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="VGM" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="NProducto" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_LECargaGranel_CAL_LECargaGranelContenedor" Member="CAL_LECargaGranel" ThisKey="IdLECargaGranel" OtherKey="IdLECargaGranel" Type="CAL_LECargaGranel" IsForeignKey="true" />
+      <Association Name="CAL_DespachoCargaGranel_CAL_LECargaGranelContenedor" Member="CAL_DespachoCargaGranel" ThisKey="IdDespachoCargaGranel" OtherKey="IdDespachoCargaGranel" Type="CAL_DespachoCargaGranel" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_PosicionContenedor" Member="CAL_PosicionContenedor">
+    <Type Name="CAL_PosicionContenedor">
+      <Column Name="IdPosicion" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_PosicionContenedor_CAL_PosicionContenedorYalero" Member="CAL_PosicionContenedorYalero" ThisKey="IdPosicion" OtherKey="IdPosicion" Type="CAL_PosicionContenedorYalero" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_PosicionContenedorYalero" Member="CAL_PosicionContenedorYalero">
+    <Type Name="CAL_PosicionContenedorYalero">
+      <Column Name="IdPosicion" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdContenedor" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_PosicionContenedor_CAL_PosicionContenedorYalero" Member="CAL_PosicionContenedor" ThisKey="IdPosicion" OtherKey="IdPosicion" Type="CAL_PosicionContenedor" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_DespachoPale" Member="CAL_DespachoPale">
+    <Type Name="CAL_DespachoPale">
+      <Column Name="IdDespachoPale" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdDetalleOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdContenedor" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdPale" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Observaciones" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="SacosDañados" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SacosTotales" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_Pale_CAL_DespachoPale" Member="CAL_Pale" ThisKey="IdPale" OtherKey="IdPale" Type="CAL_Pale" IsForeignKey="true" />
+      <Association Name="CAL_DetalleOrdenProduccion_CAL_DespachoPale" Member="CAL_DetalleOrdenProduccion" ThisKey="IdDetalleOrdenProduccion" OtherKey="IdDetalleOrdenProduccion" Type="CAL_DetalleOrdenProduccion" IsForeignKey="true" />
+      <Association Name="CAL_OrdenProduccion_CAL_DespachoPale" Member="CAL_OrdenProduccion" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_OrdenProduccion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_LEPalletsContenedor" Member="CAL_LEPalletsContenedor">
+    <Type Name="CAL_LEPalletsContenedor">
+      <Column Name="IdLEPallets" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdContenedor" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NGuiaDespacho" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NContenedor" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="SelloLinea" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="PesoNeto" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PesoBruto" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Tara" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="VGM" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="NProducto" Type="System.String" DbType="VarChar(250) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_LEPallets_CAL_LEPalletsContenedor" Member="CAL_LEPallets" ThisKey="IdLEPallets" OtherKey="IdLEPallets" Type="CAL_LEPallets" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_FT" Member="CAL_FT">
+    <Type Name="CAL_FT">
+      <Column Name="IdFichaTecnica" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Codigo" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Version" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCliente" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdSubproducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PaisCodigo" Type="System.String" DbType="Char(3) NOT NULL" CanBeNull="false" />
+      <Column Name="Sag" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Fumigacion" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PesoTotalPickingTest" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Activa" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Granel" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Observacion" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="VerificacionCliente" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="VidaUtil" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdTemperatura" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HumedadRelativa" Type="System.String" DbType="VarChar(45)" CanBeNull="true" />
+      <Association Name="CAL_FT_CAL_FTFrecuenciaAnalisis" Member="CAL_FTFrecuenciaAnalisis" ThisKey="IdFichaTecnica" OtherKey="IdFichaTecnica" Type="CAL_FTFrecuenciaAnalisis" />
+      <Association Name="CAL_FT_CAL_FTControlVersion" Member="CAL_FTControlVersion" ThisKey="IdFichaTecnica" OtherKey="IdFichaTecnica" Type="CAL_FTControlVersion" />
+      <Association Name="CAL_FT_CAL_DetalleOrdenProduccion" Member="CAL_DetalleOrdenProduccion" ThisKey="IdFichaTecnica" OtherKey="IdFichaTecnica" Type="CAL_DetalleOrdenProduccion" />
+      <Association Name="CAL_FT_CAL_DespachoCargaGranel" Member="CAL_DespachoCargaGranel" ThisKey="IdFichaTecnica" OtherKey="IdFichaTecnica" Type="CAL_DespachoCargaGranel" />
+      <Association Name="CAL_Producto_CAL_FT" Member="CAL_Producto" ThisKey="IdProducto" OtherKey="IdProducto" Type="CAL_Producto" IsForeignKey="true" />
+      <Association Name="CAL_Subproducto_CAL_FT" Member="CAL_Subproducto" ThisKey="IdSubproducto" OtherKey="IdSubproducto" Type="CAL_Subproducto" IsForeignKey="true" />
+      <Association Name="CAL_FTTemperatura_CAL_FT" Member="CAL_FTTemperatura" ThisKey="IdTemperatura" OtherKey="IdTemperatura" Type="CAL_FTTemperatura" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_FTTemperatura" Member="CAL_FTTemperatura">
+    <Type Name="CAL_FTTemperatura">
+      <Column Name="IdTemperatura" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="MinValidValue" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MaxValidValue" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_FTTemperatura_CAL_FT" Member="CAL_FT" ThisKey="IdTemperatura" OtherKey="IdTemperatura" Type="CAL_FT" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_FTFrecuenciaAnalisis" Member="CAL_FTFrecuenciaAnalisis">
+    <Type Name="CAL_FTFrecuenciaAnalisis">
+      <Column Name="IdFichaTecnica" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdTipoAnalisis" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdFrecuenciaAnalisis" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_FT_CAL_FTFrecuenciaAnalisis" Member="CAL_FT" ThisKey="IdFichaTecnica" OtherKey="IdFichaTecnica" Type="CAL_FT" IsForeignKey="true" />
+      <Association Name="CAL_TipoAnalisis_CAL_FTFrecuenciaAnalisis" Member="CAL_TipoAnalisis" ThisKey="IdTipoAnalisis" OtherKey="IdTipoAnalisis" Type="CAL_TipoAnalisis" IsForeignKey="true" />
+      <Association Name="CAL_FrecuenciaAnalisis_CAL_FTFrecuenciaAnalisis" Member="CAL_FrecuenciaAnalisis" ThisKey="IdFrecuenciaAnalisis" OtherKey="IdFrecuenciaAnalisis" Type="CAL_FrecuenciaAnalisis" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_TipoAnalisis" Member="CAL_TipoAnalisis">
+    <Type Name="CAL_TipoAnalisis">
+      <Column Name="IdTipoAnalisis" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Descripcion_en" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_TipoAnalisis_CAL_FTFrecuenciaAnalisis" Member="CAL_FTFrecuenciaAnalisis" ThisKey="IdTipoAnalisis" OtherKey="IdTipoAnalisis" Type="CAL_FTFrecuenciaAnalisis" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_FrecuenciaAnalisis" Member="CAL_FrecuenciaAnalisis">
+    <Type Name="CAL_FrecuenciaAnalisis">
+      <Column Name="IdFrecuenciaAnalisis" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Frecuencia" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CntDias" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Frecuencia_en" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_FrecuenciaAnalisis_CAL_FTFrecuenciaAnalisis" Member="CAL_FTFrecuenciaAnalisis" ThisKey="IdFrecuenciaAnalisis" OtherKey="IdFrecuenciaAnalisis" Type="CAL_FTFrecuenciaAnalisis" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_FTControlVersion" Member="CAL_FTControlVersion">
+    <Type Name="CAL_FTControlVersion">
+      <Column Name="IdControlVersion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdFichaTecnica" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Version" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Subversion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Cambios" Type="System.String" DbType="VarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdItem" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdMotivo" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdSolicitante" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="CAL_FT_CAL_FTControlVersion" Member="CAL_FT" ThisKey="IdFichaTecnica" OtherKey="IdFichaTecnica" Type="CAL_FT" IsForeignKey="true" />
+      <Association Name="CAL_FTControlVersionItem_CAL_FTControlVersion" Member="CAL_FTControlVersionItem" ThisKey="IdItem" OtherKey="IdItem" Type="CAL_FTControlVersionItem" IsForeignKey="true" />
+      <Association Name="CAL_FTControlVersionMotivo_CAL_FTControlVersion" Member="CAL_FTControlVersionMotivo" ThisKey="IdMotivo" OtherKey="IdMotivo" Type="CAL_FTControlVersionMotivo" IsForeignKey="true" />
+      <Association Name="CAL_FTControlVersionSolicitante_CAL_FTControlVersion" Member="CAL_FTControlVersionSolicitante" ThisKey="IdSolicitante" OtherKey="IdSolicitante" Type="CAL_FTControlVersionSolicitante" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_FTControlVersionItem" Member="CAL_FTControlVersionItem">
+    <Type Name="CAL_FTControlVersionItem">
+      <Column Name="IdItem" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_FTControlVersionItem_CAL_FTControlVersion" Member="CAL_FTControlVersion" ThisKey="IdItem" OtherKey="IdItem" Type="CAL_FTControlVersion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_FTControlVersionMotivo" Member="CAL_FTControlVersionMotivo">
+    <Type Name="CAL_FTControlVersionMotivo">
+      <Column Name="IdMotivo" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_FTControlVersionMotivo_CAL_FTControlVersion" Member="CAL_FTControlVersion" ThisKey="IdMotivo" OtherKey="IdMotivo" Type="CAL_FTControlVersion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_FTControlVersionSolicitante" Member="CAL_FTControlVersionSolicitante">
+    <Type Name="CAL_FTControlVersionSolicitante">
+      <Column Name="IdSolicitante" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_FTControlVersionSolicitante_CAL_FTControlVersion" Member="CAL_FTControlVersion" ThisKey="IdSolicitante" OtherKey="IdSolicitante" Type="CAL_FTControlVersion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_LECargaGranel" Member="CAL_LECargaGranel">
+    <Type Name="CAL_LECargaGranel">
+      <Column Name="IdLECargaGranel" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCarrier" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdBarco" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NReserva" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="Contenedores" Type="System.String" DbType="VarChar(64) NOT NULL" CanBeNull="false" />
+      <Column Name="NFactura" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="PuertoEmbarque" Type="System.String" DbType="VarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="PuertoDestino" Type="System.String" DbType="VarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="DUS" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="PesoNetoTotal" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PesoBrutoTotal" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="certkey" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_LECargaGranel_CAL_LECargaGranelContenedor" Member="CAL_LECargaGranelContenedor" ThisKey="IdLECargaGranel" OtherKey="IdLECargaGranel" Type="CAL_LECargaGranelContenedor" />
+      <Association Name="Barco_CAL_LECargaGranel" Member="Barco" ThisKey="IdBarco" OtherKey="IdBarco" Type="Barco" IsForeignKey="true" />
+      <Association Name="Carrier_CAL_LECargaGranel" Member="Carrier" ThisKey="IdCarrier" OtherKey="IdCarrier" Type="Carrier" IsForeignKey="true" />
+      <Association Name="CAL_OrdenProduccion_CAL_LECargaGranel" Member="CAL_OrdenProduccion" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_OrdenProduccion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_CAL_ProductoConEspesor" Member="vw_CAL_ProductoConEspesor">
+    <Type Name="vw_CAL_ProductoConEspesor">
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Familia" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdSubproducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Producto" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEspesorProducto" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Espesor" Type="System.String" DbType="VarChar(83)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_RITSelloTara" Member="CAL_RITSelloTara">
+    <Type Name="CAL_RITSelloTara">
+      <Column Name="IdRIT" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdContenedor" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NContenedor" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="SelloLinea" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="Tara" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_LEPallets" Member="CAL_LEPallets">
+    <Type Name="CAL_LEPallets">
+      <Column Name="IdLEPallets" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCarrier" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdBarco" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NReserva" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="Contenedores" Type="System.String" DbType="VarChar(64) NOT NULL" CanBeNull="false" />
+      <Column Name="NFactura" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="PuertoEmbarque" Type="System.String" DbType="VarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="PuertoDestino" Type="System.String" DbType="VarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="DUS" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="PesoNetoTotal" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PesoBrutoTotal" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="certkey" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Association Name="CAL_LEPallets_CAL_LEPalletsContenedor" Member="CAL_LEPalletsContenedor" ThisKey="IdLEPallets" OtherKey="IdLEPallets" Type="CAL_LEPalletsContenedor" />
+      <Association Name="Barco_CAL_LEPallets" Member="Barco" ThisKey="IdBarco" OtherKey="IdBarco" Type="Barco" IsForeignKey="true" />
+      <Association Name="Carrier_CAL_LEPallets" Member="Carrier" ThisKey="IdCarrier" OtherKey="IdCarrier" Type="Carrier" IsForeignKey="true" />
+      <Association Name="CAL_OrdenProduccion_CAL_LEPallets" Member="CAL_OrdenProduccion" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_OrdenProduccion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_DetalleOrdenProduccion" Member="CAL_DetalleOrdenProduccion">
+    <Type Name="CAL_DetalleOrdenProduccion">
+      <Column Name="IdDetalleOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdSubproducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CantidadProducto" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEspesorProducto" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdSaco" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdContenedor" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CantidadContenedores" Type="System.Decimal" DbType="Decimal(14,6) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="RowKey" Type="System.String" DbType="VarChar(40) NOT NULL" CanBeNull="false" />
+      <Column Name="CantidadSacos" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdPesoSaco" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SacosPorContenedor" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CantidadPorContenedor" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdFichaTecnica" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="CAL_DetalleOrdenProduccion_CAL_Pale" Member="CAL_Pale" ThisKey="IdDetalleOrdenProduccion" OtherKey="IdDetalleOrdenProduccion" Type="CAL_Pale" />
+      <Association Name="CAL_DetalleOrdenProduccion_CAL_DespachoPale" Member="CAL_DespachoPale" ThisKey="IdDetalleOrdenProduccion" OtherKey="IdDetalleOrdenProduccion" Type="CAL_DespachoPale" />
+      <Association Name="CAL_DetalleOrdenProduccion_CAL_DespachoCargaGranel" Member="CAL_DespachoCargaGranel" ThisKey="IdDetalleOrdenProduccion" OtherKey="IdDetalleOrdenProduccion" Type="CAL_DespachoCargaGranel" />
+      <Association Name="CAL_FT_CAL_DetalleOrdenProduccion" Member="CAL_FT" ThisKey="IdFichaTecnica" OtherKey="IdFichaTecnica" Type="CAL_FT" IsForeignKey="true" />
+      <Association Name="CAL_PesoSaco_CAL_DetalleOrdenProduccion" Member="CAL_PesoSaco" ThisKey="IdPesoSaco" OtherKey="IdPesoSaco" Type="CAL_PesoSaco" IsForeignKey="true" />
+      <Association Name="CAL_Contenedor_CAL_DetalleOrdenProduccion" Member="CAL_Contenedor" ThisKey="IdContenedor" OtherKey="IdContenedor" Type="CAL_Contenedor" IsForeignKey="true" />
+      <Association Name="CAL_EspesorProducto_CAL_DetalleOrdenProduccion" Member="CAL_EspesorProducto" ThisKey="IdEspesorProducto" OtherKey="IdEspesorProducto" Type="CAL_EspesorProducto" IsForeignKey="true" />
+      <Association Name="CAL_Producto_CAL_DetalleOrdenProduccion" Member="CAL_Producto" ThisKey="IdProducto" OtherKey="IdProducto" Type="CAL_Producto" IsForeignKey="true" />
+      <Association Name="CAL_Saco_CAL_DetalleOrdenProduccion" Member="CAL_Saco" ThisKey="IdSaco" OtherKey="IdSaco" Type="CAL_Saco" IsForeignKey="true" />
+      <Association Name="CAL_Subproducto_CAL_DetalleOrdenProduccion" Member="CAL_Subproducto" ThisKey="IdSubproducto" OtherKey="IdSubproducto" Type="CAL_Subproducto" IsForeignKey="true" />
+      <Association Name="CAL_OrdenProduccion_CAL_DetalleOrdenProduccion" Member="CAL_OrdenProduccion" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_OrdenProduccion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_OrdenProduccion" Member="CAL_OrdenProduccion">
+    <Type Name="CAL_OrdenProduccion">
+      <Column Name="IdOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LoteComercial" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdExportador" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCliente" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PaisCodigo" Type="System.String" DbType="Char(3) NOT NULL" CanBeNull="false" />
+      <Column Name="IdCarrier" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdBarco" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NumeroViaje" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="FichaTecnica" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="InspeccionSAG" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="InicioProduccion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="TerminoProduccion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaZarpe" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Fumigacion" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Observaciones" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Autorizado" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="AutorizadoAuto" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="FechaHoraAutoriza" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UserAutoriza" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IpAutoriza" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IdTipoOrdenProduccion" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Terminada" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IdPlanta" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="CAL_OrdenProduccion_CAL_TransporteTerrestre" Member="CAL_TransporteTerrestre" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_TransporteTerrestre" />
+      <Association Name="CAL_OrdenProduccion_CAL_DespachoPale" Member="CAL_DespachoPale" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_DespachoPale" />
+      <Association Name="CAL_OrdenProduccion_CAL_LECargaGranel" Member="CAL_LECargaGranel" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_LECargaGranel" />
+      <Association Name="CAL_OrdenProduccion_CAL_LEPallets" Member="CAL_LEPallets" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_LEPallets" />
+      <Association Name="CAL_OrdenProduccion_CAL_DetalleOrdenProduccion" Member="CAL_DetalleOrdenProduccion" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_DetalleOrdenProduccion" />
+      <Association Name="CAL_OrdenProduccion_CAL_DespachoCargaGranel" Member="CAL_DespachoCargaGranel" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_DespachoCargaGranel" />
+      <Association Name="Barco_CAL_OrdenProduccion" Member="Barco" ThisKey="IdBarco" OtherKey="IdBarco" Type="Barco" IsForeignKey="true" />
+      <Association Name="CAL_Exportador_CAL_OrdenProduccion" Member="CAL_Exportador" ThisKey="IdExportador" OtherKey="IdExportador" Type="CAL_Exportador" IsForeignKey="true" />
+      <Association Name="CAL_TipoOrdenProduccion_CAL_OrdenProduccion" Member="CAL_TipoOrdenProduccion" ThisKey="IdTipoOrdenProduccion" OtherKey="IdTipoOrdenProduccion" Type="CAL_TipoOrdenProduccion" IsForeignKey="true" />
+      <Association Name="Carrier_CAL_OrdenProduccion" Member="Carrier" ThisKey="IdCarrier" OtherKey="IdCarrier" Type="Carrier" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CAL_DespachoCargaGranel" Member="CAL_DespachoCargaGranel">
+    <Type Name="CAL_DespachoCargaGranel">
+      <Column Name="IdDespachoCargaGranel" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdDetalleOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdSilo" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="NContainerDiario" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Container" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CantidadCargada" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="KgProductoNoConforme" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Observaciones" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IdContenedor" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="RetenidoAut" Type="System.Boolean" DbType="Bit" IsDbGenerated="true" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Retenido" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Reproceso" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Liberado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IdTurno" Type="System.Int32" DbType="Int" IsDbGenerated="true" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="IdFichaTecnica" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserLiberadoIns" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaLiberadoHoraIns" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpLiberadoIns" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="UserReprocesoIns" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraReprocesoIns" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpReprocesoIns" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CAL_DespachoCargaGranel_CAL_LECargaGranelContenedor" Member="CAL_LECargaGranelContenedor" ThisKey="IdDespachoCargaGranel" OtherKey="IdDespachoCargaGranel" Type="CAL_LECargaGranelContenedor" />
+      <Association Name="CAL_DetalleOrdenProduccion_CAL_DespachoCargaGranel" Member="CAL_DetalleOrdenProduccion" ThisKey="IdDetalleOrdenProduccion" OtherKey="IdDetalleOrdenProduccion" Type="CAL_DetalleOrdenProduccion" IsForeignKey="true" />
+      <Association Name="CAL_FT_CAL_DespachoCargaGranel" Member="CAL_FT" ThisKey="IdFichaTecnica" OtherKey="IdFichaTecnica" Type="CAL_FT" IsForeignKey="true" />
+      <Association Name="CAL_OrdenProduccion_CAL_DespachoCargaGranel" Member="CAL_OrdenProduccion" ThisKey="IdOrdenProduccion" OtherKey="IdOrdenProduccion" Type="CAL_OrdenProduccion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Function Name="dbo.CAL_GetAnalisisPeriodicosPorDetalleOrdenProduccionYTipoAnalisis" Method="CAL_GetAnalisisPeriodicosPorDetalleOrdenProduccionYTipoAnalisis">
+    <Parameter Name="IdDetalleOrdenProduccion" Parameter="idDetalleOrdenProduccion" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IdTipoAnalisis" Parameter="idTipoAnalisis" Type="System.Int32" DbType="Int" />
+    <ElementType Name="CAL_GetAnalisisPeriodicosPorDetalleOrdenProduccionYTipoAnalisisResult">
+      <Column Name="IdAnalisisPeriodico" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdTipoAnalisis" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdDetalleOrdenProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ProductoNombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdSubproducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SubproductoNombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaAnalisis" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdTipoAnalisis1" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DescripcionTipoAnalisis" Type="System.String" DbType="VarChar(8000)" CanBeNull="true" />
+      <Column Name="IdFrecuenciaAnalisis" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Frecuencia" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="CntDias" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="LoteComercial" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CAL_GetSacoPorIdFichaTecnica" Method="CAL_GetSacoPorIdFichaTecnica">
+    <Parameter Name="IdFichaTecnica" Parameter="idFichaTecnica" Type="System.Int32" DbType="Int" />
+    <ElementType Name="CAL_GetSacoPorIdFichaTecnicaResult">
+      <Column Name="IdSaco" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Peso" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IdControlFechado" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="ColorHilo" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="NEWID" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CAL_GetParametroAnalisisAsociadosPorFichaTecnica" Method="CAL_GetParametroAnalisisAsociadosPorFichaTecnica">
+    <Parameter Name="IdFichaTecnica" Parameter="idFichaTecnica" Type="System.Int32" DbType="Int" />
+    <ElementType Name="CAL_GetParametroAnalisisAsociadosPorFichaTecnicaResult">
+      <Column Name="IdParametroAnalisis" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre_en" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UM" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="UM_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="MinValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="MaxValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="FormatString" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="FormatString_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Orden" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CAL_GetParametroPesticidaPorIdFichaTecnica" Method="CAL_GetParametroPesticidaPorIdFichaTecnica">
+    <Parameter Name="IdFichaTecnica" Parameter="idFichaTecnica" Type="System.Int32" DbType="Int" />
+    <ElementType Name="CAL_GetParametroPesticidaPorIdFichaTecnicaResult">
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre_en" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UM" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="UM_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="MinValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="MaxValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="FormatString" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="FormatString_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CAL_GetParametroNutricionalPorIdFichaTecnica" Method="CAL_GetParametroNutricionalPorIdFichaTecnica">
+    <Parameter Name="IdFichaTecnica" Parameter="idFichaTecnica" Type="System.Int32" DbType="Int" />
+    <ElementType Name="CAL_GetParametroNutricionalPorIdFichaTecnicaResult">
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre_en" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UM" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="UM_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="MinValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="MaxValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="FormatString" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="FormatString_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CAL_GetParametroMicrobiologiaPorIdFichaTecnica" Method="CAL_GetParametroMicrobiologiaPorIdFichaTecnica">
+    <Parameter Name="IdFichaTecnica" Parameter="idFichaTecnica" Type="System.Int32" DbType="Int" />
+    <ElementType Name="CAL_GetParametroMicrobiologiaPorIdFichaTecnicaResult">
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre_en" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="UM" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="UM_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="MinValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="MaxValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="FormatString" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="FormatString_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CAL_GetParametroMicotoxinaPorIdFichaTecnica" Method="CAL_GetParametroMicotoxinaPorIdFichaTecnica">
+    <Parameter Name="IdFichaTecnica" Parameter="idFichaTecnica" Type="System.Int32" DbType="Int" />
+    <ElementType Name="CAL_GetParametroMicotoxinaPorIdFichaTecnicaResult">
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre_en" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UM" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="UM_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="MinValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="MaxValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="FormatString" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="FormatString_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CAL_GetParametroMetalPesadoPorIdFichaTecnica" Method="CAL_GetParametroMetalPesadoPorIdFichaTecnica">
+    <Parameter Name="IdFichaTecnica" Parameter="idFichaTecnica" Type="System.Int32" DbType="Int" />
+    <ElementType Name="CAL_GetParametroMetalPesadoPorIdFichaTecnicaResult">
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre_en" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UM" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="UM_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="MinValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="MaxValidValue" Type="System.Decimal" DbType="Decimal(14,4)" CanBeNull="true" />
+      <Column Name="FormatString" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="FormatString_en" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CAL_GetFichasTecnicasPorClienteSAP" Method="CAL_GetFichasTecnicasPorClienteSAP">
+    <Parameter Name="IDAvenatop" Parameter="iDAvenatop" Type="System.String" DbType="VarChar(50)" />
+    <ElementType Name="CAL_GetFichasTecnicasPorClienteSAPResult">
+      <Column Name="IdFichaTecnica" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Codigo" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Version" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCliente" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdSubproducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PaisCodigo" Type="System.String" DbType="Char(3) NOT NULL" CanBeNull="false" />
+      <Column Name="Sag" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Fumigacion" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PesoTotalPickingTest" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Granel" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Observacion" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="VerificacionCliente" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="VidaUtil" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdTemperatura" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HumedadRelativa" Type="System.String" DbType="VarChar(45)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CAL_GetTransportistasPorOrdenProduccion" Method="CAL_GetTransportistasPorOrdenProduccion">
+    <Parameter Name="IdOrdenProduccion" Parameter="idOrdenProduccion" Type="System.Int32" DbType="Int" />
+    <ElementType Name="CAL_GetTransportistasPorOrdenProduccionResult">
+      <Column Name="IdTransportista" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Seleccionado" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </ElementType>
+  </Function>
+</Database>

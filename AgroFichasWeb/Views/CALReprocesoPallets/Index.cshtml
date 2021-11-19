@@ -1,0 +1,252 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model List<CAL_ReprocesoPallets>
+@{
+    AgroFichasDBDataContext dc = new AgroFichasDBDataContext();
+    ViewBag.Title = "Reproceso de Pallets";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantasProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#foo-filtering').dataTable({
+            "aLengthMenu": [100, 300, 500],
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+
+@foreach (var item in Model)
+    {
+    <script>
+        $("#autorizar_@item.IdReprocesoPalet").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas autorizar este reproceso?",
+                    text: "ID: " +@item.IdReprocesoPalet+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Autorizar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Autorizar", "CALReprocesoPallets", new { id = item.IdReprocesoPalet })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                        });
+            });
+    </script>
+}
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtros de Búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <div class="form-inline center">
+                    @using (Html.BeginForm("index", "calreprocesopallets", new { id = 0 }, FormMethod.Get))
+                    {
+                        <div class="form-group">
+                            @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                        </div>
+
+                        <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                        <input class="btn btn-default" type="submit" value="Buscar" />
+                        <div class="clearfix visible-xs mb-sm"></div>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Reproceso de Pallets</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="foo-filtering" data-page-size="100">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Lote Reproceso</th>
+                    <th>Cliente Reproceso</th>
+                    <th>Producto Reproceso</th>
+                    <th>Envase Reproceso</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdReprocesoPalet</td>
+                        <td>@item.GetLote(item.IdOrdenProduccion).LoteComercial</td>
+                        <td>@item.GetCliente(item.IdCliente).RazonSocial</td>
+                        <td>@item.GetSubproducto(item.IdSubproducto).Nombre</td>
+                        <td>@item.GetEnvase(item.IdOrdenProduccion).Descripcion</td>
+                        <td>
+                            @if (item.Autorizado == true)
+                            {
+                                <span class="label label-info" style="display: block">Autorizado</span>
+                            }
+                            else
+                            {
+                                <span class="label label-danger" style="display: block">No Autorizado</span>
+                            }
+                        </td>
+                        <td>
+                            <span data-toggle="modal" data-target=".modalInfo_@item.IdPale"><button class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Información Pallet"> <i class="fa fa-info"></i></button></span>
+                            @if (permisosUsuario.AutorizarReproceso)
+                            {
+                                if (item.Autorizado == true)
+                                {
+                                    <button id="autorizar_@item.IdReprocesoPalet" class="btn btn-info"  data-toggle="tooltip" data-placement="top" title="" data-original-title="Autorizar" disabled> <i class="fa fa-check-circle-o"></i></button>
+                                }
+                                else
+                                {
+                                    <button id="autorizar_@item.IdReprocesoPalet" class="btn" style="background-color:#0088cc;color: white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Autorizar"> <i class="fa fa-check-circle-o"></i></button>
+                                }
+
+
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->
+@foreach (var item in Model)
+{
+<div id="info_@item.IdPale" class="modal fade modalInfo_@item.IdPale" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myLargeModalLabel"><i class="fa fa-info fa-1x"></i> Más información</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel-body">
+                    <div class="invoice">
+                        <header class="clearfix panel-featured panel-featured-primary">
+                            <div class="row">
+                                <div class="col-sm-6 mt-md">
+                                    <h2 class="h2 mb-sm text-dark text-weight-bold">
+                                        Pallet #<span style="font-family: Consolas">@item.IdPale</span>
+                                    </h2>
+                                </div>
+                                <div class="col-sm-6 text-right mt-md mb-md">
+                                    <address class="ib mr-xlg">
+                                    </address>
+                                    <div class="ib">
+                                    </div>
+                                </div>
+                            </div>
+                        </header>
+                        <header class="clearfix">
+                            <div class="bill-info">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="bill-to">
+                                            <div class="text-left">
+                                                <table class="table h5 text-dark" style="border: none">
+                                                    <tbody>
+                                                        <tr class="b-top-none">
+                                                            <td colspan="2"><span class="text-dark text-weight-semibold">PLANTA PRODUCTIVA:</span></td>
+                                                            @{ PlantaProduccion plantaProduccion = dc.PlantaProduccion.Where(X => X.IdPlantaProduccion == item.GetDetallePale(item.IdPale).CAL_OrdenProduccion.IdPlanta).FirstOrDefault();  }
+                                                            <td class="text-left"><span class="value">@plantaProduccion.Nombre</span></td>
+                                                        </tr>
+                                                        <tr class="b-top-none">
+                                                            <td colspan="2"><span class="text-dark text-weight-semibold">LOTE COMERCIAL:</span></td>
+                                                            <td class="text-left"><span class="value">@item.GetDetallePale(item.IdPale).CAL_OrdenProduccion.LoteComercial</span></td>
+                                                        </tr>
+                                                        <tr class="b-top-none">
+                                                            <td colspan="2"><span class="text-dark text-weight-semibold">CLIENTE:</span></td>
+                                                            <td class="text-left"><span class="value">@item.GetDetallePale(item.IdPale).CAL_OrdenProduccion.GetCliente(item.GetDetallePale(item.IdPale).CAL_OrdenProduccion.IdCliente).RazonSocial</span></td>
+                                                        </tr>
+                                                        <tr class="b-top-none">
+                                                            <td colspan="2"><span class="text-dark text-weight-semibold">PRODUCTO:</span></td>
+                                                            <td class="text-left"><span class="value">@item.GetSubproducto(item.GetDetallePale(item.IdPale).IdSubproducto).Nombre</span></td>
+                                                        </tr>
+                                                        <tr class="b-top-none">
+                                                            <td colspan="2"><span class="text-dark text-weight-semibold">ENVASE:</span></td>
+                                                            <td class="text-left"><span class="value">@item.GetEnvase(item.GetDetallePale(item.IdPale).IdOrdenProduccion).Descripcion</span></td>
+                                                        </tr>
+                                                        <tr class="b-top-none">
+                                                            <td colspan="2"><span class="text-dark text-weight-semibold">CANTIDAD PALETIZADA:</span></td>
+                                                            <td class="text-left"><span class="value">@item.CAL_Pale.CantidadPaletizada</span></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </header>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+}

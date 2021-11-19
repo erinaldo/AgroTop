@@ -1,0 +1,338 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_AnalisisPeriodico
+@{
+    ViewBag.Title = "Análisis Periódicos";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    CAL_DetalleOrdenProduccion detalleOrdenProduccion = (CAL_DetalleOrdenProduccion)ViewData["detalleOrdenProduccion"];
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+    CAL_TipoAnalisis cAL_TipoAnalisis = (CAL_TipoAnalisis)ViewData["cAL_TipoAnalisis"];
+    CAL_FT cAL_FT = (CAL_FT)ViewData["cAL_FT"];
+    CAL_FTControlVersion cAL_FTControlVersion = (CAL_FTControlVersion)ViewData["cAL_FTControlVersion"];
+    PlantaProduccion plantaProduccion = (PlantaProduccion)ViewData["plantaProduccion"];
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        jQuery.datetimepicker.setLocale('es');
+        jQuery('#FechaHoraInsRealizado').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", (Model.FechaHoraInsRealizado == null ? DateTime.Now : Model.FechaHoraInsRealizado))',
+            weeks: true
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        function SetCheckBox(IdParametro) {
+            var isChecked = $('#FormatString__' + IdParametro + '').is(':checked') ? true : false;
+            console.log("isChecked= " + isChecked);
+            if (isChecked) {
+                $('#FormatString__' + IdParametro + '').val(true);
+                $('#HID_NA_' + IdParametro + '').val(true);
+            }
+            else {
+                $('#FormatString__' + IdParametro + '').val(false);
+                $('#HID_NA_' + IdParametro + '').val(false);
+            }
+        }
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Crear @cAL_TipoAnalisis.Descripcion</h2>
+            </header>
+            @using (Html.BeginForm("CreaAnalisis", "CALAnalisisPeriodicos", FormMethod.Post))
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Planta de Producción</label>
+                                    <div class="col-sm-6">
+                                        @{
+                                            if (plantaProduccion != null)
+                                            {<span class="form-control" style="background-color: #ebfbdf;">@plantaProduccion.Nombre</span>}
+                                        else
+                                        { <span class="form-control" style="background-color: #ebfbdf;">No hay</span> }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Order de Producción</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">@ordenProduccion.LoteComercial</span>
+                                        @Html.Hidden("IdOrdenProduccion", Model.IdOrdenProduccion)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Familia</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">
+                                            @detalleOrdenProduccion.CAL_Producto.Nombre
+                                        </span>
+                                        @Html.Hidden("IdDetalleOrdenProduccion", Model.IdDetalleOrdenProduccion)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Producto</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">
+                                            @detalleOrdenProduccion.CAL_Subproducto.Nombre
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Espesor</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">
+                                            @if (detalleOrdenProduccion.IdEspesorProducto.HasValue)
+                                            {
+                                                @:@string.Format("{0:N2}-{1:N2} mm", detalleOrdenProduccion.CAL_EspesorProducto.Min, detalleOrdenProduccion.CAL_EspesorProducto.Max)
+                                            }
+                                            else
+                                            {
+                                                @:(No tiene Espesor)
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Ficha Técnica</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="font-family: Consolas;background-color: #ebfbdf;">
+                                            @cAL_FT.Codigo
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Versión</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="font-family: Consolas;background-color: #ebfbdf;">
+                                            @cAL_FTControlVersion.Version
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fecha Realizado <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("FechaHoraInsRealizado", Model.FechaHoraInsRealizado, new { @class = "form-control", maxlength = "50" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Parámetros de @cAL_TipoAnalisis.Descripcion <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <div class="col-sm-12" style="padding-top: 7px;">
+                                            @switch (cAL_TipoAnalisis.IdTipoAnalisis)
+                                            {
+                                                case 1:
+                                                    foreach (CAL_FTParametroMetalPesado cAL_FTParametroMetalPesado in (List<CAL_FTParametroMetalPesado>)ViewData["parametroList"])
+                                                    {
+                                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                                            <div class="col-sm-4">
+                                                                <span>@cAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.Nombre (@cAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.UM)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroMetalPesado.MinValidValue.Value, cAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.UM, cAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroMetalPesado.MaxValidValue.Value, cAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.UM, cAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="text" name="@string.Format("PARAMETROMETALPESADO__{0}", cAL_FTParametroMetalPesado.IdParametroMetalPesado)" id="@string.Format("PARAMETROMETALPESADO__{0}", cAL_FTParametroMetalPesado.IdParametroMetalPesado)" placeholder="Valor" value="" class="form-control input-sm" />
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="checkbox" name="@string.Format("FormatString__{0}", cAL_FTParametroMetalPesado.IdParametroMetalPesado)" id="@string.Format("FormatString__{0}", cAL_FTParametroMetalPesado.IdParametroMetalPesado)" value="true" onclick="SetCheckBox(@cAL_FTParametroMetalPesado.IdParametroMetalPesado)" checked /> @cAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.FormatString
+                                                                <input type="hidden" id="HID_NA_@cAL_FTParametroMetalPesado.IdParametroMetalPesado" name="HID_NA_@cAL_FTParametroMetalPesado.IdParametroMetalPesado" value="true" />
+                                                            </div>
+                                                            <div style="clear:both"></div>
+                                                        </div> }
+                                                    break;
+                                                case 2:
+                                                    foreach (CAL_FTParametroMicotoxina cAL_FTParametroMicotoxina in (List<CAL_FTParametroMicotoxina>)ViewData["parametroList"])
+                                                    {
+                                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                                            <div class="col-sm-4">
+                                                                <span>@cAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.Nombre (@cAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.UM)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroMicotoxina.MinValidValue.Value, cAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.UM, cAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroMicotoxina.MaxValidValue.Value, cAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.UM, cAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="text" name="@string.Format("PARAMETROMICOTOXINA__{0}", cAL_FTParametroMicotoxina.IdParametroMicotoxina)" id="@string.Format("PARAMETROMICOTOXINA__{0}", cAL_FTParametroMicotoxina.IdParametroMicotoxina)" placeholder="Valor" value="" class="form-control input-sm" />
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="checkbox" name="@string.Format("FormatString__{0}", cAL_FTParametroMicotoxina.IdParametroMicotoxina)" id="@string.Format("FormatString__{0}", cAL_FTParametroMicotoxina.IdParametroMicotoxina)" value="true" onclick="SetCheckBox(@cAL_FTParametroMicotoxina.IdParametroMicotoxina)" checked /> @cAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.FormatString
+                                                                <input type="hidden" id="HID_NA_@cAL_FTParametroMicotoxina.IdParametroMicotoxina" name="HID_NA_@cAL_FTParametroMicotoxina.IdParametroMicotoxina" value="true" />
+                                                            </div>
+                                                            <div style="clear:both"></div>
+                                                        </div> }
+                                                    break;
+                                                case 3:
+                                                    foreach (CAL_FTParametroMicrobiologia cAL_FTParametroMicrobiologia in (List<CAL_FTParametroMicrobiologia>)ViewData["parametroList"])
+                                                    {
+
+                                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                                            <div class="col-sm-4">
+                                                                <span>@cAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.Nombre (@cAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.UM)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroMicrobiologia.MinValidValue.Value, cAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.UM, cAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroMicrobiologia.MaxValidValue.Value, cAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.UM, cAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="text" name="@string.Format("PARAMETROMICROBIOLOGIA__{0}", cAL_FTParametroMicrobiologia.IdParametroMicrobiologia)" id="@string.Format("PARAMETROMICROBIOLOGIA__{0}", cAL_FTParametroMicrobiologia.IdParametroMicrobiologia)" placeholder="Valor" value="" class="form-control input-sm" />
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="checkbox" name="@string.Format("FormatString__{0}", cAL_FTParametroMicrobiologia.IdParametroMicrobiologia)" id="@string.Format("FormatString__{0}", cAL_FTParametroMicrobiologia.IdParametroMicrobiologia)" value="true" onclick="SetCheckBox(@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia)" checked /> @cAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.FormatString
+                                                                <input type="hidden" id="HID_NA_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" name="HID_NA_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" value="true" />
+                                                            </div>
+                                                            <div style="clear:both"></div>
+                                                        </div> }
+                                                    break;
+                                                case 4:
+                                                    foreach (CAL_FTParametroNutricional cAL_FTParametroNutricional in (List<CAL_FTParametroNutricional>)ViewData["parametroList"])
+                                                    {
+                                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                                            <div class="col-sm-4">
+                                                                <span>@cAL_FTParametroNutricional.CAL_ParametroNutricional.Nombre (@cAL_FTParametroNutricional.CAL_ParametroNutricional.UM)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroNutricional.MinValidValue.Value, cAL_FTParametroNutricional.CAL_ParametroNutricional.UM, cAL_FTParametroNutricional.CAL_ParametroNutricional.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroNutricional.MaxValidValue.Value, cAL_FTParametroNutricional.CAL_ParametroNutricional.UM, cAL_FTParametroNutricional.CAL_ParametroNutricional.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="text" name="@string.Format("PARAMETRONUTRICIONAL__{0}", cAL_FTParametroNutricional.IdParametroNutricional)" id="@string.Format("PARAMETRONUTRICIONAL__{0}", cAL_FTParametroNutricional.IdParametroNutricional)" placeholder="Valor" value="" class="form-control input-sm" />
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="checkbox" name="@string.Format("FormatString__{0}", cAL_FTParametroNutricional.IdParametroNutricional)" id="@string.Format("FormatString__{0}", cAL_FTParametroNutricional.IdParametroNutricional)" value="true" onclick="SetCheckBox(@cAL_FTParametroNutricional.IdParametroNutricional)" checked /> @cAL_FTParametroNutricional.CAL_ParametroNutricional.FormatString
+                                                                <input type="hidden" id="HID_NA_@cAL_FTParametroNutricional.IdParametroNutricional" name="HID_NA_@cAL_FTParametroNutricional.IdParametroNutricional" value="true" />
+                                                            </div>
+                                                            <div style="clear:both"></div>
+                                                        </div> }
+                                                    break;
+                                                case 5:
+                                                    foreach (CAL_FTParametroPesticida cAL_FTParametroPesticida in (List<CAL_FTParametroPesticida>)ViewData["parametroList"])
+                                                    {
+                                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                                            <div class="col-sm-4">
+                                                                <span>@cAL_FTParametroPesticida.CAL_ParametroPesticida.Nombre (@cAL_FTParametroPesticida.CAL_ParametroPesticida.UM)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroPesticida.MinValidValue.Value, cAL_FTParametroPesticida.CAL_ParametroPesticida.UM, cAL_FTParametroPesticida.CAL_ParametroPesticida.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <span style="background-color: rgb(169, 208, 142); color: black">@Formatter.Format(cAL_FTParametroPesticida.MaxValidValue.Value, cAL_FTParametroPesticida.CAL_ParametroPesticida.UM, cAL_FTParametroPesticida.CAL_ParametroPesticida.FormatString)</span>
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="text" name="@string.Format("PARAMETROPESTICIDA__{0}", cAL_FTParametroPesticida.IdParametroPesticida)" id="@string.Format("PARAMETROPESTICIDA__{0}", cAL_FTParametroPesticida.IdParametroPesticida)" placeholder="Valor" value="" class="form-control input-sm" />
+                                                            </div>
+                                                            <div class="col-sm-2">
+                                                                <input type="checkbox" name="@string.Format("FormatString__{0}", cAL_FTParametroPesticida.IdParametroPesticida)" id="@string.Format("FormatString__{0}", cAL_FTParametroPesticida.IdParametroPesticida)" value="true" onclick="SetCheckBox(@cAL_FTParametroPesticida.IdParametroPesticida)" checked /> @cAL_FTParametroPesticida.CAL_ParametroPesticida.FormatString
+                                                                <input type="hidden" id="HID_NA_@cAL_FTParametroPesticida.IdParametroPesticida" name="HID_NA_@cAL_FTParametroPesticida.IdParametroPesticida" value="true" />
+                                                            </div>
+                                                            <div style="clear:both"></div>
+                                                        </div>
+                                                    }
+                                                    break;
+                                            }
+                                            @Html.ValidationMessage("ParametrosOk")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @Html.Hidden("IdFichaTecnica", cAL_FT.IdFichaTecnica)
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Análisis" />
+                        </div>
+                    </div>
+                </footer>
+                @Html.Hidden("IdTipoAnalisis", Model.IdTipoAnalisis)
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

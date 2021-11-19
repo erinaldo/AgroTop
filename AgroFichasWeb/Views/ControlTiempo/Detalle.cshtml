@@ -1,0 +1,382 @@
+﻿@using AgroFichasWeb.Models
+
+@model CTR_ControlTiempo
+
+@{
+    ViewBag.Title = String.Format("Detalle del Control de Tiempo Núm. {0}", Model.IdControlTiempo);
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+
+<section class="panel">
+    <div class="panel-body">
+        <div class="invoice">
+            <header class="clearfix">
+                <div class="row">
+                    <div class="col-sm-6 mt-md">
+                        <h2 class="h2 mt-none mb-sm text-dark text-weight-bold">Detalle del Control de Tiempo</h2>
+                        <h4 class="h4 m-none text-dark text-weight-bold">#@String.Format("{0}", Model.IdControlTiempo)</h4>
+                    </div>
+                    <div class="col-sm-6 text-right mt-md mb-md">
+                        <address class="ib mr-xlg">
+                            Planta Producción: @Model.PlantaProduccion.Nombre
+                            <br />
+                            Empresa: @Model.Empresa.Nombre
+                            <br />
+                            Producto: @Model.CTR_Producto.Nombre
+                            <br />
+                            Envase: @(!Model.IdEnvase.HasValue ? "&mdash;" : Model.CTR_Envase.Descripcion)
+                            <br />
+                            Estado: <span class="@Model.CreateCSSClassResponsive()"><strong>@Model.CTR_Estado.Descripcion</strong></span>
+                        </address>
+                        <div class="ib">
+                            <img src="@Url.Content("~/Content/images/" + Model.Empresa.Nombre + ".png")" />
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="bill-info">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="bill-to">
+                            <p class="h5 mb-xs text-dark text-weight-semibold">Transportista:</p>
+                            <address>
+                                @Model.NombreTransportista
+                                <br />
+                                @Rut.FormatearRut(Model.RutTransportista)
+                                <br />
+                                <span class="text-dark text-weight-semibold">Chofer</span>: @Model.NombreChofer
+                                <br />
+                                <span class="text-dark text-weight-semibold">Teléfono Chofer</span>: @Model.TelefonoChofer
+                                <br />
+                                <strong class="text-dark text-weight-semibold">Patente</strong>: @Model.Patente.Replace(" ", "-")
+                                <br />
+                                <strong class="text-dark text-weight-semibold">D.U.S.</strong>: @(!string.IsNullOrEmpty(Model.DUS) ? Model.DUS.ToString() : "—")
+                                <br />
+                                <strong class="text-dark text-weight-semibold">Reserva</strong>: @(!string.IsNullOrEmpty(Model.Reserva) ? Model.Reserva : "—")
+                                <br />
+                                <strong class="text-dark text-weight-semibold">Núm. Guía</strong>: #@(Model.NumeroGuia != 0 ? Model.NumeroGuia.ToString() : "—")
+                                <br />
+                                <strong class="text-dark text-weight-semibold">Cliente</strong>: @Html.Raw(!Model.IdCliente.HasValue ? "&mdash;" : Model.Cliente.RazonSocial)
+                            </address>
+                        </div>
+                        <div class="bill-to">
+                            <p class="h5 mb-xs text-dark text-weight-semibold">Pesajes:</p>
+                            <address>
+                                <strong class="text-dark text-weight-semibold">Tara</strong>: @(Model.PesoInicial.HasValue ? Model.PesoInicial.Value.ToString("N0") : "—") kgs
+                                <br />
+                                @{
+                                    decimal? peso_final = 0;
+                                    if (Model.PesoFinal != null)
+                                    {
+                                        peso_final = Model.PesoFinal - Model.PesoInicial;
+                                    }
+                                }
+                                <strong class="text-dark text-weight-semibold">Neto</strong>: @(Model.PesoFinal.HasValue ? peso_final.Value.ToString("N0") : "—") kgs
+                                <br />
+                                <strong class="text-dark text-weight-semibold">Bruto</strong>: @(Model.PesoFinal.HasValue ? Model.PesoFinal.Value.ToString("N0") : "—") kgs
+                                <br />
+                            </address>
+                            @{
+                                if (Model.PesoFinal != null && Model.IdEstado != 4)
+                                {
+
+                                    <a href="@Url.Action("GenerarTicket", "ControlTiempo", new { id = Model.IdControlTiempo })" target="_blank" class="btn btn-secondary">Enviar ticket al chofer</a>
+
+
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bill-data text-right">
+                            <p class="mb-none">
+                                <span class="text-dark text-weight-semibold">Fecha Llegada:</span>
+                                <span class="">@string.Format("{0:dd/MM/yyyy hh:mm:ss tt}", Model.FechaLlegada)</span>
+                            </p>
+                            <p class="mb-none">
+                                <span class="text-dark text-weight-semibold">Fecha Pesaje Inicial:</span>
+                                <span class="">
+                                    @if (Model.FechaPesajeInicial.HasValue)
+                                    {
+                                        @(string.Format("{0:dd/MM/yyyy hh:mm:ss tt}", Model.FechaPesajeInicial.Value))
+                                    }
+                                    else
+                                    {
+                                        <em>No registrado</em>
+                                    }
+                                </span>
+                            </p>
+                            <p class="mb-none">
+                                <span class="text-dark text-weight-semibold">Fecha Pesaje Final:</span>
+                                <span class="">
+                                    @if (Model.FechaPesajeFinal.HasValue)
+                                    {
+                                        @(string.Format("{0:dd/MM/yyyy hh:mm:ss tt}", Model.FechaPesajeFinal.Value))
+                                    }
+                                    else
+                                    {
+                                        <em>No registrado</em>
+                                    }
+                                </span>
+                            </p>
+                            <p class="mb-none">
+                                <span class="text-dark text-weight-semibold">Fecha Salida:</span>
+                                <span class="">
+                                    @if (Model.FechaSalida.HasValue)
+                                    {
+                                        @(string.Format("{0:dd/MM/yyyy hh:mm:ss tt}", Model.FechaSalida.Value))
+                                    }
+                                    else
+                                    {
+                                        <em>No registrado</em>
+                                    }
+                                </span>
+                            </p>
+                            <p class="mb-none">
+                                <span class="text-dark text-weight-semibold">Tiempo Actual:</span>
+                                <span class="">
+                                    <strong class="text-dark text-weight-semibold">@Model.CreateMedition_V2()</strong>
+                                </span>
+                            </p>
+                            <p class="mb-none heading-margin-top">
+                                <span class="text-dark text-weight-semibold">Observaciones:</span>
+                                <span style="display: block;">
+                                    @Model.Observaciones
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive col-sm-6">
+                <p class="h3 mb-xs text-dark text-weight-semibold">Mediciones</p>
+                <table class="table invoice-items">
+                    <thead>
+                        <tr class="h4 text-dark">
+                            <th class="text-weight-semibold">Descripción</th>
+                            <th class="text-weight-semibold">Tiempo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dif. entre la Llegada y Pesaje Inicial</td>
+                            <td>
+                                @if (Model.FechaPesajeInicial.HasValue)
+                                {
+                                    @(string.Format("{0:dd} días con {0:hh} hrs. con {0:mm} min. y con {0:ss} segundos", (Model.FechaPesajeInicial.Value - Model.FechaLlegada)))
+                                }
+                                else
+                                {
+                                    <em>No disponible</em>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Dif. entre el Pesaje Inicial y Pesaje Final</td>
+                            <td>
+                                @if (Model.FechaPesajeFinal.HasValue)
+                                {
+                                    @(string.Format("{0:dd} días con {0:hh} hrs. con {0:mm} min. y con {0:ss} segundos", (Model.FechaPesajeFinal.Value - Model.FechaPesajeInicial.Value)))
+                                }
+                                else
+                                {
+                                    <em>No disponible</em>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Dif. entre el Pesaje Final y la Salida</td>
+                            <td>
+                                @if (Model.FechaSalida.HasValue)
+                                {
+                                    @(string.Format("{0:dd} días con {0:hh} hrs. con {0:mm} min. y con {0:ss} segundos", (Model.FechaSalida.Value - Model.FechaPesajeFinal.Value)))
+                                }
+                                else
+                                {
+                                    <em>No disponible</em>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Total en Planta Freire</td>
+                            <td>
+                                @if (Model.FechaSalida.HasValue)
+                                {
+                                    <strong>@(string.Format("{0:dd} días con {0:hh} hrs. con {0:mm} min. y con {0:ss} segundos", (Model.FechaSalida.Value - Model.FechaLlegada)))</strong>
+                                }
+                                else
+                                {
+                                    <em>No disponible</em>
+                                }
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive col-sm-6">
+                <p class="h3 mb-xs text-dark text-weight-semibold">Enviar Alerta</p>
+                <table class="table invoice-items">
+                    <thead>
+                        <tr class="h4 text-dark">
+                            <th class="text-weight-semibold">Mensaje</th>
+                            <th class="text-weight-semibold text-center">Enviar SMS</th>
+                            <th class="text-weight-semibold text-center">Enviar Mail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.IdEstado != 4)
+                        {
+                            <tr>
+                                <td>
+                                    Vista previa:<br />
+                                    @Model.GetPlantilla()
+                                </td>
+                                <td align="center"><a href="@Url.Action("EnviarSMS",   "ControlTiempo", new { id = Model.IdControlTiempo })" class="btn btn-default">Enviar</a></td>
+                                <td align="center"><a href="@Url.Action("EnviarEmail", "ControlTiempo", new { id = Model.IdControlTiempo })" class="btn btn-default">Enviar</a></td>
+                            </tr>
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td align="center" colspan="3">El camión ya ha sido despachado y no se pueden enviar alertas.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-responsive col-sm-12">
+                <p class="h3 mb-xs text-dark text-weight-semibold">Registro</p>
+                <table class="table invoice-items">
+                    <thead>
+                        <tr class="h4 text-dark">
+                            <th class="text-weight-semibold">Núm. Registro</th>
+                            <th class="text-weight-semibold">Teléfono</th>
+                            <th class="text-weight-semibold">Nombre</th>
+                            <th class="text-weight-semibold">Tipo</th>
+                            <th class="text-weight-semibold">Mensaje</th>
+                            <th class="text-weight-semibold">Estado</th>
+                            <th class="text-weight-semibold">Fecha</th>
+                            <th class="text-weight-semibold">Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.GetRegistrosAlerta().Count == 0)
+                        {
+                            <tr>
+                                <td colspan="8">No hay registros</td>
+                            </tr>
+                        }
+                        @foreach (var registroAlerta in Model.GetRegistrosAlerta())
+                        {
+                            <tr>
+                                <td>@registroAlerta.IdRegistroAlerta</td>
+                                <td>@registroAlerta.Telefono</td>
+                                <td>@registroAlerta.Nombre</td>
+                                <td>@registroAlerta.Tipo</td>
+                                <td>@registroAlerta.Mensaje</td>
+                                <td>@registroAlerta.Estado</td>
+                                <td>@string.Format("{0:dd/MM/yy HH:mm}", registroAlerta.FechaHoraIns)</td>
+                                <td>@registroAlerta.UserIns</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.CTR_ControlTiempo_Detalle.Count() > 0)
+            {
+                if (Model.CTR_ControlTiempo_Detalle.FirstOrDefault().CTR_PlanificacionSemanal_Detalle.TipoDocumento != 3)
+                {
+                    <div class="table-responsive col-sm-12">
+                        <p class="h3 mb-xs text-dark text-weight-semibold">Guias asignadas</p>
+                        <table class="table invoice-items">
+                            <thead>
+                                <tr class="h4 text-dark">
+                                    <th class="text-weight-semibold">Número de guía</th>
+                                    @if (Model.CTR_ControlTiempo_Detalle.Count() != 0)
+                                    {
+                                        if (Model.CTR_ControlTiempo_Detalle[0].CTR_PlanificacionSemanal_Detalle.TipoDocumento == 1)
+                                        {
+                                            <th class="text-weight-semibold">OV</th>
+                                        }
+                                        if (Model.CTR_ControlTiempo_Detalle[0].CTR_PlanificacionSemanal_Detalle.TipoDocumento == 2)
+                                        {
+                                            <th class="text-weight-semibold">FR</th>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <th class="text-weight-semibold">OV/FR</th>
+                                    }
+                                    <th class="text-weight-semibold">Producto</th>
+                                    <th class="text-weight-semibold">Cantidad ingresada</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.CTR_ControlTiempo_Detalle.Count() == 0 || Model.CTR_ControlTiempo_Detalle[0].NumeroGuia == null)
+                                {
+
+
+                                    <tr>
+                                        <td colspan="4">No hay registros</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var detalle in Model.CTR_ControlTiempo_Detalle)
+                                    {
+                                        if (detalle.NumeroGuia != null)
+                                        {
+                                            <tr>
+                                                <td>@detalle.NumeroGuia</td>
+                                                <td>@detalle.CTR_PlanificacionSemanal_Detalle.NumeroDocumento</td>
+                                                <td>@detalle.CTR_PlanificacionSemanal_Detalle.NombreProducto</td>
+                                                <td>@detalle.PesoAsociado.Value.ToString("N0")</td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+
+
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive col-sm-12">
+                        <p class="h3 mb-xs text-dark text-weight-semibold">Traslado</p>
+                        <table class="table invoice-items">
+                            <thead>
+                                <tr class="h4 text-dark">
+                                    <th class="text-weight-semibold">Número de guía</th>
+                                    <th class="text-weight-semibold">Producto asociado</th>
+                                    <th class="text-weight-semibold">Cantidad asociada</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var detalle in Model.CTR_ControlTiempo_Detalle)
+                                {
+                                    if (detalle.NumeroGuia != null)
+                                    {
+                                        <tr>
+                                            <td>@detalle.NumeroGuia</td>
+                                            <td>@detalle.CTR_PlanificacionSemanal_Detalle.NombreProducto</td>
+                                            <td>@detalle.PesoAsociado.Value.ToString("N0")</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            }
+
+
+        </div>
+    </div>
+</section>

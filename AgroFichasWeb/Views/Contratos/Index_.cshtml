@@ -1,0 +1,164 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.AppLayer.Extensions 
+
+@model AgroFichasWeb.Controllers.PaginatedList<Contrato>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Contratos";
+    ViewBag.Title = "Administrar Contratos " + temporada.Nombre;
+
+    var puedeAdministrarDocumentosContratos = SYS_User.Current().HasPermiso(1006);
+    var puedeEditar = SYS_User.Current().HasPermiso(13);
+    var puedeElimimar = SYS_User.Current().HasPermiso(14);
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>@ViewBag.Title</h2>
+
+    <div style="margin: 20px 0px">
+        @using(Html.BeginForm("index", "contratos", new { id = 0 }, FormMethod.Get)) 
+        {
+            @Html.Partial("TemporadaSelector")
+            @Html.Partial("EmpresaSelector")
+            
+            <input type="text" name="key" value="@ViewData["key"]" />
+            <input type="submit" value="Buscar" />
+        }
+
+        <div style="margin-top: 10px">
+            @Html.ActionLink("Exportar", "indexexport", new { idTemporada = temporada.IdTemporada, idEmpresa = ViewData["idEmpresa"], key = ViewData["key"] }, new { @class = "exportlink" })
+        </div>
+
+    </div>
+
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="center">
+                Habilitado
+            </th>    
+            <th align="left">
+                Número
+            </th>            
+            <th align="left">
+                Nombre
+            </th>
+            <th align="left">
+                Empresa
+            </th>
+            <th align="left">
+                Cultivo
+            </th>
+            <th align="left">
+                Comuna
+            </th>
+            <th align="right">
+                Ton
+            </th>
+            <th align="left">
+                Tipo
+            </th>
+            <th align="right">
+                Doctos
+            </th>
+            @if (puedeAdministrarDocumentosContratos) {
+            <th align="center">
+                Doctos
+            </th>
+            }
+            @if (puedeEditar) {
+            <th align="center">
+                Editar
+            </th>
+            }
+            @if (puedeElimimar) {
+            <th align="center">
+                Eliminar
+            </th>
+            }
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="11" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+        
+        @foreach (var item in Model) 
+        {
+            var itemParams = Model.RouteValues(new RouteValueDictionary() { {"id", item.IdContrato} });
+            
+            <tr valign="top">
+                <td align="center">
+                    @Html.ListCheckBox(item.Habilitado)
+                </td>
+                <td align="left">
+                    @item.NumeroContrato
+                </td>
+                <td align="left">
+                    @item.Agricultor.Nombre
+                </td>
+                <td align="left">
+                    @item.Empresa.Nombre
+                </td>
+                <td align="left">
+                    @item.DescripcionCultivos("<br />").ToMvcHtmlString()
+                </td>
+                <td>
+                    @item.Comuna.Nombre
+                </td>
+                <td align="right">
+                    @String.Format("{0:#,##0}", item.ItemContrato.Sum(ic => ic.Cantidad) / 1000M)
+                </td>
+                <td align="left">
+                    @if (item.IdTipoContrato.HasValue)
+                    {
+                        <span>@item.TipoContrato.Descripcion</span>
+                    }
+                </td>
+                <td align="right">
+                    @item.DoctoContrato.Count(X => X.DoctoValido == true)
+                </td>
+                @if (puedeAdministrarDocumentosContratos)
+                {
+                    <td align="center">
+                        @Html.ActionImage(Url.Content("~/Content/images/archivos.png"), "doctos", itemParams)
+                    </td>
+                }
+                @if (puedeEditar) 
+                {
+                    <td align="center">
+                        @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "editar", itemParams)
+                    </td>
+                }
+                @if (puedeElimimar)
+                {
+                    <td align="center">
+                        @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "eliminar", itemParams)
+                    </td>
+                }
+            </tr>
+        }
+        <tr>
+            <td colspan="12" class="pager">
+                @Model.Paginator("index", "contratos", ViewContext.RequestContext)
+            </td>
+        </tr>
+    </table>

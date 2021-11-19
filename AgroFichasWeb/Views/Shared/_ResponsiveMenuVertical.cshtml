@@ -1,0 +1,55 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var user = SYS_User.Current();
+}
+<aside id="sidebar-left" class="sidebar-left">
+    <div class="sidebar-header">
+        <div class="sidebar-title">
+            Navegación
+        </div>
+        <div class="sidebar-toggle hidden-xs" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle">
+            <i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+        </div>
+    </div>
+    <div class="nano">
+        <div class="nano-content">
+            <nav id="menu" class="nav-main" role="navigation">
+                <ul class="nav nav-main" id="mainNav" style="margin-top: 0">
+                    @foreach (var modulo in user.Modulos)
+                    {
+                        if (modulo.ID == 10)
+                        {
+                            <li class="@(user.IdModuloActivo == modulo.ID ? "nav-parent nav-expanded nav-active" : "")">
+                                <a href="#">
+                                    <i class="fa fa-cube" aria-hidden="true"></i>
+                                    <span>@modulo.Nombre</span>
+                                </a>
+                                <ul class="nav nav-children">
+                                    @foreach (var menu in user.ItemsMenu(modulo.ID))
+                                    {
+                                        <li class="@(menu.ContieneSubMenu ? "nav-parent nav-expanded" : "")">
+                                            <a href="@Url.Content(menu.Url)">@menu.Nombre<span class="mega-sub-nav-toggle pull-right" data-toggle="collapse" data-target=".mega-sub-nav-    sub-    menu-2"></span></a>
+                                            @if (menu.ContieneSubMenu)
+                                            {
+                                                <ul class="nav nav-children">
+                                                    @foreach (var submenu in user.ItemsSubMenu(menu.ID))
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Content(submenu.Url)">
+                                                                @submenu.Nombre
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</aside>

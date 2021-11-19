@@ -1,0 +1,20 @@
+﻿@using AgroFichasWeb.Models
+
+@{
+    ViewBag.NombreSeccion = "Informes de Liquidaciones";
+    ViewBag.Title = "Seleccione el Informe";
+}
+<style>
+    ul.inpagemenu li {
+        margin: 20px 0px;
+    }
+</style>
+
+<h2>@ViewBag.Title</h2>
+<ul class="inpagemenu">
+    @if (SYS_User.Current().HasPermiso(82))
+    {
+        <li>@Html.ActionLink("Control de Convenios de Cambio de Moneda", "controlcambiomoneda", null, new { @class = "command" })</li>
+        <li>@Html.ActionLink("Intención / Contratado / Cerrado / Recibido", "intencioncontratoprecioingresos", null, new { @class = "command" })</li>
+    }
+</ul>

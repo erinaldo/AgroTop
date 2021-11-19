@@ -1,0 +1,91 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<Quimico>
+
+@{
+    var tipo = (TipoRecomendacion)ViewData["tipo"];
+    
+    ViewBag.NombreSeccion = "Químicos";
+    ViewBag.Title = "Administrar " + tipo.Nombre + "s";
+    ViewBag.OverrideStyleMenu2 = "height: auto";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>Administrar @(tipo.Nombre + "s")</h2>
+
+    <div style="margin: 20px 0px">
+        <a href="@Url.Content("~/quimicos/crear?tipo=" + tipo.IdTipoRecomendacion)">Crear @tipo.Nombre</a>
+    </div>
+
+    @Html.ValidationSummary("No fue posible procesar su solicitud")
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="left">
+                Nombre
+            </th>
+            <th align="left">
+                Dósis
+            </th>
+            <th align="left">
+                UM
+            </th>
+            <th align="center">
+                Habilitado
+            </th>
+            <th align="center">
+                Editar
+            </th>
+            <th align="center">
+                Eliminar
+            </th>
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="6" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+        
+        @foreach (var item in Model) 
+        {
+            <tr valign="top">
+                <td align="left">
+                    @item.Nombre
+                </td>
+                <td align="left">
+                    @item.Dosis.ToString("#,##0.####")
+                </td>
+                <td align="left">
+                    @item.UM.Nombre
+                </td>
+                <td align="center">
+                    @Html.ListCheckBox(item.Habilitado)
+                </td>
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "Editar", new { id = item.IdQuimico })
+                </td>
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "Eliminar", new { id = item.IdQuimico })
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="6" class="pager">
+                @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "Quimicos", "")
+            </td>
+        </tr>
+
+    </table>

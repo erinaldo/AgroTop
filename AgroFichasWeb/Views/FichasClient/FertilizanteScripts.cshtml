@@ -1,0 +1,66 @@
+﻿@using AgroFichasWeb.Models
+
+<script>
+
+    function ferSetFertilizante(subItem) {
+
+        $("#ferId").val(subItem.Id);
+        $("#ferN").val(subItem.FerN);
+        $("#ferP2O5").val(subItem.FerP2O5);
+        $("#ferKO2").val(subItem.FerKO2);
+        $("#ferMgO").val(subItem.FerMgO);
+        $("#ferS").val(subItem.FerS);
+        $("#ferB").val(subItem.FerB);
+        $("#ferZn").val(subItem.FerZn);
+        $("#ferCaO").val(subItem.FerCaO);
+    }
+
+    var ferRequestCode = '';
+    /*
+    Modal Dismiss
+    */
+    $(document).on('click', '.fertilizante-selector-dismiss', function (e) {
+        e.preventDefault();
+        ferCancel();
+    });
+
+    /*
+    Modal Confirm
+    */
+    $(document).on('click', '.fertilizante-selector-confirm', function (e) {
+        e.preventDefault();
+
+        var result = {
+            Id: $("#ferId").val(),
+            FerN: $("#ferN").val(),
+            FerP2O5: $("#ferP2O5").val(),
+            FerKO2: $("#ferKO2").val(),
+            FerMgO: $("#ferMgO").val(),
+            FerS: $("#ferS").val(),
+            FerB: $("#ferB").val(),
+            FerZn: $("#ferZn").val(),
+            FerCaO: $("#ferCaO").val(),
+            Dosis: 0,
+            FechaAplicacion: '',
+            IdTipoRecomendacion: 3,
+            IdQuimico: 64,
+            IdUM: 6,
+            NombreTipoRecomendacion: 'Fertilizante',
+            NombreQuimico: 'Fertilizante Genérico',
+            NombreUM: 'kg / há'
+        };
+
+        var errorList = [];
+
+        if (result.FerN + result.FerP2O5 + result.FerKO2 + result.FerMgO + result.FerS + result.FerB + result.FerZn + result.FerCaO == 0)
+            errorList.push("Ingrese al menos un componente.");
+
+        if (errorList.length > 0) {
+            alertValidationErrors(errorList);
+        }
+        else {
+            ferCallback(result);
+        }
+    });
+
+</script>

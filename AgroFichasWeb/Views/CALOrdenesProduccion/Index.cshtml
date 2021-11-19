@@ -1,0 +1,278 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@model List<CAL_OrdenProduccion>
+@{
+    ViewBag.Title = "Órdenes de Producción";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantasProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    @foreach (var item in Model)
+    {
+<script>
+             $("#clone_@item.IdOrdenProduccion").click(function () {
+                swal({
+                    title: "¿Estás seguro que deseas clonar esta orden de producción?",
+                    text: "ID: " +@item.IdOrdenProduccion+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SÍ, Clonar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Clonar", new { id = item.IdOrdenProduccion })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+            $("#delete_@item.IdOrdenProduccion").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas eliminar esta orden de producción?",
+                    text: "ID: " +@item.IdOrdenProduccion+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Eliminar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("eliminar", new { id = item.IdOrdenProduccion })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+            $("#close_@item.IdOrdenProduccion").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas cerrar esta orden de producción?",
+                    text: "ID: " +@item.IdOrdenProduccion+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Cerrar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("cerrar", new { id = item.IdOrdenProduccion })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+            $("#renotificacion_@item.IdOrdenProduccion").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas re-notificar esta orden de producción?",
+                    text: "ID: " +@item.IdOrdenProduccion+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Cerrar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+
+                        $.ajax({
+                            url: '@Url.Action("renotificarcreacion", new { id = item.IdOrdenProduccion })',
+                            type: 'POST',
+                            data: {id: '@item.IdOrdenProduccion'},
+                            success: function (response) {
+                                if (response.IsSuccess) {
+                                    swal("success", response.Message, "success");
+                                } else {
+                                    swal("Cancelado", response.Message, "error");
+                                }
+                            }
+                        });
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+</script>
+    }
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "iDisplayLength": 50,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Filtros de Búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <div class="form-inline center">
+                    @using (Html.BeginForm("index", "calordenesproduccion", new { id = 0 }, FormMethod.Get))
+                    {
+                        <div class="form-group">
+                            @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                        </div>
+
+                        <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                        <input class="btn btn-default" type="submit" value="Buscar" />
+                        <div class="clearfix visible-xs mb-sm"></div>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar O/P</h2>
+        @if (permisosUsuario.Crear)
+        {
+            <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                <a href="@Url.Action("Crear", "CALOrdenesProduccion", new { })" class="btn btn-primary">Crear O/P <i class="fa fa-plus"></i></a>
+                <a href="@Url.Action("CrearGranel", "CALOrdenesProduccion", new { })" class="btn btn-primary">Crear O/P Granel <i class="fa fa-plus"></i></a>
+            </div>
+        }
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tipo</th>
+                    <th>Lote Comercial</th>
+                    <th>Fecha</th>
+                    <th>Embarcador</th>
+                    <th>Consignatario</th>
+                    <th>País</th>
+                    <th>Inicio Producción</th>
+                    <th>Término Producción</th>
+                    <th>Fecha Zarpe</th>
+                    <th>Autorizada</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdOrdenProduccion</td>
+                        <td>@item.CAL_TipoOrdenProduccion.Descripcion</td>
+                        <td>@item.LoteComercial</td>
+                        <td>@string.Format("{0:dd/MM/yyyy}", item.Fecha)</td>
+                        <td>@item.CAL_Exportador.Nombre</td>
+                        <td>@item.GetCliente(item.IdCliente).RazonSocial</td>
+                        <td>@item.GetPais(item.PaisCodigo).PaisNombreLocal</td>
+                        <td>@string.Format("{0:dd/MM/yyyy}", item.InicioProduccion)</td>
+                        <td>@string.Format("{0:dd/MM/yyyy}", item.TerminoProduccion)</td>
+                        <td>@string.Format("{0:dd/MM/yyyy}", item.FechaZarpe)</td>
+                        <td><span class="@item.GetGetCssStyleEstado()"><strong style="text-transform: uppercase">@item.GetEstado()</strong></span></td>
+                        <td>
+                            <button id="@string.Format("view_{0}", item.IdOrdenProduccion)" onclick="window.location.href='@Url.Action("ver", new { id = item.IdOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver"> <i class="fa fa-eye"></i></button>
+                            @if (permisosUsuario.AutorizarOP && !item.Terminada)
+                            {
+                                <button id="authorize_@item.IdOrdenProduccion" onclick="window.location.href='@Url.Action("autorizar", new { id = item.IdOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Autorizar"> <i class="fa fa-check-circle-o"></i></button>
+                            }
+                            @if (permisosUsuario.AdminFechasProduccion && !item.Terminada)
+                            {
+                                <button id="adminFichasTecnicas_@item.IdOrdenProduccion" onclick="window.location.href='@Url.Action("fechasproduccion", new { id = item.IdOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Administrar Fechas de Inicio y Término de Producción"> <i class="fa fa-clock-o"></i></button>
+                            }
+                            @if (permisosUsuario.AdminFichaTecnicas && !item.Terminada)
+                            {
+                                <button id="adminFichasTecnicas_@item.IdOrdenProduccion" onclick="window.location.href='@Url.Action("Asociar", "CALFT", new { id = item.IdOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Administrar Ficha Técnicas"> <i class="fa fa-cogs"></i></button>
+                            }
+                            @if (permisosUsuario.Actualizar && !item.Terminada)
+                            {
+                                if (item.IdTipoOrdenProduccion == 1)
+                                {
+                                    <button id="edit_@item.IdOrdenProduccion" onclick="window.location.href='@Url.Action("editar", new { id = item.IdOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                                }
+                                if (item.IdTipoOrdenProduccion == 2)
+                                {
+                                    <button id="edit_@item.IdOrdenProduccion" onclick="window.location.href='@Url.Action("editarGranel", new { id = item.IdOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                                }
+                            }
+                            @if (permisosUsuario.Crear)
+                            {
+
+
+                                if (!item.Autorizado.Value && !item.Terminada ){<button id="renotificacion_@item.IdOrdenProduccion" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Re-notificar"> <i class="fa fa-bell"></i></button>}
+
+                                <button id="clone_@item.IdOrdenProduccion" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Clonar"> <i class="fa fa-clone"></i></button>
+
+                            }
+                            @if (permisosUsuario.CerrarOP && !item.Terminada)
+                            {
+                                <button id="close_@item.IdOrdenProduccion" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Cerrar"> <i class="fa fa-check"></i></button>
+                            }
+                            @if (permisosUsuario.Borrar && !item.Terminada)
+                            {
+                                <button id="delete_@item.IdOrdenProduccion" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

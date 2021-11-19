@@ -1,0 +1,185 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model OPR_PresupuestoProduccionConsumo
+@{
+    ViewBag.Title = "Crear Presupuesto de Producción y Consumo";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+    string actionName = "";
+    if (Model.IdPresupuestoProduccionConsumo == 0)
+    {
+        actionName = "Crear";
+    }
+    else
+    {
+        actionName = "Editar";
+    }
+
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+}
+
+@section VendorScripts
+{
+}
+
+@section CustomScripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    @if (Model.IdPresupuestoProduccionConsumo == 0)
+                    {
+                        <h2 class="panel-title">Crear Presupuesto de Producción y Consumo</h2>
+                    }
+                    else
+                    {
+                        <h2 class="panel-title">Editar Presupuesto de Producción y Consumo</h2>
+                    }
+                </header>
+                @using (Html.BeginForm(actionName, "PresupuestoProduccionConsumo", FormMethod.Post))
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Mes <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("Mes", Model.GetMeses(Model.Mes), "-- Seleccione Mes --", new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("Mes")
+                                            @Html.ValidationMessage("PresupuestoProduccionConsumo")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Año <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("Año", Model.GetAños(Model.Año), "-- Seleccione Año --", new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("Año")
+                                            @Html.ValidationMessage("PresupuestoProduccionConsumo")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producción Total <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("ProduccionTotal", Model.ProduccionTotal, new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("ProduccionTotal")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producción de Hojuela <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("ProduccionHojuela", Model.ProduccionHojuela, new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("ProduccionHojuela")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producción de Harina <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("ProduccionHarina", Model.ProduccionHarina, new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("ProduccionHarina")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto Retenido <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("ProductoRetenido", Model.ProductoRetenido, new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("ProductoRetenido")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto Rechazado <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("ProductoRechazado", Model.ProductoRechazado, new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("ProductoRechazado")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Consumo de Avena <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("ConsumoAvena", Model.ConsumoAvena, new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("ConsumoAvena")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Rendimiento Teórico (%) <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("RendimientoTeorico", Model.RendimientoTeorico, new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("RendimientoTeorico")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producción ton/h <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("ProduccionTnPorH", Model.ProduccionTnPorH, new { @class = "form-control", id = "" })
+                                            @Html.ValidationMessage("ProduccionTnPorH")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Guardar" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

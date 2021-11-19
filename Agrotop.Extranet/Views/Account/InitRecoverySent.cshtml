@@ -1,0 +1,15 @@
+﻿@model Agrotop.Extranet.Models.PasswordResetRequest
+@{
+    ViewBag.Title = "Crear o Recuperar Contraseña";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    
+    <div class="titulo1">Crear o Recuperar Contraseña</div>
+    @if (Model.EmailSent)
+    {
+        <h2>Gracias por su solicitud</h2><p>Acabamos de enviar un email a <b>@Model.Email</b> con instrucciones para que reestablesca su contraseña.</p><p>Por motivos de seguridad, debe reestablecer su contraseña dentro de las próximas 24 horas.</p><p>Si no ha recibido el email, es probable que halla sido bloqueado por algún filtro de correo electrónico. Revise sus carpetas de "Correo no deseado" o "SPAM"</p>
+    }
+    else
+    {
+        <h2>Lo sentimos pero ocurrió un error al intentar crear su solicitud. Por favor, inténtelo más tarde.</h2>
+    }

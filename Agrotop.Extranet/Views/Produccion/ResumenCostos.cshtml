@@ -1,0 +1,280 @@
+﻿@using Agrotop.Extranet.Models
+@using Agrotop.Extranet.AppLayer.Extensions
+
+@model PRO_Potrero
+
+@{
+    ViewBag.Title = "Resumen de Costos " + Model.Nombre;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+
+    var temporadas          = (IEnumerable<Temporada>)ViewData["temporadas"];
+    var temporada           = (Temporada)ViewData["temporada"];
+    var agricultor          = (Agricultor)ViewData["agricultor"];
+    var laboresRealizadas   = (List<PRO_Actividad>)ViewData["laboresRealizadas"];
+    var insumosAplicados    = (List<PRO_Actividad>)ViewData["insumosAplicados"];
+    var fletesRealizados    = (List<PRO_Actividad>)ViewData["fletesRealizados"];
+    var manoObrasRealizadas = (List<PRO_Actividad>)ViewData["manoObrasRealizadas"];
+
+    // CÁLCULOS
+    var subtotalItem1    = (laboresRealizadas.Sum(X => X.ValorItem));
+    var subtotalItem2    = (insumosAplicados.Sum(X => X.ValorItem));
+    var subtotalItem3    = (fletesRealizados.Sum(X => X.ValorItem));
+    var subtotalItem4    = (manoObrasRealizadas.Sum(X => X.ValorItem));
+    var subtotalItems    = (subtotalItem1 + subtotalItem2 + subtotalItem3 + subtotalItem4);
+    var gastosGenerales  = (subtotalItems * 0.05m);
+    var costoFinancieros = (subtotalItems * Convert.ToDecimal((Model.CostoFinanciero / 100m)));
+    var sinArriendo      = (subtotalItems + gastosGenerales + costoFinancieros);
+    var conArriendo      = (subtotalItems + gastosGenerales + costoFinancieros + Model.CostoArriendo);
+}
+
+@section scripts {
+    <link href="~/Scripts/PlataformaProductiva/resumen_de_costos.css" rel="stylesheet" />
+    <script src="~/Scripts/PlataformaProductiva/resumen_de_costos.js"></script>
+}
+
+<div class="titulo1-consubmenu">@ViewBag.Title</div>
+<div class="submenu">
+    @foreach (var t in temporadas)
+    {
+        <div class="submenuitem">
+            @if (t.IdTemporada != temporada.IdTemporada)
+            {
+                @Html.ActionLink(t.Nombre, "index", new { id = t.IdTemporada })
+            }
+            else
+            {
+                <span class="submenuitem-selected">@t.Nombre</span>
+            }
+        </div>
+    }
+    <div style="clear: both"></div>
+</div>
+
+<h2>Costos</h2>
+
+<table class="tabla2">
+    <tr>
+        <td class="header" width="40%"><label>Ítem</label></td>
+        <td class="header" width="20%" align="center"><label>Cantidad</label></td>
+        <td class="header" width="20%" align="center"><label>Valor Unitario</label></td>
+        <td class="header" width="20%" align="center"><label>Valor Ítem</label></td>
+    </tr>
+    <tr>
+        <td colspan="4" class="header2">
+            <label>Maquinarias</label>
+        </td>
+    </tr>
+    @foreach (var labor in laboresRealizadas)
+    {
+        <tr>
+            <td style="padding-left: 30px;">@labor.Descripcion</td>
+            <td align="right">@labor.Cantidad.ToString("N2") @labor.Unidad</td>
+            <td align="right">@labor.ValorUnitario.ToString("C0")</td>
+            <td align="right">@labor.ValorItem.ToString("C0")</td>
+        </tr>
+    }
+    <tr>
+        <td></td>
+        <td></td>
+        <td align="right"><strong>Subtotal Ítem</strong>:</td>
+        <td align="right">@subtotalItem1.ToString("C0")</td>
+    </tr>
+    <tr>
+        <td colspan="4" class="header2">
+            <label>Insumos</label>
+        </td>
+    </tr>
+    @foreach (var insumo in insumosAplicados)
+    {
+        <tr>
+            <td style="padding-left: 30px;">@insumo.Descripcion</td>
+            <td align="right">@insumo.Cantidad.ToString("N2") @insumo.Unidad</td>
+            <td align="right">@insumo.ValorUnitario.ToString("C0")</td>
+            <td align="right">@insumo.ValorItem.ToString("C0")</td>
+        </tr>
+    }
+    <tr>
+        <td></td>
+        <td></td>
+        <td align="right"><strong>Subtotal Ítem</strong>:</td>
+        <td align="right">@subtotalItem2.ToString("C0")</td>
+    </tr>
+    <tr>
+        <td colspan="4" class="header2">
+            <label>Fletes</label>
+        </td>
+    </tr>
+    @foreach (var flete in fletesRealizados)
+    {
+        <tr>
+            <td style="padding-left: 30px;">@flete.Descripcion</td>
+            <td align="right">@flete.Cantidad.ToString("N2") @flete.Unidad</td>
+            <td align="right">@flete.ValorUnitario.ToString("C0")</td>
+            <td align="right">@flete.ValorItem.ToString("C0")</td>
+        </tr>
+    }
+    <tr>
+        <td></td>
+        <td></td>
+        <td align="right"><strong>Subtotal Ítem</strong>:</td>
+        <td align="right">@subtotalItem3.ToString("C0")</td>
+    </tr>
+    <tr>
+        <td colspan="4" class="header2">
+            <label>
+                Mano de Obra
+            </label>
+        </td>
+    </tr>
+    @foreach (var manoObra in manoObrasRealizadas)
+    {
+        <tr>
+            <td style="padding-left: 30px;">@manoObra.Descripcion</td>
+            <td align="right">@manoObra.Cantidad.ToString("N2") @manoObra.Unidad</td>
+            <td align="right">@manoObra.ValorUnitario.ToString("C0")</td>
+            <td align="right">@manoObra.ValorItem.ToString("C0")</td>
+        </tr>
+    }
+    <tr>
+        <td></td>
+        <td></td>
+        <td align="right"><strong>Subtotal Ítem</strong>:</td>
+        <td align="right">@subtotalItem4.ToString("C0")</td>
+    </tr>
+    <tr>
+        <td colspan="4" class="header2">
+            <label>
+                Costos Ítems
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            Ítems
+        </td>
+        <td align="right"></td>
+        <td align="right"></td>
+        <td align="right">@subtotalItems.ToString("C0")</td>
+    </tr>
+    <tr>
+        <td colspan="4" class="header2">
+            <label>
+                Costos Directos
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            Gastos Generales e Imprevistos (5%)
+        </td>
+        <td align="right"></td>
+        <td align="right"></td>
+        <td align="right">@gastosGenerales.ToString("C0")</td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            Costos Financieros (Máximo 12% Anual)
+        </td>
+        <td align="right">@Model.CostoFinanciero</td>
+        <td align="right"></td>
+        <td align="right">@costoFinancieros.ToString("C0")</td>
+    </tr>
+    <tr>
+        <td colspan="4" class="header2">
+            <label>
+                Costos Totales
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            Sin Arriendo
+        </td>
+        <td align="right"></td>
+        <td align="right"></td>
+        <td align="right">
+            @sinArriendo.ToString("C0")
+            <input type="hidden" id="costos-totales-sin-arriendo" value="@Math.Ceiling(sinArriendo)" />
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            Con Arriendo
+        </td>
+        <td align="right"></td>
+        <td align="right"></td>
+        <td align="right">
+            @conArriendo.ToString("C0")
+            <input type="hidden" id="costos-totales-con-arriendo" value="@Math.Ceiling(conArriendo)" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="header2">
+            <label>
+                Ingresos
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            Alternativas de Rendimiento qqm/há
+        </td>
+        <td align="right"><input type="text" id="alternativas-de-rendimiento-qqm-ha-1" name="alternativas-de-rendimiento-qqm-ha-1" value="" /></td>
+        <td align="right"><input type="text" id="alternativas-de-rendimiento-qqm-ha-2" name="alternativas-de-rendimiento-qqm-ha-2" value="" /></td>
+        <td align="right"><input type="text" id="alternativas-de-rendimiento-qqm-ha-3" name="alternativas-de-rendimiento-qqm-ha-3" value="" /></td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            $/qqm
+        </td>
+        <td align="right"><input type="text" id="signo-de-pesos-qqm-1" name="signo-de-pesos-qqm-1" value="" /></td>
+        <td align="right"><input type="text" id="signo-de-pesos-qqm-2" name="signo-de-pesos-qqm-2" value="" /></td>
+        <td align="right"><input type="text" id="signo-de-pesos-qqm-3" name="signo-de-pesos-qqm-3" value="" /></td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            Ingreso Bruto
+        </td>
+        <td align="right"><input type="text" id="ingreso-bruto-1" name="ingreso-bruto-1" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-bruto-2" name="ingreso-bruto-2" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-bruto-3" name="ingreso-bruto-3" value="" /></td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            Ingreso Neto Sin Arriendo
+        </td>
+        <td align="right"><input type="text" id="ingreso-neto-sin-arriendo-1" name="ingreso-neto-sin-arriendo-1" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-neto-sin-arriendo-2" name="ingreso-neto-sin-arriendo-2" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-neto-sin-arriendo-3" name="ingreso-neto-sin-arriendo-3" value="" /></td>
+    </tr>
+    <tr>
+        <td style="padding-left: 60px;">
+            % Rendimiento
+        </td>
+        <td align="right"><input type="text" id="ingreso-neto-sin-arriendo-porcentaje-1" name="ingreso-neto-sin-arriendo-porcentaje-1" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-neto-sin-arriendo-porcentaje-2" name="ingreso-neto-sin-arriendo-porcentaje-2" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-neto-sin-arriendo-porcentaje-3" name="ingreso-neto-sin-arriendo-porcentaje-3" value="" /></td>
+    </tr>
+    <tr>
+        <td style="padding-left: 30px;">
+            Ingreso Neto Con Arriendo
+        </td>
+        <td align="right"><input type="text" id="ingreso-neto-con-arriendo-1" name="ingreso-neto-con-arriendo-1" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-neto-con-arriendo-2" name="ingreso-neto-con-arriendo-2" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-neto-con-arriendo-3" name="ingreso-neto-con-arriendo-3" value="" /></td>
+    </tr>
+    <tr>
+        <td style="padding-left: 60px;">
+            % Rendimiento
+        </td>
+        <td align="right"><input type="text" id="ingreso-neto-con-arriendo-porcentaje-1" name="ingreso-neto-con-arriendo-porcentaje-1" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-neto-con-arriendo-porcentaje-2" name="ingreso-neto-con-arriendo-porcentaje-2" value="" /></td>
+        <td align="right"><input type="text" id="ingreso-neto-con-arriendo-porcentaje-3" name="ingreso-neto-con-arriendo-porcentaje-3" value="" /></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td colspan="3">
+            <input type="button" value="OK" onclick="javascript:window.history.back();" />
+        </td>
+    </tr>
+</table>

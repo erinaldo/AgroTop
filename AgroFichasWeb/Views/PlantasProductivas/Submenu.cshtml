@@ -1,0 +1,10 @@
+﻿<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(105))
+    {
+        <li><a href="@Url.Content("~/sucursales/crear")">Crear Sucursal</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(108))
+    {
+        <li><a href="@Url.Content("~/bodegas")">Ver Bodegas</a></li>
+    }
+</ul>

@@ -1,0 +1,70 @@
+﻿<style>
+    #progress-wrp {
+        border: 1px solid #0099CC;
+        padding: 1px;
+        position: relative;
+        height: 30px;
+        border-radius: 3px;
+        margin: 10px;
+        text-align: left;
+        background: #fff;
+        box-shadow: inset 1px 3px 6px rgba(0, 0, 0, 0.12);
+    }
+
+        #progress-wrp .progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            background-color: #f39ac7;
+            width: 0;
+            box-shadow: inset 1px 1px 10px rgba(0, 0, 0, 0.11);
+        }
+
+        #progress-wrp .status {
+            top: 3px;
+            left: 50%;
+            position: absolute;
+            display: inline-block;
+            color: #000000;
+        }
+</style>
+<div id="fotoFichaForm" class="modal-block modal-block-primary mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Foto</h2>
+        </header>
+        <div class="panel-body">
+            <form id="fotoFichaForm" class="form-horizontal mb-lg" novalidate="novalidate">
+                <input type="hidden" id="fofiFotoUrl" value="" />
+                <input type="hidden" id="fofiFileName" value="" />
+                <input type="hidden" id="fofiId" value="" />
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Foto <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <img id="fofiImagen" width="300"/>
+                        <input type="file" id="fofiFile" name="fofiFile" />
+                        <div id="progress-wrp">
+                            <div class="progress-bar"></div>
+                            <div class="status">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Observaciones</label>
+                    <div class="col-sm-9">
+                        <textarea name="observaciones" id="fofiObservaciones" class="form-control" cols="3"></textarea>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-primary fotoficha-selector-confirm">Guardar</button>
+                    <button class="btn btn-default fotoficha-selector-dismiss">Cancelar</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>

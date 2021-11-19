@@ -1,0 +1,286 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_ControlTiempo
+
+@{
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = "Registrar Pesaje Final";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+@section VendorCSS
+{
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        function RegistrarSoloPeso(element) {
+            var peso = $("#PesoFinal").val();
+
+            if (peso.length == 0) {
+                alert("Por favor, ingrese un peso final")
+                return;
+            }
+
+            window.location.href = '/ctregistrarpesajefinal/RegistrarSoloPesoSinPlanificacion?id=@Model.IdControlTiempo&peso=' + peso;
+
+        }
+
+
+
+    </script>
+
+}
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                </header>
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formPeso" }))
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Producción</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.PlantaProduccion.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.Empresa.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.CTR_Producto.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">RUT</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.RutTransportista" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Transportista</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.NombreTransportista" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Patente</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.Patente" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Estado</label>
+                                        <div class="col-sm-6">
+                                            <label class="col-sm-0 control-label"><span id="estado_description" class="@Model.CreateCSSClassResponsive()">@Model.CTR_Estado.Descripcion</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Peso Inicial</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.PesoInicial.Value.ToString("N0")" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cliente</label>
+                                        <div class="col-sm-6">
+                                            @if (!Model.IdCliente.HasValue)
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.Cliente.RazonSocial" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">D.U.S.</label>
+                                        <div class="col-sm-6">
+                                            @if (string.IsNullOrEmpty(Model.DUS))
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.DUS" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Reserva</label>
+                                        <div class="col-sm-6">
+                                            @if (string.IsNullOrEmpty(Model.Reserva))
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.Reserva" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Núm. Guía</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextBox("NumeroGuia", Model.NumeroGuia, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Peso Final <span class="required">*</span></label>
+                                        @if (ViewBag.Romana != null)
+                                        {
+                                            if (ViewBag.Romana.EsPesajeAutomatico == true)
+                                            {
+                                                <div class="col-sm-4">
+                                                    @if (Model.PesoFinal == null)
+                                                    {
+                                                        @Html.TextBox("PesoFinal", Model.PesoFinal, new { @class = "form-control", @readonly = "readonly" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextBox("PesoFinal", Model.PesoFinal, new { @class = "form-control", @readonly = "readonly" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <input type="button" onclick="getPesoFinal('')" class="btn btn-danger btn-sm" value="Romana salida" />
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-sm-6">
+                                                    @if (Model.PesoFinal == null)
+                                                    {
+                                                        @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+
+                                                </div>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <div class="col-sm-6">
+                                                @if (Model.PesoFinal == null)
+                                                {
+                                                    @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control" })
+                                                    @Html.ValidationMessage("PesoFinal")
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control" })
+                                                    @Html.ValidationMessage("PesoFinal")
+                                                }
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <div class="btn-group" role="group" aria-label="Botones de acción">
+                                    <button type="submit" class="btn btn-primary" id="registrar" value="@Model.IdControlTiempo">Registrar peso y guia</button>
+                                    <button type="button" class="btn btn-primary" onclick="RegistrarSoloPeso(this);" value="@Model.IdControlTiempo">Registrar peso</button>
+                                    <a id="btnTicket" class="btn btn-primary"  target="_blank" href="~/ctregistrarpesajefinal/GenerarTicket/@Model.IdControlTiempo">Generar Ticket</a>
+                                    <a id="btnTicketEmail" class="btn btn-primary" target="_blank" href="~/ctregistrarpesajefinal/EnviarTicket/@Model.IdControlTiempo">Enviar email</a>
+                                    <a  class="btn btn-primary" href="~/ctregistrarpesajefinal">Salir</a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>
+
+

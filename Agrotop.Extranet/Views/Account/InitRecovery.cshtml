@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Crear o Recuperar Contraseña";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    
+    <div class="titulo1">Crear o Recuperar Contraseña</div>
+
+    <div id="login-Box">
+        <div id="login-Margin">
+            <div id="loginError">
+                @Html.ValidationSummary()
+            </div>
+            <div class="box">
+                <p>Ingrese el RUT registrado como cliente de Empresas Agrotop. Le enviaremos inmediatemente un email con las instrucciones necesarias para crear una nueva contraseña:</p>
+                @using (Html.BeginForm())
+                {
+                    <p>
+                        <label>Rut</label>
+                        @Html.TextBox("Usuario", "", new { @class = "caxa", maxlength = "100" })
+                    </p>
+                    <p>
+                        <input type="submit" value="Solicitar Contraseña" class="botonx" />
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="login-Instrucciones" class="genContentText">
+        
+        <p>También puede contactar a nuestro servicio de atención a cliente:</p>
+        <p><b>+56 (45) 2377025</b></p>
+        <p><a href="mailto:servicioalcliente@empresasagrotop.cl">servicioalcliente@@empresasagrotop.cl</a></p>
+    </div>
+    <div style="clear:both" />

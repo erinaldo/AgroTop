@@ -1,0 +1,12 @@
+﻿@using Agrotop.Extranet.Models
+@{
+    var idEmpresa = (int)ViewData["idEmpresa"];
+    var empresas = (List<Empresa>)ViewData["empresas"];
+}
+<select id="idEmpresa" name="idempresa">
+    <option value="">(Todas las Empresas)</option>
+    @foreach (var t in empresas)
+    {
+        <option value="@t.IdEmpresa" @(t.IdEmpresa == idEmpresa ? "selected" : "")>@t.Nombre</option>
+    }
+</select>

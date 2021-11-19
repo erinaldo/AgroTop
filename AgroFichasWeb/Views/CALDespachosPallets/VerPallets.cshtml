@@ -1,0 +1,211 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Models.SoftwareCalidad
+@using AgroFichasWeb.Views
+@model CAL_DetalleOrdenProduccion
+@{
+    ViewBag.Title = string.Format("{0} - SACO {1}", Model.CAL_Subproducto.Nombre, Model.CAL_Saco.Nombre);
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            },
+            "pageLength": 100
+        });
+    </script>
+}
+@foreach (var avanceCargaPallet in Model.AvanceCargaPallet)
+{
+    if (avanceCargaPallet.AvanceCargaPallet == 100)
+    {
+        <div class="alert alert-success">
+            El porcentaje de avance de carga es de @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet).
+            <div class="progress progress-striped light active m-md">
+                <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet);">
+                    @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)
+                </div>
+            </div>
+        </div>
+    }
+    if (avanceCargaPallet.AvanceCargaPallet.HasValue && avanceCargaPallet.AvanceCargaPallet.Value == 0)
+    {
+        <div class="alert alert-danger">
+            El porcentaje de avance de carga es de @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet).
+            <div class="progress progress-striped light active m-md">
+                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet);">
+                    @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)
+                </div>
+            </div>
+        </div>
+    }
+    if (avanceCargaPallet.AvanceCargaPallet > 0 && avanceCargaPallet.AvanceCargaPallet < 100)
+    {
+        <div class="alert alert-warning">
+            El porcentaje de avance de carga es de @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet).
+            <div class="progress progress-striped light active m-md">
+                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet);">
+                    @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Despacho de Pallets</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>Código QR</th>
+                    <th>Correlativo</th>
+                    <th>Tipo</th>
+                    <th>Cantidad Paletizada</th>
+                    <th>Control de Fechado</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (CAL_Pale pale in Model.GetPales())
+                {
+                    <tr valign="top">
+                        <td><img src="@pale.GetImgSrc()" width="100" /></td>
+                        <td>@pale.IdPale<br />@pale.CodigoInterno</td>
+                        <td>@pale.CAL_TipoPale.Descripcion</td>
+                        <td>@pale.CantidadPaletizada</td>
+                        <td>
+                            @if (pale.IdControlFechado.HasValue)
+                            {
+                                @pale.CAL_FTSacoControlFechado.Descripcion
+                            }
+                        </td>
+                        <td>
+                            <span style="display: block">@string.Format("{0:dd/MM/yyyy HH:mm:ss}", pale.FechaHoraIns)</span>
+                            @pale.GetTurno().CAL_TipoTurno.Descripcion
+                        </td>
+                        <td>
+                            <span class="label label-@(permisosUsuario.CrearAnalisisPallet && pale.NoEstaAnalizado(pale.IdPale) ? "warning" : "success")" style="display: block">@(permisosUsuario.CrearAnalisisPallet && pale.NoEstaAnalizado(pale.IdPale) ? "En espera de análisis..." : "Analizado:")</span>
+                            @if (!pale.NoEstaReprocesado(pale.IdPale))
+                            {
+                                <span class="label label-warning" style="display: block">Reprocesado</span>
+                            }
+                            else if (pale.NoEstaRetenidoAut(pale.IdPale) && pale.NoEstaRetenido(pale.IdPale) && !pale.NoEstaAnalizado(pale.IdPale))
+                            {
+                                <span class="label label-success" style="display: block">Liberado Sincronizado</span>
+                            }
+                            else if (!pale.NoEstaLiberado(pale.IdPale))
+                            {
+                                <span class="label label-success" style="display: block">Liberado</span>
+                            }
+                            else if (!pale.NoEstaRetenidoAut(pale.IdPale))
+                            {
+                                <span class="label label-danger" style="display: block">Retenido Automático</span>
+                            }
+                            else if (!pale.NoEstaRetenido(pale.IdPale))
+                            {
+                                <span class="label label-danger" style="display: block">Retenido Analista</span>
+                            }
+                            else if (pale.NoEstaRetenido(pale.IdPale))
+                            {
+                                <span class="label label-success" style="display: block">Liberado Analista</span>
+                            }
+                            @if (!pale.NoEstaCargado(pale.IdPale))
+                            {
+                                <span class="label label-info" style="display: block">Cargado: @pale.GetDespachoPale(pale.IdPale).CAL_RITContenedor.NContenedor</span>
+                            }
+                        </td>
+                        <td>
+                            @if (permisosUsuario.CrearAnalisisPallet && pale.NoEstaAnalizado(pale.IdPale))
+                            {
+                                <button type="button" class="btn btn-default btn-danger" disabled=""><i class="fa fa-truck"></i></button>
+                            }
+                            else if (!pale.NoEstaReprocesado(pale.IdPale))
+                            {
+                                <button type="button" class="btn btn-default btn-danger" disabled=""><i class="fa fa-truck"></i></button>
+                            }
+                            else if (!pale.NoEstaRetenidoAut(pale.IdPale) && pale.NoEstaLiberado(pale.IdPale))
+                            {
+                                <button type="button" class="btn btn-default btn-danger" disabled=""><i class="fa fa-truck"></i>1</button>
+                            }
+                            else if (!pale.NoEstaRetenido(pale.IdPale))
+                            {
+                                <button type="button" class="btn btn-default btn-danger" disabled=""><i class="fa fa-truck"></i>2</button>
+                            }
+                            else if (!pale.NoEstaCargado(pale.IdPale))
+                            {
+                                <button type="button" class="btn btn-default btn-success" disabled=""><i class="fa fa-truck"></i> <i class="fa fa-plus"></i></button>
+                            }
+                            else if ((pale.NoEstaRetenidoAut(pale.IdPale) && pale.NoEstaRetenido(pale.IdPale) && !pale.NoEstaAnalizado(pale.IdPale)) || !pale.NoEstaLiberado(pale.IdPale))
+                            {
+                                <button type="button" class="btn btn-default btn-success" onclick="window.location.href='@Url.Action("CrearDespachoPallet", "CALDespachosPallets", new { pale.CAL_DetalleOrdenProduccion.IdOrdenProduccion, idDetalleOrdenProduccion = pale.IdDetalleOrdenProduccion,pale.IdPale})'"><i class="fa fa-truck"></i> <i class="fa fa-plus"></i></button>
+                                if (permisosUsuario.CrearCargaDividida)
+                                {
+                                    <button type="button" class="btn btn-default btn-default" onclick="window.location.href='@Url.Action("CrearCargaDividida", "CALDespachosPallets", new { pale.CAL_DetalleOrdenProduccion.IdOrdenProduccion, idDetalleOrdenProduccion = pale.IdDetalleOrdenProduccion,pale.IdPale})'" data-toggle="tooltip" data-placement="top" title="Dividir Carga"><i class="fa fa-truck"></i> <i class="fa fa-cut"></i></button>
+                                }
+                                if (permisosUsuario.VerCargaDividida)
+                                {
+                                    <button type="button" class="btn btn-default btn-default" onclick="window.location.href='@Url.Action("VerCargaDividida", "CALDespachosPallets", new { pale.CAL_DetalleOrdenProduccion.IdOrdenProduccion, idDetalleOrdenProduccion = pale.IdDetalleOrdenProduccion,pale.IdPale})'" data-toggle="tooltip" data-placement="top" title="Ver Carga Dividida"><i class="fa fa-eye"></i></button>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

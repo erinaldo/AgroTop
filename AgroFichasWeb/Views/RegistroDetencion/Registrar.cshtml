@@ -1,0 +1,252 @@
+﻿@using AgroFichasWeb.Models
+@model OPR_RegistroDetencion
+
+@{
+    ViewBag.Title = "Registro de Turno de Detenciones";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var areaList = (IEnumerable<SelectListItem>)ViewData["areaList"];
+    var lineaProduccionList = (IEnumerable<SelectListItem>)ViewData["lineaProduccionList"];
+    var tipoDetencionList = (IEnumerable<SelectListItem>)ViewData["tipoDetencionList"];
+    var causaDetencionList = (IEnumerable<SelectListItem>)ViewData["causaDetencionList"];
+    var registroTurno = (OPR_RegistroTurno)ViewData["registroTurno"];
+}
+
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/bootstrap-timepicker/css/bootstrap-timepicker.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/bootstrap-timepicker/css/MvcBootstrapTimepicker.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+}
+
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Content/porto/vendor/bootstrap-timepicker/bootstrap-timepicker.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/bootstrap-timepicker/MvcBootstrapTimepicker.js")"></script>
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "")
+            {
+                $(".field-validation-error").show();
+            }
+
+            $("#lineaProduccion").change(function () {
+                $("#equipo").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetEquipos")',
+                    dataType: 'json',
+                    data: { idLineaProduccion: $("#lineaProduccion").val(), idEquipo: @(Model.IdEquipo == null ? 0 : Model.IdEquipo) },
+                    success: function (equipos) {
+                        $.each(equipos, function (i, equipo) {
+                            if (equipo.Selected)
+                            {
+                                $("#equipo").append('<option selected="selected" value="' + equipo.Value + '">' + equipo.Text + '</option>');
+                            }
+                            else
+                            {
+                                $("#equipo").append('<option value="' + equipo.Value + '">' + equipo.Text + '</option>');
+                            }
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log("Error al recuperar los equipos.");
+                        console.log(errorThrown);
+                    }
+                });
+                return false;
+            });
+
+            @if (Model.IdRegistroDetencion != 0)
+            {
+                @:$("#lineaProduccion").change();
+            }
+
+            jQuery.datetimepicker.setLocale('es');
+            jQuery('#dtHoraDetencion').datetimepicker({
+                i18n: {
+                    es: {
+                        months: [
+                            'Enero', 'Febrero', 'Marzo', 'Abril',
+                            'Mayo', 'Junio', 'Julio', 'Agosto',
+                            'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                            "Do", "Lu", "Ma", "Mi",
+                            "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                startDate: new Date(),
+                dayOfWeekStart: 1,
+                format: 'Y/m/d H:i',
+                mask: true,
+                step: 10,
+                timepicker: true,
+                todayButton: true,
+                value: '@string.Format("{0:yyyy/MM/dd hh:mm}", Model.HoraPartida)',
+                weeks: true
+            });
+            jQuery('#dtHoraPartida').datetimepicker({
+                i18n: {
+                    es: {
+                        months: [
+                            'Enero', 'Febrero', 'Marzo', 'Abril',
+                            'Mayo', 'Junio', 'Julio', 'Agosto',
+                            'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                            "Do", "Lu", "Ma", "Mi",
+                            "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                dayOfWeekStart: 1,
+                format: 'Y/m/d H:i',
+                mask: true,
+                step: 10,
+                timepicker: true,
+                todayButton: true,
+                value: '@string.Format("{0:yyyy/MM/dd hh:mm}", Model.HoraPartida)',
+                weeks: true
+            });
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    @if (Model.IdRegistroDetencion == 0)
+                    {
+                        <h2 class="panel-title">Registrar Detención del Turno #@registroTurno.Correlativo @registroTurno.OPR_Turno.OPR_TipoTurno.Descripcion</h2>
+                    }
+                    else
+                    {
+                        <h2 class="panel-title">Editar Registro de Detención #@Model.IdRegistroDetencion</h2>
+                    }
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Línea de Producción <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdLineaProduccion", lineaProduccionList, "-- Seleccione Línea de Producción --", new { @class = "form-control", id = "lineaProduccion" })
+                                            @Html.ValidationMessage("IdLineaProduccion")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Equipo <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdEquipo", new SelectList(string.Empty, "Value", "Text"), null, new { @class = "form-control", id = "equipo" })
+                                            @Html.ValidationMessage("IdEquipo")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Origen <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdArea", areaList, "-- Seleccione Origen --", new { @class = "form-control", id = "area" })
+                                            @Html.ValidationMessage("IdArea")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Tipo de Detención <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdTipoDetencion", tipoDetencionList, "-- Seleccione Tipo de Detención --", new { @class = "form-control", id = "tipoDetencion" })
+                                            @Html.ValidationMessage("IdTipoDetencion")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Causa de la Detención <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdCausaDetencion", causaDetencionList, "-- Seleccione Causa de la Detención --", new { @class = "form-control", id = "causaDetencion" })
+                                            @Html.ValidationMessage("IdCausaDetencion")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Hora Detención / Partida <span class="required">*</span></label>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn-danger">
+                                                    <i class="fa fa-clock-o"></i>
+                                                </span>
+                                                @Html.TextBox("HoraDetencion", Model.HoraDetencion, new { @class = "form-control", id = "dtHoraDetencion" })
+                                                @Html.ValidationMessage("HoraDetencion")
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn-success">
+                                                    <i class="fa fa-clock-o"></i>
+                                                </span>
+                                                @Html.TextBox("HoraPartida", Model.HoraPartida, new { @class = "form-control", id = "dtHoraPartida" })
+                                                @Html.ValidationMessage("HoraPartida")
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input-group">
+                                                <span><strong>NOTA</strong>: Debe ingresar una <em>hora estimada</em> de partida.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Observaciones</label>
+                                        <div class="col-sm-6">
+                                            @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "form-control", rows = "3", id = "textareaAutosize", @data_plugin_textarea_autosize = "{}" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Guardar" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

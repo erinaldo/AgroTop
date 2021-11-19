@@ -1,0 +1,54 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model ImportarSaldosCtaCteViewModel
+
+@{
+    ViewBag.NombreSeccion = "Saldos Cuenta Corriente";
+    ViewBag.Title = "Importar Saldos";
+    
+    var dc = new AgroFichasDBDataContext();
+
+    var empresas = from c in ((List<Empresa>)ViewData["empresas"])
+                   select new SelectListItem() { Text = c.Nombre, Value = c.IdEmpresa.ToString(), Selected = c.IdEmpresa == Model.IdEmpresa };
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm("importar", "saldosctacte", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <fieldset class="dataForm">
+        <p><b>Instrucciones</b></p>
+        <ul style="margin-bottom: 30px">
+            <li>El archivo debe tener cuatro columnas: Rut, Nombre, Documentada y Abierta.</li>
+            <li>Guardar como "Texto (delimitado por tabulaciones)"</li>
+        </ul>
+        <p>
+            <label>Empresa</label>
+            @Html.DropDownList("IdEmpresa", empresas)
+            @Html.ValidationMessage("IdEmpresa", ".")
+        </p>
+        <p>
+            <label>Archivo</label>
+            <input type="file" name="file" id="file" /> @Html.ValidationMessage("FilePath", ".")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Subir Archivo de Datos" />
+        </p>
+    </fieldset>
+}
+

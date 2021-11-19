@@ -1,0 +1,235 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    var agente = (SYS_User)ViewData["agente"];
+    var agentes = (List<SYS_User>)ViewData["agentes"];
+
+    ViewBag.NombreSeccion = "Informes";
+    ViewBag.Title = "Visitas Por Semana a agricultores ingresadas por " + agente.FullName + " " + temporada.Nombre;
+
+    var index = (ISingleResult<rpt_VisitasAgenteIngresoPorSemana_IndexResult>)ViewData["index"];
+    var data = (List<rpt_VisitasAgenteIngresoPorSemana_DataResult>)ViewData["data"];
+    var cultivosSemana = (List<rpt_VisitasAgenteIngresoPorSemana_CultivosResult>)ViewData["cultivosSemana"];
+
+    var semanas = (List<AgroFichasWeb.Controllers.SemanaAno>)ViewData["semanas"];
+    var meses = AgroFichasWeb.Controllers.MesAno.FromSemanas(semanas);
+
+    var dc = new AgroFichasDBDataContext();
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+}
+
+@helper headerMeses(List<AgroFichasWeb.Controllers.MesAno> meses)
+{
+    foreach (var s in meses)
+    {
+        <td colspan="@s.CuentaSemanas" class="label mes">@(new DateTime(s.Ano, s.Mes, 1).ToString("MMM yy"))</td>
+    }
+}
+
+@helper headerSemanas(List<AgroFichasWeb.Controllers.SemanaAno> semanas)
+{
+    var lastMoth = -1;
+    var iSemana = 0;
+    foreach (var s in semanas)
+    {
+        if (s.Mes != lastMoth)
+        {
+            iSemana = 0;
+        }
+        lastMoth = s.Mes;
+        <td class="value">S@(++iSemana)</td>
+    }
+}
+
+@helper siembras(int idAgricultor, int countSiembras) {
+
+    var cultivos = (List<rpt_SuperficiePorCultivoPorAgricultorResult>)ViewData["cultivos"];
+    if (countSiembras == 0)
+    {
+        <div class="cultivo cultivo-0">¿?</div>
+    }
+    foreach (var cultivo in cultivos.Where(c => c.IdAgricultor == idAgricultor).OrderBy(c => c.IdCultivo))
+    {
+        <div class="cultivo cultivo-@cultivo.IdCultivo" title="@cultivo.Nombre">@cultivo.SuperficieTotal.Value.ToString("#,##0")</div>
+    }
+}
+
+
+@Html.Partial("Styles")
+
+<h2>@ViewBag.Title</h2>
+<p>Se muestran sólo las fichas ingresadas por <b>@agente.FullName</b>.</p>
+<div class="reportFilter">
+    @using (Html.BeginForm())
+    {
+        <select id="idTemporada" name="id">
+            @foreach (var t in temporadas)
+            {
+                <option value="@t.IdTemporada" @(t.IdTemporada == temporada.IdTemporada ? "selected" : "")>@t.Nombre</option>
+            }
+        </select>
+        <select id="idTemporada" name="userId">
+            @foreach (var a in agentes)
+            {
+                <option value="@a.UserID" @(a.UserID == agente.UserID ? "selected" : "")>@a.FullName</option>
+            }
+        </select>
+        <input type="submit" value="Ir" />
+    }
+</div>
+
+<table border="0" cellpading="0" cellspacing="0" class="rep1">
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2">
+            <div class="cultivo cultivo-1">Raps</div>
+            <div class="cultivo cultivo-2">Trigo</div>
+            <div class="cultivo cultivo-3">Avena</div>
+            <div class="cultivo cultivo-0">Sin Info</div>
+        </td>
+        @headerMeses(meses)
+    </tr>
+    <tr>
+        <td class="label">#</td>
+        <td class="label">Agricultor</td>
+        <td class="label">Agente</td>
+        <td class="label">Siembra</td>
+        @headerSemanas(semanas)
+        <td class="label" style="text-align: center">Tot</td>
+    </tr>
+
+    @{
+        var i = 0;
+        var totalFilas = 0;
+        foreach (var ix in index)
+        {
+            var ag = dc.Agricultor.Single(a => a.IdAgricultor == ix.IdAgricultor);
+            <tr valign="top">
+                <td class="number">@(++i)</td>
+                <td><a href="#" class="rowValue" data-ida="@ix.IdAgricultor">@ix.Nombre</a></td>
+                <td>
+
+                    @if (ag.UsuarioAgricultor.Count > 0)
+                    {
+                        foreach (var user in ag.UsuarioAgricultor)
+                        {
+                            @(user.SYS_User.UserName) <br />
+                        }
+                    }
+                    else
+                    {
+                        <text>-</text>
+                    }
+                </td>
+                <td class="value">
+                    @siembras(ix.IdAgricultor, ix.CountSiembras.Value)
+                </td>
+                @{
+                    int totalAgricultor = 0;
+                    foreach (var s in semanas)
+                    {
+                        var d = data.SingleOrDefault(x => x.Semana == s.Semana && x.Mes == s.Mes && x.Ano == s.Ano && x.IdAgricultor == ix.IdAgricultor);
+                        <td class="value">
+                            @if (d != null)
+                            {
+                                totalAgricultor += d.Visitas.Value;
+                                var cs = cultivosSemana.Where(x => x.Semana == s.Semana && x.Ano == s.Ano && x.IdAgricultor == ix.IdAgricultor);
+                                var width = (int)Math.Floor(99M /cs.Count());
+                                foreach (var c in cs)
+                                {
+                                    <div class="cultivoInd cultivo-@c.IdCultivo" style="width: @width%"></div>
+                                
+                                }                                
+                                <a href="#" class="cellValue" data-ida="@ix.IdAgricultor" data-sem="@d.Semana" data-ano="@d.Ano">@d.Visitas.ToString()</a>
+                            }
+                        </td>
+                    }
+                    totalFilas += totalAgricultor;
+                }
+                <td class="labelc">@totalAgricultor</td>
+            </tr>
+        }
+    }
+    <tr>
+        <td colspan="4"></td>
+        @headerMeses(meses)
+    </tr>
+    <tr>
+        <td colspan="4"></td>
+        @headerSemanas(semanas)
+        <td class="label" style="text-align: center">Tot</td>
+    </tr>
+
+    <tr>
+        <td class="label" colspan="4">Totales</td>
+        @{
+            int totalGeneral = 0;
+            foreach (var s in semanas)
+            {
+                var d = data.Where(x => x.Semana == s.Semana && x.Ano == s.Ano).Sum(x => x.Visitas);
+                <td class="value label" style="@(!d.HasValue || d.Value == 0 ? "background-color: red" : "")">
+                    @if (d.HasValue != null)
+                    {
+                        totalGeneral += d.Value;
+                        <a href="#" class="cellValue" data-ida="0" data-sem="@s.Semana" data-ano="@s.Ano">@d.ToString()</a>
+                    }
+                </td>
+            }
+        }
+        <td class="labelc" style="font-size:16px;">
+            @totalGeneral
+            @if (totalGeneral != totalFilas)
+            {
+                <div style="color: red">Descuadrado. Filas suman @totalFilas.ToString()</div>
+            }
+        </td>
+    </tr>
+
+</table>
+
+<div id="detailWindow">
+    <div id="detailWindow-Content">
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $(".cellValue").click(function () {
+            showCellValue($(this).attr("data-ida"), $(this).attr("data-sem"), $(this).attr("data-ano"));
+            return false;
+        });
+
+        $(".rowValue").click(function () {
+            showCellValue($(this).attr("data-ida"), "", "");
+            return false;
+        });
+
+        function showCellValue(idAgricultor, semana, ano) {
+
+            $("#detailWindow-Content").html("Cargando...");
+
+            $("#detailWindow").dialog({
+                height: 600,
+                width: 800,
+                modal: true,
+                buttons: {},
+                open: function () {
+                    var baseUrl = '@(new MvcHtmlString(Url.Action("VisitasPorSemana_Detalle", new { idAgricultor = -1, semana = -2, ano = -3, idTemporada = temporada.IdTemporada, userID = agente.UserID })))';
+                    $("#detailWindow-Content").load(baseUrl.replace('-1', idAgricultor).replace('-2', semana).replace('-3', ano));
+                }
+            });
+
+
+        }
+    });
+
+</script>

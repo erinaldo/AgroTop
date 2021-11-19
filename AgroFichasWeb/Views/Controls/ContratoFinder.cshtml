@@ -1,0 +1,115 @@
+﻿@using AgroFichasWeb.ViewModels
+@model ContratoFinderViewModel
+@{
+
+}
+
+<div id="cofSearchWindow" style="display: none" title="Buscar Contrato">
+    <div id="cofSearchWindow-Content">
+        <table class="form1" style="width: 100%; text-align: left;">
+            <tr>
+                <td class="label">Buscar:</td>
+                <td><input type="text" id="cof-keyword" style="width: 400px" /></td>
+                <td><input type="button" value="Buscar" id="cof-buscar" /></td>
+                <td></td>
+            </tr>
+            <tr class="title">
+                <td colspan="4">Resultados</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="4">
+                    <div id="cof-results" style="height: 300px; overflow-y:scroll; width: 100%"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+<script>
+    var idContratoBase;
+    $(document).ready(function () {
+
+        $("#cof-buscar").click(function () {
+            cofSearchContrato();
+        });
+
+    });
+
+    function cofClearContrato() {
+        cofSetContrato("", '&nbsp;', '', '')
+    }
+
+    function cofSetContrato(id, nombre, numero, empresa) {
+        cofCallback(id, nombre, numero, empresa);
+    }
+
+    function cofSelectContrato(idContratoBaseParam) {
+
+        idContratoBase = idContratoBaseParam;
+
+        $("#cofSearchWindow").dialog({
+            width: 600,
+            modal: true,
+            buttons: {
+                Cancelar: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+                $('#cof-results').html("");
+            }
+        });
+
+        @if (Model.SearchType == ContratoSearchType.ParaConvenioPrecio)
+        {
+            <text>cofSearchContrato();</text>
+        }
+
+    }
+
+    function cofSearchContrato() {
+        $('#cof-results').html('<div class="cargando"></div>');
+        $.ajax({
+            type: "POST",
+            url: "@Url.Content("~/contratos/ContratosFinderSearch")",
+            data: "{keyword: '" + $("#cof-keyword").val() + "', type: @((int)Model.SearchType), idContratoBaseArgument: " + idContratoBase + "}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                var table = '<table class="form1">';
+
+                if (result.length == 0)
+                    table += "<tr><td><i>No se encontraron resultados</i></td></tr>";
+
+                for (var contrato in result) {
+                    var row = '<tr valign="top">';
+                    row += '<td nowrap="nowrap">' + result[contrato].NumeroContrato + '</td>';
+                    row += '<td id="pf_' + result[contrato].IdContrato + '"><a href="javascript:scof(' + "'" + result[contrato].IdContrato + "', '" + result[contrato].NumeroContrato + "', '" + result[contrato].NombreCultivo + "', '" + result[contrato].NombreEmpresa + "'" + ')">' + result[contrato].Nombre + "</a></td>";
+                    row += '<td nowrap="nowrap">' + result[contrato].NombreEmpresa + '</td>';
+                    row += '<td nowrap="nowrap">' + result[contrato].NombreCultivo + '</td>';
+                    row += "</tr>";
+                    table += row;
+                }
+                table += "</table>";
+                $('#cof-results').html(table);
+            },
+            error: function (req, stat, err) {
+                var msg = '<div style="color:red;">';
+                msg += "Se produjo un error al ejecutar la búsqueda.";
+                msg += "<p>" + req.responseText + "</p>";
+                msg += "<p>" + req.statusText + "</p>";
+                msg += "</div>";
+                $('#cof-results').html(msg);
+            }
+        });
+    }
+
+    function scof(id, numero, cultivo, empresa) {
+        var nombre = $("#pf_" + id + " > a").text();
+        cofSetContrato(id, ' - ' + cultivo + ' - ' + nombre, numero, empresa);
+        $('#cofSearchWindow').dialog('close');
+    }
+
+
+</script>

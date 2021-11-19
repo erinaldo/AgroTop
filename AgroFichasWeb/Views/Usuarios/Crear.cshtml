@@ -1,0 +1,86 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model SYS_User
+
+@{
+    ViewBag.NombreSeccion = "Usuarios";
+    ViewBag.Title = "Crear Usuario";
+    var permisos = (List<SYS_PermisosUsuarioResult>)ViewData["permisos"];
+    var modulos = (List<SYS_Modulo>)ViewData["modulos"];
+    var zonasSucursales = (Dictionary<string, List<SYS_SucursalesUsuarioResult>>)ViewData["zonasSucursales"];
+    var seccionesList = (IEnumerable<SelectListItem>)ViewData["seccionesList"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+    <h2>Crear Usuario</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+    
+    @using (Html.BeginForm()) 
+    {
+        <fieldset class="dataForm">
+            <p>
+                <label for="UserName">Nombre de Usuario</label>
+                @Html.TextBox("UserName", Model.UserName, new { @class = "heavy std", maxlength = "100" })
+                @Html.ValidationMessage("UserName", "*")
+            </p>
+            <p>
+                <label for="Password">Contraseña</label>
+                @Html.TextBox("Password")
+                @Html.ValidationMessage("Password", "*")
+            </p>
+            <p>
+                <label for="FullName">Nombre Completo</label>
+                @Html.TextBox("FullName")
+                @Html.ValidationMessage("FullName", "*")
+            </p>
+            <p>
+                <label for="Email">Email</label>
+                @Html.TextBox("Email")
+                @Html.ValidationMessage("Email", "*")
+            </p>
+            <p>
+                <label for="IdSeccion">Sección</label>
+                @Html.DropDownList("IdSeccion", seccionesList, "(Desconocida)", new { @class = "std" })
+            </p>
+            <p>
+                <label for="Email">Teléfono</label>
+                @Html.TextBox("Telefono", null, new { @class = "std", maxlength = "11" })
+            </p>
+            <div>
+                <label style="float: left; margin-top: 10px;">Permisos</label>
+                <ul style="float: left; margin: 0px 0px 20px 0px; padding: 0px; list-style: none;">
+                    @foreach (var modulo in modulos)
+                    {
+                        <li style="margin: 10px 0px"><b>@modulo.Nombre</b></li>
+                        foreach (var permiso in permisos.Where(p => p.IdModulo == modulo.IdModulo).OrderBy(p => p.Orden))
+                        {
+                            <li style="margin-left: 20px;"><input type="checkbox" name="chkPermiso" value="@permiso.IdPermiso" @((permiso.Tiene.Value) ? "checked=\"checked\"" : "") /> @permiso.Nombre</li>
+                        }
+                    } 
+                </ul>  
+                <div style="clear: both"></div>
+            </div>
+            <div>
+                <label style="float: left; margin-top: 10px;">Acceso a Sucursales</label>
+                <ul style="float: left; margin: 0px 0px 20px 0px; padding: 0px; list-style: none;">
+                    @foreach (var zona in zonasSucursales)
+                    {
+                        <li style="margin: 10px 0px"><b>@zona.Key</b></li>
+                        foreach (var suc in zona.Value)
+                        {
+                            <li style="margin-left: 20px;"><input type="checkbox" name="chkSucursal" value="@(suc.ZoneToken + "-" + suc.IdSucursal)" @((suc.Tiene.Value) ? "checked=\"checked\"" : "") /> @suc.Nombre</li>
+                        } 
+                    }
+                </ul>  
+                <div style="clear: both"></div>
+            </div>
+            <p class="okcancel">
+                <input type="submit" value="Guardar Este Usuario" /> o @Html.ActionLink("Volver a la lista de usuarios", "Index")
+            </p>
+        </fieldset>
+    }
+
+

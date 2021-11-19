@@ -1,0 +1,31 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model LOG_ControlCamionPlanta
+
+@{
+    ViewBag.NombreSeccion = "Control del Camión en Planta";
+    ViewBag.Title = "Crear Voucher de Llegada a Origen";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Núm. Ped.</label>
+            @Html.TextBox("IdPedido", Model.IdPedido, new { @class = "heavy std", maxlength = "50" })
+            @Html.ValidationMessage("IdPedido", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Crear Voucher" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

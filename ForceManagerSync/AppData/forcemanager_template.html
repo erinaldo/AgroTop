@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>ForceManager</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #envoltura {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 1200px;
+        }
+
+        #cabecera {
+            width: 1200px;
+        }
+
+            #cabecera #logo {
+                text-align: left;
+            }
+
+            #cabecera #fecha-emision {
+                text-align: right;
+            }
+
+            #cabecera td {
+                width: 50%;
+            }
+
+        #cuerpo {
+            width: 1200px;
+        }
+
+            #cuerpo #titulo-certificado {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-agricultores {
+                width: 1200px;
+            }
+
+                #cuerpo #cuerpo-agricultores #agricultores {
+                    border: 1px solid black;
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 600px;
+                }
+
+                    #cuerpo #cuerpo-agricultores #agricultores thead {
+                        background-color: lightgray;
+                    }
+
+                    #cuerpo #cuerpo-agricultores #agricultores #rut {
+                        width: 200px;
+                    }
+
+                    #cuerpo #cuerpo-agricultores #agricultores #agricultor {
+                        width: 400px;
+                    }
+
+        #pie-de-pagina {
+            height: 50px;
+            text-align: center;
+            width: 1200px;
+        }
+
+        .text-align-left {
+            text-align: left;
+        }
+
+        .text-align-center {
+            text-align: center;
+        }
+
+        .text-align-right {
+            text-align: right;
+        }
+
+        .text-align-justify {
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+    <table id="envoltura">
+        <tr>
+            <td>
+                <table id="cabecera">
+                    <tr>
+                        <td id="logo">
+                            <img src="http://sys.empresasagrotop.cl/Content/images/ForceManager.png" width="100" />
+                        </td>
+                        <td id="fecha-emision">
+                            <span>Chile, ***FECHA***</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="cuerpo">
+                    <tr>
+                        <td id="titulo-certificado">
+                            <h1>
+                                AGRICULTORES NO ASOCIADOS
+                            </h1>
+                            <h3>
+                                REPORTE
+                            </h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-agricultores">
+                            <table id="agricultores" cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th id="rut">RUT</th>
+                                        <th id="agricultor">Agricultor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ***AGRICULTORES***
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="pie-de-pagina">
+                    <tr>
+                        <td>
+                            <p><strong>Empresas Agrotop &copy;***AÑO***</strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

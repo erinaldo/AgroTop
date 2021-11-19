@@ -1,0 +1,150 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model List<rpt_DetalleRecepcionesResult>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var valoresAnalisis = (List<rpt_ValoresAnalisisRecepcionesResult>)ViewData["valoresAnalisis"];
+    var parametros = (List<ParametroAnalisis>)ViewData["parametros"];
+    
+    ViewBag.Title = "Resultados de Análisis " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+}
+
+
+@section filter {
+    @using(Html.BeginForm()) {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("CultivoSelector")</td>
+                <td>@Html.Partial("EmpresaSelector")</td>
+                <td>@Html.Partial("SucursalSelector")</td>
+                <td><input type="text" name="key" value="@ViewData["key"]" /></td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Cultivo:</td>
+        <td nowrap="nowrap">@ViewData["cultivoLabel"]</td>
+        <td class="RptLabel">Empresa:</td>
+        <td nowrap="nowrap">@ViewData["empresaLabel"]</td>
+        <td class="RptLabel">Planta:</td>
+        <td nowrap="nowrap">@ViewData["sucursalLabel"]</td>
+        <td class="RptLabel">Filtro:</td>
+        <td width="100%">@(!String.IsNullOrWhiteSpace(ViewData["key"].ToString()) ? ViewData["key"] : "(ninguno)")</td>
+    </tr>
+    </table>
+    <br />
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptEncabezadoListado">Nro</td>
+        <td class="RptEncabezadoListado" align="right">Fecha</td>
+        <td class="RptEncabezadoListado" align="right">Rut</td>
+        <td class="RptEncabezadoListado">Agricultor</td>
+        <td class="RptEncabezadoListado">Planta</td>
+        <td class="RptEncabezadoListado">Bodega</td>
+        <td class="RptEncabezadoListado">Sec</td>
+        <td class="RptEncabezadoListado">Cultivo</td>
+        <td class="RptEncabezadoListado">Variedad</td>
+        <td class="RptEncabezadoListado" align="right">Ton<br />Neto</td>
+        @foreach (var pa in parametros)
+        {
+            <td class="RptEncabezadoListado" align="right">@pa.NombreCorto</td>
+        }
+        <td class="RptEncabezadoListado" align="right">Ton<br />Bono</td>
+        <td class="RptEncabezadoListado" align="right">Ton<br />Std</td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr class="RptItemListado" valign="top">
+            <td nowrap="nowrap">@item.IdProcesoIngreso</td>
+            <td nowrap="nowrap" align="right">@item.FechaHoraLlegada.Value.ToString("dd/MM")</td>
+            <td nowrap="nowrap" align="right">@item.Rut</td>
+            <td>@item.Nombre</td>
+            <td>@item.Sucursal</td>
+            <td>@(((item.NombreBodega ?? "") + " " + (item.Manga.HasValue ? item.Manga.Value.ToString() : "")).Trim()) </td>
+            <td>@(item.Secador.Value ? "Sí" : "")</td>
+            <td>@item.CultivoContrato</td>
+            <td>@item.Variedad</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", item.PesoBruto.Value / 1000M)</td>
+            @foreach (var pa in parametros)
+            {
+                var valor = valoresAnalisis.SingleOrDefault(va => va.IdProcesoIngreso == item.IdProcesoIngreso && va.IdParametroAnalisis == pa.IdParametroAnalisis);
+                <td align="right">@(valor != null ? ValorAnalisis.ToString(pa, valor.Valor, false): "")</td>
+            }
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", (item.PesoNormal.Value - item.PesoBruto.Value) / 1000M)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", item.PesoNormal.Value / 1000M)</td>
+        </tr>
+    }
+    <tr>
+        <td class="RptPieListado" colspan="9">&nbsp;</td>
+        <td class="RptPieListado" align="right">Ton<br />Neto</td>
+        @foreach (var pa in parametros)
+        {
+            <td class="RptPieListado" align="right">@pa.NombreCorto</td>
+        }
+        <td class="RptPieListado" align="right">Ton<br />Bono</td>
+        <td class="RptPieListado" align="right">Ton<br />Std</td>
+    </tr>
+    <tr>
+
+        <td class="RptPieListado" colspan="9" align="right">Sumas</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => m.PesoBruto).Sum().Value / 1000M)</td>
+        @foreach (var pa in parametros)
+        {
+            <td class="RptPieListado" align="right">
+                 
+            </td>
+        }
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => (m.PesoNormal - m.PesoBruto)).Sum().Value / 1000M)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => m.PesoNormal).Sum().Value / 1000M)</td>
+    </tr>
+    <tr>
+        <td class="RptPieListado" colspan="9" align="right">Promedio por Ingreso</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", (decimal)(Model.Select(m => m.PesoBruto).Average() ?? 0D) / 1000M)</td>
+        @foreach (var pa in parametros)
+        {
+            <td class="RptPieListado" align="right">
+                 @ValorAnalisis.ToString(pa, valoresAnalisis.Where(va => va.IdParametroAnalisis == pa.IdParametroAnalisis && va.Valor.HasValue).Select(va => va.Valor.Value).Average(), false)
+            </td>
+        }
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", (decimal) (Model.Select(m => (m.PesoNormal - m.PesoBruto)).Average() ?? 0D) / 1000M)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", (decimal) (Model.Select(m => m.PesoNormal).Average() ?? 0D) / 1000M)</td>
+    </tr>
+    <tr>
+        <td class="RptPieListado" colspan="9" align="right">Promedio Ponderado</td>
+        <td class="RptPieListado" align="right"></td>
+        @foreach (var pa in parametros)
+        {
+            var suma = (from va in valoresAnalisis
+                        join pi in Model on va.IdProcesoIngreso equals pi.IdProcesoIngreso
+                        where va.IdParametroAnalisis == pa.IdParametroAnalisis
+                           && va.Valor.HasValue
+                        select va.Valor.Value * pi.PesoBruto).Sum();
+            var peso = (from va in valoresAnalisis
+                        join pi in Model on va.IdProcesoIngreso equals pi.IdProcesoIngreso
+                        where va.IdParametroAnalisis == pa.IdParametroAnalisis
+                           && va.Valor.HasValue
+                        select pi.PesoBruto).Sum();
+            
+            decimal? pp = null;
+            if (peso.HasValue && suma.HasValue && peso != 0)
+            {
+                pp = suma / peso;   
+            }
+            <td class="RptPieListado" align="right">
+                 @ValorAnalisis.ToString(pa, pp, false)
+            </td>
+        }
+        <td class="RptPieListado" align="right"></td>
+        <td class="RptPieListado" align="right"></td>
+    </tr>
+</table>

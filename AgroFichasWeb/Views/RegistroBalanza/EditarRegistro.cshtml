@@ -1,0 +1,132 @@
+﻿@using AgroFichasWeb.Models
+@model OPR_RegistroBalanza
+@{
+    ViewBag.Title = "Registro de Turno de Balanzas";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var idBalanzas = Model.IdBalanza + ",";
+}
+
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        var idBalanzas, idBalanzasArray;
+        idBalanzas = '@(Model.IdBalanza + ",")';
+        idBalanzasArray = idBalanzas.split(',');
+
+        $(document).ready(function () {
+            $('#datatable-default').dataTable({
+                "ordering": false,
+                "searching": false,
+                "lengthChange": false
+            });
+
+            Reset();
+
+            $("#btnRegistrar").click(function (e) {
+                if (!Validar()) {
+                    e.preventDefault(e);
+                    return false;
+                }
+                else {
+                    $(this).submit();
+                }
+            });
+        });
+
+        function Reset() {
+            if (idBalanzasArray != null) {
+                for (I = 0; I < idBalanzasArray.length - 1; I++) {
+                    $("#contador_" + idBalanzasArray[I]).css("border", "1px solid #ccc");
+                    $("#msg_" + idBalanzasArray[I]).hide();
+                }
+            }
+        }
+
+        function Validar() {
+            Reset();
+
+            var OK = true;
+
+            if (idBalanzasArray != null) {
+                for (I = 0; I < idBalanzasArray.length - 1; I++) {
+                    if ($("#contador_" + idBalanzasArray[I]).val() == "") {
+                        $("#contador_" + idBalanzasArray[I]).css("border", "1px solid #FF2828");
+                        $("#msg_" + idBalanzasArray[I]).show();
+                        OK = false;
+                    }
+                }
+            }
+
+            return OK;
+        }
+
+        function isNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Editar Registro de Balanza #@Model.IdRegistroBalanza</h2>
+                </header>
+                @using (Html.BeginForm("EditarRegistro", "RegistroBalanza", FormMethod.Post))
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-offset-3 col-sm-6">
+                                            <div class="input-group mb-md no-margin-bottom" id="inputgroup_@Model.IdBalanza">
+                                                <span class="input-group-addon">@Model.OPR_Balanza.Descripcion</span>
+                                                <input type="text" class="form-control" name="contador_@Model.IdBalanza" id="contador_@Model.IdBalanza" placeholder="Contador" value="@Model.Contador" onkeypress="return isNumber(event)">
+                                            </div>
+                                            <span id="msg_@Model.IdBalanza" style="color: red; display: none; margin-top: -10px;">Por favor ingrese el contador de la balanza</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <button type="submit" id="btnRegistrar" class="btn btn-primary">Editar Registro de Balanza</button>
+                            </div>
+                        </div>
+                    </footer>
+                    <input type="hidden" id="idRegistroBalanza" name="idRegistroBalanza" value="@Model.IdRegistroBalanza" />
+                    <input type="hidden" id="idBalanzas" name="idBalanzas" value="@idBalanzas" />
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>
+

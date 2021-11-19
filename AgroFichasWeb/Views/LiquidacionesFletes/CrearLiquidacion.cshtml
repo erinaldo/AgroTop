@@ -1,0 +1,50 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model LOG_Liquidacion
+
+@{
+    ViewBag.NombreSeccion = "Liquidaciones de Fletes";
+    ViewBag.Title = "Crear Liquidación";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm("crearliquidacion", "liquidacionesfletes", FormMethod.Post))
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Número Factura</label>
+            @Html.TextBox("NumeroFactura", Model.NumeroFactura, new { @class = "heavy std" })
+            @Html.ValidationMessage("NumeroFactura", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Liquidar" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+
+    @Html.Hidden("IdLiquidacion", Model.IdLiquidacion, new { @class = "heavy std" })
+    <input type="hidden" name="IdRequerimiento" value="@ViewData["IdRequerimiento"]" />
+    <input type="hidden" name="IdTransportista" value="@ViewData["IdTransportista"]" />
+    <input type="hidden" name="pedidos" value="@ViewData["pedidos"]" />
+}

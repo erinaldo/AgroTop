@@ -1,0 +1,78 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<LOG_RegistrarEntrada>
+
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    ViewBag.Title = "Registrar Movimiento de Entrada";
+
+    var DC = new AgroFichasDBDataContext();
+    var idRequerimiento = (int)(ViewData["IdRequerimiento"] ?? 0);
+    var requerimientosList = (IEnumerable<SelectListItem>)ViewData["requerimientosList"];
+}
+
+@section submenuSection {
+    @Html.Partial("~/Views/Requerimientos/Submenu.cshtml")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("registrarentradaindex", "movimientos", new { id = 0 }, FormMethod.Get))
+    {
+        @Html.DropDownList("idRequerimiento", requerimientosList, "-- Seleccione --", new { @class = "heavy std" })
+        <input type="submit" value="Filtrar por Requerimiento" />
+    }
+</div>
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">Núm. Req.</th>
+        <th align="left">Núm. Ped.</th>
+        <th align="left">Núm. Guía</th>
+        <th align="left">Fecha Asignación</th>
+        <th align="left">Transportista</th>
+        <th align="left">Chofer</th>
+        <th align="left" width="80">Patente</th>
+        <th align="left">Cultivo</th>
+        <th align="left">Origen</th>
+        <th align="left">Destino</th>
+        <th align="left">Registrar</th>
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="11" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+    @foreach (var item in Model)
+    {
+        <tr valign="top">
+            <td align="left">@item.IdRequerimiento</td>
+            <td align="left">@item.IdPedido</td>
+            <td align="left">@item.NumeroGuia</td>
+            <td align="left">@item.FechaAsignacion.ToString("dd/MM/yyyy hh:mm")</td>
+            <td align="left">@item.Transportista</td>
+            <td align="left">@item.Chofer</td>
+            <td align="left">@item.Patente</td>
+            <td align="left">@item.Cultivo</td>
+            <td align="left">@item.OrigenV2</td>
+            <td align="left">@item.DestinoV2</td>
+            <td align="center"><a class="command" href="@Url.Action("registrarentrada", "movimientos", new { id = item.IdPedido })">Registrar</a></td>
+        </tr>
+    }
+    <tr>
+        <td colspan="11" class="pager">
+            @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "movimientos", idRequerimiento.ToString(), "registrarentradaindex")
+        </td>
+    </tr>
+</table>

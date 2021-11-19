@@ -1,0 +1,108 @@
+﻿@using AgroFichasWeb.Models
+@model List<rpt_CoberturaTipoCambioResult>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.Title = "Cobertura de Tipo de Cambio " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+
+    var dc = new AgroFichasDBDataContext();
+    var CLP = dc.Moneda.Single(m => m.IdMoneda == 1);
+    var USD = dc.Moneda.Single(m => m.IdMoneda == 2);
+
+    var monedas = dc.Moneda.ToList();
+
+    var totalesMC = new Dictionary<int, decimal>();
+    foreach (var m in monedas)
+    {
+        totalesMC.Add(m.IdMoneda, 0);
+    }
+}
+
+
+@section filter {
+    @using(Html.BeginForm()) {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("EmpresaSelector")</td>
+                <td>@Html.Partial("SucursalSelector")</td>
+                <td><input type="text" name="key" value="@ViewData["key"]" /></td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Empresa:</td>
+        <td>@ViewData["empresaLabel"]</td>
+        <td class="RptLabel">Planta:</td>
+        <td nowrap="nowrap">@ViewData["sucursalLabel"]</td>
+        <td class="RptLabel">Filtro:</td>
+        <td width="100%">@(!String.IsNullOrWhiteSpace(ViewData["key"].ToString()) ? ViewData["key"] : "(ninguno)")</td>
+    </tr>
+    </table>
+    <ul style="font-style: italic; font-size: 12px;">
+        <li>Tipo 1: Sin convenio de precio.</li>
+        <li>Tipo 2: Convenio en USD, liquidará en CLP.</li>
+    </ul>
+
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr valign="bottom">
+        <td class="RptEncabezadoListado">Nro</td>
+        <td class="RptEncabezadoListado" align="right">Fecha</td>
+        <td class="RptEncabezadoListado" align="right">Rut</td>
+        <td class="RptEncabezadoListado">Agricultor</td>
+        <td class="RptEncabezadoListado">Planta</td>
+        <td class="RptEncabezadoListado">Cultivo</td>
+        <td class="RptEncabezadoListado" align="right">Kg Std</td>
+        <td class="RptEncabezadoListado" align="right" colspan="1">Precio / Kg</td>
+        <td class="RptEncabezadoListado" align="right" colspan="1">Total</td>
+        <td class="RptEncabezadoListado" align="right" colspan="1">Tasa<br />Cambio</td>
+        <td class="RptEncabezadoListado" align="right" colspan="1">Total Neto CLP</td>
+        <td class="RptEncabezadoListado" align="right" colspan="1">Liquidar En</td>
+        <td class="RptEncabezadoListado" align="right" colspan="1">Tipo</td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        var monedaConvenio = monedas.Single(m => m.IdMoneda == item.IdMonedaConvenio);
+        var monedaLiquidacion = monedas.Single(m => m.IdMoneda == item.IdMonedaLiquidacion);
+        var totalMonedaConvenio = PrecioIngreso.TotalMonedaConvenio(item.Cantidad, item.PrecioUnidad, item.SobrePrecioTotal, monedaConvenio);
+
+        totalesMC[item.IdMonedaConvenio] += totalMonedaConvenio;
+        
+        <tr class="RptItemListado" valign="top">
+            <td nowrap="nowrap">@Html.ActionLink(item.IdProcesoIngreso.ToString(), "detalleingreso", "recepciones", new { id = item.IdProcesoIngreso }, new { @class = "command", target = "_blank" })</td>
+            <td nowrap="nowrap" align="right">@item.FechaHoraLlegada.Value.ToString("dd/MM")</td>
+            <td nowrap="nowrap" align="right">@item.Rut</td>
+            <td>@item.Nombre</td>
+            <td>@item.Sucursal</td>
+            <td>@item.Cultivo</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0}", item.Cantidad)</td>
+            <td nowrap="nowrap" align="right">@String.Format(monedaConvenio.Formato, item.PrecioUnidad)</td>
+            <td nowrap="nowrap" align="right">@String.Format(monedaConvenio.Formato, totalMonedaConvenio)</td>
+            <td align="right">@String.Format(monedaConvenio.Formato2, item.TasaCambio)</td>
+            <td align="right">@String.Format(monedaConvenio.Formato2, item.TotalNeto)</td>
+            <td align="right">@monedaLiquidacion.Simbolo</td>
+            <td align="right">@item.Tipo</td>
+        </tr>
+    }
+    <tr valign="top">
+        <td class="RptPieListado" colspan="6">&nbsp;</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", Model.Select(m => m.Cantidad).Sum())</td>
+        <td class="RptPieListado" colspan="1">&nbsp;</td>
+        <td class="RptPieListado" colspan="1" nowrap="nowrap" align="right">
+            @foreach (var total in totalesMC.Where(i => i.Value != 0))
+            {
+                @String.Format(monedas.Single(m => m.IdMoneda == total.Key).Formato, total.Value)<br />
+            }
+        </td>
+        <td class="RptPieListado" colspan="1">&nbsp;</td>
+        <td class="RptPieListado" align="right" nowrap="nowrap">CLP @String.Format("{0:#,##0}", Model.Select(m => m.TotalNeto).Sum())</td>
+        <td class="RptPieListado" colspan="2">&nbsp;</td>
+    </tr>
+</table>

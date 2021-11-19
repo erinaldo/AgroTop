@@ -1,0 +1,363 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Models.SoftwareCalidad
+@using AgroFichasWeb.Views
+@model List<CAL_DetalleOrdenProduccion>
+@{
+    ViewBag.Title = "Paletización";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+    AgroFichasDBDataContext dc = new AgroFichasDBDataContext();
+    PlantaProduccion planta = dc.PlantaProduccion.Where(X => X.IdPlantaProduccion == ordenProduccion.IdPlanta).FirstOrDefault();
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <style>
+
+        div.greyGridTable {
+            border: 2px solid #FFFFFF;
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+        }
+
+        .divTable.greyGridTable .divTableCell, .divTable.greyGridTable .divTableHead {
+            border: 1px solid #FFFFFF;
+            padding: 3px 4px;
+        }
+
+        .divTable.greyGridTable .divTableBody .divTableCell {
+            font-size: 13px;
+        }
+
+        .divTable.greyGridTable .divTableCell:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .divTable.greyGridTable .divTableHeading {
+            background: #FFFFFF;
+            border-bottom: 4px solid #ddd;
+        }
+
+            .divTable.greyGridTable .divTableHeading .divTableHead {
+                font-size: 13px;
+                font-weight: bold;
+                color: #777;
+                text-align: center;
+                border-left: 2px solid #ddd;
+            }
+
+                .divTable.greyGridTable .divTableHeading .divTableHead:first-child {
+                    border-left: none;
+                }
+
+        .greyGridTable .tableFootStyle {
+            font-size: 13px;
+            font-weight: bold;
+            color: #777;
+            border-top: 4px solid #ddd;
+        }
+
+        .greyGridTable .tableFootStyle {
+            font-size: 14px;
+        }
+        /* DivTable.com */
+        .divTable {
+            display: table;
+        }
+
+        .divTableRow {
+            display: table-row;
+        }
+
+        .divTableHeading {
+            display: table-header-group;
+        }
+
+        .divTableCell, .divTableHead {
+            display: table-cell;
+        }
+
+        .divTableHeading {
+            display: table-header-group;
+        }
+
+        .divTableFoot {
+            display: table-footer-group;
+        }
+
+        .divTableBody {
+            display: table-row-group;
+        }
+    </style>
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        (function ($) {
+            'use strict';
+
+            var datatableInit = function () {
+                var $table = $('#datatable');
+
+                // format function for row details
+                var fnFormatDetails = function (datatable, tr) {
+                    var data = datatable.fnGetData(tr);
+
+                    return [
+                        data[8]
+                    ].join('');
+                };
+
+                // insert the expand/collapse column
+                var th = document.createElement('th');
+                var td = document.createElement('td');
+                td.innerHTML = '<i data-toggle class="fa fa-plus-square-o text-primary h5 m-none" style="cursor: pointer;"></i>';
+                td.className = "text-center";
+
+                $table
+                    .find('thead tr').each(function () {
+                        this.insertBefore(th, this.childNodes[0]);
+                    });
+
+                $table
+                    .find('tbody tr').each(function () {
+                        this.insertBefore(td.cloneNode(true), this.childNodes[0]);
+                    });
+
+                // initialize
+                var datatable = $table.dataTable({
+                    aoColumnDefs: [{
+                        bSortable: false,
+                        aTargets: [0]
+                    }],
+                    aaSorting: [
+                        [1, 'asc']
+                    ],
+                    "ordering": true,
+                    "searching": true,
+                    "lengthChange": true,
+                    "language": {
+                        "emptyTable": "No hay registros"
+                    },
+                    "pageLength": 100
+                });
+
+                // add a listener
+                $table.on('click', 'i[data-toggle]', function () {
+                    var $this = $(this),
+                        tr = $(this).closest('tr').get(0);
+
+                    if (datatable.fnIsOpen(tr)) {
+                        $this.removeClass('fa-minus-square-o').addClass('fa-plus-square-o');
+                        datatable.fnClose(tr);
+                    } else {
+                        $this.removeClass('fa-plus-square-o').addClass('fa-minus-square-o');
+                        datatable.fnOpen(tr, fnFormatDetails(datatable, tr), 'details');
+                    }
+                });
+            };
+
+            $(function () {
+                datatableInit();
+            });
+
+        }).apply(this, [jQuery]);
+    </script>
+
+    <script>
+        $(".nav-tabs.nav-justified li").click(function () {
+            var id = $(this).prop("href");
+            console.log(id);
+            $('' + id + '').attr('class', 'active');
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">O/P N° @ordenProduccion.LoteComercial | @planta.Nombre</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Espesor</th>
+                    <th>Saco</th>
+                    <th>Sacos Requeridos</th>
+                    <th>Sacos Envasados</th>
+                    <th>% Avance</th>
+                    <th>Acciones</th>
+                    <th class="hidden">Pallets</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.CAL_Subproducto.Nombre.ToUpper()</td>
+                        <td>@(item.IdEspesorProducto.HasValue ? string.Format("{0:N2}-{1:N2} mm", item.CAL_EspesorProducto.Min, item.CAL_EspesorProducto.Max) : "(No tiene Espesor)")</td>
+                        <td>@item.CAL_Saco.Nombre</td>
+                        <td>@string.Format("{0:N0}", item.CantidadSacos)</td>
+                        <td>@string.Format("{0:N0}", item.GetPaletizado())</td>
+                        <td>
+                            @if (item.GetPorcentajeAvance() > 100)
+                            {
+                                <div class="alert alert-danger">
+                                    El porcentaje de avance del envasado es de @string.Format("{0:N2}%", item.GetPorcentajeAvance()).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvance());">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvance())
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (item.GetPorcentajeAvance() == 100)
+                            {
+                                <div class="alert alert-success">
+                                    El porcentaje de avance del envasado es de @string.Format("{0:N2}%", item.GetPorcentajeAvance()).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvance());">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvance())
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (item.GetPorcentajeAvance() == 0)
+                            {
+                                <div class="alert alert-danger">
+                                    El porcentaje de avance del envasado es de @string.Format("{0:N2}%", item.GetPorcentajeAvance()).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvance());">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvance())
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (item.GetPorcentajeAvance() > 0 && item.GetPorcentajeAvance() < 100)
+                            {
+                                <div class="alert alert-warning">
+                                    El porcentaje de avance del envasado es de @string.Format("{0:N2}%", item.GetPorcentajeAvance()).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", item.GetPorcentajeAvance())" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", item.GetPorcentajeAvance());">
+                                            @string.Format("{0:N2}%", item.GetPorcentajeAvance())
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            @if (permisosUsuario.Crear)
+                            {
+                                if (item.GetPorcentajeAvance() != 100)
+                                {
+                                    <button id="@string.Format("createPallet_{0}", item.IdDetalleOrdenProduccion)" onclick="window.location.href='@Url.Action("crearpale", new { id = item.IdOrdenProduccion, idDetalleOrdenProduccion = item.IdDetalleOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Crear Pallet"> <i class="fa fa-plus"></i></button>
+                                }
+                            }
+                            <a href="@Url.Action("ImprimirEtiquetas", "CALPale", new {id = item.IdDetalleOrdenProduccion })" target="_blank" class="btn btn-default"><i class="fa fa-print"></i></a>
+                        </td>
+                        <td class="hidden">
+                            @foreach (DateTime dateTime in item.GetFechas(item.IdDetalleOrdenProduccion))
+                            {
+                                <div class="tabs">
+                                    @{ int I = 0; }
+                                    <ul class="nav nav-tabs nav-justified">
+                                        @foreach (vw_CAL_TurnoPallet turnoPale in item.GetFechas(item.IdDetalleOrdenProduccion, dateTime))
+                                        {
+                                            <li class="@(I == 0 ? "active" : "")">
+                                                <a href="#@CALUtils.GetGuid(turnoPale.IdTurno, item.IdDetalleOrdenProduccion)" data-toggle="tab" class="text-center">@string.Format("{0:dd/MM/yyyy}", dateTime) @turnoPale.Turno</a>
+                                            </li>
+                                            I++;
+                                        }
+                                    </ul>
+                                    @{ int J = 0; }
+                                    <div class="tab-content">
+                                        @foreach (vw_CAL_TurnoPallet turnoPale in item.GetFechas(item.IdDetalleOrdenProduccion, dateTime))
+                                        {
+                                            <div id="@CALUtils.GetGuid(turnoPale.IdTurno, item.IdDetalleOrdenProduccion)" class="@(J == 0 ? "tab-pane active" : "tab-pane")">
+                                                <div class="divTable greyGridTable">
+                                                    <div class="divTableHeading">
+                                                        <div class="divTableRow">
+                                                            <div class="divTableHead">Código QR</div>
+                                                            <div class="divTableHead">Correlativo</div>
+                                                            <div class="divTableHead">Tipo</div>
+                                                            <div class="divTableHead">Cantidad Paletizada</div>
+                                                            <div class="divTableHead">Fecha</div>
+                                                            <div class="divTableHead">Acciones</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="divTableBody">
+                                                        @foreach (CAL_Pale pale in item.GetPales(item.IdDetalleOrdenProduccion, dateTime, turnoPale.IdTurno))
+                                                        {
+                                                            <div class="divTableRow">
+                                                                <div class="divTableCell"><img src="@pale.GetImgSrc()" width="80" /></div>
+                                                                <div class="divTableCell">@pale.IdPale<br />@pale.CodigoInterno</div>
+                                                                <div class="divTableCell">@pale.CAL_TipoPale.Descripcion</div>
+                                                                <div class="divTableCell">@pale.CantidadPaletizada</div>
+                                                                <div class="divTableCell">
+                                                                    <span style="display: block">@string.Format("{0:dd/MM/yyyy HH:mm:ss}", pale.FechaHoraIns)</span>
+                                                                    @pale.GetTurno().CAL_TipoTurno.Descripcion
+                                                                </div>
+                                                                <div class="divTableCell">
+                                                                    <a href="@Url.Action("ImprimirEtiqueta", "CALPale", new {id = pale.IdPale })" target="_blank" class="btn btn-default"><i class="fa fa-print"></i></a>
+                                                                    @if (permisosUsuario.Borrar)
+                                                                    {
+                                                                        <button id="@string.Format("deletePallet_{0}", pale.IdPale)" onclick="window.location.href='@Url.Action("Eliminar", new { id = pale.IdPale })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar Pallet"><i class="fa fa-trash-o"></i></button>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            J++;
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

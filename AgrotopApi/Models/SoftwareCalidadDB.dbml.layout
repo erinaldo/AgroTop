@@ -1,0 +1,563 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 21, 49.375" name="SoftwareCalidadDB">
+  <DataContextMoniker Name="/SoftwareCalidadDBDataContext" />
+  <nestedChildShapes>
+    <classShape Id="57ad2e50-b133-4ebd-a78c-37a41e66ac0b" absoluteBounds="3.5, 14, 2, 1.9631982421874987">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_Exportador" />
+      <nestedChildShapes>
+        <elementListCompartment Id="9e93628f-0080-4ee6-8524-a5fb264b2302" absoluteBounds="3.5150000005960464, 14.46000000089407, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a4bce1bf-5b92-44c4-9afb-97fffc6c599f" absoluteBounds="6.5, 42.25, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoSaco" />
+      <nestedChildShapes>
+        <elementListCompartment Id="a611ce9a-a485-4f1f-8cb1-f4097bb4a0d3" absoluteBounds="6.515, 42.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a95f2fe4-f907-432f-89f8-03b75954c32e" absoluteBounds="13.25, 30.75, 2, 2.3478011067708309">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_PesoTipoSaco" />
+      <nestedChildShapes>
+        <elementListCompartment Id="33ce1a49-6420-4d54-8173-2d8c01d59e37" absoluteBounds="13.265, 31.21, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="0f2ff49e-ec36-4329-9697-c7ffea5ac4cb" absoluteBounds="3.5, 10.375, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/Barco" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f7d1a4b8-d5d0-4f01-9f4c-11657098bec1" absoluteBounds="3.5150000005960464, 10.83500000089407, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="8eb4320b-3b6b-4a60-a796-87d4551631ed" absoluteBounds="0.75, 10.5, 2, 2.5401025390624987">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/Carrier" />
+      <nestedChildShapes>
+        <elementListCompartment Id="095c8dd1-449f-4045-a224-5e9a9c9d9416" absoluteBounds="0.76500000059604645, 10.96000000089407, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="0a955fbb-5de4-40a1-bf4c-9e22db10cda1" absoluteBounds="9, 21.625, 2, 1.7708968098958309">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_TransporteTerrestre" />
+      <nestedChildShapes>
+        <elementListCompartment Id="3f9db6b1-240b-456d-a93a-1bbb32316442" absoluteBounds="9.015, 22.085, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="16f720e2-041e-4335-b5b8-f0a40fe13cb4" absoluteBounds="9.25, 38.375, 2, 3.1170068359375023">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_EspesorProducto" />
+      <nestedChildShapes>
+        <elementListCompartment Id="12f976db-0e3f-4061-8faf-d20b5b35f04c" absoluteBounds="9.265, 38.835, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c624a85e-b911-4436-97d7-9fa1e8a9e236" absoluteBounds="9.25, 43.5, 2, 3.3093082682291595">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_Saco" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1477abbc-3b28-4165-935d-631e744d0724" absoluteBounds="9.265, 43.96, 1.9700000000000002, 2.7493082682291665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="df2870bd-5899-4179-92ed-7fbe874da018" absoluteBounds="9.25, 28.25, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_Contenedor" />
+      <nestedChildShapes>
+        <elementListCompartment Id="50c9fc58-852a-4b72-854a-e3c5d57874fe" absoluteBounds="9.265, 28.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="9ee6e1da-ab8d-4d25-8af5-29347668260c" absoluteBounds="9.25, 34.875, 2, 2.7324039713541737">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_Subproducto" />
+      <nestedChildShapes>
+        <elementListCompartment Id="773b5bf0-cd47-46fc-a770-c5263a565ca4" absoluteBounds="9.265, 35.335, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="665d99c7-d63d-4429-81e3-8a584c93e408" absoluteBounds="9.25, 31.625, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_Producto" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8b50f3e8-dc1c-495e-8f94-c96495544788" absoluteBounds="9.265, 32.085, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="5a4d5599-aaa9-40fe-98f0-c327a0aa8eb7" absoluteBounds="14.75, 1.75, 2, 1.5785953776041668">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/vw_CAL_Producto" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8ecb73aa-5ad8-44ac-b6a4-308810cfa2fd" absoluteBounds="14.765, 2.21, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="4a801146-fcee-4542-8c98-f09a34a4ec44" absoluteBounds="9.25, 25, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_PesoSaco" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ae896c22-c6f9-470c-ad65-9ca010af06af" absoluteBounds="9.265, 25.46, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="22c7b296-b6ff-45c5-abef-87f3b4fcfd49" absoluteBounds="3.5, 7.5, 2, 1.77089680989583">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoOrdenProduccion" />
+      <nestedChildShapes>
+        <elementListCompartment Id="3a38e566-7020-4d65-b2d3-72ea4907fa8f" absoluteBounds="3.5150000005960464, 7.96000000089407, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="64a7c126-baf6-444b-b3bf-63ae395cffd7" absoluteBounds="6.5, 45.5, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoColorHiloSaco" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f9d78cd2-7266-4d2a-af6e-0c463888b084" absoluteBounds="6.515, 45.96, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="1e74c7ea-df40-4f87-9da6-e078c167ac4f" absoluteBounds="14.75, 10, 2, 3.5016097005208344">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_Pale" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ff8473c1-06dc-4bb5-9bd0-17fc8527644e" absoluteBounds="14.765000000596046, 10.46000000089407, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="75160092-6930-422b-9b9f-6b30a6020570" absoluteBounds="12, 0.75, 2, 1.9631982421875">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoPale" />
+      <nestedChildShapes>
+        <elementListCompartment Id="3c428fbf-243e-4d88-a86a-ae422bd1aab5" absoluteBounds="12.015000000596046, 1.2100000008940697, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="14b0bce8-d509-4248-9ad0-9fe9166ba7c7" absoluteBounds="11.75, 15.75, 2, 4.0785139973958326">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_LECargaGranelContenedor" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b0cef1ea-ef1b-4b79-8aae-c2eaaf9b3793" absoluteBounds="11.765, 16.21, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="36c93f4c-96cb-4180-9348-f2ed188a46b5" absoluteBounds="0.75, 2.25, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_PosicionContenedor" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5fc0d08e-8746-45a2-bebf-1bd33f4a20f7" absoluteBounds="0.76500000059604645, 2.7100000008940697, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="5f2e01b2-e49d-4818-9679-2bca47ff461f" absoluteBounds="3.5, 2, 2, 2.3478011067708335">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_PosicionContenedorYalero" />
+      <nestedChildShapes>
+        <elementListCompartment Id="400a9f90-a37a-4c75-8639-d1d27a315aae" absoluteBounds="3.5150000005960464, 2.4600000008940697, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="15fbc6c3-8d28-4150-a9d5-282967d2b49e" absoluteBounds="17.5, 9.875, 2, 3.6939111328124987">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_DespachoPale" />
+      <nestedChildShapes>
+        <elementListCompartment Id="fb1c4d45-1bcf-4d00-830f-54d7236e6620" absoluteBounds="17.515000000596046, 10.33500000089407, 1.9700000000000002, 3.1339111328125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="6c27a758-e08b-49f0-81fa-a2e508eb97c2" absoluteBounds="11.75, 3.75, 2, 4.0785139973958309">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_LEPalletsContenedor" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e5f80bab-150f-4bf3-a0e0-346d966bcb61" absoluteBounds="11.765, 4.2100000000000009, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(7.5 : 42.25); (7.5 : 31.3013012695313); (10.1666666666667 : 31.3013012695313 : JumpStart); (10.3333333333333 : 31.3013012695313 : JumpEnd); (11.2916666666667 : 31.3013012695313 : JumpStart); (11.6458333333333 : 31.3013012695313 : JumpEnd); (13.25 : 31.3013012695313)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoSaco/CAL_TipoSaco_CAL_PesoTipoSaco" />
+      <nodes>
+        <classShapeMoniker Id="a4bce1bf-5b92-44c4-9afb-97fffc6c599f" />
+        <classShapeMoniker Id="a95f2fe4-f907-432f-89f8-03b75954c32e" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(11.25 : 26.6031903369141); (11.2916666666667 : 26.6031903369141 : JumpStart); (11.4583333333333 : 26.6031903369141 : JumpEnd); (13.9166666666667 : 26.6031903369141 : JumpStart); (14.0833333333333 : 26.6031903369141 : JumpEnd); (14.578125 : 26.6031903369141); (14.578125 : 30.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_PesoSaco/CAL_PesoSaco_CAL_PesoTipoSaco" />
+      <nodes>
+        <classShapeMoniker Id="4a801146-fcee-4542-8c98-f09a34a4ec44" />
+        <classShapeMoniker Id="a95f2fe4-f907-432f-89f8-03b75954c32e" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 11.7700512695312); (3.5 : 11.7700512695312)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/Carrier/Carrier_Barco" />
+      <nodes>
+        <classShapeMoniker Id="8eb4320b-3b6b-4a60-a796-87d4551631ed" />
+        <classShapeMoniker Id="0f2ff49e-ec36-4329-9697-c7ffea5ac4cb" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.5 : 44.1450512695313); (9.25 : 44.1450512695313)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoSaco/CAL_TipoSaco_CAL_Saco" />
+      <nodes>
+        <classShapeMoniker Id="a4bce1bf-5b92-44c4-9afb-97fffc6c599f" />
+        <classShapeMoniker Id="c624a85e-b911-4436-97d7-9fa1e8a9e236" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.5 : 46.1546541341146); (9.25 : 46.1546541341146)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoColorHiloSaco/CAL_TipoColorHiloSaco_CAL_Saco" />
+      <nodes>
+        <classShapeMoniker Id="64a7c126-baf6-444b-b3bf-63ae395cffd7" />
+        <classShapeMoniker Id="c624a85e-b911-4436-97d7-9fa1e8a9e236" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(10.25 : 34.1651025390625); (10.25 : 34.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_Producto/CAL_Producto_CAL_Subproducto" />
+      <nodes>
+        <classShapeMoniker Id="665d99c7-d63d-4429-81e3-8a584c93e408" />
+        <classShapeMoniker Id="9ee6e1da-ab8d-4d25-8af5-29347668260c" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(14 : 1.73159912109375); (14.5 : 1.73159912109375); (14.5 : 4.75); (16.625 : 4.75); (16.625 : 9.625); (15.75 : 9.625); (15.75 : 10)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoPale/CAL_TipoPale_CAL_Pale" />
+      <nodes>
+        <classShapeMoniker Id="75160092-6930-422b-9b9f-6b30a6020570" />
+        <classShapeMoniker Id="1e74c7ea-df40-4f87-9da6-e078c167ac4f" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 3.13544840494792); (3.5 : 3.13544840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_PosicionContenedor/CAL_PosicionContenedor_CAL_PosicionContenedorYalero" />
+      <nodes>
+        <classShapeMoniker Id="36c93f4c-96cb-4180-9348-f2ed188a46b5" />
+        <classShapeMoniker Id="5f2e01b2-e49d-4818-9679-2bca47ff461f" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(16.75 : 11.7508048502604); (17.0416666666667 : 11.7508048502604 : JumpStart); (17.2083333333333 : 11.7508048502604 : JumpEnd); (17.5 : 11.7508048502604)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_Pale/CAL_Pale_CAL_DespachoPale" />
+      <nodes>
+        <classShapeMoniker Id="1e74c7ea-df40-4f87-9da6-e078c167ac4f" />
+        <classShapeMoniker Id="15fbc6c3-8d28-4150-a9d5-282967d2b49e" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="82e04bea-e24a-468d-8181-479400278a43" absoluteBounds="13.125, 33.75, 2, 5.4246240234375">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_FT" />
+      <nestedChildShapes>
+        <elementListCompartment Id="82c3527d-50ee-4680-8499-2ff6f70c969c" absoluteBounds="13.14, 34.21, 1.9700000000000002, 4.8646240234375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(11.25 : 33.9575512695313); (13.125 : 33.9575512695313)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_Producto/CAL_Producto_CAL_FT" />
+      <nodes>
+        <classShapeMoniker Id="665d99c7-d63d-4429-81e3-8a584c93e408" />
+        <classShapeMoniker Id="82e04bea-e24a-468d-8181-479400278a43" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(11.25 : 36.2412019856771); (11.2916666666667 : 36.2412019856771 : JumpStart); (11.4583333333333 : 36.2412019856771 : JumpEnd); (13.125 : 36.2412019856771)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_Subproducto/CAL_Subproducto_CAL_FT" />
+      <nodes>
+        <classShapeMoniker Id="9ee6e1da-ab8d-4d25-8af5-29347668260c" />
+        <classShapeMoniker Id="82e04bea-e24a-468d-8181-479400278a43" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="67d94ced-91ea-4606-9211-c4ed6c84c0b3" absoluteBounds="12.375, 40.375, 2, 1.9631982421875">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTTemperatura" />
+      <nestedChildShapes>
+        <elementListCompartment Id="019b5288-a319-4381-b436-2676dbf08d13" absoluteBounds="12.39, 40.835, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(13.75 : 40.375); (13.75 : 39.1746240234375)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTTemperatura/CAL_FTTemperatura_CAL_FT" />
+      <nodes>
+        <classShapeMoniker Id="67d94ced-91ea-4606-9211-c4ed6c84c0b3" />
+        <classShapeMoniker Id="82e04bea-e24a-468d-8181-479400278a43" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="ab48359d-1d12-48a0-becd-6ea902ace137" absoluteBounds="16, 34.625, 2, 2.5401025390625">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTFrecuenciaAnalisis" />
+      <nestedChildShapes>
+        <elementListCompartment Id="666c7f1a-7b68-4819-95c6-4f0572d4226a" absoluteBounds="16.015, 35.085, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(15.125 : 35.8950512695313); (16 : 35.8950512695313)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_FT/CAL_FT_CAL_FTFrecuenciaAnalisis" />
+      <nodes>
+        <classShapeMoniker Id="82e04bea-e24a-468d-8181-479400278a43" />
+        <classShapeMoniker Id="ab48359d-1d12-48a0-becd-6ea902ace137" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="53c1424a-dd34-490a-94e1-fba677fc3fea" absoluteBounds="18.5, 38.375, 2, 2.5401025390625">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoAnalisis" />
+      <nestedChildShapes>
+        <elementListCompartment Id="d1b6ab8a-bd40-44a0-9031-b2a5616c505d" absoluteBounds="18.515, 38.835, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(19.5 : 38.375); (19.5 : 35.8950512695313); (18.3333333333333 : 35.8950512695313 : JumpStart); (18.1666666666667 : 35.8950512695313 : JumpEnd); (18 : 35.8950512695313)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoAnalisis/CAL_TipoAnalisis_CAL_FTFrecuenciaAnalisis" />
+      <nodes>
+        <classShapeMoniker Id="53c1424a-dd34-490a-94e1-fba677fc3fea" />
+        <classShapeMoniker Id="ab48359d-1d12-48a0-becd-6ea902ace137" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="e2d4364c-fc8e-4c98-b34c-759dff51701c" absoluteBounds="15.875, 38.75, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_FrecuenciaAnalisis" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b9ebe20b-3966-406d-917d-c0dc4ea2f77d" absoluteBounds="15.89, 39.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(16.9375 : 38.75); (16.9375 : 37.1651025390625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_FrecuenciaAnalisis/CAL_FrecuenciaAnalisis_CAL_FTFrecuenciaAnalisis" />
+      <nodes>
+        <classShapeMoniker Id="e2d4364c-fc8e-4c98-b34c-759dff51701c" />
+        <classShapeMoniker Id="ab48359d-1d12-48a0-becd-6ea902ace137" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="b87f6a04-e18b-459a-afe9-85e86ad5cd99" absoluteBounds="16.125, 41.75, 2, 2.9247054036458331">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTControlVersion" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e695d5be-ca31-4440-af5b-f7db965367e4" absoluteBounds="16.14, 42.21, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(15.125 : 37.9575512695313); (18.0312495 : 37.9575512695313); (18.0312495 : 41.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_FT/CAL_FT_CAL_FTControlVersion" />
+      <nodes>
+        <classShapeMoniker Id="82e04bea-e24a-468d-8181-479400278a43" />
+        <classShapeMoniker Id="b87f6a04-e18b-459a-afe9-85e86ad5cd99" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="d79c259e-ebdd-47b0-ad58-e46a8ae2bd2f" absoluteBounds="13.375, 43.25, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTControlVersionItem" />
+      <nestedChildShapes>
+        <elementListCompartment Id="f7824ce9-f1e9-46ae-9368-0f32c0b71e75" absoluteBounds="13.39, 43.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="13515347-7990-47c1-98c0-13824b863da4" absoluteBounds="13.375, 46.625, 2, 2.5401025390625023">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTControlVersionMotivo" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c7fd8613-a6a7-40b5-a881-f97484492fef" absoluteBounds="13.39, 47.085, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="ce488207-28b2-4047-9e07-46c8c7547e55" absoluteBounds="14.375, 5, 2, 2.5401025390625005">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTControlVersionSolicitante" />
+      <nestedChildShapes>
+        <elementListCompartment Id="81b5e8c5-e350-418d-b253-20db059dcf68" absoluteBounds="14.39, 5.46, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(15.375 : 43.9623527018229); (16.125 : 43.9623527018229)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTControlVersionItem/CAL_FTControlVersionItem_CAL_FTControlVersion" />
+      <nodes>
+        <classShapeMoniker Id="d79c259e-ebdd-47b0-ad58-e46a8ae2bd2f" />
+        <classShapeMoniker Id="b87f6a04-e18b-459a-afe9-85e86ad5cd99" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(15.375 : 47.8950512695313); (17.125 : 47.8950512695313); (17.125 : 44.6747054036458)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTControlVersionMotivo/CAL_FTControlVersionMotivo_CAL_FTControlVersion" />
+      <nodes>
+        <classShapeMoniker Id="13515347-7990-47c1-98c0-13824b863da4" />
+        <classShapeMoniker Id="b87f6a04-e18b-459a-afe9-85e86ad5cd99" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(16.375 : 6.27005126953125); (16.5416666666667 : 6.27005126953125 : JumpStart); (16.7083333333333 : 6.27005126953125 : JumpEnd); (17.125 : 6.27005126953125); (17.125 : 34.375); (18.25 : 34.375); (18.25 : 41.375); (18.1145828333333 : 41.375 : JumpStart); (17.9479161666667 : 41.375 : JumpEnd); (17.125 : 41.375); (17.125 : 41.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_FTControlVersionSolicitante/CAL_FTControlVersionSolicitante_CAL_FTControlVersion" />
+      <nodes>
+        <classShapeMoniker Id="ce488207-28b2-4047-9e07-46c8c7547e55" />
+        <classShapeMoniker Id="b87f6a04-e18b-459a-afe9-85e86ad5cd99" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="a2ef4b9c-7bfd-4e11-af08-bd5b36a2d86b" absoluteBounds="8.875, 9.125, 2, 4.6554182942708326">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_LECargaGranel" />
+      <nestedChildShapes>
+        <elementListCompartment Id="d25d804c-23a3-48ed-ad1f-da172bcd47c5" absoluteBounds="8.89, 9.585, 1.9700000000000002, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(10.21875 : 13.7804182942708); (10.21875 : 18.5183740234375); (11.0729166666667 : 18.5183740234375 : JumpStart); (11.2395833333333 : 18.5183740234375 : JumpEnd); (11.2916666666667 : 18.5183740234375 : JumpStart); (11.7083333333333 : 18.5183740234375 : JumpEnd); (11.75 : 18.5183740234375)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_LECargaGranel/CAL_LECargaGranel_CAL_LECargaGranelContenedor" />
+      <nodes>
+        <classShapeMoniker Id="a2ef4b9c-7bfd-4e11-af08-bd5b36a2d86b" />
+        <classShapeMoniker Id="14b0bce8-d509-4248-9ad0-9fe9166ba7c7" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(5.5 : 10.375); (5.875 : 10); (5.875 : 8.75); (6.22916666666667 : 8.75 : JumpStart); (6.48958333333333 : 8.75 : JumpEnd); (7.26041416666667 : 8.75 : JumpStart); (7.42708083333333 : 8.75 : JumpEnd); (8.32291666666667 : 8.75 : JumpStart); (8.48958333333333 : 8.75 : JumpEnd); (8.5 : 8.75); (8.875 : 9.125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/Barco/Barco_CAL_LECargaGranel" />
+      <nodes>
+        <classShapeMoniker Id="0f2ff49e-ec36-4329-9697-c7ffea5ac4cb" />
+        <classShapeMoniker Id="a2ef4b9c-7bfd-4e11-af08-bd5b36a2d86b" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.75 : 10.5); (1.75 : 9.44794840494792); (5.79166666666667 : 9.44794840494792 : JumpStart); (5.95833333333333 : 9.44794840494792 : JumpEnd); (6.16666666666667 : 9.44794840494792 : JumpStart); (6.48958333333333 : 9.44794840494792 : JumpEnd); (7.26041416666667 : 9.44794840494792 : JumpStart); (7.42708083333333 : 9.44794840494792 : JumpEnd); (8.32291666666667 : 9.44794840494792 : JumpStart); (8.48958333333333 : 9.44794840494792 : JumpEnd); (8.875 : 9.44794840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/Carrier/Carrier_CAL_LECargaGranel" />
+      <nodes>
+        <classShapeMoniker Id="8eb4320b-3b6b-4a60-a796-87d4551631ed" />
+        <classShapeMoniker Id="a2ef4b9c-7bfd-4e11-af08-bd5b36a2d86b" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="95b94349-bb83-4894-8206-9aa7ed6c93ce" absoluteBounds="17, 3.375, 2, 1.9631982421875">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/vw_CAL_ProductoConEspesor" />
+      <nestedChildShapes>
+        <elementListCompartment Id="22e70948-02fe-482e-b7c8-9ea49adc0d47" absoluteBounds="17.015, 3.835, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="b8726484-b2a8-4206-8093-72bf48a7d1ba" absoluteBounds="18.75, 6.375, 2, 2.9247054036458331">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_RITSelloTara" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8227a374-41aa-48dd-972e-629df4f75efb" absoluteBounds="18.765, 6.8350000000000009, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="45f580cb-cfc8-481b-9e7a-72aade54a47d" absoluteBounds="8.75, 3, 2, 4.6554182942708326">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_LEPallets" />
+      <nestedChildShapes>
+        <elementListCompartment Id="2a8288ae-4818-45d1-985b-485e5fb6a4a9" absoluteBounds="8.765, 3.46, 1.9700000000000002, 4.095418294270833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(10.75 : 5.70270914713542); (11.75 : 5.70270914713542)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_LEPallets/CAL_LEPallets_CAL_LEPalletsContenedor" />
+      <nodes>
+        <classShapeMoniker Id="45f580cb-cfc8-481b-9e7a-72aade54a47d" />
+        <classShapeMoniker Id="6c27a758-e08b-49f0-81fa-a2e508eb97c2" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(5.5 : 11.7724539856771); (6.25 : 11.7724539856771); (6.25 : 8.875); (6.32291666666667 : 8.875 : JumpStart); (6.48958333333333 : 8.875 : JumpEnd); (7.26041416666667 : 8.875 : JumpStart); (7.42708083333333 : 8.875 : JumpEnd); (8.32291666666667 : 8.875 : JumpStart); (8.48958333333333 : 8.875 : JumpEnd); (8.54166666666667 : 8.875 : JumpStart); (8.70833333333333 : 8.875 : JumpEnd); (9.46353891666667 : 8.875 : JumpStart); (9.63020558333333 : 8.875 : JumpEnd); (9.9687495 : 8.875); (9.9687495 : 7.65541829427083)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/Barco/Barco_CAL_LEPallets" />
+      <nodes>
+        <classShapeMoniker Id="0f2ff49e-ec36-4329-9697-c7ffea5ac4cb" />
+        <classShapeMoniker Id="45f580cb-cfc8-481b-9e7a-72aade54a47d" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 11.7700512695312); (3.25 : 11.7700512695312); (3.25 : 10.125); (5.66666666666667 : 10.125 : JumpStart); (5.83333333333333 : 10.125 : JumpEnd); (6.16666666666667 : 10.125 : JumpStart); (6.33333333333333 : 10.125 : JumpEnd); (6.375 : 10.125); (6.375 : 9); (7.26041416666667 : 9 : JumpStart); (7.42708083333333 : 9 : JumpEnd); (8.32291666666667 : 9 : JumpStart); (8.48958333333333 : 9 : JumpEnd); (8.66666666666667 : 9 : JumpStart); (8.83333333333333 : 9 : JumpEnd); (9.54687225 : 9); (9.54687225 : 7.65541829427083)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/Carrier/Carrier_CAL_LEPallets" />
+      <nodes>
+        <classShapeMoniker Id="8eb4320b-3b6b-4a60-a796-87d4551631ed" />
+        <classShapeMoniker Id="45f580cb-cfc8-481b-9e7a-72aade54a47d" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="7d129b53-e5c1-494a-abbd-11af61c11f03" absoluteBounds="12, 9.5, 2, 4.8477197265625">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_DetalleOrdenProduccion" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4cfa3ae3-9daf-4391-9fdb-6597f0eb7a38" absoluteBounds="12.015, 9.96, 1.9700000000000002, 4.2877197265625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(14 : 11.7508048502604); (14.75 : 11.7508048502604)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_DetalleOrdenProduccion/CAL_DetalleOrdenProduccion_CAL_Pale" />
+      <nodes>
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+        <classShapeMoniker Id="1e74c7ea-df40-4f87-9da6-e078c167ac4f" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(14 : 9.90625); (15.6666666666667 : 9.90625 : JumpStart); (15.8333333333333 : 9.90625 : JumpEnd); (17.0416666666667 : 9.90625 : JumpStart); (17.2083333333333 : 9.90625 : JumpEnd); (17.5 : 9.90625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_DetalleOrdenProduccion/CAL_DetalleOrdenProduccion_CAL_DespachoPale" />
+      <nodes>
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+        <classShapeMoniker Id="15fbc6c3-8d28-4150-a9d5-282967d2b49e" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(14.125 : 33.75); (14.125 : 33.3478011067708); (15.5 : 33.3478011067708); (15.5 : 13.7516097005208); (14.5 : 13.7516097005208); (14.5 : 13.0805142884115); (14 : 13.0805142884115)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_FT/CAL_FT_CAL_DetalleOrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="82e04bea-e24a-468d-8181-479400278a43" />
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(11.15625 : 25); (11.15625 : 14.0953190104167); (11.2916666666667 : 14.0953190104167 : JumpStart); (11.7083333333333 : 14.0953190104167 : JumpEnd); (12 : 14.0953190104167)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_PesoSaco/CAL_PesoSaco_CAL_DetalleOrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="4a801146-fcee-4542-8c98-f09a34a4ec44" />
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(11.25 : 29.4999995); (11.2916666666667 : 29.4999995 : JumpStart); (11.7083333333333 : 29.4999995 : JumpEnd); (14 : 29.4999995); (14 : 14.7227197265625); (13 : 14.7227197265625); (13 : 14.3477197265625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_Contenedor/CAL_Contenedor_CAL_DetalleOrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="df2870bd-5899-4179-92ed-7fbe874da018" />
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(10.25 : 38.375); (10.25 : 37.8574039713542); (11.2916666666667 : 37.8574039713542 : JumpStart); (11.4583333333333 : 37.8574039713542 : JumpEnd); (11.5 : 37.8574039713542); (11.5 : 11.7664075052083); (11.5416666666667 : 11.7664075052083 : JumpStart); (11.7083333333333 : 11.7664075052083 : JumpEnd); (12 : 11.7664075052083)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_EspesorProducto/CAL_EspesorProducto_CAL_DetalleOrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="16f720e2-041e-4335-b5b8-f0a40fe13cb4" />
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(10.25 : 31.625); (10.25 : 31.0401025390625); (11.2916666666667 : 31.0401025390625 : JumpStart); (11.5833333333333 : 31.0401025390625 : JumpEnd); (11.625 : 31.0401025390625); (11.625 : 10.6019517526042); (12 : 10.6019517526042)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_Producto/CAL_Producto_CAL_DetalleOrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="665d99c7-d63d-4429-81e3-8a584c93e408" />
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(10.25 : 43.5); (10.25 : 41.7420068359375); (11.375 : 41.7420068359375); (11.375 : 12.836513078776); (11.4166666666667 : 12.836513078776 : JumpStart); (11.7083333333333 : 12.836513078776 : JumpEnd); (12 : 12.836513078776)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_Saco/CAL_Saco_CAL_DetalleOrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="c624a85e-b911-4436-97d7-9fa1e8a9e236" />
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(10.25 : 34.875); (10.25 : 34.4151025390625); (11.2916666666667 : 34.4151025390625 : JumpStart); (11.4583333333333 : 34.4151025390625 : JumpEnd); (11.5625 : 34.4151025390625); (11.5625 : 11.1841796289062); (12 : 11.1841796289062)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_Subproducto/CAL_Subproducto_CAL_DetalleOrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="9ee6e1da-ab8d-4d25-8af5-29347668260c" />
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" absoluteBounds="6.5, 9.625, 2, 6.7707340494791657">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_OrdenProduccion" />
+      <nestedChildShapes>
+        <elementListCompartment Id="440aec1c-d9ff-4e61-b202-f3bbdb599c64" absoluteBounds="6.515, 10.085, 1.9700000000000002, 6.2107340494791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(7.5 : 16.3957340494792); (7.5 : 22.5104484049479); (9 : 22.5104484049479)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_OrdenProduccion/CAL_OrdenProduccion_CAL_TransporteTerrestre" />
+      <nodes>
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+        <classShapeMoniker Id="0a955fbb-5de4-40a1-bf4c-9e22db10cda1" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.5 : 15.2051098632813); (10.1354166666667 : 15.2051098632813 : JumpStart); (10.3020833333333 : 15.2051098632813 : JumpEnd); (11.0729166666667 : 15.2051098632813 : JumpStart); (11.2395833333333 : 15.2051098632813 : JumpEnd); (11.2916666666667 : 15.2051098632812 : JumpStart); (11.7083333333333 : 15.2051098632813 : JumpEnd); (13.9166666666667 : 15.2051098632813 : JumpStart); (14.0833333333333 : 15.2051098632813 : JumpEnd); (15.4166666666667 : 15.2051098632813 : JumpStart); (15.5833333333333 : 15.2051098632813 : JumpEnd); (17.0416666666667 : 15.2051098632813 : JumpStart); (17.2083333333333 : 15.2051098632813 : JumpEnd); (18.5 : 15.2051098632813); (18.5 : 13.5689111328125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_OrdenProduccion/CAL_OrdenProduccion_CAL_DespachoPale" />
+      <nodes>
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+        <classShapeMoniker Id="15fbc6c3-8d28-4150-a9d5-282967d2b49e" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.5 : 11.7027091471354); (8.875 : 11.7027091471354)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_OrdenProduccion/CAL_OrdenProduccion_CAL_LECargaGranel" />
+      <nodes>
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+        <classShapeMoniker Id="a2ef4b9c-7bfd-4e11-af08-bd5b36a2d86b" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.5 : 12.3838029316406); (8.8125 : 12.3838029316406); (8.8125 : 9.0625); (10.39062675 : 9.0625); (10.39062675 : 7.65541829427083)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_OrdenProduccion/CAL_OrdenProduccion_CAL_LEPallets" />
+      <nodes>
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+        <classShapeMoniker Id="45f580cb-cfc8-481b-9e7a-72aade54a47d" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.5 : 13.9066186523438); (10.1354166666667 : 13.9066186523438 : JumpStart); (10.3020833333333 : 13.9066186523438 : JumpEnd); (11.2916666666667 : 13.9066186523438 : JumpStart); (11.7083333333333 : 13.9066186523438 : JumpEnd); (12 : 13.9066186523438)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_OrdenProduccion/CAL_OrdenProduccion_CAL_DetalleOrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(5.5 : 11.8201462933694); (6.22916666666667 : 11.8201462933694 : JumpStart); (6.48958333333333 : 11.8201462933694 : JumpEnd); (6.5 : 11.8201462933694)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/Barco/Barco_CAL_OrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="0f2ff49e-ec36-4329-9697-c7ffea5ac4cb" />
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(5.5 : 14.9815991210937); (6.22916666666667 : 14.9815991210937 : JumpStart); (6.48958333333333 : 14.9815991210937 : JumpEnd); (6.5 : 14.9815991210937)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_Exportador/CAL_Exportador_CAL_OrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="57ad2e50-b133-4ebd-a78c-37a41e66ac0b" />
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(5.5 : 8.28681559244792); (6.22916666666667 : 8.28681559244791 : JumpStart); (6.48958333333333 : 8.28681559244792 : JumpEnd); (7.26041416666667 : 8.28681559244792 : JumpStart); (7.42708083333333 : 8.28681559244792 : JumpEnd); (8.40625 : 8.28681559244792); (8.40625 : 9.625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_TipoOrdenProduccion/CAL_TipoOrdenProduccion_CAL_OrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="22c7b296-b6ff-45c5-abef-87f3b4fcfd49" />
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.75 : 13.0401025390625); (1.75 : 13.5537019856771); (6.22916666666667 : 13.5537019856771 : JumpStart); (6.48958333333333 : 13.5537019856771 : JumpEnd); (6.5 : 13.5537019856771)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/Carrier/Carrier_CAL_OrdenProduccion" />
+      <nodes>
+        <classShapeMoniker Id="8eb4320b-3b6b-4a60-a796-87d4551631ed" />
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="c3a7d763-27d5-41d7-995d-720ad16ce9ca" absoluteBounds="6.25, 1.375, 2, 6.3861311848958326">
+      <DataClassMoniker Name="/SoftwareCalidadDBDataContext/CAL_DespachoCargaGranel" />
+      <nestedChildShapes>
+        <elementListCompartment Id="47991487-3f28-4db5-9f26-5eef0123e965" absoluteBounds="6.265, 1.835, 1.9700000000000002, 5.826131184895833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.3125 : 7.76113118489583); (6.3125 : 17.4570515364583); (6.32291666666667 : 17.4570515364583 : JumpStart); (6.48958333333333 : 17.4570515364583 : JumpEnd); (7.41666666666667 : 17.4570515364583 : JumpStart); (7.58333333333333 : 17.4570515364583 : JumpEnd); (10.1354166666667 : 17.4570515364583 : JumpStart); (10.3020833333333 : 17.4570515364583 : JumpEnd); (11.0729166666667 : 17.4570515364583 : JumpStart); (11.2395833333333 : 17.4570515364583 : JumpEnd); (11.2916666666667 : 17.4570515364583 : JumpStart); (11.7083333333333 : 17.4570515364583 : JumpEnd); (11.75 : 17.4570515364583)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_DespachoCargaGranel/CAL_DespachoCargaGranel_CAL_LECargaGranelContenedor" />
+      <nodes>
+        <classShapeMoniker Id="c3a7d763-27d5-41d7-995d-720ad16ce9ca" />
+        <classShapeMoniker Id="14b0bce8-d509-4248-9ad0-9fe9166ba7c7" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(12 : 9.5); (11.625 : 9.125); (11.625 : 8.13613118489583); (10.4739600833333 : 8.13613118489583 : JumpStart); (10.3072934166667 : 8.13613118489583 : JumpEnd); (10.0520828333333 : 8.13613118489583 : JumpStart); (9.88541616666667 : 8.13613118489583 : JumpEnd); (9.63020558333333 : 8.13613118489583 : JumpStart); (9.46353891666667 : 8.13613118489583 : JumpEnd); (8.625 : 8.13613118489583); (8.25 : 7.76113118489583)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_DetalleOrdenProduccion/CAL_DetalleOrdenProduccion_CAL_DespachoCargaGranel" />
+      <nodes>
+        <classShapeMoniker Id="7d129b53-e5c1-494a-abbd-11af61c11f03" />
+        <classShapeMoniker Id="c3a7d763-27d5-41d7-995d-720ad16ce9ca" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(13.125 : 38.0849519856771); (11.4583333333333 : 38.0849519856771 : JumpStart); (11.2916666666667 : 38.0849519856771 : JumpEnd); (10.3333333333333 : 38.0849519856771 : JumpStart); (10.1666666666667 : 38.0849519856771 : JumpEnd); (7.58333333333333 : 38.0849519856771 : JumpStart); (7.41666666666667 : 38.0849519856771 : JumpEnd); (6.40625 : 38.0849519856771); (6.40625 : 7.76113118489583)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_FT/CAL_FT_CAL_DespachoCargaGranel" />
+      <nodes>
+        <classShapeMoniker Id="82e04bea-e24a-468d-8181-479400278a43" />
+        <classShapeMoniker Id="c3a7d763-27d5-41d7-995d-720ad16ce9ca" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(7.3437475 : 9.625); (7.3437475 : 7.76113118489583)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/SoftwareCalidadDBDataContext/CAL_OrdenProduccion/CAL_OrdenProduccion_CAL_DespachoCargaGranel" />
+      <nodes>
+        <classShapeMoniker Id="6833a1e0-0bb3-46bf-bd38-8a4ceb26bcd1" />
+        <classShapeMoniker Id="c3a7d763-27d5-41d7-995d-720ad16ce9ca" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

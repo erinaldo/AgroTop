@@ -1,0 +1,8 @@
+﻿    <ul>
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(3))
+        {
+        <li><a href="@Url.Content("~/agricultores")">Administrar</a></li>
+        <li><a href="@Url.Content("~/agricultores/crear")">Crear Agricultor</a></li>
+        <li><a href="@Url.Content("~/agricultores/recientes")">Movimientos Recientes</a></li>
+        }
+    </ul>

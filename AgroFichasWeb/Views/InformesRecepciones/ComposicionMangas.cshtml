@@ -1,0 +1,112 @@
+﻿@using AgroFichasWeb.Models
+@model List<rpt_ComposicionMangaResult>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.Title = "Composición de Mangas " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+
+    var dc = new AgroFichasDBDataContext();
+    var cultivos = Model.Select(i => i.IdCultivoContrato).Distinct().OrderBy(i => i);
+    var sucursales = Model.Select(i => i.IdSucursal).Distinct();
+    
+    var bodegasIndex = dc.Bodega.ToList();
+    var sucursalesIndex = dc.Sucursal.ToList();
+    var cultivosIndex = dc.CultivoContrato.ToList();
+    
+    var idPeso = (int)ViewData["idPeso"];
+}
+
+
+@section filter {
+    @using (Html.BeginForm())
+    {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("CultivoSelector")</td>
+                <td>@Html.Partial("SucursalSelector")</td>
+                <td>@Html.Partial("PesoSelector")</td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Cultivo:</td>
+        <td nowrap="nowrap">@ViewData["cultivoLabel"]</td>
+        <td class="RptLabel">Peso:</td>
+        <td nowrap="nowrap">@ViewData["pesoLabel"]</td>
+        <td class="RptLabel">Planta:</td>
+        <td width="100%" nowrap="nowrap">@ViewData["sucursalLabel"]</td>
+    </tr>
+</table>
+<ul style="font-style: italic; font-size: 12px;">
+    <li>En toneladas, según fecha de segundo pesaje</li>
+</ul>
+
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptEncabezadoListado">&nbsp;</td>
+        @foreach (var sucursal in sucursales)
+        {
+            var colspan = Model.Where(m => m.IdSucursal == sucursal).Select(m => m.Manga).Distinct().Count();
+            <td class="RptEncabezadoListadoGrupo" align="center" colspan="@colspan">@sucursalesIndex.Single(b => b.IdSucursal == sucursal).Nombre</td>
+        }
+        <td class="RptEncabezadoListado">&nbsp;</td>
+    </tr>
+    <tr valign="bottom">
+        <td class="RptEncabezadoListado" align="left">Fecha</td>
+        @foreach (var sucursal in sucursales)
+        {
+            foreach (var manga in Model.Where(m => m.IdSucursal == sucursal).Select(m => m.Manga).Distinct().OrderBy(m => m.Value))
+            {
+                <td class="RptEncabezadoListado" align="right">@manga</td>
+            }
+        }
+        <td class="RptEncabezadoListado" align="right">Total</td>
+    </tr>
+    @foreach (var idCultivoContrato in cultivos)
+    {
+        <tr class="RptItemListado" valign="top">
+            <td align="left">@(cultivosIndex.Single(c => c.IdCultivoContrato == idCultivoContrato).Nombre)</td>
+            @foreach (var sucursal in sucursales)
+            {
+                foreach (var manga in Model.Where(m => m.IdSucursal == sucursal).Select(m => m.Manga).Distinct().OrderBy(m => m.Value))
+                {
+                    var valor = Model.SingleOrDefault(i => i.IdCultivoContrato == idCultivoContrato && i.Manga.Value == manga.Value);
+                    if (valor != null)
+                    {
+                        <td align="right">@((( (idPeso == 1 ? valor.PesoNormal : valor.PesoBruto) ?? 0) / 1000M).ToString("#,##0.0"))</td>
+                    }
+                    else
+                    {
+                        <td align="right"></td>
+                    }
+                }
+            }
+            <td align="right">
+                @(((Model.Where(i => i.IdCultivoContrato == idCultivoContrato).Select(i => (idPeso == 1 ? i.PesoNormal : i.PesoBruto)).Sum() ?? 0) / 1000M).ToString("#,##0.0"))
+            </td>
+        </tr>
+    }
+    <tr>
+        <td class="RptPieListado" colspan="1">&nbsp;</td>
+        @foreach (var sucursal in sucursales)
+        {
+            foreach (var manga in Model.Where(m => m.IdSucursal == sucursal).Select(m => m.Manga).Distinct().OrderBy(m => m.Value))
+            {
+                <td class="RptPieListado" align="right">
+                    @(((Model.Where(i => i.Manga.Value == manga.Value).Select(i => (idPeso == 1 ? i.PesoNormal : i.PesoBruto)).Sum() ?? 0) / 1000M).ToString("#,##0.0"))
+                </td>
+            }
+        }
+        <td class="RptPieListado" align="right">
+            @(((Model.Select(i => (idPeso == 1 ? i.PesoNormal : i.PesoBruto)).Sum() ?? 0) / 1000M).ToString("#,##0.0"))
+        </td>
+    </tr>
+</table>

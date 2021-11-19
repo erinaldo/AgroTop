@@ -1,0 +1,13 @@
+﻿@using AgroFichasWeb.Models
+@model AgroFichasWeb.ViewModels.Recepciones.TemporadaSelectorViewModel
+
+<ul>
+    @foreach (var t in Model.Temporadas)
+    {
+        if (t.IdTemporada != Model.Temporada.IdTemporada)
+        {
+            <li><a href="@Model.HrefMask.Replace("IDTEMPORADA", t.IdTemporada.ToString())">@t.Nombre</a></li>
+        }
+    }
+</ul>
+<div style="clear:both;"></div>

@@ -1,0 +1,93 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+@using AgroFichasWeb.ViewModels.Liquidaciones
+@using Newtonsoft.Json;
+
+@model ConvenioPrecio
+
+@{
+    ViewBag.NombreSeccion = "Convenios de Precio";
+    ViewBag.Title = "Notificar Cambios a Convenio de Precio";
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/validate.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    @Html.Hidden("id", Model.IdConvenioPrecio)
+    <fieldset class="dataForm">
+        <p>
+            <label>ID</label>
+            <b>@Model.IdConvenioPrecio</b>
+        </p>
+        <div class="p">
+            <label>Contrato</label>
+            @Model.Contrato.NumeroContrato
+        </div>
+        <p>
+            <label>Agricultor</label>
+            @Model.Contrato.Agricultor.Nombre
+        </p>
+        <div class="p">
+            <label style="float: left; margin-top: 0px;">Destinatarios</label>
+            <ul style="float: left; margin: 0px 0px 20px 0px; padding: 0px; list-style: none;">
+                @{
+                    int index = 0;
+                    foreach (var s in Model.DestanatariosNotificacion())
+                    {
+                        <li>
+                            @if (!String.IsNullOrWhiteSpace(s.Email))
+                            {
+                                if (s.Optional)
+                                {
+                                    <input type="checkbox" name="Destinatarios[@index].Seleccionado" value="true" checked="checked" />
+                                    <input type="hidden"   name="Destinatarios[@index].Seleccionado" value="false" />
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="Destinatarios[@index].Seleccionado" value="true" />
+                                }
+
+                                <input type="hidden" name="Destinatarios[@index].Rol" value="@s.Rol" />
+                                <input type="hidden" name="Destinatarios[@index].Email" value="@s.Email" />
+                                <input type="hidden" name="Destinatarios[@index].Nombre" value="@s.Nombre" />
+                                <span>@(new MvcHtmlString(String.Format("{0} &lt;{1}&gt; ({2})", s.Nombre, s.Email, s.Rol)))</span>
+
+                                index++;
+                            }
+                            else
+                            {
+                                <span style="color: red">@(new MvcHtmlString(String.Format("{0} &lt;{1}&gt; ({2})", s.Nombre, s.Email, s.Rol))) NO HAY EMAIL REGISTRADO</span>
+                            }
+                        </li>
+                    }
+                }
+            </ul>
+            <div style="clear: both"></div>
+        </div>
+        <p class="okcancel">
+            <input type="submit" value="Enviar notificaciones" /> o
+            @if (!String.IsNullOrEmpty(Request.QueryString["backto"]))
+            {
+                <a href="@Request.QueryString["backto"]">Cancelar</a>
+            }
+            else
+            {
+                @Html.ActionLink("Cancelar", "Index")
+            }
+        </p>
+    </fieldset>
+
+}
+

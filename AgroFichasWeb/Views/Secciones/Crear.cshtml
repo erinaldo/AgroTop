@@ -1,0 +1,36 @@
+﻿@using AgroFichasWeb.Models
+
+@model Seccion
+
+@{
+    ViewBag.NombreSeccion = "Secciones";
+    if (Model.IdSeccion == 0)
+    {
+        ViewBag.Title = "Crear Sección";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Sección";
+    }
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Descripción</label>
+            @Html.TextBox("Descripcion", Model.Descripcion, new { @class = "heavy std", maxlength = "128" })
+            @Html.ValidationMessage("Descripcion", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar esta Sección" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

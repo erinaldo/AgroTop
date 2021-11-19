@@ -1,0 +1,72 @@
+﻿@using AgroFichasWeb.Models
+@model List<rpt_RecepcionesMangasResult>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.Title = "Recepciones Mangas " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+}
+
+
+@section filter {
+    @using (Html.BeginForm())
+    {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("EmpresaSelector")</td>
+                <td>@Html.Partial("SucursalSelector")</td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Empresa:</td>
+        <td>@ViewData["empresaLabel"]</td>
+        <td class="RptLabel">Planta:</td>
+        <td width="100%">@ViewData["sucursalLabel"]</td>
+    </tr>
+</table>
+<br />
+
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptEncabezadoListado">Planta</td>
+        <td class="RptEncabezadoListado" align="right">Manga</td>
+        <td class="RptEncabezadoListado" align="right">Fecha</td>
+        <td class="RptEncabezadoListado" align="right">Nro</td>
+        <td class="RptEncabezadoListado" align="right">Nro Manual</td>
+        <td class="RptEncabezadoListado" align="right">Guía</td>
+        <td class="RptEncabezadoListado" align="right">Rut</td>
+        <td class="RptEncabezadoListado">Agricultor</td>
+        <td class="RptEncabezadoListado">Cultivo</td>
+        <td class="RptEncabezadoListado" align="right">Kg Neto</td>
+        <td class="RptEncabezadoListado" align="right">Kg Std</td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr class="RptItemListado" valign="top">
+            <td nowrap="nowrap">@item.Sucursal</td>
+            <td nowrap="nowrap" align="right">@item.Manga</td>
+            <td nowrap="nowrap" align="right">@item.Fecha.Value.ToString("dd/MM")</td>
+            <td nowrap="nowrap" align="right">@item.IdProcesoIngreso</td>
+            <td nowrap="nowrap" align="right">@item.NroIngresoManual</td>
+            <td nowrap="nowrap" align="right">@item.NumeroGuia</td>
+            <td nowrap="nowrap" align="right">@item.Rut</td>
+            <td>@item.Nombre</td>
+            <td>@item.CultivoContrato</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0}", item.PesoBruto.Value)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0}", item.PesoNormal.Value)</td>
+        </tr>
+    }
+    <tr>
+        <td class="RptPieListado" colspan="9">&nbsp;</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", Model.Select(m => m.PesoBruto).Sum().Value)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", Model.Select(m => m.PesoNormal).Sum().Value)</td>
+    </tr>
+</table>

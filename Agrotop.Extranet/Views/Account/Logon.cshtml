@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Iniciar Sesión";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <script  type="text/javascript">
+
+        $(document).ready(function () {
+            $("#Usuario").focus();
+        });
+    
+    </script>
+
+    <div class="titulo1">Acceso Clientes</div>
+
+    <div id="login-Box">
+        <div id="login-Margin">
+            <div id="loginError">
+                @Html.ValidationSummary()
+            </div>
+            <div class="box">
+                @using (Html.BeginForm())
+                {
+                    <p>
+                        <label>Rut</label>
+                        @Html.TextBox("Usuario", "", new { @class = "caxa", maxlength = "100" })
+                    </p>
+                    <p>
+                        <label>Contraseña</label>
+                        @Html.Password("Password", "", new { @class = "caxa" })
+                    </p>
+                    <p>
+                        @Html.ActionLink("¿Olvidó su contraseña?", "initrecovery")
+                    </p>                    
+                    <p>
+                        <input type="submit" value="Ingresar" class="botonx" />
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="login-Instrucciones" class="genContentText">
+        <p>Esta sección es de acceso exclusivo para clientes de Empresas Agrotop</p>
+        <p>Si no conoce u olvidó su contraseña, puede crear una nueva contraseña aquí:<br />  @Html.ActionLink("¿Olvidó o no conoce su contraseña?", "initrecovery")</p>
+        <p>También puede contactar a nuestro servicio de atención a cliente:</p>
+        <p><b>+56 (45) 2377025</b></p>
+        <p><a href="mailto:servicioalcliente@empresasagrotop.cl">servicioalcliente@@empresasagrotop.cl</a></p>
+    </div>
+    <div style="clear:both" />

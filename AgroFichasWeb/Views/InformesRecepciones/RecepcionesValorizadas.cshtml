@@ -1,0 +1,106 @@
+﻿@using AgroFichasWeb.Models
+@model List<rpt_DetalleRecepcionesResult>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.Title = "Recepciones Valorizadas" + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+    
+    var dc = new AgroFichasDBDataContext();
+
+    var totalValor = 0M;
+    var kilosValor = 0;
+}
+
+
+@section filter {
+    @using(Html.BeginForm()) {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("EmpresaSelector")</td>
+                <td>@Html.Partial("SucursalSelector")</td>
+                <td><input type="text" name="key" value="@ViewData["key"]" /></td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Empresa:</td>
+        <td>@ViewData["empresaLabel"]</td>
+        <td class="RptLabel">Planta:</td>
+        <td>@ViewData["sucursalLabel"]</td>
+        <td class="RptLabel">Filtro:</td>
+        <td width="100%">
+            @(!String.IsNullOrWhiteSpace(ViewData["key"].ToString()) ? ViewData["key"] : "(ninguno)")
+            @*@Html.ActionLink("Exportar", "recepcionesvalorizadasexport", new { idTemporada = temporada.IdTemporada, idEmpresa = ViewData["idEmpresa"], idSucursal = ViewData["idSucursal"] , key = ViewData["key"] }, new { @class = "exportlink" })*@
+        </td>
+    </tr>
+    </table>
+    <p><small><i>(*) Ingreso no cerrado aún. Se valorizó utilizando precio spot</i></small></p>
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptEncabezadoListado">Nro</td>
+        <td class="RptEncabezadoListado">Fecha</td>
+        <td class="RptEncabezadoListado" align="right">Rut</td>
+        <td class="RptEncabezadoListado">Agricultor</td>
+        <td class="RptEncabezadoListado">Planta</td>
+        <td class="RptEncabezadoListado">Empresa</td>
+        <td class="RptEncabezadoListado">Cultivo</td>
+        <td class="RptEncabezadoListado">Variedad</td>
+        <td class="RptEncabezadoListado" align="right">Kg Neto</td>
+        <td class="RptEncabezadoListado" align="right">Kg Std</td>
+        <td class="RptEncabezadoListado" align="right">Precio / Kg</td>
+        <td class="RptEncabezadoListado" align="right">Valor Neto CLP</td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        bool usingSpot;
+        decimal precioCLP;
+        var pi = dc.ProcesoIngreso.Single(p => p.IdProcesoIngreso == item.IdProcesoIngreso);
+        decimal? valor = pi.Valorizar(dc, out precioCLP, out usingSpot);
+        if (valor.HasValue)
+        {
+            totalValor += valor.Value;
+            kilosValor += item.PesoNormal.Value;
+        }
+        <tr class="RptItemListado" valign="top">
+            <td nowrap="nowrap">@item.IdProcesoIngreso</td>
+            <td nowrap="nowrap" align="right">@item.FechaHoraLlegada.Value.ToString("dd/MM")</td>
+            <td nowrap="nowrap" align="right">@item.Rut</td>
+            <td>@item.Nombre</td>
+            <td>@item.Sucursal</td>
+            <td>@item.Empresa</td>
+            <td>@item.Cultivo</td>
+            <td>@item.Variedad</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0}", item.PesoBruto.Value)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0}", item.PesoNormal.Value)</td>
+            <td nowrap="nowrap" align="right">
+                @(usingSpot ? "* ": "")
+                @String.Format("{0:#,##0.##}", precioCLP)
+            </td>
+            <td nowrap="nowrap" align="right">
+                @(valor.HasValue ? String.Format("{0:#,##0}", valor.Value) : "")
+            </td>
+        </tr>
+    }
+    @{
+        var precioPromedio = 0M;
+        if (kilosValor != 0)
+        {
+            precioPromedio = Math.Round(totalValor / kilosValor, 0);
+        }
+    }
+    <tr>
+        <td class="RptPieListado" colspan="8">&nbsp;</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", Model.Select(m => m.PesoBruto).Sum().Value)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", Model.Select(m => m.PesoNormal).Sum().Value)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,###.##}", precioPromedio)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0}", totalValor)</td>
+    </tr>
+</table>

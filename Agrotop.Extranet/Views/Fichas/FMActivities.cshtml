@@ -1,0 +1,257 @@
+﻿@using Agrotop.Extranet.Models
+@{
+    var temporadas = (IEnumerable<Temporada>)ViewData["temporadas"];
+    var temporada = (Temporada)ViewData["temporada"];
+    var agricultor = (Agricultor)ViewData["agricultor"];
+    List<ForceManagerLib.Activity> activities = (List<ForceManagerLib.Activity>)ViewData["activities"];
+
+    ViewBag.Title = "Asesorías en Terreno " + temporada.Nombre;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<div class="titulo1-consubmenu">@ViewBag.Title</div>
+<div class="submenu">
+    @foreach (var t in temporadas)
+    {
+        <div class="submenuitem">
+            @if (t.IdTemporada != temporada.IdTemporada)
+            {
+                @Html.ActionLink(t.Nombre, "index", new { id = t.IdTemporada })
+            }
+            else
+            {
+                <span class="submenuitem-selected">@t.Nombre</span>
+            }
+        </div>
+    }
+    <div style="clear: both"></div>
+</div>
+
+<div style="margin: 50px 0px 0px 0px;">
+    @if (activities.Count > 0)
+    {
+        <table class="tabla1" id="tablaDatosSiembra">
+            <tr class="header">
+                <td colspan="4">Datos de Siembra</td>
+            </tr>
+            @foreach (ForceManagerLib.Activity activity in activities)
+            {
+                <tr>
+                    <td>@activity.Z_Potrero</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+            @if (activities.Count == 0)
+            {
+                <tr>
+                    <td colspan="5"><i>No hay información</i></td>
+                </tr>
+            }
+        </table>
+        <table class="tabla1" id="tablaFichas">
+            <tr class="header">
+                <td colspan="5">Visitas a Terreno</td>
+            </tr>
+            <tr class="header">
+                <td>Fecha / Tipo de gestión</td>
+                <td>Responsable</td>
+                <td>Cultivo</td>
+                <td>Potrero</td>
+                <td>Comentarios</td>
+            </tr>
+            @{int iFicha = 0;}
+            @foreach (ForceManagerLib.Activity activity in activities)
+            {
+                <tr valign="top" class="@(++iFicha % 2 != 0 ? "alt" : "alt2")">
+                    <td>
+                        @activity.dateCreated.ToString("dd MMM")<br />@activity.typeId.value
+                        <p>@Html.ActionLink("Descargar Ficha", "DescargarFicha", new { id = activity.id })</p>
+                    </td>
+                    <td>@activity.salesRepId.value</td>
+                    <td>
+                        @if (activity.Z_idCultivo != null)
+                        {
+                            @activity.Z_idCultivo.value
+                        }
+                    </td>
+                    <td>@activity.Z_Potrero</td>
+                    <td>
+                        @activity.comment
+                        @if (activity.Z_Agro1 != null)
+                        {
+                            <table cellpadding="0" cellspacing="0" class="recomendaciones">
+                                <tr valign="top" class="header">
+                                    <td colspan="4">RECOMENDACIÓN DE AGROQUÍMICO 1</td>
+                                </tr>
+                                <tr valign="top" class="header">
+                                    <td>
+                                        Recomendación de Agroquímico
+                                    </td>
+                                    <td>
+                                        Dosis
+                                    </td>
+                                    <td>
+                                        Unidad de medida
+                                    </td>
+                                    <td>
+                                        Observaciones
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @if (activity.Z_Agro1 != null)
+                                        {
+                                            @activity.Z_Agro1.value
+                                        }
+                                    </td>
+                                    <td>@activity.Z_Dosis1</td>
+                                    <td>@activity.Z_UMedida1</td>
+                                    <td>@activity.Z_Obs1</td>
+                                </tr>
+                            </table>
+                        }
+                        @if (activity.Z_Agro2 != null)
+                        {
+                            <table cellpadding="0" cellspacing="0" class="recomendaciones">
+                                <tr valign="top" class="header">
+                                    <td colspan="4">RECOMENDACIÓN DE AGROQUÍMICO 2</td>
+                                </tr>
+                                <tr valign="top" class="header">
+                                    <td>
+                                        Recomendación de Agroquímico
+                                    </td>
+                                    <td>
+                                        Dosis
+                                    </td>
+                                    <td>
+                                        Unidad de medida
+                                    </td>
+                                    <td>
+                                        Observaciones
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @if (activity.Z_Agro2 != null)
+                                        {
+                                            @activity.Z_Agro2.value
+                                        }
+                                    </td>
+                                    <td>@activity.Z_Dosis2</td>
+                                    <td>@activity.Z_UMedida2</td>
+                                    <td>@activity.Z_Obs2</td>
+                                </tr>
+                            </table>
+                        }
+                        @if (activity.Z_Agro3 != null)
+                        {
+                            <table cellpadding="0" cellspacing="0" class="recomendaciones">
+                                <tr valign="top" class="header">
+                                    <td colspan="4">RECOMENDACIÓN DE AGROQUÍMICO 3</td>
+                                </tr>
+                                <tr valign="top" class="header">
+                                    <td>
+                                        Recomendación de Agroquímico
+                                    </td>
+                                    <td>
+                                        Dosis
+                                    </td>
+                                    <td>
+                                        Unidad de medida
+                                    </td>
+                                    <td>
+                                        Observaciones
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @if (activity.Z_Agro3 != null)
+                                        {
+                                            @activity.Z_Agro3.value
+                                        }
+                                    </td>
+                                    <td>@activity.Z_Dosis3</td>
+                                    <td>@activity.Z_UMedida3</td>
+                                    <td>@activity.Z_Obs3</td>
+                                </tr>
+                            </table>
+                        }
+                        @if (activity.Z_Agro4 != null)
+                        {
+                            <table cellpadding="0" cellspacing="0" class="recomendaciones">
+                                <tr valign="top" class="header">
+                                    <td colspan="4">RECOMENDACIÓN DE AGROQUÍMICO 4</td>
+                                </tr>
+                                <tr valign="top" class="header">
+                                    <td>
+                                        Recomendación de Agroquímico
+                                    </td>
+                                    <td>
+                                        Dosis
+                                    </td>
+                                    <td>
+                                        Unidad de medida
+                                    </td>
+                                    <td>
+                                        Observaciones
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @if (activity.Z_Agro4 != null)
+                                        {
+                                            @activity.Z_Agro4.value
+                                        }
+                                    </td>
+                                    <td>@activity.Z_Dosis4</td>
+                                    <td>@activity.Z_UMedida4</td>
+                                    <td>@activity.Z_Obs4</td>
+                                </tr>
+                            </table>
+                        }
+                        @if (activity.Z_Agro5 != null)
+                        {
+                            <table cellpadding="0" cellspacing="0" class="recomendaciones">
+                                <tr valign="top" class="header">
+                                    <td colspan="4">RECOMENDACIÓN DE AGROQUÍMICO 5</td>
+                                </tr>
+                                <tr valign="top" class="header">
+                                    <td>
+                                        Recomendación de Agroquímico
+                                    </td>
+                                    <td>
+                                        Dosis
+                                    </td>
+                                    <td>
+                                        Unidad de medida
+                                    </td>
+                                    <td>
+                                        Observaciones
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @if (activity.Z_Agro5 != null)
+                                        {
+                                            @activity.Z_Agro5.value
+                                        }
+                                    </td>
+                                    <td>@activity.Z_Dosis5</td>
+                                    <td>@activity.Z_UMedida5</td>
+                                    <td>@activity.Z_Obs5</td>
+                                </tr>
+                            </table>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+        <div style="clear:both; margin-bottom: 50px"></div>
+    }
+    else
+    {
+        <div>No hay datos registrados para esta temporada</div>
+    }
+</div>

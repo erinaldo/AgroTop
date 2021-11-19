@@ -1,0 +1,121 @@
+﻿
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model PesoFinalViewModel
+@{
+   
+    ViewBag.NombreSeccion = "Registrar Peso Final " + Model.ProcesoIngreso.Temporada.Nombre;
+    ViewBag.Title = "Ingresar Datos";
+
+    var bodegas = (from bo in Model.Bodegas
+                   select new SelectListItem { Value = bo.IdBodega.ToString(), Text = bo.Nombre, Selected = bo.IdBodega == Model.IdBodega }).Distinct();
+
+    var oSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    var bodegasJSON = oSerializer.Serialize(from p in Model.Bodegas
+                                            select new { IdBodega = p.IdBodega, EsManga = p.EsManga ? 1 : 0 });                     
+}
+
+
+    <h2>@ViewBag.Title</h2>
+
+    <form action="@Url.Action("pesofinal2", "recepciones", (RouteValueDictionary)ViewData["indexRouteValues"])#formPos" method="post">
+        @Html.Hidden("IdProcesoIngreso", Model.IdProcesoIngreso)
+        <fieldset class="dataForm">
+            @Html.Partial("Ingreso", Model.ProcesoIngreso)
+            <a name="formPos">&nbsp;</a>
+            @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+        <p>
+            <label>Peso Final (Kg)</label>
+            @if (ViewBag.Romana != null)
+            {
+                if (ViewBag.Romana.EsPesajeAutomatico == true)
+                {
+                    @Html.TextBox("PesoFinal", Model.PesoFinal, new { @class = "std", @readonly = "readonly" })
+                    @Html.ValidationMessage("PesoFinal", ".")
+                    <input type="button" onclick="getPesoFinal('')" class="btn btn-danger btn-sm" value="Romana salida" />
+                }
+                else
+                {
+                    @Html.TextBox("PesoFinal", Model.PesoFinal, new { @class = "std" })
+                    @Html.ValidationMessage("PesoFinal", ".")
+                }
+            }
+            else
+            {
+                @Html.TextBox("PesoFinal", Model.PesoFinal, new { @class = "std" })
+                @Html.ValidationMessage("PesoFinal", ".")
+            }
+
+        </p>
+            <p>
+                <label>Bodega</label>
+                @Html.DropDownList("IdBodega", bodegas, new { @class = "std" })
+                @Html.ValidationMessage("IdBodega", ".")
+            </p>
+            <p id="mangaContainer">
+                <label>Número Manga</label>
+                @Html.TextBox("Manga", Model.Manga, new { @class = "std" })
+                @Html.ValidationMessage("Manga", ".")
+            </p>
+            <p>
+                <label>Enviar a Secador</label>
+                @Html.CheckBox("Secador", Model.Secador)
+            </p>
+            <p>
+                <label>Observaciones</label>
+                @Html.TextArea("ObservacionesPesoFinal", Model.ObservacionesPesoFinal, new { @class = "std", rows = 5 })
+            </p>
+            <p>
+                <label>PIN</label>
+                @Html.Password("Pin", "", new { autocomplete = "off" })
+                @Html.ValidationMessage("Pin", ".")
+            </p>
+            <p class="okcancel">
+                <input type="submit" value="Registrar Peso Final" />
+                <a id="btnTicket" target="_blank" href="/recepciones/GenerarPdf/@Model.ProcesoIngreso.IdProcesoIngreso">Generar Ticket</a>
+                o
+                @Html.ActionLink("Cancelar", "pesofinal1", (RouteValueDictionary)ViewData["indexRouteValues"])
+            </p>
+        </fieldset>
+
+        <script type="text/javascript">
+            var uri = 'http://190.13.134.173/Soindus/SoindusApi/RegCom/';
+            var strParams = { pIdBalanza: "BALANZA2" };
+            var bodegas = @(bodegasJSON.ToMvcHtmlString());
+
+            $(document).ready(function () {
+                
+                $("#IdBodega").change(function () {
+                    updateManga();
+                });
+                updateManga();
+            });
+
+            function updateManga() {
+
+                $("#mangaContainer").hide();
+
+                var idBodega =$("#IdBodega").val();
+                for (var i = 0; i < bodegas.length; i++)
+                    if (bodegas[i].IdBodega == idBodega && bodegas[i].EsManga == "1")
+                        $("#mangaContainer").show();
+                
+            };
+            function getPesoFinal(str) {
+                $('#PesoFinal').val('Cargando. . .');
+
+                $.getJSON(uri + '@ViewBag.Romana.RomanaSalida')
+                    .done(function (result) {
+                        $('#PesoFinal').val(result["StrValue"]);
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(err)
+                        alert("Ha ocurrido un error a la hora de traer el pesaje, por favor ingreselo manualmente.")
+                        $('#PesoFinal').val(0);
+                    });
+            }
+        </script>
+
+    </form>

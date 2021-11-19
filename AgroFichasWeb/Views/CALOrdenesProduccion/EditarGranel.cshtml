@@ -1,0 +1,1002 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_OrdenProduccion
+@{
+    ViewBag.Title = "Órdenes de Producción";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdOrdenProduccion == 0)
+    {
+        ViewBag.SubTitle = "Crear Orden de Producción Granel";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Orden de Producción Granel";
+    }
+
+    List<CAL_DetalleOrdenProduccion> detalleOrdenProduccionGranelList = Model.GetDetalleOrdenProduccion();
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-4.0.5/dist/css/select2.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/bootstrap-multiselect/bootstrap-multiselect.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/select2-4.0.5/dist/js/select2.full.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        // Do this before you initialize any of your modals
+        $.fn.modal.Constructor.prototype.enforceFocus = function () { };
+
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        jQuery.datetimepicker.setLocale('es');
+        jQuery('#Fecha').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", (Model.Fecha == null ? DateTime.Now : Model.Fecha))',
+            weeks: true
+        });
+
+        jQuery('#FechaZarpe').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", (Model.FechaZarpe == null ? DateTime.Now : Model.FechaZarpe))',
+            weeks: true
+        });
+
+        jQuery('#InicioProduccion').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", (Model.InicioProduccion == null ? DateTime.Now : Model.InicioProduccion))',
+            weeks: true
+        });
+
+        jQuery('#TerminoProduccion').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", (Model.TerminoProduccion == null ? DateTime.Now : Model.TerminoProduccion))',
+            weeks: true
+        });
+
+        // Llamado al API de Empresas Agrotop
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="', '', '">', 'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        function DeleteConsignatarios() {
+            $("#IdCliente option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Consignatario)', '</option>');
+            $("#IdCliente").html(options.join(''));
+        }
+
+        function DeleteBarcos() {
+            $("#IdBarco option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Barco)', '</option>');
+            $("#IdBarco").html(options.join(''));
+        }
+
+        function GetConsignatarios() {
+            var id = $('#IdExportador').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdCliente'));
+            }
+            $.getJSON(uri + '/Consignatarios/Get?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay consignatarios disponibles");
+                        DeleteConsignatarios();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Consignatario)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdConsignatario, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#IdCliente").html(options.join(''));
+
+                        var idConsignatario = '@(Model.IdCliente == 0 ? "" : Model.IdCliente.ToString())';
+                        var idEmbarcador = '@(Model.IdExportador == 0 ? "" : Model.IdExportador.ToString())';
+                        if (!$.isEmptyObject(idConsignatario) && id == idEmbarcador) {
+                            $("#IdCliente").val(idConsignatario);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetBarcos() {
+            var id = $('#IdCarrier').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdBarco'));
+            }
+            $.getJSON(uri + '/Barcos/Get?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay barcos disponibles");
+                        DeleteConsignatarios();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Barco)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdBarco, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#IdBarco").html(options.join(''));
+
+                        var idBarco = '@(Model.IdBarco == 0 ? "" : Model.IdBarco.ToString())';
+                        if (!$.isEmptyObject(idBarco)) {
+                            $("#IdBarco").val(idBarco);
+                        }
+                    }
+
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdExportador").change(function () {
+            DeleteConsignatarios();
+            GetConsignatarios();
+        });
+
+        $("#IdCarrier").change(function () {
+            DeleteBarcos();
+            GetBarcos();
+        });
+
+        $(document).ready(function () {
+            if ($("#IdExportador").val() != 0) {
+                DeleteConsignatarios();
+                GetConsignatarios();
+            }
+
+            if ($("#IdCarrier").val() != 0) {
+                DeleteBarcos();
+                GetBarcos();
+            }
+
+            GetFamiliaProductos();
+
+            var hiddenKeys = '';
+            @foreach (CAL_DetalleOrdenProduccion detalleOrdenProduccionGranel in detalleOrdenProduccionGranelList)
+            {
+                @Html.Raw("GetFamiliaProductosEdicion('cal-FamiliaProductos-" + detalleOrdenProduccionGranel.RowKey + "');");
+                @Html.Raw("GetContenedores('cal-Contenedor-" + detalleOrdenProduccionGranel.RowKey + "');");
+                @Html.Raw("hiddenKeys += '<input type=\"hidden\" id=\"idProducto_" + detalleOrdenProduccionGranel.RowKey + "\" name=\"idProducto_" + detalleOrdenProduccionGranel.RowKey + "\" value=\"" + detalleOrdenProduccionGranel.IdSubproducto + "\" />';");
+                @Html.Raw("hiddenKeys += '<input type=\"hidden\" id=\"RowKey_" + detalleOrdenProduccionGranel.RowKey + "\" name=\"RowKey\" value=\"" + detalleOrdenProduccionGranel.RowKey + "\" />';");
+                @Html.Raw("$(\"#cal-HiddenKeys\").append(hiddenKeys);");
+                @Html.Raw("hiddenKeys = '';");
+            }
+        });
+
+        // MANIPULACIÓN DE PRODUCTOS
+
+        function AgregarProducto() {
+            var id = $('#idProducto').find(':selected').val();
+            if (id === '') {
+                alert("Debe seleccionar un producto");
+                return;
+            }
+
+            var text = $('#idProducto').find(':selected').text();
+            var sptext = text.split();
+            var genId = generateId(40);
+
+            var onchangePesoSaco = "GetPesoSaco('cal-Saco-" + genId + "')";
+
+            var newtr = '<tr class="item" data-id="' + id + '">';
+            newtr += '<td class="iProduct">' + text + '</td>';
+            newtr += '<td><select class="form-control" id="cal-Contenedor-' + genId + '" name="Contenedor_' + genId + '">' + GetContenedores('cal-Contenedor-' + genId + '') + '</select></td>';
+            newtr += '<td><input  class="form-control" id="cal-cntProd-' + genId + '" name="cntProd_' + genId + '" value="0" onkeyup="CalcularContenedores(\'' + genId + '\')" required /></td>';
+            newtr += '<td><input  class="form-control" id="cal-cntPorCont-' + genId + '" name="cntPorCont_' + genId + '" value="0" onkeyup="CalcularContenedores(\'' + genId + '\')" required  /></td>';
+            newtr += '<td><input  class="form-control" id="cal-cntCont-' + genId + '" name="cntCont_' + genId + '" value="0" required readonly /></td>';
+            newtr += '<td><button type="button" class="btn btn-danger btn-xs remove-item" data-datakey="' + genId + '"><i class="fa fa-times"></i></button></td>';
+            newtr += '</tr>';
+
+            $('#ProductoSelected').append(newtr);
+
+            //Hidden Keys
+            var hiddenKeys = '';
+            hiddenKeys += '<input type="hidden" id="idProducto_' + genId + '" name="idProducto_' + genId + '" value="' + id + '" />';
+            hiddenKeys += '<input type="hidden" id="RowKey_' + genId + '" name="RowKey" value="' + genId + '" />';
+            $("#cal-HiddenKeys").append(hiddenKeys);
+
+            RefrescaProducto();
+
+            $('.remove-item').off().click(function (e) {
+                var datakey = $(this).data("datakey");
+                $("#idProducto_" + datakey).remove();
+                $("#RowKey_" + datakey).remove();
+
+                $(this).parent('td').parent('tr').remove();
+                if ($('#ProductoSelected tr.item').length == 0)
+                    $('#ProductoSelected .no-item').slideDown(300);
+                RefrescaProducto();
+            });
+
+            $('.idProducto').off().change(function (e) {
+                RefrescaProducto();
+            });
+        }
+
+        function EditarProducto(rowKey) {
+            $.ajax({
+                url: uri + '/OrdenProduccion/EditarProductoGranel',
+                type: 'POST',
+                data: {
+                    rowKey            : rowKey,
+                    Producto          : $("#cal-FamiliaProductos-" + rowKey).val(),
+                    Contenedor        : $("#cal-Contenedor-" + rowKey).val(),
+                    cntProd           : $("#cal-cntProd-" + rowKey).val(),
+                    cntPorCont        : $("#cal-cntPorCont-" + rowKey).val(),
+                    cntCont           : $("#cal-cntCont-" + rowKey).val()
+                }
+            }).done(function (result) {
+                if (result.OK) {
+                    alert("El producto ha sido editado");
+                    RecargaProducto(result.rowKey, result.FamiliaProductos, result.Producto, result.Contenedor, result.cntProd, result.cntPorCont, result.cntCont);
+                }
+                else {
+                    alert(result.Error);
+                    return;
+                }
+            });
+        }
+
+        function EliminarProducto(rowKey) {
+            if (confirm("¿Estás seguro que deseas eliminar este producto?")) {
+
+                var id = $("#itemRow-" + rowKey).data("id");
+
+                $.ajax({
+                    url: uri + '/OrdenProduccion/EliminarProducto',
+                    type: 'POST',
+                    data: {
+                        'id': id
+                    }
+                }).done(function (result) {
+                    if (result.OK) {
+                        alert("El producto ha sido eliminado");
+                        $("#idProducto_" + rowKey).remove();
+                        $("#RowKey_" + rowKey).remove();
+                        $("#itemRow-" + rowKey).remove();
+                    }
+                    else {
+                        alert(result.Error);
+                        return;
+                    }
+                });
+            }
+            else {
+                return;
+            }
+        }
+
+        function CalcularContenedores(rowKey) {
+            var cntProd = $("#cal-cntProd-" + rowKey).val();
+            var cntPorCont = $("#cal-cntPorCont-" + rowKey).val();
+
+            $("#cal-cntCont-" + rowKey).val(Math.round(cntProd / cntPorCont));
+            $("#cal-cntCont-" + rowKey).change();
+        }
+
+        function RecargaProducto(rowKey, FamiliaProductos, Producto, Contenedor, cntProd, cntPorCont, cntCont) {
+            $("#itemRow-cal-FamiliaProductos-" + rowKey).html(FamiliaProductos);
+            $("#itemRow-cal-Producto-" + rowKey).html(Producto);
+            $("#itemRow-cal-Contenedor-" + rowKey).html(Contenedor);
+            $("#itemRow-cal-cntProd-" + rowKey).html(cntProd);
+            $("#itemRow-cal-SacosPorContenedor-" + rowKey).html(cntPorCont);
+            $("#itemRow-cal-cntCont-" + rowKey).html(cntCont);
+        }
+
+        function RefrescaProducto() {
+            var arr = [];
+            var i = 0;
+            $('.idProducto').each(function (index, element) {
+                i++;
+                arr.push({ idProducto: $(this).val() });
+            });
+        }
+
+        function dec2hex(dec) {
+            return ('0' + dec.toString(16)).substr(-2)
+        }
+
+        function generateId(len) {
+            var arr = new Uint8Array((len || 40) / 2)
+            window.crypto.getRandomValues(arr)
+            return Array.from(arr, dec2hex).join('')
+        }
+
+        function GetFamiliaProductos() {
+            SetCargando($("#idProducto"));
+            $.getJSON(uri + '/FamiliaProductos/Get')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                    }
+                    else {
+                        options.push('<option value="">', '(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<optgroup id="cal-FamiliaProductos-' + result[i].IdFamiliaProducto + '" label="FAMILIA: ' + result[i].Nombre + '">');
+                            options.push('</optgroup>');
+                        }
+                        $("#idProducto").html(options.join(''));
+
+                        GetProductos();
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetProductos() {
+            $.getJSON(uri + '/FamiliaProductos/GetProductosGranel')
+                .done(function (result) {
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                    }
+                    else {
+                        for (var i = 0; i < result.length; i++) {
+                            var id = result[i].FamiliaProducto.IdFamiliaProducto;
+                            $("#cal-FamiliaProductos-" + id).append('<option value=' + result[i].IdProducto + '>' + result[i].Nombre + '</option>');
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetFamiliaProductosEdicion(id) {
+            SetCargando($("#" + id));
+            $.getJSON(uri + '/FamiliaProductos/Get')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                    }
+                    else {
+                        options.push('<option value="">', '(Seleccione Producto)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<optgroup id="' + id + '-' + result[i].IdFamiliaProducto + '" label="FAMILIA: ' + result[i].Nombre + '">');
+                            options.push('</optgroup>');
+                        }
+                        $("#" + id).html(options.join(''));
+
+                        GetProductosEdicion(id);
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetProductosEdicion(id) {
+            $.getJSON(uri + '/FamiliaProductos/GetProductos')
+                .done(function (result) {
+                    if (result.length == 0) {
+                        alert("No hay productos disponibles");
+                    }
+                    else {
+                        for (var i = 0; i < result.length; i++) {
+                            var idFamiliaProducto = result[i].FamiliaProducto.IdFamiliaProducto;
+                            $("#" + id + "-" + idFamiliaProducto).append('<option value=' + result[i].IdProducto + '>' + result[i].Nombre + '</option>');
+                        }
+                    }
+
+                    var idFamiliaProducto = $("#" + id).data("selected");
+                    if (idFamiliaProducto != "") {
+                        $("#" + id).val('' + idFamiliaProducto + ''); // Select the option with a value of '1'
+                        $("#" + id).trigger('change'); // Notify any JS components that the value changed
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetEspesores(id) {
+            SetCargando($("#" + id));
+            $.getJSON(uri + '/Espesores/GetEspesorProducto')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay espesores disponibles");
+                    }
+                    else {
+                        options.push('<option value="', '', '">', '(Seleccione Espesor)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="', result[i].IdEspesor, '">', result[i].Min.toFixed(2).replace(".", ","), '-', result[i].Max.toFixed(2).replace(".", ","), '</option>');
+                        }
+
+                        $($("#" + id)).html(options.join(''));
+
+                        var idEspesor = $("#" + id).data("selected");
+                        if (idEspesor != "") {
+                            $("#" + id).val(idEspesor);
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetSacos(id) {
+            SetCargando($("#" + id));
+            $.getJSON(uri + '/Sacos/Get')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay sacos disponibles");
+                    }
+                    else {
+                        options.push('<option value="', '', '">', '(Seleccione Saco)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="', result[i].IdSaco, '">', result[i].Nombre, '</option>');
+                        }
+
+                        $($("#" + id)).html(options.join(''));
+
+                        var idSaco = $("#" + id).data("selected");
+                        if (idSaco != "") {
+                            $("#" + id).val(idSaco);
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetSacosEdicion(id) {
+            $.getJSON(uri + '/Sacos/Get')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay sacos disponibles");
+                    }
+                    else {
+                        options.push('<option value="', '', '">', '(Seleccione Saco)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="', result[i].IdSaco, '">', result[i].Nombre, '</option>');
+                        }
+
+                        $($("#" + id)).html(options.join(''));
+
+                        var idSaco = $("#" + id).data("selected");
+                        console.log("idSaco = " + id + ", value = " + idSaco);
+                        if (idSaco != "") {
+                            $("#" + id).val(idSaco);
+
+                            GetPesoSaco(id);
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetPesoSaco(id) {
+            var rowKey = id.replace("cal-Saco-", "");
+            var idSaco = $("#" + id).val();
+            if (idSaco == "") {
+                alert("Debe seleccionar el saco");
+                return;
+            }
+            SetCargando($("#cal-PesoSaco-" + rowKey));
+            $.getJSON(uri + '/Sacos/GetPesoSaco?IdSaco=' + idSaco)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result == null || result.length == 0) {
+                        alert("No hay pesos disponibles");
+                    }
+                    else {
+                        options.push('<option value="', '', '">', '(Seleccione Peso Saco)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="', result[i].IdPesoSaco, '">', result[i].Peso, '</option>');
+                        }
+
+                        $($("#cal-PesoSaco-" + rowKey)).html(options.join(''));
+
+                        var idPesoSaco = $("#cal-PesoSaco-" + rowKey).data("selected");
+                        console.log("idPesoSaco = cal-PesoSaco-" + rowKey + ", value = " + idPesoSaco);
+                        if (idPesoSaco != "") {
+                            $("#cal-PesoSaco-" + rowKey).val(idPesoSaco);
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetContenedores(id) {
+            SetCargando($("#" + id));
+            $.getJSON(uri + '/Contenedores/Get')
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay contenedores disponibles");
+                    }
+                    else {
+                        options.push('<option value="', '', '">', '(Seleccione Contenedor)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="', result[i].IdContenedor, '">', result[i].Nombre, '</option>');
+                        }
+
+                        $($("#" + id)).html(options.join(''));
+
+                        var idContenedor = $("#" + id).data("selected");
+                        if (idContenedor != "") {
+                            $("#" + id).val(idContenedor);
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+        function ValidarFormulario() {
+            var LoteComercial = $("#LoteComercial").val();
+            var IdExportador = $("#IdExportador").val();
+            var IdCliente = $("#IdCliente").val();
+            var PaisCodigo = $("#PaisCodigo").val();
+            var IdCarrier = $("#IdCarrier").val();
+            var IdBarco = $("#IdBarco").val();
+            var FechaZarpe = $("#FechaZarpe").val();
+            var IdsTransportistas = $("#IdsTransportistas").val();
+
+            if (LoteComercial.length == 0) {
+                alert("Ingrese el lote comercial")
+                return false;
+            }
+
+            if (IdExportador.length == 0) {
+                alert("Seleccione un embarcador")
+                return false;
+            }
+
+            if (IdCliente.length == 0) {
+                alert("Seleccione un consignatario")
+                return false;
+            }
+
+            if (PaisCodigo.length == 0) {
+                alert("Seleccione un país")
+                return false;
+            }
+
+            if (IdCarrier.length == 0) {
+                alert("Seleccione un carrier")
+                return false;
+            }
+
+            if (IdBarco.length == 0) {
+                alert("Seleccione un barco")
+                return false;
+            }
+
+            if (FechaZarpe.length == 0) {
+                alert("Ingrese una fecha de zarpe")
+                return false;
+            }
+
+            if (IdsTransportistas.length == 0) {
+                alert("Ingrese al menos un transportista")
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            <form method="post" action="/calordenesproduccion/editarGranel" onsubmit="return ValidarFormulario();">
+
+
+
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fecha de Creación de la O/P <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Fecha", Model.Fecha, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("Fecha")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Lote Comercial <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("LoteComercial", Model.LoteComercial, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("LoteComercial")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fecha de Inicio de la Producción</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("InicioProduccion", Model.InicioProduccion, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("InicioProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fecha de Término de la Producción</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("TerminoProduccion", Model.TerminoProduccion, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("TerminoProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Embarcador <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdExportador", Model.GetEmbarcadores(Model.IdExportador), "(Seleccione Embarcador)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdExportador")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Consignatario <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdCliente", new List<SelectListItem>(), "(Seleccione Consignatario)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdCliente")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">País de Destino <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("PaisCodigo", Model.GetPaises(Model.PaisCodigo), "(Seleccione País de Destino)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("PaisCodigo")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Carrier <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdCarrier", Model.GetCarriers(Model.IdCarrier), "(Seleccione Carrier)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdCarrier")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Barco <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdBarco", new List<SelectListItem>(), "(Seleccione Barco)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdBarco")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Código del Viaje</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("NumeroViaje", Model.NumeroViaje, new { @class = "form-control", maxlength = "50" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fecha de Zarpe <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("FechaZarpe", Model.FechaZarpe, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("FechaZarpe")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Transporte Terrestre <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdsTransportistas", Model.GetTransportistas(Model.IdOrdenProduccion), new { @class = "form-control", multiple = "multiple", data_plugin_multiselect = "", data_plugin_options = "{ \"maxHeight\": 600, \"enableCaseInsensitiveFiltering\" : true }" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Inspección del SAG <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.CheckBox("InspeccionSAG", Model.InspeccionSAG, new { @class = "" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fumigación <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.CheckBox("Fumigacion", Model.Fumigacion, new { @class = "" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Observaciones</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Productos</label>
+                                    <div class="col-sm-8">
+                                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#cal-ModalProducto">(Agregar Producto)</button>
+                                        <table id="datatable" class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Producto</th>
+                                                    <th>Contenedor</th>
+                                                    <th>Cnt. de Producto (kg)</th>
+                                                    <th>Cnt. X Cont. (kg)</th>
+                                                    <th>Cnt. de Cont.</th>
+                                                    <th align="center" colspan="2">Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="ProductoSelected">
+                                                @foreach (CAL_DetalleOrdenProduccion detalleOrdenProduccionGranel in detalleOrdenProduccionGranelList)
+                                                {
+                                                    <tr class="item" id="itemRow-@detalleOrdenProduccionGranel.RowKey" data-id="@detalleOrdenProduccionGranel.IdDetalleOrdenProduccion">
+                                                        <td class="iProduct text-left">
+                                                            <span id="itemRow-cal-FamiliaProductos-@detalleOrdenProduccionGranel.RowKey" class="value" style="display: block; text-decoration: underline">@detalleOrdenProduccionGranel.CAL_Producto.Nombre</span>
+                                                            <small id="itemRow-cal-Producto-@detalleOrdenProduccionGranel.RowKey">@detalleOrdenProduccionGranel.CAL_Subproducto.Nombre</small>
+                                                        </td>
+                                                        <td id="itemRow-cal-Contenedor-@detalleOrdenProduccionGranel.RowKey">@string.Format("{0} ft", detalleOrdenProduccionGranel.CAL_Contenedor.Tamaño)</td>
+                                                        <td id="itemRow-cal-cntProd-@detalleOrdenProduccionGranel.RowKey">@string.Format("{0:N2}", detalleOrdenProduccionGranel.CantidadProducto)</td>
+
+                                                        <td id="itemRow-cal-SacosPorContenedor-@detalleOrdenProduccionGranel.RowKey">@string.Format("{0:N0}", detalleOrdenProduccionGranel.CantidadPorContenedor)</td>
+                                                        <td id="itemRow-cal-cntCont-@detalleOrdenProduccionGranel.RowKey">@string.Format("{0:N0}", detalleOrdenProduccionGranel.CantidadContenedores)</td>
+                                                        <td><button type="button" class="btn btn-xs btn-info" data-toggle="modal" data-target="#cal-ModalEditarProducto-@detalleOrdenProduccionGranel.RowKey"> <i class="fa fa-edit"></i></button></td>
+                                                        <td><button type="button" class="btn btn-danger btn-xs remove-item-edited" data-datakey="@detalleOrdenProduccionGranel.RowKey" onclick="EliminarProducto('@detalleOrdenProduccionGranel.RowKey')"><i class="fa fa-times"></i></button></td>
+                                                    </tr>
+                                                }
+                                                <tr></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="cal-HiddenKeys">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar esta Orden de Producción" />
+                        </div>
+                    </div>
+                </footer>
+            </form>
+        </section>
+    </div>
+</div>
+<!-- end: page -->
+<!-- Modal -->
+<div class="modal fade" id="cal-ModalProducto" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Agregar Producto a la Lista</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Producto</label>
+                    <select data-plugin-selecttwo="" class="form-control populate selectpicker" id="idProducto" name="idProducto" tabindex="-1" aria-hidden="true" data-width='100%'></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="AgregarProducto()" class="btn btn-default" data-dismiss="modal">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@foreach (CAL_DetalleOrdenProduccion detalleOrdenProduccionGranel in detalleOrdenProduccionGranelList)
+{
+    <div class="modal fade" id="cal-ModalEditarProducto-@detalleOrdenProduccionGranel.RowKey" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Editar Producto</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Producto</label>
+                        <select data-plugin-selecttwo="" class="form-control populate selectpicker" id="cal-FamiliaProductos-@detalleOrdenProduccionGranel.RowKey" name="cal-FamiliaProductos-@detalleOrdenProduccionGranel.RowKey" tabindex="-1" data-selected="@detalleOrdenProduccionGranel.IdSubproducto" aria-hidden="true" data-width='100%'></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Contenedor</label>
+                        <select class="form-control" id="cal-Contenedor-@detalleOrdenProduccionGranel.RowKey" name="Contenedor-@detalleOrdenProduccionGranel.RowKey" tabindex="-1" data-selected="@detalleOrdenProduccionGranel.IdContenedor" aria-hidden="true" data-width='100%'></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad de Producto</label>
+                        <input class="form-control" id="cal-cntProd-@detalleOrdenProduccionGranel.RowKey" name="cntProd-@detalleOrdenProduccionGranel.RowKey" tabindex="-1" aria-hidden="true" data-width='100%' value="@detalleOrdenProduccionGranel.CantidadProducto" onkeyup="CalcularContenedores('@detalleOrdenProduccionGranel.RowKey')" />
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad X Contenedor</label>
+                        <input class="form-control" id="cal-cntPorCont-@detalleOrdenProduccionGranel.RowKey" name="cntPorCont-@detalleOrdenProduccionGranel.RowKey" tabindex="-1" aria-hidden="true" data-width='100%' value="@detalleOrdenProduccionGranel.CantidadPorContenedor" onkeyup="CalcularContenedores('@detalleOrdenProduccionGranel.RowKey')" />
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad de Contenedores</label>
+                        <input class="form-control" id="cal-cntCont-@detalleOrdenProduccionGranel.RowKey" name="cntCont-@detalleOrdenProduccionGranel.RowKey" tabindex="-1" aria-hidden="true" data-width='100%' value="@detalleOrdenProduccionGranel.CantidadContenedores" readonly />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="EditarProducto('@detalleOrdenProduccionGranel.RowKey')" class="btn btn-default" data-dismiss="modal">Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

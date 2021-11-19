@@ -1,0 +1,15 @@
+﻿@model AgroFichasWeb.Models.Siembra
+<tr id="itemRowSiembra-@Model.IdSiembra">
+    <td>@Model.Variedad.Cultivo.Nombre</td>
+    <td>@Model.Variedad.Nombre</td>
+    <td>@Model.DescripcionPotreros()</td>
+    <td class="text-right">@Model.Superficie().ToString("#,##0")</td>
+    <td>@Model.UserIns</td>
+    <td class="actions text-center">
+        @if (true)
+        {
+            <img id="editSpinnerSiembra-@Model.IdSiembra" src="~/Content/spinner.svg" height="18" style="display: none; margin-right:10px" />
+            <a href="#" id="editButtonSiembra-@Model.IdSiembra" class="editItemSiembra" data-id="@Model.IdSiembra" style="margin-right:10px"><i class="fa fa-pencil"></i></a>
+        }
+    </td>
+</tr>

@@ -1,0 +1,22 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model ExportBatch
+@{
+   
+    ViewBag.Title = "Crear Lote de Exportación de Recepciones " + Model.Temporada.Nombre;
+    ViewBag.Title = "El lote de exportación ha sido registrado con éxito";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <h2>@ViewBag.Title</h2>
+
+    <fieldset class="dataForm">
+        @Html.Partial("ExportBatch", Model)
+        <p class="okcancel">
+            @Html.ActionLink("Lista de Lotes", "index", "exportarrecepciones")  
+        </p>
+    </fieldset>

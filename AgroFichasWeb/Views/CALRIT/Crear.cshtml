@@ -1,0 +1,298 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_RIT
+@{
+    ViewBag.Title = "Registros de Inspección de Transporte";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdRIT == 0)
+    {
+        ViewBag.SubTitle = "Crear Registro de Inspección de Transporte";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Registro de Inspección de Transporte";
+    }
+
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+    List<CAL_ParametroRevisarContenedor> cAL_ParametroRevisarContenedorList = (List<CAL_ParametroRevisarContenedor>)ViewData["cAL_ParametroRevisarContenedorList"];
+    List<CAL_RITAccionCorrectiva> cAL_RITAccionCorrectivaList = (List<CAL_RITAccionCorrectiva>)ViewData["cAL_RITAccionCorrectivaList"];
+    CAL_RITSelloTara cAL_RITSelloTara = (CAL_RITSelloTara)ViewData["cAL_RITSelloTara"];
+    PlantaProduccion plantaProduccion = (PlantaProduccion)ViewData["planta"];
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+    <link href="~/Content/porto/vendor/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+    <script src="~/Content/porto/vendor/select2/js/select2.min.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $("#select_all").click(function () {
+            var isChecked = $(this).is(':checked') ? true : false;
+            console.log("isChecked= " + isChecked);
+            if (isChecked) {
+                SelectAll();
+            } else {
+                DeselectAll();
+            }
+        })
+
+        function SelectAll() {
+            @foreach (CAL_ParametroRevisarContenedor cAL_ParametroRevisarContenedor in cAL_ParametroRevisarContenedorList)
+            {
+                @:$('#CUMPLE__' + @cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor + '').prop('checked', true);
+                @:$('#CUMPLE__' + @cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor + '').val(true);
+                @:$('#HIDDEN__CUMPLE__' + @cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor + '').val(true);
+            }
+        }
+
+        function DeselectAll() {
+            @foreach (CAL_ParametroRevisarContenedor cAL_ParametroRevisarContenedor in cAL_ParametroRevisarContenedorList)
+            {
+                @:$('#CUMPLE__' + @cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor + '').prop('checked', false);
+                @:$('#CUMPLE__' + @cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor + '').val(false);
+                @:$('#HIDDEN__CUMPLE__' + @cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor + '').val(false);
+            }
+        }
+
+        function SetCheckBox(IdParametroRevisarContenedor) {
+            var isChecked = $('#CUMPLE__' + IdParametroRevisarContenedor + '').is(':checked') ? true : false;
+            console.log("isChecked= " + isChecked);
+            if (isChecked) {
+                $('#CUMPLE__' + IdParametroRevisarContenedor + '').val(true);
+                $('#HIDDEN__CUMPLE__' + IdParametroRevisarContenedor + '').val(true);
+            }
+            else {
+                $('#CUMPLE__' + IdParametroRevisarContenedor + '').val(false);
+                $('#HIDDEN__CUMPLE__' + IdParametroRevisarContenedor + '').val(false);
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+<div class="col-sm-12">
+    <div class="mb-md">
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <span class="text-weight-bold">Acciones Correctivas:</span>
+            <ol>
+                @foreach (CAL_RITAccionCorrectiva cAL_RITAccionCorrectiva in cAL_RITAccionCorrectivaList)
+                {
+                    <li>@cAL_RITAccionCorrectiva.Descripcion</li>
+                }
+            </ol>
+        </div>
+    </div>
+</div>
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm("Crear", "CALRIT", FormMethod.Post))
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Planta de Producción</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">@plantaProduccion.Nombre</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Order de Producción</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="background-color: #ebfbdf;">@ordenProduccion.LoteComercial</span>
+                                        @Html.Hidden("IdOrdenProduccion", Model.IdOrdenProduccion)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cliente</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="font-family: Consolas;background-color: #ebfbdf;">
+                                            @ordenProduccion.GetCliente(ordenProduccion.IdCliente).RazonSocial
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group has-success">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Reserva</label>
+                                    <div class="col-sm-6">
+                                        <span class="form-control" style="font-family: Consolas;background-color: #ebfbdf;">
+                                            @ordenProduccion.NumeroViaje
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label class="col-sm-3 control-label">Contenedor <span class="required">*</span></label>
+                    <div class="col-sm-6">
+                        @Html.DropDownList("IdContenedor", Model.GetContenedores(Model.IdContenedor), new { @class = "form-control populate", @data_plugin_selectTwo = "" })
+                        @Html.ValidationMessage("IdContenedor")
+                    </div>
+                </div>
+            </div>
+        </div>*@
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Contenedor <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("NContenedor", Model.NContenedor, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("NContenedor")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Patente</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Patente", Model.Patente, new { @class = "form-control", maxlength = "8" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Sello de Línea </label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("SelloLinea", cAL_RITSelloTara.SelloLinea, new { @class = "form-control", maxlength = "128" })
+                                        @Html.ValidationMessage("SelloLinea")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Tara </label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Tara", cAL_RITSelloTara.Tara, new { @class = "form-control", maxlength = "32" })
+                                        @Html.ValidationMessage("Tara")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Parámetros a Revisar <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <div class="col-sm-12" style="padding-top: 7px;">
+                                            <div class="col-sm-12 text-left" style="background-color: yellow">
+                                                <input type="checkbox" name="select_all" id="select_all" value="Seleccionar todo" /> <strong>Seleccionar todo</strong>
+                                            </div>
+                                            <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                                <div class="col-sm-6">
+                                                    <span class="text-weight-bold">Parámetro</span>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <span class="text-weight-bold">Cumple (Sí/No)</span>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <span class="text-weight-bold">Acc. Correctiva</span>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <span class="text-weight-bold">Observaciones</span>
+                                                </div>
+                                                <div style="clear:both"></div>
+                                            </div>
+                                            @foreach (CAL_ParametroRevisarContenedor cAL_ParametroRevisarContenedor in cAL_ParametroRevisarContenedorList)
+                                            {
+                                                <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                                    <div class="col-sm-6">
+                                                        <span>@cAL_ParametroRevisarContenedor.Nombre</span>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <input type="checkbox" name="@string.Format("CUMPLE__{0}", cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor)" id="@string.Format("CUMPLE__{0}", cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor)" value="false" onclick="SetCheckBox(@cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor)" />
+                                                        <input type="hidden" name="@string.Format("HIDDEN__CUMPLE__{0}", cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor)" id="@string.Format("HIDDEN__CUMPLE__{0}", cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor)" value="false" />
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <select class="form-control" name="@string.Format("ACCIONCORRECTIVA__{0}", cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor)" id="@string.Format("ACCIONCORRECTIVA__{0}", cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor)">
+                                                            <option value="">(Seleccione Acción Correctiva)</option>
+                                                            @foreach (CAL_RITAccionCorrectiva cAL_RITAccionCorrectiva in cAL_RITAccionCorrectivaList)
+                                                            {
+                                                                <option value="@cAL_RITAccionCorrectiva.IdAccionCorrectiva">@cAL_RITAccionCorrectiva.Descripcion</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <input class="form-control" name="@string.Format("OBSERVACIONES__{0}", cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor)" id="@string.Format("OBSERVACIONES__{0}", cAL_ParametroRevisarContenedor.IdParametroRevisarContenedor)" value="" placeholder="Observaciones" />
+                                                    </div>
+                                                    <div style="clear:both"></div>
+                                                </div>}
+                                            @Html.ValidationMessage("ParametrosOk")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Observación <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextArea("Observacion", Model.Observacion, new { @class = "summernote", @data_plugin_summernote = "{}" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Aprobado <span class="required">*</span></label>
+                                    <div class="col-sm-6" style="padding-top: 7px;">
+                                        @Html.CheckBox("Aprobado", Model.Aprobado)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Registro de Inspección de Transporte" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

@@ -1,0 +1,127 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model AgroFichasWeb.Controllers.PaginatedList<SaldoCtaCte>
+
+@{
+
+    ViewBag.NombreSeccion = "Saldos Cuenta Corriente";
+    ViewBag.Title = "Administrar Saldos Cuenta Corriente";
+
+    var puedeEditar = SYS_User.Current().HasPermiso(42);
+    var puedeElimimar = SYS_User.Current().HasPermiso(43);
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "saldosctacte", new { id = 0 }, FormMethod.Get))
+    {
+        @Html.Partial("EmpresaSelector")
+        <input type="text" name="key" value="@ViewData["key"]" />
+        <input type="submit" value="Buscar" />
+    }
+    <div style="margin-top: 10px">
+        @Html.ActionLink("Exportar", "indexexport", new { idEmpresa = ViewData["idEmpresa"], key = ViewData["key"] }, new { @class = "exportlink" })
+    </div>
+</div>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">
+            Rut
+        </th>
+        <th align="left">
+            Nombre
+        </th>
+        <th align="left">
+            Empresa
+        </th>
+        <th align="right">
+            Cta Cte
+        </th>
+        <th align="right">
+            Documentado
+        </th>
+        <th align="right">
+            Total
+        </th>
+        @if (puedeEditar)
+        {
+            <th align="center">
+                Editar
+            </th>
+        }
+        @if (puedeElimimar)
+        {
+            <th align="center">
+                Eliminar
+            </th>
+        }
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="9" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        var itemParams = Model.RouteValues(new RouteValueDictionary() { { "id", item.IdSaldoCtaCte } });
+
+        <tr valign="top">
+            <td align="left">
+                @item.Agricultor.Rut
+            </td>
+            <td align="left">
+                @item.Agricultor.Nombre
+            </td>
+            <td align="left">
+                @item.Empresa.Nombre
+            </td>
+            <td align="right" nowrap="nowrap">
+                @item.MontoCtaCte.ToString("#,##0")
+            </td>
+            <td align="right" nowrap="nowrap">
+                @item.MontoDocumentado.ToString("#,##0")
+            </td>
+            <td align="right" nowrap="nowrap">
+                @item.MontoTotal.Value.ToString("#,##0")
+            </td>
+            @if (puedeEditar)
+            {
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "Editar", itemParams)
+                </td>
+            }
+            @if (puedeElimimar)
+            {
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "Eliminar", itemParams)
+                </td>
+            }
+        </tr>
+    }
+    <tr>
+        <td colspan="9" class="pager">
+            @Model.Paginator("index", "saldosctacte", ViewContext.RequestContext)
+        </td>
+    </tr>
+</table>

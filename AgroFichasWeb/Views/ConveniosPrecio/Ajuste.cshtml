@@ -1,0 +1,143 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels.Liquidaciones
+@model ConvenioPrecioViewModel
+@{
+
+    var motivos = from c in (Model.MotivosAjuste)
+                  select new SelectListItem() { Text = c.Nombre, Value = c.IdMotivoAjustePrecio.ToString(), Selected = false };
+}
+
+<div id="bondes-window" style="display: none" title="Ajuste de Convenio de Precio">
+    <div id="bondes-content">
+        <input type="hidden" id="bondes-id" value="" />
+        <table class="form1" style="width: 100%; text-align: left;">
+            <tr>
+                <td class="label">Tipo:</td>
+                <td><span id="bondes-tipo"></span><input type="hidden" id="bondes-esBono" /></td>
+            </tr>
+            <tr>
+                <td class="label">Motivo:</td>
+                <td>@Html.DropDownList("bondes-idMotivo", motivos)</td>
+            </tr>
+            <tr>
+                <td class="label">Precio:</td>
+                <td><input type="text" id="bondes-precioUnidad" style="width: 200px" /> ($/Kg)</td>
+            </tr>
+            <tr>
+                <td class="label">Cantidad:</td>
+                <td><input type="text" id="bondes-cantidad" style="width: 200px" /> (Kg)</td>
+            </tr>
+            <tr valign="top">
+                <td class="label">Sucursales de Entrega:</td>
+                <td>
+                    <ul id="bondes-sucursales" style="margin: 0px 0px 20px 0px; padding: 0px; list-style: none;">
+
+                    </ul>
+
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Comentarios:</td>
+                <td><textarea id="bondes-comentarios" class="std" rows="5"></textarea></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    function bondesShow(ajuste) {
+
+        $("#bondes-id").val(ajuste.IdConvenioPrecioAjuste);
+        $("#bondes-idMotivo").val(ajuste.IdMotivoAjustePrecio);
+        $("#bondes-esBono").val(ajuste.EsBono);
+        $("#bondes-tipo").html(ajuste.EsBono == "True" ? "Bono" : "Descuento");
+        $("#bondes-precioUnidad").val(ajuste.PrecioUnidad);
+        $("#bondes-cantidad").val(ajuste.Cantidad);
+        $("#bondes-comentarios").val(ajuste.Comentarios);
+
+        $("#bondes-sucursales > li").remove();
+
+        var s = '';
+        for (var i = 0; i < ajuste.Sucursales.length; i++)
+        {
+            var suc = ajuste.Sucursales[i];
+
+            s += '<li>';
+            s += '<input type="checkbox" class="bondes-suc" ' +
+                 'id="bondes-suc-' + suc.IdSucursal + '"' +
+                (suc.Seleccionado == "True" ? "checked " : " ") +
+                'data-id="' + suc.IdSucursal + '" ' +
+                'data-nombre="' + suc.NombreSucursal + '" ' +
+                ' /> ' + suc.NombreSucursal; 
+            s += '</li>';
+        }
+        $("#bondes-sucursales").html(s);
+
+
+        $("#bondes-window").dialog({
+            width: 600,
+            modal: true,
+            buttons: {
+                Aceptar: function () {
+
+                    if (!jqEsTextoNumeric($("#bondes-precioUnidad"), false, 0.0001, NaN)) {
+                        alert('Ingrese el Precio');
+                        return;
+                    }
+
+                    if (!jqEsTextoEntero($("#bondes-cantidad"), false, 1, NaN)) {
+                        alert('Ingrese la Cantidad');
+                        return;
+                    }
+
+                    var sucursales = new Array();
+                    var nombresSucursales = '';
+                    $(".bondes-suc").each(function (index, element) {
+                        sucursales.push({
+                            IdSucursal: $(this).attr("data-id"),
+                            NombreSucursal: $(this).attr("data-nombre"),
+                            Seleccionado: $(this).is(':checked') ? "True" : "False"
+                        });
+
+                        if ($(this).is(':checked')) {
+                            if (nombresSucursales != '')
+                                nombresSucursales += ', ';
+
+                            nombresSucursales += $(this).attr("data-nombre");
+                        }
+                    });
+
+                    if (nombresSucursales == '') {
+                        alert('Seleccione al menos una Sucursal');
+                        return;
+                    }
+
+                    var result = {
+                        IdConvenioPrecioAjuste: $("#bondes-id").val(),
+                        IdMotivoAjustePrecio: $("#bondes-idMotivo").val(),
+                        NombreMotivoAjustePrecio: $("#bondes-idMotivo :selected").text(),
+                        Cantidad: parseInt($("#bondes-cantidad").val(), 10),
+                        PrecioUnidad: parseFloat($("#bondes-precioUnidad").val()),
+                        EsBono: $("#bondes-esBono").val(),
+                        Comentarios: $("#bondes-comentarios").val(),
+                        Sucursales: sucursales,
+                        NombresSucursales: nombresSucursales
+                    };
+
+                    bondesCallback(result);
+                    $(this).dialog("close");
+                },
+                Cancelar: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+                //$('#ags-results').html("");
+            }
+        });
+
+    }
+</script>

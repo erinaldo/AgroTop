@@ -1,0 +1,84 @@
+﻿@using AgroFichasWeb.Models
+
+@model DoctoContrato
+@{
+    string Action = "";
+    ViewBag.NombreSeccion = "Contratos";
+    var contrato = (Contrato)ViewData["contrato"];
+
+    if (Model.IdDoctoContrato == 0)
+    {
+        ViewBag.Title = "Crear Documento de Contrato de " + contrato.NumeroContrato + " " + contrato.Agricultor.Nombre;
+        Action = "creardocto";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Documento de Contrato de " + contrato.NumeroContrato + " " + contrato.Agricultor.Nombre;
+        Action = "editardocto";
+    }
+
+
+    var msgerr = (string)Request["msgerr"];
+    var tipoDoctoList = (IEnumerable<SelectListItem>)ViewData["tipoDoctoList"];
+}
+
+@section headSection {
+    <script>
+        $(document).ready(function () {
+            if ($("#IdTipoDoctoContrato").val() == 1)
+                $("#correlativo").hide();
+            else
+                $("#correlativo").show();
+
+            $("#IdTipoDoctoContrato").change(function () {
+                if ($(this).val() == 1)
+                    $("#correlativo").hide();
+                else
+                    $("#correlativo").show();
+            });
+        });
+    </script>
+}
+
+@section submenuSection {
+    @Html.Partial("SubmenuDoctoContrato", contrato)
+}
+
+@if (!string.IsNullOrEmpty(msgerr))
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm(Action, "contratos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Tipo Docto.</label>
+            @Html.DropDownListFor(model => model.IdTipoDoctoContrato, tipoDoctoList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessageFor(model => model.IdTipoDoctoContrato, " ")
+        </p>
+        <p id="correlativo">
+            <label for="Titulo">Correlativo</label>
+            @Html.TextBoxFor(model => model.Correlativo, new { })
+            @Html.ValidationMessageFor(model => model.Correlativo, " ")
+        </p>
+        <p>
+            <label for="Titulo">Archivo (sólo PDF)</label>
+            <input type="file" class="input" name="docto" />
+            @if (Model.IdDoctoContrato != 0)
+            {
+                <a href="@Url.Action("descargarcontrato", "contratos", new { id = Model.IdDoctoContrato })" target="_blank">VER ARCHIVO PDF</a>
+            }
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar Docto" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+
+    @Html.HiddenFor(model => model.IdContrato, Model.IdContrato)
+}

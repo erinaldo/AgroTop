@@ -1,0 +1,92 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<TasaCambio>
+
+@{
+    var monedas = (List<Moneda>)ViewData["monedas"];
+    var monedaCLP = monedas.Single(m => m.IdMoneda == 1);
+    var monedaUSD = monedas.Single(m => m.IdMoneda == 2);
+
+    var puedeEditar = SYS_User.Current().HasPermiso(57);
+    var puedeElimimar = SYS_User.Current().HasPermiso(58);
+    
+    ViewBag.NombreSeccion = "Tasas de Cambio";
+    ViewBag.Title = "Administrar Tasas de Cambio";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>@ViewBag.Title</h2>
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+
+    @Html.ValidationSummary("No fue posible procesar su solicitud")
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="left">
+                Fecha
+            </th>
+            <th align="right">
+                @monedaCLP.Simbolo / @monedaUSD.Simbolo
+            </th>
+            @if (puedeEditar) {
+            <th align="center">
+                Editar
+            </th>
+            }
+            @if (puedeElimimar) {
+            <th align="center">
+                Eliminar
+            </th>
+            }
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="6" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+        
+        @foreach (var item in Model) 
+        {
+            object itemParams = new { id = item.IdMoneda, fecha = item.Fecha.ToString("dd/MM/yyyy") };
+            <tr valign="top">
+                <td align="left">
+                    @item.Fecha.ToString("dd/MM/yyyy")
+                </td>
+                <td align="right">
+                    @(String.Format(monedaUSD.Formato2, item.Valor))
+                </td>
+                @if (puedeEditar) 
+                {
+                    <td align="center">
+                        @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "Editar", itemParams)
+                    </td>
+                }
+                @if (puedeElimimar)
+                {
+                    <td align="center">
+                        @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "Eliminar", itemParams)
+                    </td>
+                }
+            </tr>
+        }
+        <tr>
+            <td colspan="6" class="pager">
+                @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "TasasCambio", "")
+            </td>
+        </tr>
+
+    </table>

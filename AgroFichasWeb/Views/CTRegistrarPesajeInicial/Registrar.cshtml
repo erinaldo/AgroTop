@@ -1,0 +1,221 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_ControlTiempo
+
+@{
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = "Registrar Pesaje Inicial";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+@section CustomScripts
+{
+    <script>
+        var uri = 'http://190.13.134.173/Soindus/SoindusApi/RegCom/';
+        var strParams = { pIdBalanza: "BALANZA2"};
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+        function getPesoInicial() {
+            $('#PesoInicial').val('Cargando. . .');
+            $.getJSON(uri + '@ViewBag.Romana.RomanaEntrada', function (data) {
+                $('#PesoInicial').val(data["StrValue"])
+            });
+        }
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                    <h4 class="text-primary">¿Error de tipeo? <a onclick="window.location.href='@Url.Action("editar", new { id = Model.IdControlTiempo })'">modificar formulario</a></h4>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Producción</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.PlantaProduccion.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.Empresa.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.CTR_Producto.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">RUT</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.RutTransportista" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Transportista</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.NombreTransportista" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Patente</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.Patente" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cliente</label>
+                                        <div class="col-sm-6">
+                                            @if (!Model.IdCliente.HasValue)
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.Cliente.RazonSocial" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" value="@Model." />
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">D.U.S.</label>
+                                        <div class="col-sm-6">
+                                            @if (string.IsNullOrEmpty(Model.DUS))
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.DUS" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Reserva</label>
+                                        <div class="col-sm-6">
+                                            @if (string.IsNullOrEmpty(Model.Reserva))
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.Reserva" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Estado</label>
+                                        <div class="col-sm-6">
+                                            <label class="col-sm-0 control-label"><span class="@Model.CreateCSSClassResponsive()">@Model.CTR_Estado.Descripcion</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Peso Inicial <span class="required">*</span></label>
+                                        @if (ViewBag.Romana != null)
+                                        {
+                                            if (ViewBag.Romana.EsPesajeAutomatico == true)
+                                            {
+                                                <div class="col-sm-4">
+
+                                                    @Html.TextBox("PesoInicial", Model.PesoInicial, new { @class = "form-control", @readonly = "readonly" })
+                                                    @Html.ValidationMessage("PesoInicial")
+                                                </div>
+
+                                            }
+                                            else
+                                            {
+                                                <div class="col-sm-6">
+
+                                                    @Html.TextBox("PesoInicial", Model.PesoInicial, new { @class = "form-control" })
+                                                    @Html.ValidationMessage("PesoInicial")
+                                                </div>
+                                            }
+
+                                            if (ViewBag.Romana.EsPesajeAutomatico == true)
+                                            {
+                                                <div class="col-sm-6">
+                                                    <input type="button" onclick="getPesoInicial('')" class="btn btn-danger btn-sm" value="Romana entrada" />
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="col-sm-6">
+                                                @Html.TextBox("PesoInicial", Model.PesoInicial, new { @class = "form-control" })
+                                                @Html.ValidationMessage("PesoInicial")
+                                            </div>
+
+                                        }
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Registrar Pesaje Inicial" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

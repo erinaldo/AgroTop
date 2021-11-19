@@ -1,0 +1,297 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels.Liquidaciones
+
+@model CrearDoctoLiquidacionViewModel
+
+@{
+    ViewBag.NombreSeccion = "Liquidaciones";
+
+    var dc = new AgroFichasDBDataContext();
+
+    if ((Model.IdDoctoLiquidacion ?? 0) == 0)
+    {
+        ViewBag.Title = "Crear Documento de Agricultor";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Documento de Agricultor";
+    }
+    
+    var tiposDocto = from t in Model.TiposDocto
+                     select new SelectListItem() 
+                     { 
+                         Text = t.Nombre, 
+                         Value = t.IdTipoDoctoLiquidacion.ToString(), 
+                         Selected = t.IdTipoDoctoLiquidacion == Model.IdTipoDoctoLiquidacion 
+                     };
+
+    var cuentasBanco = from c in Model.Liquidacion.Agricultor.CuentaBancaria
+                       select new SelectListItem()
+                       {
+                           Text = String.Format("{0} {1} {2}", c.NumeroCuenta, c.TipoCuentaBancaria.Nombre, c.Banco.Nombre ),
+                           Value = c.IdCuentaBancaria.ToString(),
+                           Selected = c.IdCuentaBancaria == Model.IdCuentaBancaria
+                       };
+
+    var formasPago = from f in Model.FormasPago
+                     select new SelectListItem()
+                     {
+                         Text = f.Nombre,
+                         Value = f.IdFormaPago.ToString(),
+                         Selected = f.IdFormaPago == Model.IdFormaPago
+                     };
+
+    var tiposFechaPago = from f in Model.TiposFechaPago
+                         select new SelectListItem()
+                         {
+                             Text = f.Nombre,
+                             Value = f.IdTipoFechaPago.ToString(),
+                             Selected = f.IdTipoFechaPago == Model.IdTipoFechaPago
+                         };
+
+    //Para cuentas bancarias partial
+    ViewData["bancos"] = Model.Bancos;
+    ViewData["tiposCuenta"] = Model.TiposCuentaBancaria;
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery.ui.datepicker-es.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.IdDoctoLiquidacion)
+    @Html.HiddenFor(m => m.IdLiquidacion)
+    
+    <fieldset class="dataForm">
+        <p>
+            <label>Liquidación</label>
+            @Model.IdLiquidacion
+        </p>
+
+        @if ((Model.IdDoctoLiquidacion ?? 0) > 0)
+        {
+            <p>
+                <label>Id</label>
+                @Model.IdDoctoLiquidacion
+            </p>
+        }
+        <p>
+            <label>Emisor</label>
+            @Model.Rut @Model.Nombre
+            @Html.HiddenFor(m => m.Rut)
+            @Html.HiddenFor(m => m.Nombre)
+        </p>        
+        <p>
+            <label>Tipo</label>
+            @Html.DropDownList("IdTipoDoctoLiquidacion", tiposDocto)
+            @Html.ValidationMessage("IdTipoDoctoLiquidacion", ".")
+        </p>
+        <p>
+            <label>Nro Documento</label>
+            @Html.TextBox("Numero", Model.Numero, new { @class = "std" })
+            @Html.ValidationMessage("Numero", ".")
+        </p>
+        <p>
+            <label for="Fecha">Fecha</label>
+            @Html.TextBox("Fecha", String.Format("{0:dd/MM/yyyy}", Model.Fecha), new { @class = "datebox" })
+            @Html.ValidationMessage("Fecha", ".")
+        </p>
+            <table>
+                <tr>
+                    <td></td>
+                    <td align="right">Monto Documento</td>
+                    <td align="right">Saldo Liquidación</td>
+                </tr>
+                <tr>
+                    <td><label>Total Neto</label></td>
+                    <td>
+                        @Html.TextBoxFor(m => m.TotalNeto, "{0:0}", new { style = "text-align: right", @class="enTotalPagar" })
+                        @Html.ValidationMessage("TotalNeto", ".")
+                    </td>
+                    <td>
+                        @*@Html.TextBoxFor(m => m.SaldoPendienteDoctos.TotalNeto, "{0:#,##0}", new { @readonly = "readonly", @class="readonly", style="text-align:right" })*@
+                        @Html.TextBoxFor(m => m.SaldoPendienteDoctos.TotalNeto, new { @readonly = "readonly", @class = "readonly", style = "text-align:right" })
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Total Iva<br />(@((Model.FactorIva*100).ToString("#,##0.##")) %)</label></td>
+                    <td>
+                        @Html.TextBoxFor(m => m.TotalIva, "{0:0}", new { style = "text-align: right", @class = "enTotalPagar" })
+                        @Html.ValidationMessage("TotalIva", ".")
+                    </td>
+                    <td>
+                        @*@Html.TextBoxFor(m => m.SaldoPendienteDoctos.TotalIva, "{0:#,##0}", new { @readonly = "readonly", @class = "readonly", style = "text-align:right" })*@
+                        @Html.TextBoxFor(m => m.SaldoPendienteDoctos.TotalIva, new { @readonly = "readonly", @class = "readonly", style = "text-align:right" })
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Total Iva Retenido<br />(@((Model.FactorIvaRetenido * 100).ToString("#,##0.##")) %)</label></td>
+                    <td>
+                        @Html.TextBoxFor(m => m.TotalIvaRetenido, "{0:0}", new { style = "text-align: right", @class = "enTotalPagar" })
+                        @Html.ValidationMessage("TotalIvaRetenido", ".")
+                    </td>
+                    <td>
+                        @*@Html.TextBoxFor(m => m.SaldoPendienteDoctos.TotalIvaRetenido, "{0:#,##0}", new { @readonly = "readonly", @class = "readonly", style = "text-align:right" })*@
+                        @Html.TextBoxFor(m => m.SaldoPendienteDoctos.TotalIvaRetenido, new { @readonly = "readonly", @class = "readonly", style = "text-align:right" })
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Total a Pagar</label></td>
+                    <td>
+                        <input type="text" value="" id="TotalPagar" readonly style="text-align:right" />
+                        @Html.ValidationMessage("TotalPagar", ".")
+                    </td>
+                    <td>
+                        @*@Html.TextBoxFor(m => m.SaldoPendienteDoctos.TotalPagar, "{0:#,##0}", new { @readonly = "readonly", @class = "readonly", style = "text-align:right" })*@
+                        @Html.TextBoxFor(m => m.SaldoPendienteDoctos.TotalPagar, new { @readonly = "readonly", @class = "readonly", style = "text-align:right" })
+                    </td>
+                </tr>
+            </table>
+        <p>
+            <label>Forma de Pago</label>
+            @Html.DropDownListFor(m => m.IdFormaPago, formasPago)
+            @Html.ValidationMessageFor(m => m.IdFormaPago, ".")
+        </p>
+        <p>
+            <label>Cuenta Bancaria</label>
+            @Html.DropDownListFor(m => m.IdCuentaBancaria, cuentasBanco)
+            @Html.ValidationMessageFor(m => m.IdCuentaBancaria, ".")
+            <span id="culcon-saving" style="display:none;">Guardando....</span>
+            <a href="#" id="culcon-add" class="command">Agregar Cuenta</a>
+            @Html.Partial("~/Views/Agricultores/CuentaBancaria.cshtml")
+            <script>
+
+                $(document).ready(function () {
+                    $("#culcon-add").click(function () {
+                        culconShow({ id: 0, idBanco: 0, idTipoCuentaBancaria: 0, numeroCuenta: '', comentarios: '' });
+                        return false;
+                    });
+                });
+
+                function culconCallback(cuentaBancaria) {
+                    $('#culcon-add').hide();
+                    $('#culcon-saving').show();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Content("~/agricultores/AgregarCuentaBancaria")",
+                        data: "{idAgricultor:@(Model.Liquidacion.IdAgricultor), idTipoCuenta:" + cuentaBancaria.idTipoCuentaBancaria + ", idBanco:" + cuentaBancaria.idBanco + ", numeroCuenta:'" + cuentaBancaria.numeroCuenta + "', comentarios:'" + cuentaBancaria.comentarios + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (result) {
+
+                            $('#culcon-saving').hide();
+                            $('#culcon-add').show();
+
+                            if (result.OK) {
+                                $("#IdCuentaBancaria").append($("<option></option>")
+                                    .attr("value", result.IdCuenta)
+                                    .text(cuentaBancaria.numeroCuenta + " " + cuentaBancaria.nombreTipoCuentaBancaria + " " + cuentaBancaria.nombreBanco));
+                                $("#IdCuentaBancaria").val(result.IdCuenta);
+                            }
+                            else {
+                                var msg = "Se produjo un error al guardar la cuenta:\n\n";
+                                msg += result.Message;
+
+                                alert(msg);
+                            }
+
+                        },
+                        error: function (req, stat, err) {
+
+                            $('#culcon-saving').hide();
+                            $('#culcon-add').show();
+
+                            var msg = "Se produjo un error al guardar la cuenta:\n\n";
+                            msg += req.responseText + "\n";
+                            msg += req.statusText ;
+
+                            alert(msg);
+                        }
+                    });
+                };
+
+            </script>
+
+        </p>
+        <p>
+            <label>Fecha de Pago</label>
+            @Html.DropDownListFor(m => m.IdTipoFechaPago, tiposFechaPago)
+            @Html.ValidationMessageFor(m => m.IdTipoFechaPago)
+
+            @Html.TextBox("FechaPagoEspecial", String.Format("{0:dd/MM/yyyy}", Model.FechaPagoEspecial), new { @class = "datebox" })
+            @Html.ValidationMessage("FechaPagoEspecial", ".")
+        </p>
+
+        <p>
+            <label>Observaciones</label>
+            @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "std", rows = 5 })
+            @Html.ValidationMessage("Observaciones", ".")
+        </p>
+
+        <p class="okcancel">
+            <input type="submit" value="Guardar Este Documento" /> o @Html.ActionLink("Cancelar", "detalleliquidacion", "liquidaciones",  new { id = Model.IdLiquidacion }, null)
+        </p>
+    </fieldset>
+
+}
+
+<script type="text/javascript">
+  
+    $(document).ready(function () {
+
+        $.datepicker.setDefaults($.datepicker.regional["es"]);
+        $("#Fecha").datepicker({ showOn: 'button', buttonImage: '@Url.Content("~/Content/images/calendar.gif") ', buttonImageOnly: true });
+        $("#FechaPagoEspecial").datepicker({ showOn: 'button', buttonImage: '@Url.Content("~/Content/images/calendar.gif") ', buttonImageOnly: true });
+
+        $("#IdTipoFechaPago").change(function () {
+            tipoFechaPago();
+        });
+
+        $(".enTotalPagar").change(function () {
+            totalPagar();
+        });
+
+        tipoFechaPago();
+        totalPagar();
+    });
+
+    function tipoFechaPago() {
+
+        if ($("#IdTipoFechaPago").val() == "1") {
+            $("#FechaPagoEspecial").hide();
+            $("#FechaPagoEspecial").siblings("img").hide();
+        }
+        else {
+            $("#FechaPagoEspecial").show();
+            $("#FechaPagoEspecial").siblings("img").show();
+        }
+    }
+
+    function totalPagar() {
+
+        var total = 0;
+
+        total += parseInt($("#TotalNeto").val(), 10);
+        total += parseInt($("#TotalIva").val(), 10);
+        total -= parseInt($("#TotalIvaRetenido").val(), 10);
+
+        $("#TotalPagar").val(total);
+    }
+
+</script> 

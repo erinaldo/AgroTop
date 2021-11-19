@@ -1,0 +1,43 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+@using AgroFichasWeb.AppLayer.Extensions 
+
+@model DetalleAnalisisViewModel
+                               
+    @if (Model.ProcesoIngreso.ValorAnalisis.Count > 0 || !String.IsNullOrEmpty(Model.ProcesoIngreso.ObservacionesAnalisis))
+    {
+        
+        int i = 0;
+        bool open = false;
+        int colspan = Model.Columas * 2 - 1;
+        <table class="sublist2" style="margin-bottom: 10px;">
+        @foreach (var valor in Model.ProcesoIngreso.ValorAnalisis.OrderBy(X => X.ParametroAnalisis.Orden))
+        {
+            if (i % Model.Columas == 0)
+            {
+                @(new MvcHtmlString(open ? "</tr>" : ""))
+                @(new MvcHtmlString("<tr>"))
+                open = true;
+            }
+            i++;
+            <td><b>@valor.ParametroAnalisis.Nombre</b></td>
+            <td style="min-width: 40px">@valor.ToString()</td>
+        }
+        @(new MvcHtmlString(open ? "</tr>" : ""))
+        <tr valign="top">
+            <td><b>Observaciones</b></td>
+            <td colspan="@colspan">@Model.ProcesoIngreso.ObservacionesAnalisis</td>
+        </tr>
+        @if (Model.ProcesoIngreso.Autorizado.HasValue && !String.IsNullOrEmpty(Model.ProcesoIngreso.MotivoRechazoAnalisis))
+        {
+        <tr valign="top">
+            <td><b>Motivo</b></td>
+            <td colspan="@colspan">@Model.ProcesoIngreso.MotivoRechazoAnalisis.Replace("\n", "<br/>").ToMvcHtmlString()</td>
+        </tr>
+        }
+        </table>
+    }
+    else
+    {
+        <text>-</text>
+    }

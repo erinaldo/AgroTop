@@ -1,0 +1,60 @@
+﻿@using AgroFichasWeb.ViewModels.OrdenesCompra
+
+@model OrdenCompraViewModel
+
+@{
+    ViewBag.NombreSeccion = "Órdenes de Compra";
+    ViewBag.Title = "Editar Orden de Compra";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:<br />
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Núm. O/C</label>
+            @Html.TextBox("OC", Model.OC, new { @class = "std" })
+            @Html.ValidationMessage("OC", " ")
+        </p>
+        <p>
+            <label for="Titulo">Código Proveedor</label>
+            @Html.TextBox("IdProveedor", Model.IdProveedor, new { @class = "std" })
+            @Html.ValidationMessage("IdProveedor", " ")
+        </p>
+        <p>
+            <label for="Titulo">Material</label>
+            @Html.DropDownList("IdMaterial", Model.MaterialesSelectList, "-- Seleccione Material --", new { @class = "std" })
+            @Html.ValidationMessage("IdMaterial", " ")
+        </p>
+        <p>
+            <label for="Titulo">Condición de Pago</label>
+            @Html.TextArea("CondicionPago", Model.CondicionPago, new { @class = "std", maxlength = "200" })
+            @Html.ValidationMessage("CondicionPago", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar esta Orden" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+    @Html.Hidden("IdLiquidacion", Model.IdLiquidacion)
+    @Html.Hidden("IdProyecto", Model.IdProyecto)
+}

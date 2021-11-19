@@ -1,0 +1,86 @@
+﻿@using AgroFichasWeb.ViewModels
+@model AsignarCamionViewModel
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    if (Model.Reasignar)
+    {
+        ViewBag.Title = "Reasignación de Camiones a Planta de Origen Paso 2";
+    }
+    else
+    {
+        ViewBag.Title = "Asignación de Camiones a Planta de Origen Paso 2";
+    }
+
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/validate.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("~/Views/Requerimientos/Submenu.cshtml")
+}
+
+<h2>@ViewBag.Title</h2>
+@if (!string.IsNullOrEmpty(Model.MsgErr))
+{
+    <div class="validation-summary-errors">
+        Han ocurrido los siguientes errores:
+        @(Html.Raw(Model.MsgErr))
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.MsgOk))
+{
+    <div class="validation-summary-oks">
+        @Model.MsgOk
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Origen</label>
+            @Model.Origen
+        </p>
+        <p>
+            <label for="Titulo">Destino</label>
+            @Model.Destino
+        </p>
+        <p>
+            <label for="Titulo">Transportista</label>
+            <strong>@Model.Transportista.Nombre</strong>
+        </p>
+        <p>
+            <label for="Titulo">Chofer</label>
+            @Html.Partial("~/Views/Controls/ChoferSelector.cshtml", new ChoferSelectorViewModel() { IdTransportista = Model.IdTransportista, IdChofer = (Model.Chofer != null ? Model.Chofer.IdChofer : 0), RUT = (Model.Chofer != null ? Model.Chofer.RUT : ""), Nombre = (Model.Chofer != null ? Model.Chofer.Nombre : "") })
+            @Html.Hidden("IdChofer", Model.IdChofer)
+        </p>
+        <p>
+            <label for="Titulo">Camión</label>
+            @Html.DropDownList("IdCamion", Model.CamionesList, "-- Seleccione --", new { @class = "heavy std" })
+        </p>
+        <p>
+            <label for="Titulo">Valor flete por kilogramo transportado</label>
+            @Html.TextBox("ValorFletePorKgTransportado", null, new { @class = "heavy std" }) <em>En Peso</em>
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Asignar" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+
+    @Html.Hidden("IdPedido", Model.IdPedido)
+    @Html.Hidden("IdRequerimiento", Model.IdRequerimiento)
+    @Html.Hidden("IdTransportista", Model.IdTransportista)
+}
+
+<script type="text/javascript">
+
+    function agsCallback(idAgricultor, nombre) {
+        $("#IdChofer").val(idAgricultor);
+    }
+
+</script>   

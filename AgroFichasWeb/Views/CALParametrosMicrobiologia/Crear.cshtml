@@ -1,0 +1,124 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_ParametroMicrobiologia
+@{
+    ViewBag.Title = "Parámetros de Microbiología";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdParametroMicrobiologia == 0)
+    {
+        ViewBag.SubTitle = "Crear Parámetro de Microbiología";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Parámetro de Microbiología";
+    }
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Nombre <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Nombre", Model.Nombre, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("Nombre")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">FormatString</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("FormatString", Model.FormatString, new { @class = "form-control", maxlength = "20" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">UM <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("UM", Model.UM, new { @class = "form-control", maxlength = "20" })
+                                        @Html.ValidationMessage("UM")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Decimales</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Decimales", Model.Decimales, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("Decimales")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Nombre (en)</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Nombre_en", Model.Nombre_en, new { @class = "form-control", maxlength = "50" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">FormatString (en)</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("FormatString_en", Model.FormatString_en, new { @class = "form-control", maxlength = "50" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">UM (en)</label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("UM_en", Model.UM_en, new { @class = "form-control", maxlength = "50" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Parámetro de Microbiología" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

@@ -1,0 +1,129 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model AgroFichasWeb.Controllers.PaginatedList<ExportBatch>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Exportar Recepciones";
+    ViewBag.Title = "Administrar Lotes de Exportación " + temporada.Nombre;
+
+    
+    var puedeAnular = SYS_User.Current().HasPermiso(80);
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>@ViewBag.Title</h2>
+
+    <div style="margin: 20px 0px">
+        @using(Html.BeginForm("index", "exportarrecepciones", new { id = 0 }, FormMethod.Get)) {
+            @Html.Partial("TemporadaSelector")
+            @Html.Partial("EmpresaSelector")
+            <input type="submit" value="Buscar" />
+        }
+    </div>
+
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="center">
+                Estado
+            </th>    
+            <th align="right">
+                Número
+            </th>
+            <th align="left">
+                Empresa
+            </th>                           
+            <th align="left">
+                Tipo
+            </th>
+            <th align="center">
+                Detalle
+            </th>
+            @if (puedeAnular) {
+            <th align="center">
+                Anular
+            </th>
+            }
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="9" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+       
+        @foreach (var item in Model) 
+        {
+            var itemParams = Model.RouteValues(new RouteValueDictionary() { {"id", item.IdExportBatch} });
+            var htmlAttr = new Dictionary<String, Object>() { { "class", "command" } };
+            <tr valign="top">
+                <td align="center" style="color:#0000s; background-color: @(item.Nulo ? "#ff8e73" : "#83f03c")" >
+                    @(item.Nulo ? "Nulo" : "Vigente")
+                </td>
+                <td align="right">
+                    @item.IdExportBatch
+                </td>
+                <td align="left">
+                    @item.Empresa.Nombre
+                </td>
+                <td align="left">
+                    @item.TipoExportBatch.Nombre
+                </td>
+                <td align="center">
+                    @Html.ActionLink("Detalle", "detalle", itemParams, htmlAttr)
+                </td>
+                @if (puedeAnular)
+                {
+                    <td align="center">
+                        @if (!item.Nulo)
+                        {    
+                            <a href="#" class="command2 anular" data-id="@item.IdExportBatch">Anular</a> 
+                        }
+                    </td>
+                }
+            </tr>
+        }
+        <tr>
+            <td colspan="11" class="pager">
+                @Model.Paginator("index", "exportarrecepciones", ViewContext.RequestContext)
+            </td>
+        </tr>
+    </table>
+
+
+    @if (puedeAnular)
+    {
+    <script>
+
+        $(document).ready(function () {
+
+            $(".anular").click(function () {
+                var id = $(this).attr("data-id");
+                if (confirm("¿Está seguro de que desea anular el lote #" + id)) {
+                    window.location.href = '@Url.Action("anular", Model.RouteValues(new RouteValueDictionary() { {"id", "idpi"} })).ToMvcHtmlString()'.replace("idpi", id);
+                }
+                return false;
+            });
+
+        });
+
+    </script>
+    }

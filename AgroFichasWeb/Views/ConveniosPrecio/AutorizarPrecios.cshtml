@@ -1,0 +1,48 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Liquidaciones
+
+@model AutorizarPreciosViewModel
+@{
+
+    ViewBag.NombreSeccion = "Convenios de Precios";
+    ViewBag.Title = "Autorizar Convenio de Precio";
+
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm("autorizarprecios", "conveniosprecio", (RouteValueDictionary)ViewData["indexRouteValues"], FormMethod.Post, new { id = "frm" }))
+{
+    @Html.Hidden("IdConvenioPrecioAutorizacion", Model.IdConvenioPrecioAutorizacion)
+    @Html.Hidden("Autorizado", Model.Autorizado)
+
+    <fieldset class="dataForm">
+        @Html.Partial("ConvenioPrecioAutorizacion", Model)
+        <p class="okcancel">
+            <input type="button" id="btnAutorizar" value="Autorizar Precios" style="background-color: green; color: white;" />
+            <input type="button" id="btnRechazar" value="Rechazar Precios" style="background-color: red; color: white;" />
+            o @Html.ActionLink("Cancelar", "autorizarpreciosindex", (RouteValueDictionary)ViewData["indexRouteValues"])
+        </p>
+    </fieldset>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#btnAutorizar").click(function () {
+                    setAutorizado('true');
+                });
+                $("#btnRechazar").click(function () {
+                    setAutorizado('false');
+                });
+            });
+
+            function setAutorizado(autorizado) {
+                $("#Autorizado").val(autorizado);
+                $('#frm')[0].submit();
+            }
+        </script>
+}

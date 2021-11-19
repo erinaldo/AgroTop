@@ -1,0 +1,413 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model List<CTR_ControlTiempo>
+@{
+    ViewBag.Title = "Control de Tiempo";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var controlTiempo = (CTR_ControlTiempo)ViewData["controlTiempo"];
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantasProduccion"];
+
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": false,
+            "order": [0, 'desc'],
+            "searching": false,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        $(document).ready(function () {
+            var uri = '@ApiRealUrl.GetApiUrl()';
+
+            if ($("#IdAntiguedad").val() == 1) {
+                $('#datatable').ordering = true;
+                $('#datatable').order([0, 'asc']);
+            }
+            else if ($("#IdAntiguedad").val() == 2) {
+                $('#datatable').ordering = true;
+                $('#datatable').order([0, 'desc']);
+            }
+
+            var id = $('#IdEmpresa').val();
+            if (!jQuery.isEmptyObject(id)) {
+                DeleteProductos();
+                GetProductos();
+            }
+
+            //DATETIMEPICKER
+            jQuery.datetimepicker.setLocale('es');
+            jQuery('#dateTime1').datetimepicker({
+                i18n: {
+                    es: {
+                        months: [
+                            'Enero', 'Febrero', 'Marzo', 'Abril',
+                            'Mayo', 'Junio', 'Julio', 'Agosto',
+                            'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                            "Do", "Lu", "Ma", "Mi",
+                            "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                dayOfWeekStart: 1,
+                format: 'Y/m/d',
+                mask: true,
+                step: 1,
+                timepicker: false,
+                todayButton: true,
+                value: null,
+                weeks: true
+            });
+            jQuery('#dateTime2').datetimepicker({
+                i18n: {
+                    es: {
+                        months: [
+                            'Enero', 'Febrero', 'Marzo', 'Abril',
+                            'Mayo', 'Junio', 'Julio', 'Agosto',
+                            'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                            "Do", "Lu", "Ma", "Mi",
+                            "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                dayOfWeekStart: 1,
+                format: 'Y/m/d',
+                mask: true,
+                step: 1,
+                timepicker: false,
+                todayButton: true,
+                value: null,
+                weeks: true
+            });
+
+            function GetProductos() {
+                var id = $('#IdEmpresa').val();
+                if (!jQuery.isEmptyObject(id)) {
+                    SetCargando($('#IdProducto'));
+                }
+                $.getJSON(uri + '/Productos/GetProductos?id=' + id)
+                    .done(function (result) {
+                        var options = [];
+
+                        if (result.length == 0) {
+                            alert("No hay productos disponibles");
+                            DeleteProductos();
+                        }
+                        else {
+                            options.push('<option value="',
+                                '', '">',
+                                '(Seleccione Producto)', '</option>');
+                            for (var i = 0; i < result.length; i++) {
+                                options.push('<option value="',
+                                    result[i].IdProducto, '">',
+                                    result[i].Nombre, '</option>');
+                            }
+                            $("#IdProducto").html(options.join(''));
+                        }
+
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(err);
+                    });
+            }
+
+            function GetEnvases() {
+                var id = $('#IdProducto').val();
+                if (!jQuery.isEmptyObject(id)) {
+                    SetCargando($('#IdEnvase'));
+                }
+                $.getJSON(uri + '/Productos/GetEnvases?id=' + id)
+                    .done(function (result) {
+                        var options = [];
+
+                        if (result.length == 0) {
+                            alert("No hay envases disponibles");
+                            DeleteEnvases();
+                        }
+                        else {
+                            options.push('<option value="',
+                                '', '">',
+                                '(Seleccione Envase)', '</option>');
+                            for (var i = 0; i < result.length; i++) {
+                                options.push('<option value="',
+                                    result[i].IdEnvase, '">',
+                                    result[i].Descripcion, '</option>');
+                            }
+                            $("#IdEnvase").html(options.join(''));
+                        }
+
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        console.log(err);
+                    });
+            }
+
+            function DeleteProductos() {
+                $("#IdProducto option").remove();
+                var options = [];
+                options.push('<option value="',
+                    '', '">',
+                    '(Seleccione Producto)', '</option>');
+                $("#IdProducto").html(options.join(''));
+            }
+
+            function DeleteEnvases() {
+                $("#IdEnvase option").remove();
+                var options = [];
+                options.push('<option value="',
+                    '', '">',
+                    '(Seleccione Envase)', '</option>');
+                $("#IdEnvase").html(options.join(''));
+            }
+
+            function SetCargando(element) {
+                var options = [];
+                options.push('<option value="',
+                    '', '">',
+                    'Cargando...', '</option>');
+                element.html(options.join(''));
+            }
+
+            $("#IdEmpresa").change(function () {
+                DeleteProductos();
+                DeleteEnvases();
+                GetProductos();
+            });
+
+            $("#IdProducto").change(function () {
+                DeleteEnvases();
+                GetEnvases();
+            });
+
+
+
+        });
+    </script>
+
+    @foreach (var item in Model)
+    {
+        <script>
+            $("#delete_@item.IdControlTiempo").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas eliminar este control tiempo?",
+                    text: "ID: " +@item.IdControlTiempo+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Eliminar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Eliminar", new { id = item.IdControlTiempo })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+        </script>
+    }
+}
+
+<section role="main" class="content-body">
+    @if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+    {
+        <div class="row">
+            @if (!string.IsNullOrEmpty(Request["errMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["errMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Request["okMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["okMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Filtros de Búsqueda</h2>
+                </header>
+                <div class="panel-body">
+                    <div class="form-inline center">
+                        @using (Html.BeginForm("index", "controltiempo", new { id = 0 }, FormMethod.Get))
+                        {
+                            <div class="form-group">
+                                @if (plantas.Count() > 0)
+                                {
+                                    @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("IdPlantaProduccion", new List<SelectListItem>(), "(Sin Plantas Asignadas)", new { @class = "form-control" })
+                                }
+                            </div>
+                            <div class="form-group">
+                                @Html.DropDownList("IdEmpresa", controlTiempo.GetEmpresas(controlTiempo.IdEmpresa), "(Todas las Empresas)", new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                @Html.DropDownList("IdProducto", new List<SelectListItem>(), "(Todos las Productos)", new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                @Html.DropDownList("IdEnvase", new List<SelectListItem>(), "(Todos las Envases)", new { @class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" id="IdEstado" name="IdEstado">
+                                    <option>(Todos las Estados)</option>
+                                    <option value="9">No Despachado</option>
+                                    @foreach (var item in controlTiempo.GetEstados(controlTiempo.IdEstado))
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                @Html.TextBox("FechaDesde", controlTiempo.FechaDesde, new { @class = "form-control", id = "dateTime1" })
+                            </div>
+                            <div class="form-group">
+                                @Html.TextBox("FechaHasta", controlTiempo.FechaHasta, new { @class = "form-control", id = "dateTime2" })
+                            </div>
+                            <div class="form-group">
+                                @Html.DropDownList("IdAntiguedad", controlTiempo.GetAntiguedades(controlTiempo.IdAntiguedad), "(Por Defecto)", new { @class = "form-control" })
+                            </div>
+                            <div class="visible-sm clearfix mt-sm mb-sm"></div>
+                            <input type="text" name="key" class="form-control" value="@ViewData["key"]" /> <input class="btn btn-default" type="submit" value="Buscar" />
+                            <div class="clearfix visible-xs mb-sm"></div>
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Controles Hechos y/o En Desarrollo</h2>
+        </header>
+        <div class="panel-body">
+            <p>Las horas señaladas en la tabla corresponden al <strong>tiempo total del camión en la planta</strong>. En caso de que el camión haya sido despachado muestra el <strong>tiempo total que estuvo en la planta</strong>.</p>
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>Núm. Control</th>
+                        <th>Planta Producción</th>
+                        <th>RUT</th>
+                        <th>Transportista</th>
+                        <th>Patente</th>
+                        <th>Chofer</th>
+                        <th>Tel. Chofer</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Envase</th>
+                        <th>Estado</th>
+                        <th>Núm. Guía</th>
+                        <th>Días</th>
+                        <th>Horas</th>
+                        <th>Minutos</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr valign="top">
+                            <td>@item.IdControlTiempo</td>
+                            <td>@item.PlantaProduccion.Nombre</td>
+                            <td>@item.RutTransportista</td>
+                            <td>@item.NombreTransportista</td>
+                            <td>@item.Patente.Replace(" ", "-")</td>
+                            <td>@item.NombreChofer</td>
+                            <td>@item.TelefonoChofer</td>
+                            @if (!item.IdCliente.HasValue)
+                            {
+                                <td>&mdash;</td>
+                            }
+                            else
+                            {
+                                <td>@item.Cliente.RazonSocial</td>
+                            }
+                            <td>@item.CTR_Producto.Nombre</td>
+                            @if (!item.IdEnvase.HasValue)
+                            {
+                                <td>&mdash;</td>
+                            }
+                            else
+                            {
+                                <td>@item.CTR_Envase.Descripcion</td>
+                            }
+                            <td><span class="@item.CreateCSSClassResponsive()">@item.CTR_Estado.Descripcion</span></td>
+                            @if (item.NumeroGuia == 0 || item.NumeroGuia == null)
+                            {
+                                <td>&mdash;</td>
+                            }
+                            else
+                            {
+                                <td>@item.NumeroGuia</td>
+                            }
+                            <td align="center"><span class="@item.CreateCSSClassMeditionResponsive_V2()">@item.CreateDayMedition_V2()</span></td>
+                            <td align="center"><span class="@item.CreateCSSClassMeditionResponsive_V2()">@item.CreateHoursMedition_V2()</span></td>
+                            <td align="center"><span class="@item.CreateCSSClassMeditionResponsive_V2()">@item.CreateMinutesMedition_V2()</span></td>
+                            <td>
+                                <button id="detail_@item.IdControlTiempo " onclick="window.location.href='@Url.Action("detalle", new { id = item.IdControlTiempo })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Detalles"> <i class="fa fa-eye"></i></button>
+                                @if (permisosUsuario.Actualizar && item.IdEstado != 4)
+                                {
+                                    <button id="edit_@item.IdControlTiempo " onclick="window.location.href='@Url.Action("editar", new { id = item.IdControlTiempo })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                                }
+                                @if (permisosUsuario.Borrar && item.IdEstado != 4)
+                                {
+                                    @*<button id="delete_@item.IdControlTiempo" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>*@
+                                    <button id="@string.Format("delete_{0}", item.IdControlTiempo)" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- end: page -->
+</section>

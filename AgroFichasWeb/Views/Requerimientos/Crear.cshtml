@@ -1,0 +1,138 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model LOG_Requerimiento
+
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    if (Model.IdRequerimiento == 0)
+    {
+        ViewBag.Title = "Crear Requerimiento";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Requerimiento";
+    }
+
+    var empresasList = (IEnumerable<SelectListItem>)ViewData["empresasList"];
+    var tipoMovimientosList = (IEnumerable<SelectListItem>)ViewData["tipoMovimientosList"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+@section headSection {
+    <!-- this should go after your </body> -->
+    <link href="~/Scripts/datetimepicker-master/jquery.datetimepicker.css" rel="stylesheet" />
+    <script src="~/Scripts/datetimepicker-master/build/jquery.datetimepicker.full.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var currentDate = new Date();
+            var day = currentDate.getDate();
+            var month = currentDate.getMonth() + 1;
+            var year = currentDate.getFullYear();
+            var startDate = year + "/" + month + "/" + day;
+            jQuery.datetimepicker.setLocale('es');
+            jQuery('#datetimepicker1').datetimepicker({
+                i18n: {
+                    de: {
+                        months: [
+                         'Januar', 'Februar', 'März', 'April',
+                         'Mai', 'Juni', 'Juli', 'August',
+                         'September', 'Oktober', 'November', 'Dezember',
+                        ],
+                        dayOfWeek: [
+                         "So.", "Mo", "Di", "Mi",
+                         "Do", "Fr", "Sa.",
+                        ]
+                    },
+                    es: {
+                        months: [
+                         'Enero', 'Febrero', 'Marzo', 'Abril',
+                         'Mayo', 'Junio', 'Julio', 'Agosto',
+                         'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                         "Do", "Lu", "Ma", "Mi",
+                         "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                dayOfWeekStart: 1,
+                startDate: new Date(),
+                format: 'Y/m/d H:i',
+                timepicker: true,
+                weeks: true,
+            });
+            jQuery('#datetimepicker2').datetimepicker({
+                i18n: {
+                    de: {
+                        months: [
+                         'Januar', 'Februar', 'März', 'April',
+                         'Mai', 'Juni', 'Juli', 'August',
+                         'September', 'Oktober', 'November', 'Dezember',
+                        ],
+                        dayOfWeek: [
+                         "So.", "Mo", "Di", "Mi",
+                         "Do", "Fr", "Sa.",
+                        ]
+                    },
+                    es: {
+                        months: [
+                         'Enero', 'Febrero', 'Marzo', 'Abril',
+                         'Mayo', 'Junio', 'Julio', 'Agosto',
+                         'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                         "Do", "Lu", "Ma", "Mi",
+                         "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                dayOfWeekStart: 1,
+                startDate: new Date(),
+                format: 'Y/m/d H:i',
+                timepicker: true,
+                weeks: true,
+            });
+        });
+    </script>
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Empresa</label>
+            @Html.DropDownList("IdEmpresa", empresasList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdEmpresa", " ")
+        </p>
+        <p>
+            <label for="Titulo">Movimiento</label>
+            @Html.DropDownList("IdTipoMovimiento", tipoMovimientosList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdTipoMovimiento", " ")
+        </p>
+        <p>
+            <label for="Titulo">Glosa</label>
+            @Html.TextBox("Glosa", Model.Glosa, new { @class = "heavy std", maxlength = "100" }) <em>Movimiento interno desde A a B</em>
+            @Html.ValidationMessage("Glosa", " ")
+        </p>
+        <p>
+            <label for="Titulo">Fecha de Inicio</label>
+            @Html.TextBox("FechaInicio", Model.FechaInicio, new { @class = "heavy std", id = "datetimepicker1" })
+            @Html.ValidationMessage("FechaInicio", " ")
+        </p>
+        <p>
+            <label for="Titulo">Fecha de Término</label>
+            @Html.TextBox("FechaVencimiento", Model.FechaVencimiento, new { @class = "heavy std", id = "datetimepicker2" })
+            @Html.ValidationMessage("FechaInicio", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar este Requerimiento" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

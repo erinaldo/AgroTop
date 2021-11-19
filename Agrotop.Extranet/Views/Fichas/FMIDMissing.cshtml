@@ -1,0 +1,31 @@
+﻿@using Agrotop.Extranet.Models
+@{
+    var temporadas = (IEnumerable<Temporada>)ViewData["temporadas"];
+    var temporada = (Temporada)ViewData["temporada"];
+    var agricultor = (Agricultor)ViewData["agricultor"];
+
+    ViewBag.Title = "Asesorías en Terreno " + temporada.Nombre;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<div class="titulo1-consubmenu">@ViewBag.Title</div>
+<div class="submenu">
+    @foreach (var t in temporadas)
+    {
+        <div class="submenuitem">
+            @if (t.IdTemporada != temporada.IdTemporada)
+            {
+                @Html.ActionLink(t.Nombre, "index", new { id = t.IdTemporada })
+            }
+            else
+            {
+                <span class="submenuitem-selected">@t.Nombre</span>
+            }
+        </div>
+    }
+    <div style="clear: both"></div>
+</div>
+
+<div style="margin: 50px 0px 0px 0px;">
+    <div>Agricultor no vinculado a ForceManager</div>
+</div>

@@ -1,0 +1,117 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model IntencionSiembra
+
+@{
+    ViewBag.NombreSeccion = "Intecion de Siembra";
+
+    var dc = new AgroFichasDBDataContext();
+
+    if (Model.IdIntencionSiembra == 0)
+    {
+        ViewBag.Title = "Crear Intención de Siembra";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Intencion de Siembra";
+    }
+
+    var cultivos = Cultivo.SelectListParaIntencionSiembra(Model.IdCultivo);
+
+    var comunas = Comuna.SelectList(Model.IdComuna);
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    @*<script src="~/Scripts/validate.js"></script>*@
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <div class="p">
+            <label>Agricultor</label>
+            @Html.Partial("~/Views/Controls/AgricultorSelector.cshtml", new AgricultorSelectorViewModel() { IdAgricultor = Model.IdAgricultor, Nombre = (Model.Agricultor != null) ? Model.Agricultor.Nombre : "&nbsp;" })
+            @Html.ValidationMessage("IdAgricultor", ".")
+            @Html.Hidden("IdAgricultor", Model.IdAgricultor)
+
+        </div>
+        <p>
+            <label>Temporada</label>
+            @if (Model.IdIntencionSiembra == 0)
+            {
+                @Html.Partial("TemporadaSelector")
+            }
+            else
+            {
+                <text>@Model.Temporada.Nombre</text>
+                @Html.Hidden("IdTemporada", Model.IdTemporada)
+            }
+        </p>
+        <p>
+            <label>Cultivo</label>
+            @Html.DropDownList("IdCultivo", cultivos)
+            @Html.ValidationMessage("IdCultivo", ".")
+        </p>
+        <p>
+            <label>Comuna</label>
+            @Html.DropDownList("IdComuna", comunas)
+            @Html.ValidationMessage("IdComuna", ".")
+        </p>
+        <p>
+            <label>Superficie (há)</label>
+            @Html.TextBox("Superficie", Model.Superficie)
+            @Html.ValidationMessage("Superficie", ".")
+        </p>
+        <p>
+            <label>Cantidad (Kg)</label>
+            @Html.TextBox("Cantidad", Model.Cantidad)
+            @Html.ValidationMessage("Cantidad", ".")
+        </p>
+        <p>
+            <label>Punto de Entrega Probable</label>
+            @Html.TextBox("PuntoEntrega", Model.PuntoEntrega)
+            @Html.ValidationMessage("PuntoEntrega", ".")
+        </p>
+        <p>
+            <label>Observaciones</label>
+            @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "std", rows = 5 })
+            @Html.ValidationMessage("Observaciones", ".")
+        </p>
+            @if (Model.IdIntencionSiembra > 0)
+            {
+                <label></label>
+                <table class="sublist" style="display:inline-block; margin-bottom: 20px">
+                    <tr><td>Creado</td><td>@Model.FechaHoraIns.ToString("dd/MM/yy HH:mm")</td><td>@(Model.UserIns)</td></tr>
+                    @if (Model.FechaHoraUpd.HasValue)
+                    {
+                        <tr><td>Actualizado</td><td>@Model.FechaHoraUpd.Value.ToString("dd/MM/yy HH:mm")</td><td>@(Model.UserUpd)</td></tr>
+                    }
+                </table>
+            }
+        <p class="okcancel">
+            <input type="submit" value="Guardar Esta Intención de Siembra" /> o @Html.ActionLink("Cancelar", "Index", (RouteValueDictionary)ViewData["indexRouteValues"])
+        </p>
+    </fieldset>
+}
+
+<script type="text/javascript">
+
+    function agsCallback(idAgricultor, nombre) {
+        $("#IdAgricultor").val(idAgricultor);
+    }
+
+</script>   

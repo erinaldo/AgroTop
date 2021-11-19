@@ -1,0 +1,22 @@
+﻿@using AgroFichasWeb.Models
+@model List<Sucursal>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.NombreSeccion = "Colas de Recepción " + temporada.Nombre;
+    ViewBag.Title = "Seleccione la Cola";
+}
+<style>
+    ul.inpagemenu li {
+        margin: 20px 0px;
+    }
+</style>
+
+@foreach (var sucursal in Model)
+{
+    <h2>@sucursal.Nombre</h2>
+    <ul class="inpagemenu">
+        <li>@Html.ActionLink("Cola de Toma de Muestra", "colaestado", new { id = 1, idSucursal = sucursal.IdSucursal }, new { @class = "command", target = "_blank" })</li>
+        <li>@Html.ActionLink("Cola de Descarga", "coladescarga", new { idSucursal = sucursal.IdSucursal }, new { @class = "command", target = "_blank" })</li>
+    </ul>
+}

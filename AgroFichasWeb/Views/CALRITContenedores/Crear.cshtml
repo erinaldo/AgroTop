@@ -1,0 +1,94 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_RITContenedor
+@{
+    ViewBag.Title = "Registro de Inspección de Transporte";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdContenedor == 0)
+    {
+        ViewBag.SubTitle = "Crear Contenedor";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Contenedor";
+    }
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link href="~/Content/porto/vendor/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="~/Content/porto/vendor/select2/js/select2.min.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Planta Producción <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdPlanta", Model.GetPlantaProduccion(Model.IdPlanta), new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdPlanta")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Nombre Contenedor <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("NContenedor", Model.NContenedor, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("NContenedor")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Transportista <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdTransportista", Model.GetTransportistas(Model.IdTransportista), "(Seleccione Transportista)", new { @class = "form-control populate", @data_plugin_selectTwo = "" })
+                                        @Html.ValidationMessage("IdTransportista")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Contenedor" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

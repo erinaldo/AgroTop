@@ -1,0 +1,11 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+}    
+    <select id="idTemporada" name="idtemporada">
+        @foreach (var t in temporadas)
+        {
+            <option value="@t.IdTemporada" @(t.IdTemporada == temporada.IdTemporada ? "selected" : "")>@t.Nombre</option>
+        }
+    </select>

@@ -1,0 +1,162 @@
+﻿@using AgroFichasWeb.Models
+@model Liquidacion
+@{
+    Layout = null;
+    ViewBag.Title = "Liquidación #" + Model.IdLiquidacion.ToString();
+    int copies = int.Parse(ViewData["copias"].ToString());
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <style>
+        body 
+        {
+	        font-family:Verdana, Arial, Helvetica, sans-serif;
+	        font-size: 12px;
+        }
+
+        .procesoIngreso {
+        }
+        .procesoIngreso label {
+            font-weight:bold;
+        }
+
+        .procesoIngreso td {
+            border-bottom: solid 1px #d5dfe5;
+            padding: 5px 5px 5px 5px;
+            margin: 0px 0px 10px 0px;
+        }
+
+        .procesoIngreso label
+        {
+            width: 100px;
+            font-weight:bold;
+            display: inline-block;
+            text-align: right;
+            padding: 0px 10px 0px 0px;
+            vertical-align: top;
+        }
+
+
+        .procesoIngreso .sublist td {
+            font-size: 11px;
+        }
+
+        .procesoIngreso table.sublist2 td
+        {
+            padding: 5px 10px 5px 0px;
+            margin: 0px 0px 10px 0px;
+        }
+        .estado {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            padding: 3px;
+        }
+        h1 {
+            margin-top: 0px;
+        }
+        .info {
+            font-size: 10px;
+            text-align: right;
+        }
+
+        table.form1 {
+        }
+
+        table.form1 tr.title, table.form1 td.title {
+            font-weight: bold;
+            color: #ffffff;
+            background: #7f7f7f;
+        }
+
+        table.form1 td {
+            padding: 4px 4px 4px 4px;
+        }
+
+        table.form1 td.label {
+            font-weight: bold;
+            color: #333333;
+            background: #e5e5e5;
+        }
+
+        table.form1 td.small {
+            font-size: 10px;
+            padding: 2px 2px 2px 2px;
+        }
+
+        table.form1 td.nopad td {
+            padding: 0px 0px 0px 0px;
+        }
+
+        table.form1 td.idins {
+            font-style: italic;
+        }
+
+        table.form1 tr.inlineForm td {
+            background-color: #ffc800;
+        }
+
+        table.form1 td.buttons {
+            border-top: solid 1px #7f7f7f;
+            text-align: right;
+        }
+
+        table.form1-sublist td {
+            font-size: 10px;
+            padding: 2px 2px 2px 2px;
+        }
+
+        table.form1-sublist input {
+            font-size: 10px;
+        }
+
+        table.form1-sublist td.label {
+            background: transparent;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        table.form1-sublist tr.title {
+            font-weight: bold;
+            color: #ffffff;
+            background: #7f7f7f;
+        }
+
+
+        @@media all {
+	        .page-break	{ display: none; }
+        }
+
+        @@media print {
+	        .page-break	{ display: block; page-break-before: always; }
+        }
+    </style>
+</head>
+<body onload="window.print();">
+    @for (int page = 0; page < copies; page++)
+    {
+        <div>
+            <table width="100%">
+                <tr valign="top">
+                    <td>
+                        Empresas Agrotop
+                        <h1>@ViewBag.Title</h1>
+                    </td>
+                    <td class="info">@SYS_User.Current().UserName<br />@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            </table>
+            
+            @Html.Partial("Liquidacion", Model)
+        </div>
+        if (page < copies - 1)
+        {
+            <div class="page-break"></div>
+        }
+    }
+</body>
+</html>

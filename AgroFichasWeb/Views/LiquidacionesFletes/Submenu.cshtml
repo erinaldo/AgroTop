@@ -1,0 +1,8 @@
+﻿@using AgroFichasWeb.Models
+<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(122))
+    {
+        <li><a href="@Url.Content("~/liquidacionesfletes/liquidarpropuestasindex")">Liquidar Propuestas</a></li>
+    }
+</ul>
+<div style="clear:both;"></div>

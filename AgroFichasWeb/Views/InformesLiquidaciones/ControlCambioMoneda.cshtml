@@ -1,0 +1,70 @@
+﻿@using AgroFichasWeb.Models
+@model List<ConvenioCambioMoneda>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.Title = "Control de Convenios de Cambio de Moneda " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+}
+
+
+@section filter {
+    @using(Html.BeginForm()) {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("EmpresaSelector")</td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Empresa:</td>
+        <td  width="100%">@ViewData["empresaLabel"]</td>
+    </tr>
+    </table>
+    <br />
+
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptEncabezadoListado">Nro</td>
+        <td class="RptEncabezadoListado">Agricultor</td>
+        <td class="RptEncabezadoListado" align="right">Cantidad</td>
+        <td class="RptEncabezadoListado" align="right">Tasa Cambio</td>
+        <td class="RptEncabezadoListado" align="right">Pendiente</td>
+        <td class="RptEncabezadoListado" align="right">Ingreso</td>
+        <td class="RptEncabezadoListado" align="right">Utilizado</td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        item.Contrato.LoadControlConvenioCambioMoneda();
+        
+        <tr class="RptItemListado" valign="top">
+            <td class="RptEncabezadoListadoGrupo" nowrap="nowrap">@item.IdConvenioCambioMoneda</td>
+            <td class="RptEncabezadoListadoGrupo">@item.Contrato.Agricultor.Nombre</td>
+            <td class="RptEncabezadoListadoGrupo" nowrap="nowrap" align="right">@String.Format(item.Moneda1.Formato2, item.Cantidad)</td>
+            <td class="RptEncabezadoListadoGrupo" nowrap="nowrap" align="right">@String.Format(item.Moneda1.Formato2, item.PrecioUnidad)</td>
+            <td class="RptEncabezadoListadoGrupo" nowrap="nowrap" align="right">@String.Format(item.Moneda1.Formato2, item.Cantidad - item.CantidadUtilizada)</td>
+            <td class="RptEncabezadoListadoGrupo"></td>
+            <td class="RptEncabezadoListadoGrupo" nowrap="nowrap" align="right">@String.Format(item.Moneda1.Formato2, item.CantidadUtilizada)</td>
+        </tr>
+        foreach (var uso in item.Usos)
+        {
+            <tr class="RptItemListado" valign="top">
+                <td colspan="1"></td>
+                <td>@uso.PrecioIngreso.ProcesoIngreso.Agricultor.Nombre</td>
+                <td colspan="3"></td>
+                <td align="right">@Html.ActionLink(uso.PrecioIngreso.IdProcesoIngreso.ToString(), "detalleingreso", "recepciones", new { id = uso.PrecioIngreso.IdProcesoIngreso}, new { @class = "command" })</td>
+                <td nowrap="nowrap" align="right">@String.Format(item.Moneda1.Formato2, uso.CantidadUtilizada)</td>
+            </tr>
+        }
+    }
+    <tr>
+        <td class="RptPieListado" colspan="8">&nbsp;</td>
+    </tr>
+</table>

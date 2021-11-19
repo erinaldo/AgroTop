@@ -1,0 +1,350 @@
+﻿@using AgroFichasWeb.ViewModels.Operaciones
+@model RegistroProductividadViewModel
+
+@{
+    ViewBag.Title = "Registro de Turno de Productividad";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var existeReporteProduccionTurnoEstabilizado = true;
+    var reporteProduccionTurnoEstabilizado = Model.ProduccionTurnoEstabilizado.FirstOrDefault();
+    if (reporteProduccionTurnoEstabilizado == null)
+    {
+        existeReporteProduccionTurnoEstabilizado = false;
+    }
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-ui/jquery-ui.css")"  />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-ui/jquery-ui.theme.css")"  />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/morris/morris.css")"  />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/owl.carousel/assets/owl.carousel.css")"  />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/owl.carousel/assets/owl.theme.default.css")"  />
+}
+
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-ui/jquery-ui.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jqueryui-touch-punch/jqueryui-touch-punch.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-appear/jquery-appear.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery.easy-pie-chart/jquery.easy-pie-chart.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.pie.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.categories.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot/jquery.flot.resize.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/flot.tooltip/flot.tooltip.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-sparkline/jquery-sparkline.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/raphael/raphael.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/morris/morris.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/owl.carousel/owl.carousel.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/examples.widgets.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": false,
+            "searching": false,
+            "lengthChange": false,
+            "bInfo": false,
+            "bPaginate": false
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        @if (Model.TurnoAnteriorSiguiente.IdAnterior != 0)
+        {
+            <div class="col-md-2">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-primary" role="button" href="@Url.Action("index", "registroproductividad", new { id = Model.TurnoAnteriorSiguiente.IdAnterior })"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Turno Anterior</a>
+                </div>
+            </div>
+        }
+        @if (Model.TurnoAnteriorSiguiente.IdSiguiente != 0)
+        {
+            <div class="col-md-2 col-md-offset-8">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-primary" role="button" href="@Url.Action("index", "registroproductividad", new { id = Model.TurnoAnteriorSiguiente.IdSiguiente })">Turno Siguiente <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> </a>
+                </div>
+            </div>
+        }
+    </div>
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Registro de Productividad del Turno #@Model.RegistroTurno.Correlativo, @Model.RegistroTurno.OPR_Turno.OPR_TipoTurno.Descripcion del @String.Format("{0:dd/MM/yyyy}", Model.RegistroTurno.FechaHoraIns)</h2>
+
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>Proceso</th>
+                        <th>Meta</th>
+                        <th>Producción</th>
+                        <th>Cumplimiento</th>
+                        <th>Rendimiento</th>
+                        <th>Detención (min.)</th>
+                        <th>Productividad</th>
+                        <th>Eficiencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var reporteProduccionTurno in Model.ProduccionTurno)
+                    {
+                    <tr role="row" class="odd">
+                        <td>@reporteProduccionTurno.Proceso</td>
+                        <td>@reporteProduccionTurno.Meta.ToString("N0")</td>
+                        <td>@reporteProduccionTurno.Produccion.ToString("N0")</td>
+                        <td>
+                            <div class="progress progress-striped m-md">
+                                <div class="progress-bar @(reporteProduccionTurno.Cumplimiento < 99 ? "progress-bar-danger" : "progress-bar-success")" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                                    @reporteProduccionTurno.Cumplimiento.ToString().Replace(",", ".")%
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress progress-striped m-md">
+                                <div class="progress-bar @Model.GetRendimientoCssClass(reporteProduccionTurno.Proceso, reporteProduccionTurno.Rendimiento)" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                                    @reporteProduccionTurno.Rendimiento.ToString().Replace(",", ".")%
+                                </div>
+                            </div>
+                        </td>
+                        <td>@reporteProduccionTurno.DetencionMin</td>
+                        <td>
+                            <div class="progress progress-striped m-md">
+                                <div class="progress-bar @(reporteProduccionTurno.Productividad < 90 ? "progress-bar-danger" : "progress-bar-success")" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                                    @reporteProduccionTurno.Productividad.ToString().Replace(",", ".")%
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress progress-striped m-md">
+                                <div class="progress-bar @(reporteProduccionTurno.Eficiencia < 95 ? "progress-bar-danger" : "progress-bar-success")" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+                                    @reporteProduccionTurno.Eficiencia.ToString().Replace(",", ".")%
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    @if (existeReporteProduccionTurnoEstabilizado)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-4">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Consumo MP</h4>
+                                        <div class="info">
+                                            <strong class="amount">@reporteProduccionTurnoEstabilizado.ConsumoMP.ToString("N2") kg</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-4">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Flujo Promedio</h4>
+                                        <div class="info">
+                                            <strong class="amount">@reporteProduccionTurnoEstabilizado.FlujoProm.ToString("N2") kg/hr</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-4">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Producción</h4>
+                                        <div class="info">
+                                            <strong class="amount">@reporteProduccionTurnoEstabilizado.Produccion.ToString("N2") kg</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Cáscara</h4>
+                                        <div class="info">
+                                            <strong class="amount">@reporteProduccionTurnoEstabilizado.Cascara.ToString("N2") kg</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-6">
+                    <section class="panel panel-featured-left panel-featured-success">
+                        <div class="panel-body">
+                            <div class="widget-summary widget-summary-md">
+                                <div class="widget-summary-col widget-summary-col-icon">
+                                    <div class="summary-icon bg-primary">
+                                        <i class="fa fa-bar-chart"></i>
+                                    </div>
+                                </div>
+                                <div class="widget-summary-col">
+                                    <div class="summary">
+                                        <h4 class="title">Rendimiento</h4>
+                                        <div class="info">
+                                            <strong class="amount">@reporteProduccionTurnoEstabilizado.Rendimiento.ToString("N2")%</strong>
+                                            @*<span class="text-primary">(14 unread)</span>*@
+                                        </div>
+                                    </div>
+                                    @*<div class="summary-footer">
+                                            <a class="text-muted text-uppercase">(view all)</a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Registro de Envasado del Turno #@Model.RegistroTurno.Correlativo, @Model.RegistroTurno.OPR_Turno.OPR_TipoTurno.Descripcion del @String.Format("{0:dd/MM/yyyy}", Model.RegistroTurno.FechaHoraIns)</h2>
+                </header>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped mb-none" id="datatable">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Producto</th>
+                                <th>Cliente</th>
+                                <th>Lote</th>
+                                <th>Peso</th>
+                                <th>Envasado (Sac)</th>
+                                <th>Retenido</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var registroEnvasado in Model.RegistroEnvasados)
+                            {
+                                <tr role="row" class="odd">
+                                    <td>@registroEnvasado.OPR_Producto.OPR_TipoProducto.Descripcion</td>
+                                    <td>@registroEnvasado.OPR_Producto.Descripcion</td>
+                                    <td>@registroEnvasado.OPR_Cliente.Nombre</td>
+                                    <td>@registroEnvasado.Lote</td>
+                                    <td>@registroEnvasado.Peso.ToString("N0")</td>
+                                    <td>@registroEnvasado.EnvasadoSac.ToString("N0")</td>
+                                    <td>@registroEnvasado.Retenido</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+        <div class="col-md-6">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Registro de Subproducto del Turno #@Model.RegistroTurno.Correlativo, @Model.RegistroTurno.OPR_Turno.OPR_TipoTurno.Descripcion del @String.Format("{0:dd/MM/yyyy}", Model.RegistroTurno.FechaHoraIns)</h2>
+                </header>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped mb-none" id="datatable">
+                        <thead>
+                            <tr>
+                                <th>Despedradora</th>
+                                <th>Despedicio</th>
+                                <th>Sortex</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var registroGeneracionMaxisacos in Model.RegistroGeneracionMaxisacos)
+                            {
+                                <tr role="row" class="odd">
+                                    <td>@registroGeneracionMaxisacos.Despedradora</td>
+                                    <td>@registroGeneracionMaxisacos.Desperdicio</td>
+                                    <td>@registroGeneracionMaxisacos.Sortex</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Observaciones</h2>
+        </header>
+        <div class="panel-body">
+            @Model.RegistroTurno.Observaciones
+        </div>
+    </section>
+    <!-- end: page -->
+</section>

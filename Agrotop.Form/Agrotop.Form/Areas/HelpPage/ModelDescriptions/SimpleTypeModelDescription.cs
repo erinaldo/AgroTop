@@ -1,0 +1,6 @@
+namespace Agrotop.Form.Areas.HelpPage.ModelDescriptions
+{
+    public class SimpleTypeModelDescription : ModelDescription
+    {
+    }
+}

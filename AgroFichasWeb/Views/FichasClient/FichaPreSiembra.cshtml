@@ -1,0 +1,102 @@
+﻿@using AgroFichasWeb.Models
+@{ 
+    var temporada = Temporada.TemporadaActivaFichas();
+    var estadosSiembra = EstadoSiembra.SelectList(-1);
+    var importancias = ImportanciaSeguimiento.SelectList(-1);
+}
+<!-- Modal Form - PreSiembra -->
+<div id="modalFormPreSiembra" class="modal-block modal-block-primary mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title" id="formTitlePreSiembra">Titulo</h2>
+        </header>
+        <div class="panel-body">
+            <form id="formItemPreSiembra" class="form-horizontal mb-lg" novalidate="novalidate">
+                <div class="validation-summary-errors" id="validationErrorsPreSiembra" style="display: none;">
+
+                </div>
+                <input type="hidden" value="" name="idFichaPreSiembra" id="idFichaPreSiembra" />
+                <input type="hidden" name="idPredio" value="@Model.IdPredio" />
+                <input type="hidden" name="idTemporada" value="@temporada.IdTemporada" />
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Potreros <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <table id="tblPotrerosPreSiembra" class="table table-bordered table-striped mb-none">
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Fecha <span class="required">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" name="fecha" id="fechapresiembra" class="form-control" data-plugin-datepicker />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Observaciones</label>
+                    <div class="col-sm-9">
+                        <textarea name="observaciones" id="observacionespresiembra" class="form-control" cols="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Estado de Siembra</label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("idestadosiembra", estadosSiembra, new { id = "idestadopresiembra" })
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Importacia de Seguimiento</label>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("idimportanciaseguimiento", importancias, new { id = "idimportanciaseguimientopresiembra" })
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Recomendaciones</label>
+                    <div class="col-sm-9">
+                        <table id="tblRecomendacionesPreSiembra" class="table table-bordered table-striped mb-none">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th class="text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <button type="button" id="addRecomendacionPreSiembra" class="mb-xs mt-xs mr-xs btn-xs btn-primary">Agregar Químico</button>
+                        <button type="button" id="addFertilizantePreSiembra" class="mb-xs mt-xs mr-xs btn-xs btn-primary">Agregar Fertilizante</button>
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Fotos</label>
+                    <div class="col-sm-9">
+                        <table id="tblFotosPreSiembra" class="table table-bordered table-striped mb-none">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Observaciones</th>
+                                    <th class="text-center"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody></tbody>
+                        </table>
+                        <button type="button" id="addFotoPreSiembra" class="mb-xs mt-xs mr-xs btn-xs btn-primary">Agregar Foto</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-center" id="footerSpinnerPreSiembra" style="display: none;">
+                    <img id="spinnerImagePreSiembra" src="~/Content/spinner.svg" height="34" />
+                </div>
+                <div class="col-md-12 text-right" id="footerButtonsPreSiembra">
+                    <button class="btn btn-primary modal-confirmPreSiembra">Guardar</button>
+                    <button class="btn btn-default modal-dismissPreSiembra">Cancelar</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>
+
+ 

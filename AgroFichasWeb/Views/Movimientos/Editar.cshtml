@@ -1,0 +1,134 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model LOG_Movimiento
+@{
+    ViewBag.NombreSeccion = "Requerimientos";
+    ViewBag.Title = "Editar Movimiento";
+}
+
+@section submenuSection {
+    @Html.Partial("~/Views/Requerimientos/Submenu.cshtml")
+}
+
+@section headSection {
+    <!-- this should go after your </body> -->
+    <link href="~/Scripts/datetimepicker-master/jquery.datetimepicker.css" rel="stylesheet" />
+    <style>
+        .label {
+            display: inline-block;
+        }
+    </style>
+    <script src="~/Scripts/datetimepicker-master/build/jquery.datetimepicker.full.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var currentDate = new Date();
+            var day = currentDate.getDate();
+            var month = currentDate.getMonth() + 1;
+            var year = currentDate.getFullYear();
+            var startDate = year + "/" + month + "/" + day;
+            jQuery.datetimepicker.setLocale('es');
+            jQuery('#datetimepicker1').datetimepicker({
+                i18n: {
+                    es: {
+                        months: [
+                         'Enero', 'Febrero', 'Marzo', 'Abril',
+                         'Mayo', 'Junio', 'Julio', 'Agosto',
+                         'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                         "Do", "Lu", "Ma", "Mi",
+                         "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                dayOfWeekStart: 1,
+                startDate: new Date(),
+                format: 'Y/m/d H:i',
+                timepicker: true,
+                weeks: true,
+            });
+            jQuery('#datetimepicker2').datetimepicker({
+                i18n: {
+                    es: {
+                        months: [
+                         'Enero', 'Febrero', 'Marzo', 'Abril',
+                         'Mayo', 'Junio', 'Julio', 'Agosto',
+                         'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                        ],
+                        dayOfWeek: [
+                         "Do", "Lu", "Ma", "Mi",
+                         "Ju", "Vi", "Sa",
+                        ]
+                    }
+                },
+                dayOfWeekStart: 1,
+                startDate: new Date(),
+                format: 'Y/m/d H:i',
+                timepicker: true,
+                weeks: true,
+            });
+        });
+    </script>
+}
+
+<h2>@ViewBag.Title</h2>
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Núm. Ped.</label>
+            <strong>@ViewData["IdPedido"]</strong>
+        </p>
+        <p>
+            <label for="Titulo">Núm. Guía</label>
+            <strong>@Model.NumeroGuia</strong>
+        </p>
+        <p>
+            <label for="Titulo">Fecha Salida</label>
+            @Html.TextBox("FechaSalida", Model.FechaSalida, new { @class = "heavy std", id = "datetimepicker1", maxlength = "10", value = "" })
+            @Html.ValidationMessage("FechaSalida", " ")
+        </p>
+        <p>
+            <label for="Titulo">Pesaje Salida</label>
+            @Html.TextBox("PesajeSalidaKg", Model.PesajeSalidaKg, new { @class = "heavy std" }) <em>En kg</em>
+            @Html.ValidationMessage("PesajeSalidaKg", " ")
+        </p>
+        <p>
+            <label for="Titulo">Fecha de Entrada</label>
+            @Html.TextBox("FechaLlegada", Model.FechaLlegada, new { @class = "heavy std", id = "datetimepicker2", maxlength = "10", value = "" })
+            @Html.ValidationMessage("FechaLlegada", " ")
+        </p>
+        <p>
+            <label for="Titulo">Pesaje Entrada</label>
+            @Html.TextBox("PesajeLlegadaKg", Model.PesajeLlegadaKg, new { @class = "heavy std" }) <em>En kg</em>
+            @Html.ValidationMessage("PesajeLlegadaKg", " ")
+        </p>
+        <p>
+            <label for="Titulo">Valor Flete Por Kg Transportado</label>
+            @Html.TextBox("ValorFletePorKgTransportado", Model.ValorFletePorKgTransportado, new { @class = "heavy std" }) <em>En kg</em>
+            @Html.ValidationMessage("ValorFletePorKgTransportado", " ")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Editar este Movimiento" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+
+    <input type="hidden" name="IdPedido" value="@ViewData["IdPedido"]" />
+    <input type="hidden" name="IdMovimiento" value="@ViewData["IdMovimiento"]" />
+}

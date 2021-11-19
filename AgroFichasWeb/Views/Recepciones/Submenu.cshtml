@@ -1,0 +1,20 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var cultivos = (List<Cultivo>)ViewData["cultivos"];
+}    
+    <ul>
+        @*Ver recepciones*@
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(24))
+        {
+            <li><a href="@Url.Content("~/recepciones")">Listado</a></li>
+        }
+        @*Crear ingresos manualmente*@
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(49))
+        {
+            foreach (var cultivo in cultivos)
+            {
+                <li><a href="@Url.Content("~/recepciones/crear?idCultivo=" + cultivo.IdCultivo)">Crear Ingreso @cultivo.Nombre</a></li>
+            }
+        }
+    </ul>
+    <div style="clear:both;"></div>

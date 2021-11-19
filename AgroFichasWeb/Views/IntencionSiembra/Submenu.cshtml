@@ -1,0 +1,10 @@
+﻿<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1002))
+    {
+        <li><a href="@Url.Content("~/intencionsiembra")">Listado</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1003))
+    {
+        <li><a href="@Url.Content("~/intencionsiembra/crear")">Crear Intención de Siembra</a></li>
+    }
+</ul>

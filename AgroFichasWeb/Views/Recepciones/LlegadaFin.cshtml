@@ -1,0 +1,26 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model ProcesoIngreso
+@{
+   
+    ViewBag.NombreSeccion = "Registrar Llegada " + Model.Temporada.Nombre;
+    ViewBag.Title = "El ingreso ha sido registrado con éxito";
+}
+
+    <h2>@ViewBag.Title</h2>
+
+    <fieldset class="dataForm">
+        @Html.Partial("Ingreso", Model)
+        <p class="okcancel">
+            <input type="button" id="btnPrint" onclick="javascript:printIngreso(3);" value="Imprimir Este Ingreso" /> o @Html.ActionLink("Registrar otro ingreso", "llegadapaso1", "recepciones")  
+        </p>
+    </fieldset>
+
+    <script type="text/javascript">
+
+        function printIngreso(copias) {
+            window.open('@Url.Action("printingreso", "recepciones", new { id = Model.IdProcesoIngreso, copias = "cpis" })'.replace('cpis', copias));
+        }
+
+    </script>

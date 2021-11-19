@@ -1,0 +1,47 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model Variedad
+
+@{
+    var dc = new AgroFichasDBDataContext();
+    var tipo = dc.Cultivo.Single(c => c.IdCultivo == Model.IdCultivo).Nombre;
+    ViewBag.NombreSeccion = "Cultivos";
+    
+    if (Model.IdVariedad == 0) {
+        ViewBag.Title = "Crear Variedad de " + tipo;
+    }
+    else {
+        ViewBag.Title = "Editar Variedad de " + tipo;
+    }
+
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm())
+    {
+
+        @Html.Hidden("IdCultivo", Model.IdCultivo)
+        <fieldset class="dataForm">
+            <p>
+                <label for="Titulo">Nombre</label>
+                @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "100" }) 
+                @Html.ValidationMessage("Nombre", ".")  
+            </p>
+            <p>
+                <label for="EnPortada">Habilitado</label>
+                @Html.CheckBox("Habilitado", Model.Habilitado)   Permitir el uso de esta Variedad
+                @Html.ValidationMessage("Habilitado", ".") 
+            </p>
+            <p class="okcancel">
+                <input type="submit" value="Guardar Esta Variedad" /> o @Html.ActionLink("Cancelar", "Index", new { tipo = Model.IdCultivo })  
+            </p>
+        </fieldset>
+
+    }

@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>INFORME SEMANAL DE ESPERA DE CAMIONES EN PLANTA</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        #envoltura {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            width: 990px;
+        }
+
+        #cabecera {
+            width: 990px;
+        }
+
+            #cabecera #logo {
+                text-align: left;
+            }
+
+            #cabecera #fecha-emision {
+                text-align: right;
+            }
+
+            #cabecera td {
+                width: 50%;
+            }
+
+        #cuerpo {
+            width: 990px;
+        }
+
+            #cuerpo #titulo-esperacamiones {
+                text-align: center;
+            }
+
+            #cuerpo #descripcion-esperacamiones {
+                padding: 20px;
+                text-align: justify;
+            }
+
+            #cuerpo #titulo-camiones {
+                text-align: center;
+            }
+
+            #cuerpo #cuerpo-camiones {
+                /*min-width: 700px;*/
+                width: 1000px;
+            }
+
+                #cuerpo #cuerpo-camiones #camiones {
+                    border-collapse: collapse;
+                    border-spacing: 0;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    /*min-width: 700px;*/
+                    width: 1000px;
+                }
+
+                    #cuerpo #cuerpo-camiones #camiones thead th,
+                    #cuerpo #cuerpo-camiones #camiones tfoot td {
+                        background-color: lightgray;
+                        border: 1px solid black;
+                        font-size: 14px;
+                        padding: 3px;
+                        text-transform: uppercase
+                    }
+
+                    #cuerpo #cuerpo-camiones #camiones td {
+                        border: 1px solid black;
+                        font-size: 12px;
+                        text-align: center;
+                    }
+
+                    #cuerpo #cuerpo-camiones #camiones tfoot .ultima-linea {
+                        background-color: white;
+                    }
+
+            #cuerpo #cuerpo-personal-responsable {
+                width: 990px;
+            }
+
+                #cuerpo #cuerpo-personal-responsable #personal-responsable {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    position: relative;
+                    width: 800px;
+                }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable tbody th, #cuerpo #cuerpo-personal-responsable #personal-responsable tbody td {
+                        padding-top: 100px;
+                        text-align: center;
+                        width: 400px;
+                    }
+
+                    #cuerpo #cuerpo-personal-responsable #personal-responsable h3 {
+                        border-top: 1px solid black;
+                    }
+
+            #cuerpo #pie-de-pagina-personal-responsable {
+                padding-bottom: 20px;
+            }
+
+        #pie-de-pagina {
+            height: 50px;
+            text-align: center;
+            width: 990px;
+        }
+
+        .text-align-left {
+            text-align: left;
+        }
+
+        .text-align-center {
+            text-align: center;
+        }
+
+        .text-align-right {
+            text-align: right;
+        }
+
+        .text-align-justify {
+            text-align: justify;
+        }
+
+        /*FIX: wkhtmltopdf repeating thead headers overlapping content*/
+        thead, tfoot {
+            display: table-row-group;
+        }
+    </style>
+</head>
+<body>
+    <table id="envoltura">
+        <tr>
+            <td>
+                <table id="cabecera">
+                    <tr>
+                        <td id="logo">
+                            <img src="http://sys.empresasagrotop.cl/Content/images/logo.png" />
+                        </td>
+                        <td id="fecha-emision">
+                            <span>Chile, martes, 24 marzo 2020</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="cuerpo">
+                    <tr>
+                        <td id="titulo-esperacamiones">
+                            <h1>INFORME SEMANAL DE ESPERA DE CAMIONES EN PLANTA<br />SEMANA: 12</h1>
+                            <h2><u>Oleotop</u></h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="descripcion-esperacamiones">
+                            <strong>FECHA DESDE </strong>16/03/20 <strong> HASTA </strong> 22/03/20
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-camiones">
+                            <table id="camiones">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" width="15%">Producto</th>
+                                        <th scope="col" width="15%">Envase</th>
+                                        <th scope="col" width="12%">Ent. Portería</th>
+                                        <th scope="col" width="12%">Ent. Romana</th>
+                                        <th scope="col" width="12%">Sal. Romana</th>
+                                        <th scope="col" width="12%">Sal. Portería</th>
+                                        <th scope="col" width="12%">Tiempo Ingreso</th>
+                                        <th scope="col" width="12%">Tiempo Romana</th>
+                                        <th scope="col" width="12%">Tiempo Salida</th>
+                                        <th scope="col" width="12%">Tiempo Espera</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 07:53:30</td>
+    <td>16/03/20 08:30:41</td>
+    <td>16/03/20 11:00:54</td>
+    <td>16/03/20 11:01:03</td>
+    <td>0.00:37:00</td>
+    <td>0.02:30:00</td>
+    <td>0.00:01:00</td>
+    <td>0.03:08:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 09:02:44</td>
+    <td>16/03/20 11:41:18</td>
+    <td>16/03/20 11:41:34</td>
+    <td>16/03/20 11:46:14</td>
+    <td>0.02:39:00</td>
+    <td>0.00:00:00</td>
+    <td>0.00:05:00</td>
+    <td>0.02:44:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 09:16:10</td>
+    <td>16/03/20 09:18:38</td>
+    <td>16/03/20 11:25:26</td>
+    <td>16/03/20 11:46:30</td>
+    <td>0.00:02:00</td>
+    <td>0.02:07:00</td>
+    <td>0.00:21:00</td>
+    <td>0.02:30:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 09:21:02</td>
+    <td>16/03/20 09:23:34</td>
+    <td>16/03/20 12:31:00</td>
+    <td>16/03/20 13:12:26</td>
+    <td>0.00:02:00</td>
+    <td>0.03:08:00</td>
+    <td>0.00:41:00</td>
+    <td>0.03:51:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 10:28:05</td>
+    <td>16/03/20 10:29:57</td>
+    <td>16/03/20 13:41:50</td>
+    <td>16/03/20 13:54:33</td>
+    <td>0.00:01:00</td>
+    <td>0.03:12:00</td>
+    <td>0.00:13:00</td>
+    <td>0.03:26:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 11:18:26</td>
+    <td>16/03/20 13:42:34</td>
+    <td>16/03/20 13:51:22</td>
+    <td>16/03/20 13:55:00</td>
+    <td>0.02:24:00</td>
+    <td>0.00:09:00</td>
+    <td>0.00:04:00</td>
+    <td>0.02:37:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 11:19:21</td>
+    <td>16/03/20 11:22:59</td>
+    <td>16/03/20 14:08:31</td>
+    <td>16/03/20 14:30:15</td>
+    <td>0.00:03:00</td>
+    <td>0.02:46:00</td>
+    <td>0.00:22:00</td>
+    <td>0.03:11:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 11:26:24</td>
+    <td>16/03/20 11:31:26</td>
+    <td>16/03/20 14:40:29</td>
+    <td>16/03/20 14:55:05</td>
+    <td>0.00:05:00</td>
+    <td>0.03:09:00</td>
+    <td>0.00:15:00</td>
+    <td>0.03:29:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 14:20:13</td>
+    <td>16/03/20 14:22:52</td>
+    <td>16/03/20 17:11:45</td>
+    <td>16/03/20 18:07:44</td>
+    <td>0.00:02:00</td>
+    <td>0.02:49:00</td>
+    <td>0.00:56:00</td>
+    <td>0.03:47:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 15:40:58</td>
+    <td>16/03/20 15:44:39</td>
+    <td>16/03/20 18:37:09</td>
+    <td>16/03/20 20:09:20</td>
+    <td>0.00:04:00</td>
+    <td>0.02:53:00</td>
+    <td>0.01:32:00</td>
+    <td>0.04:29:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>16/03/20 16:38:36</td>
+    <td>16/03/20 18:08:40</td>
+    <td>16/03/20 18:37:27</td>
+    <td>16/03/20 20:09:28</td>
+    <td>0.01:30:00</td>
+    <td>0.00:29:00</td>
+    <td>0.01:32:00</td>
+    <td>0.03:31:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>17/03/20 00:12:33</td>
+    <td>17/03/20 08:14:42</td>
+    <td>17/03/20 11:30:48</td>
+    <td>17/03/20 12:00:21</td>
+    <td>0.08:02:00</td>
+    <td>0.03:16:00</td>
+    <td>0.00:30:00</td>
+    <td>0.11:48:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>17/03/20 00:13:37</td>
+    <td>17/03/20 08:15:53</td>
+    <td>17/03/20 12:10:06</td>
+    <td>17/03/20 13:47:59</td>
+    <td>0.08:02:00</td>
+    <td>0.03:55:00</td>
+    <td>0.01:37:00</td>
+    <td>0.13:34:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>17/03/20 00:14:26</td>
+    <td>17/03/20 08:17:01</td>
+    <td>17/03/20 11:32:06</td>
+    <td>17/03/20 12:01:03</td>
+    <td>0.08:03:00</td>
+    <td>0.03:15:00</td>
+    <td>0.00:29:00</td>
+    <td>0.11:47:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>17/03/20 01:07:47</td>
+    <td>17/03/20 08:20:02</td>
+    <td>17/03/20 11:48:35</td>
+    <td>17/03/20 12:00:10</td>
+    <td>0.07:13:00</td>
+    <td>0.03:28:00</td>
+    <td>0.00:12:00</td>
+    <td>0.10:53:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>17/03/20 08:01:19</td>
+    <td>17/03/20 08:18:38</td>
+    <td>17/03/20 14:01:50</td>
+    <td>17/03/20 14:33:12</td>
+    <td>0.00:17:00</td>
+    <td>0.05:43:00</td>
+    <td>0.00:32:00</td>
+    <td>0.06:32:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>17/03/20 09:43:16</td>
+    <td>17/03/20 09:46:41</td>
+    <td>17/03/20 12:54:38</td>
+    <td>17/03/20 13:47:03</td>
+    <td>0.00:03:00</td>
+    <td>0.03:08:00</td>
+    <td>0.00:53:00</td>
+    <td>0.04:04:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>17/03/20 11:06:20</td>
+    <td>17/03/20 11:17:16</td>
+    <td>17/03/20 14:02:13</td>
+    <td>17/03/20 14:33:22</td>
+    <td>0.00:11:00</td>
+    <td>0.02:45:00</td>
+    <td>0.00:31:00</td>
+    <td>0.03:27:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>17/03/20 13:00:43</td>
+    <td>17/03/20 13:01:08</td>
+    <td>17/03/20 15:53:13</td>
+    <td>17/03/20 16:15:57</td>
+    <td>0.00:01:00</td>
+    <td>0.02:52:00</td>
+    <td>0.00:22:00</td>
+    <td>0.03:15:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>17/03/20 15:09:53</td>
+    <td>17/03/20 15:11:18</td>
+    <td>17/03/20 17:39:42</td>
+    <td>17/03/20 18:46:53</td>
+    <td>0.00:02:00</td>
+    <td>0.02:28:00</td>
+    <td>0.01:07:00</td>
+    <td>0.03:37:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>18/03/20 00:10:08</td>
+    <td>18/03/20 08:19:52</td>
+    <td>18/03/20 10:19:27</td>
+    <td>18/03/20 12:06:46</td>
+    <td>0.08:09:00</td>
+    <td>0.02:00:00</td>
+    <td>0.01:47:00</td>
+    <td>0.11:56:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>18/03/20 01:24:28</td>
+    <td>18/03/20 08:41:52</td>
+    <td>18/03/20 11:21:31</td>
+    <td>18/03/20 16:34:57</td>
+    <td>0.07:17:00</td>
+    <td>0.02:40:00</td>
+    <td>0.05:13:00</td>
+    <td>0.15:10:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>18/03/20 06:42:24</td>
+    <td>18/03/20 08:42:05</td>
+    <td>18/03/20 11:08:31</td>
+    <td>18/03/20 16:33:34</td>
+    <td>0.02:00:00</td>
+    <td>0.02:26:00</td>
+    <td>0.05:25:00</td>
+    <td>0.09:51:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>18/03/20 07:42:46</td>
+    <td>18/03/20 08:42:50</td>
+    <td>18/03/20 12:05:02</td>
+    <td>18/03/20 16:38:08</td>
+    <td>0.01:00:00</td>
+    <td>0.03:23:00</td>
+    <td>0.04:33:00</td>
+    <td>0.08:56:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>18/03/20 07:58:10</td>
+    <td>18/03/20 08:42:35</td>
+    <td>18/03/20 12:50:15</td>
+    <td>18/03/20 16:35:18</td>
+    <td>0.00:44:00</td>
+    <td>0.04:08:00</td>
+    <td>0.03:45:00</td>
+    <td>0.08:37:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>18/03/20 14:37:20</td>
+    <td>18/03/20 14:41:45</td>
+    <td>18/03/20 15:46:41</td>
+    <td>18/03/20 16:35:43</td>
+    <td>0.00:04:00</td>
+    <td>0.01:05:00</td>
+    <td>0.00:49:00</td>
+    <td>0.01:58:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>18/03/20 15:11:34</td>
+    <td>18/03/20 15:22:23</td>
+    <td>18/03/20 17:23:54</td>
+    <td>18/03/20 17:34:52</td>
+    <td>0.00:11:00</td>
+    <td>0.02:01:00</td>
+    <td>0.00:11:00</td>
+    <td>0.02:23:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>18/03/20 15:14:57</td>
+    <td>18/03/20 15:23:48</td>
+    <td>18/03/20 17:50:16</td>
+    <td>18/03/20 18:52:43</td>
+    <td>0.00:09:00</td>
+    <td>0.02:27:00</td>
+    <td>0.01:02:00</td>
+    <td>0.03:38:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>19/03/20 11:06:59</td>
+    <td>19/03/20 22:15:45</td>
+    <td>19/03/20 22:15:57</td>
+    <td>20/03/20 07:38:49</td>
+    <td>0.11:09:00</td>
+    <td>0.00:00:00</td>
+    <td>0.09:23:00</td>
+    <td>0.20:32:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>19/03/20 11:10:18</td>
+    <td>19/03/20 22:15:24</td>
+    <td>19/03/20 22:15:32</td>
+    <td>20/03/20 07:38:54</td>
+    <td>0.11:05:00</td>
+    <td>0.00:00:00</td>
+    <td>0.09:23:00</td>
+    <td>0.20:28:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>19/03/20 11:14:31</td>
+    <td>19/03/20 22:16:28</td>
+    <td>19/03/20 22:16:37</td>
+    <td>20/03/20 07:38:58</td>
+    <td>0.11:02:00</td>
+    <td>0.00:00:00</td>
+    <td>0.09:22:00</td>
+    <td>0.20:24:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>19/03/20 11:18:13</td>
+    <td>19/03/20 22:16:50</td>
+    <td>19/03/20 22:18:49</td>
+    <td>20/03/20 07:39:02</td>
+    <td>0.10:58:00</td>
+    <td>0.00:02:00</td>
+    <td>0.09:21:00</td>
+    <td>0.20:21:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>19/03/20 13:21:31</td>
+    <td>19/03/20 14:15:01</td>
+    <td>19/03/20 22:19:22</td>
+    <td>20/03/20 07:39:18</td>
+    <td>0.00:54:00</td>
+    <td>0.08:04:00</td>
+    <td>0.09:20:00</td>
+    <td>0.18:18:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>19/03/20 13:26:41</td>
+    <td>19/03/20 22:18:59</td>
+    <td>19/03/20 22:19:35</td>
+    <td>20/03/20 07:39:14</td>
+    <td>0.08:52:00</td>
+    <td>0.00:01:00</td>
+    <td>0.09:20:00</td>
+    <td>0.18:13:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>19/03/20 19:11:59</td>
+    <td>19/03/20 19:19:58</td>
+    <td>19/03/20 22:01:55</td>
+    <td>20/03/20 07:39:10</td>
+    <td>0.00:08:00</td>
+    <td>0.02:42:00</td>
+    <td>0.09:38:00</td>
+    <td>0.12:28:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>20/03/20 11:04:42</td>
+    <td>20/03/20 11:49:16</td>
+    <td>20/03/20 11:49:41</td>
+    <td>20/03/20 11:51:20</td>
+    <td>0.00:45:00</td>
+    <td>0.00:00:00</td>
+    <td>0.00:02:00</td>
+    <td>0.00:47:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>20/03/20 11:05:33</td>
+    <td>20/03/20 11:49:07</td>
+    <td>20/03/20 11:49:28</td>
+    <td>20/03/20 11:51:33</td>
+    <td>0.00:44:00</td>
+    <td>0.00:00:00</td>
+    <td>0.00:02:00</td>
+    <td>0.00:46:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>20/03/20 15:50:50</td>
+    <td>20/03/20 15:56:31</td>
+    <td>20/03/20 20:59:53</td>
+    <td>20/03/20 22:00:51</td>
+    <td>0.00:06:00</td>
+    <td>0.05:03:00</td>
+    <td>0.01:01:00</td>
+    <td>0.06:10:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>21/03/20 07:41:24</td>
+    <td>21/03/20 08:24:01</td>
+    <td>21/03/20 11:17:06</td>
+    <td>21/03/20 11:17:44</td>
+    <td>0.00:43:00</td>
+    <td>0.02:53:00</td>
+    <td>0.00:00:00</td>
+    <td>0.03:36:00</td>
+</tr>
+<tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>21/03/20 09:05:49</td>
+    <td>21/03/20 10:57:14</td>
+    <td>21/03/20 10:57:27</td>
+    <td>21/03/20 10:58:35</td>
+    <td>0.01:52:00</td>
+    <td>0.00:00:00</td>
+    <td>0.00:01:00</td>
+    <td>0.01:53:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>16/03/20 00:16:21</td>
+    <td>16/03/20 09:00:39</td>
+    <td>16/03/20 11:01:12</td>
+    <td>16/03/20 11:22:56</td>
+    <td>0.08:44:00</td>
+    <td>0.02:01:00</td>
+    <td>0.00:21:00</td>
+    <td>0.11:06:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>16/03/20 00:17:52</td>
+    <td>16/03/20 10:10:57</td>
+    <td>16/03/20 12:15:00</td>
+    <td>16/03/20 12:16:30</td>
+    <td>0.09:53:00</td>
+    <td>0.02:05:00</td>
+    <td>0.00:01:00</td>
+    <td>0.11:59:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>16/03/20 20:44:07</td>
+    <td>16/03/20 20:51:04</td>
+    <td>16/03/20 21:58:44</td>
+    <td>16/03/20 22:00:34</td>
+    <td>0.00:07:00</td>
+    <td>0.01:07:00</td>
+    <td>0.00:02:00</td>
+    <td>0.01:16:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>17/03/20 10:40:28</td>
+    <td>17/03/20 10:47:26</td>
+    <td>17/03/20 12:07:37</td>
+    <td>17/03/20 13:46:50</td>
+    <td>0.00:07:00</td>
+    <td>0.01:20:00</td>
+    <td>0.01:39:00</td>
+    <td>0.03:06:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>17/03/20 12:51:58</td>
+    <td>17/03/20 12:58:38</td>
+    <td>17/03/20 15:14:06</td>
+    <td>17/03/20 16:15:40</td>
+    <td>0.00:07:00</td>
+    <td>0.02:16:00</td>
+    <td>0.01:01:00</td>
+    <td>0.03:24:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>17/03/20 16:28:22</td>
+    <td>17/03/20 17:54:06</td>
+    <td>17/03/20 18:37:51</td>
+    <td>17/03/20 18:46:42</td>
+    <td>0.01:26:00</td>
+    <td>0.00:43:00</td>
+    <td>0.00:09:00</td>
+    <td>0.02:18:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>17/03/20 20:00:11</td>
+    <td>17/03/20 20:04:52</td>
+    <td>17/03/20 20:58:14</td>
+    <td>17/03/20 21:14:01</td>
+    <td>0.00:04:00</td>
+    <td>0.00:54:00</td>
+    <td>0.00:16:00</td>
+    <td>0.01:14:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>18/03/20 00:09:04</td>
+    <td>18/03/20 11:07:01</td>
+    <td>18/03/20 13:22:01</td>
+    <td>18/03/20 16:33:46</td>
+    <td>0.10:58:00</td>
+    <td>0.02:15:00</td>
+    <td>0.03:11:00</td>
+    <td>0.16:24:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>18/03/20 09:47:09</td>
+    <td>18/03/20 13:44:56</td>
+    <td>18/03/20 16:47:21</td>
+    <td>18/03/20 17:18:14</td>
+    <td>0.03:57:00</td>
+    <td>0.03:03:00</td>
+    <td>0.00:31:00</td>
+    <td>0.07:31:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>18/03/20 09:52:02</td>
+    <td>18/03/20 14:20:58</td>
+    <td>18/03/20 16:25:08</td>
+    <td>18/03/20 16:35:56</td>
+    <td>0.04:28:00</td>
+    <td>0.02:05:00</td>
+    <td>0.00:10:00</td>
+    <td>0.06:43:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>18/03/20 12:24:53</td>
+    <td>18/03/20 14:54:00</td>
+    <td>18/03/20 16:48:02</td>
+    <td>18/03/20 17:18:01</td>
+    <td>0.02:30:00</td>
+    <td>0.01:54:00</td>
+    <td>0.00:30:00</td>
+    <td>0.04:54:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>18/03/20 16:05:23</td>
+    <td>18/03/20 16:20:41</td>
+    <td>18/03/20 17:39:33</td>
+    <td>18/03/20 18:52:07</td>
+    <td>0.00:15:00</td>
+    <td>0.01:19:00</td>
+    <td>0.01:13:00</td>
+    <td>0.02:47:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>19/03/20 14:03:29</td>
+    <td>19/03/20 14:14:37</td>
+    <td>19/03/20 22:19:48</td>
+    <td>20/03/20 07:39:06</td>
+    <td>0.00:11:00</td>
+    <td>0.08:05:00</td>
+    <td>0.09:20:00</td>
+    <td>0.17:36:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>19/03/20 14:25:29</td>
+    <td>19/03/20 15:43:56</td>
+    <td>19/03/20 22:20:00</td>
+    <td>20/03/20 07:39:22</td>
+    <td>0.01:18:00</td>
+    <td>0.06:37:00</td>
+    <td>0.09:19:00</td>
+    <td>0.17:14:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>19/03/20 14:28:41</td>
+    <td>19/03/20 18:19:45</td>
+    <td>19/03/20 18:20:01</td>
+    <td>19/03/20 18:42:06</td>
+    <td>0.03:51:00</td>
+    <td>0.00:01:00</td>
+    <td>0.00:22:00</td>
+    <td>0.04:14:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>19/03/20 17:27:58</td>
+    <td>19/03/20 18:16:21</td>
+    <td>19/03/20 18:40:02</td>
+    <td>19/03/20 18:42:19</td>
+    <td>0.00:49:00</td>
+    <td>0.00:24:00</td>
+    <td>0.00:02:00</td>
+    <td>0.01:15:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>20/03/20 12:10:28</td>
+    <td>20/03/20 12:23:03</td>
+    <td>20/03/20 13:46:16</td>
+    <td>20/03/20 13:58:23</td>
+    <td>0.00:13:00</td>
+    <td>0.01:23:00</td>
+    <td>0.00:12:00</td>
+    <td>0.01:48:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>20/03/20 15:03:40</td>
+    <td>20/03/20 15:17:23</td>
+    <td>20/03/20 16:47:55</td>
+    <td>20/03/20 16:49:07</td>
+    <td>0.00:14:00</td>
+    <td>0.01:30:00</td>
+    <td>0.00:02:00</td>
+    <td>0.01:46:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>20/03/20 15:04:36</td>
+    <td>20/03/20 16:29:12</td>
+    <td>20/03/20 18:19:14</td>
+    <td>20/03/20 18:48:13</td>
+    <td>0.01:25:00</td>
+    <td>0.01:50:00</td>
+    <td>0.00:29:00</td>
+    <td>0.03:44:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>20/03/20 17:07:33</td>
+    <td>20/03/20 17:36:09</td>
+    <td>20/03/20 21:01:55</td>
+    <td>20/03/20 22:00:47</td>
+    <td>0.00:29:00</td>
+    <td>0.03:25:00</td>
+    <td>0.00:59:00</td>
+    <td>0.04:53:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>20/03/20 20:16:19</td>
+    <td>20/03/20 20:23:23</td>
+    <td>20/03/20 22:01:08</td>
+    <td>21/03/20 01:02:10</td>
+    <td>0.00:07:00</td>
+    <td>0.01:38:00</td>
+    <td>0.03:01:00</td>
+    <td>0.04:46:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>21/03/20 10:28:19</td>
+    <td>21/03/20 10:43:40</td>
+    <td>21/03/20 13:10:48</td>
+    <td>21/03/20 15:47:37</td>
+    <td>0.00:15:00</td>
+    <td>0.02:27:00</td>
+    <td>0.02:37:00</td>
+    <td>0.05:19:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>16/03/20 09:06:59</td>
+    <td>16/03/20 09:30:27</td>
+    <td>16/03/20 16:22:07</td>
+    <td>16/03/20 18:06:57</td>
+    <td>0.00:24:00</td>
+    <td>0.06:52:00</td>
+    <td>0.01:44:00</td>
+    <td>0.09:00:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>17/03/20 00:11:31</td>
+    <td>17/03/20 08:20:51</td>
+    <td>17/03/20 12:09:16</td>
+    <td>17/03/20 13:47:49</td>
+    <td>0.08:09:00</td>
+    <td>0.03:49:00</td>
+    <td>0.01:38:00</td>
+    <td>0.13:36:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>17/03/20 08:38:57</td>
+    <td>17/03/20 09:34:58</td>
+    <td>17/03/20 14:44:44</td>
+    <td>17/03/20 15:00:26</td>
+    <td>0.00:56:00</td>
+    <td>0.05:10:00</td>
+    <td>0.00:16:00</td>
+    <td>0.06:22:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>17/03/20 13:27:32</td>
+    <td>17/03/20 13:36:55</td>
+    <td>17/03/20 18:47:16</td>
+    <td>17/03/20 20:09:42</td>
+    <td>0.00:09:00</td>
+    <td>0.05:11:00</td>
+    <td>0.01:22:00</td>
+    <td>0.06:42:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>18/03/20 08:36:55</td>
+    <td>18/03/20 09:12:05</td>
+    <td>18/03/20 13:05:07</td>
+    <td>18/03/20 16:37:56</td>
+    <td>0.00:36:00</td>
+    <td>0.03:53:00</td>
+    <td>0.03:32:00</td>
+    <td>0.08:01:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>18/03/20 09:38:06</td>
+    <td>18/03/20 11:06:51</td>
+    <td>18/03/20 12:56:59</td>
+    <td>18/03/20 16:36:13</td>
+    <td>0.01:28:00</td>
+    <td>0.01:50:00</td>
+    <td>0.03:40:00</td>
+    <td>0.06:58:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>19/03/20 10:47:52</td>
+    <td>19/03/20 22:16:09</td>
+    <td>19/03/20 22:16:19</td>
+    <td>20/03/20 07:38:44</td>
+    <td>0.11:29:00</td>
+    <td>0.00:00:00</td>
+    <td>0.09:22:00</td>
+    <td>0.20:51:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>19/03/20 10:57:20</td>
+    <td>19/03/20 14:15:13</td>
+    <td>19/03/20 14:15:29</td>
+    <td>19/03/20 16:07:23</td>
+    <td>0.03:18:00</td>
+    <td>0.00:00:00</td>
+    <td>0.01:52:00</td>
+    <td>0.05:10:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>20/03/20 07:38:26</td>
+    <td>20/03/20 10:11:52</td>
+    <td>20/03/20 13:48:45</td>
+    <td>20/03/20 14:00:46</td>
+    <td>0.02:33:00</td>
+    <td>0.03:37:00</td>
+    <td>0.00:12:00</td>
+    <td>0.06:22:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>20/03/20 07:40:46</td>
+    <td>20/03/20 13:29:17</td>
+    <td>20/03/20 17:40:24</td>
+    <td>20/03/20 18:47:31</td>
+    <td>0.05:49:00</td>
+    <td>0.04:11:00</td>
+    <td>0.01:07:00</td>
+    <td>0.11:07:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>20/03/20 11:06:49</td>
+    <td>20/03/20 12:28:26</td>
+    <td>20/03/20 12:28:40</td>
+    <td>20/03/20 12:44:36</td>
+    <td>0.01:22:00</td>
+    <td>0.00:00:00</td>
+    <td>0.00:16:00</td>
+    <td>0.01:38:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>20/03/20 13:30:34</td>
+    <td>20/03/20 17:43:42</td>
+    <td>20/03/20 17:43:51</td>
+    <td>20/03/20 18:47:59</td>
+    <td>0.04:13:00</td>
+    <td>0.00:00:00</td>
+    <td>0.01:04:00</td>
+    <td>0.05:17:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>21/03/20 07:39:29</td>
+    <td>21/03/20 07:49:19</td>
+    <td>21/03/20 13:11:08</td>
+    <td>21/03/20 15:46:46</td>
+    <td>0.00:10:00</td>
+    <td>0.05:22:00</td>
+    <td>0.02:35:00</td>
+    <td>0.08:07:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>21/03/20 08:22:35</td>
+    <td>21/03/20 15:50:45</td>
+    <td>21/03/20 15:51:32</td>
+    <td>21/03/20 15:53:32</td>
+    <td>0.07:28:00</td>
+    <td>0.00:01:00</td>
+    <td>0.00:02:00</td>
+    <td>0.07:31:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Maxisaco</td>
+    <td>16/03/20 10:04:49</td>
+    <td>16/03/20 13:21:14</td>
+    <td>16/03/20 16:58:13</td>
+    <td>16/03/20 20:08:30</td>
+    <td>0.03:17:00</td>
+    <td>0.03:37:00</td>
+    <td>0.03:10:00</td>
+    <td>0.10:04:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Maxisaco</td>
+    <td>17/03/20 08:49:11</td>
+    <td>17/03/20 09:10:06</td>
+    <td>17/03/20 11:31:16</td>
+    <td>17/03/20 11:59:59</td>
+    <td>0.00:21:00</td>
+    <td>0.02:21:00</td>
+    <td>0.00:28:00</td>
+    <td>0.03:10:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Maxisaco</td>
+    <td>18/03/20 09:24:41</td>
+    <td>18/03/20 11:07:28</td>
+    <td>18/03/20 12:46:06</td>
+    <td>18/03/20 16:37:36</td>
+    <td>0.01:43:00</td>
+    <td>0.01:39:00</td>
+    <td>0.03:51:00</td>
+    <td>0.07:13:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Maxisaco</td>
+    <td>19/03/20 18:19:11</td>
+    <td>19/03/20 20:05:37</td>
+    <td>19/03/20 20:05:47</td>
+    <td>19/03/20 20:33:22</td>
+    <td>0.01:46:00</td>
+    <td>0.00:00:00</td>
+    <td>0.00:28:00</td>
+    <td>0.02:14:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Maxisaco</td>
+    <td>20/03/20 11:08:41</td>
+    <td>20/03/20 13:33:47</td>
+    <td>20/03/20 16:48:14</td>
+    <td>20/03/20 16:48:36</td>
+    <td>0.02:25:00</td>
+    <td>0.03:15:00</td>
+    <td>0.00:00:00</td>
+    <td>0.05:40:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Maxisaco</td>
+    <td>20/03/20 13:05:10</td>
+    <td>20/03/20 19:02:39</td>
+    <td>20/03/20 19:32:25</td>
+    <td>20/03/20 20:54:18</td>
+    <td>0.05:57:00</td>
+    <td>0.00:30:00</td>
+    <td>0.01:22:00</td>
+    <td>0.07:49:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco + Maxisaco</td>
+    <td>17/03/20 11:20:26</td>
+    <td>17/03/20 11:37:13</td>
+    <td>17/03/20 18:09:20</td>
+    <td>17/03/20 18:47:20</td>
+    <td>0.00:17:00</td>
+    <td>0.06:32:00</td>
+    <td>0.00:38:00</td>
+    <td>0.07:27:00</td>
+</tr>
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="cuerpo">
+                    <tr>
+                        <td id="titulo-camiones">
+                            <h2>RESUMEN SEMANAL</h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="cuerpo-camiones">
+                            <table id="camiones">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" width="25%">Producto</th>
+                                        <th scope="col" width="25%">Envase</th>
+                                        <th scope="col" width="25%">N° Camiones</th>
+                                        <th scope="col" width="25%">Tiempo Ingreso</th>
+                                        <th scope="col" width="25%">Tiempo Romana</th>
+                                        <th scope="col" width="25%">Tiempo Salida</th>
+                                        <th scope="col" width="25%">Tiempo Promedio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+    <td>Aceite</td>
+    <td>Granel</td>
+    <td>40</td>
+    <td>0.02:55:00</td>
+    <td>0.02:19:00</td>
+    <td>0.02:32:00</td>
+    <td>0.07:48:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Granel</td>
+    <td>22</td>
+    <td>0.02:20:00</td>
+    <td>0.02:11:00</td>
+    <td>0.01:36:00</td>
+    <td>0.06:08:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Maxisaco</td>
+    <td>6</td>
+    <td>0.02:34:00</td>
+    <td>0.01:53:00</td>
+    <td>0.01:33:00</td>
+    <td>0.06:01:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco</td>
+    <td>14</td>
+    <td>0.03:26:00</td>
+    <td>0.02:51:00</td>
+    <td>0.02:03:00</td>
+    <td>0.08:20:00</td>
+</tr>
+<tr>
+    <td>Afrecho</td>
+    <td>Saco + Maxisaco</td>
+    <td>1</td>
+    <td>0.00:17:00</td>
+    <td>0.06:32:00</td>
+    <td>0.00:38:00</td>
+    <td>0.07:27:00</td>
+</tr>
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="pie-de-pagina">
+                    <tr>
+                        <td>
+                            <p><strong>Empresas Agrotop &copy;2020</strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

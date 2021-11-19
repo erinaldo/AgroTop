@@ -1,0 +1,6 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var estadosList = (IEnumerable<SelectListItem>)ViewData["estadosList"];
+}
+
+@Html.DropDownList("IdEstado", estadosList, "(Todos los Estados)", new { @class = "std" })

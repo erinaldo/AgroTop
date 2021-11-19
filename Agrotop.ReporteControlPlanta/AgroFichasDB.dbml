@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="agrofichas_produccion" Class="AgroFichasDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=RONALD;Initial Catalog=agrofichas_produccion;Persist Security Info=True;User ID=sa" SettingsObjectName="Agrotop.ReporteControlPlanta.Properties.Settings" SettingsPropertyName="agrofichas_produccionConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Empresa" Member="Empresa">
+    <Type Name="Empresa">
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(35) NOT NULL" CanBeNull="false" />
+      <Column Name="Sigla" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Function Name="dbo.rpt_CTR_EncabezadoControlSemanalPorEmpresa" Method="rpt_CTR_EncabezadoControlSemanalPorEmpresa">
+    <ElementType Name="rpt_CTR_EncabezadoControlSemanalPorEmpresaResult">
+      <Column Name="NumeroSemana" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PrimerDiaSemanaPasada" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="UltimoDiaSemanaPasada" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_CTR_DetalleControlSemanalPorEmpresa" Method="rpt_CTR_DetalleControlSemanalPorEmpresa">
+    <Parameter Name="IdEmpresa" Parameter="idEmpresa" Type="System.Int32" DbType="Int" />
+    <ElementType Name="rpt_CTR_DetalleControlSemanalPorEmpresaResult">
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Producto" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEnvase" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Envase" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaLlegada" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaPesajeInicial" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FechaPesajeFinal" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FechaSalida" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IngresoPlanta" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Romana" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SalidaPlanta" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="EstadiaEnPlanta" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_CTR_ResumenControlSemanalPorEmpresa" Method="rpt_CTR_ResumenControlSemanalPorEmpresa">
+    <Parameter Name="IdEmpresa" Parameter="idEmpresa" Type="System.Int32" DbType="Int" />
+    <ElementType Name="rpt_CTR_ResumenControlSemanalPorEmpresaResult">
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Producto" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEnvase" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Envase" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="NControles" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IngresoPlanta" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Romana" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="SalidaPlanta" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Promedio" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </ElementType>
+  </Function>
+</Database>

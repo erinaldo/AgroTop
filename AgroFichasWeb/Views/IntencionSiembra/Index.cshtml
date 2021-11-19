@@ -1,0 +1,127 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model AgroFichasWeb.Controllers.PaginatedList<IntencionSiembra>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Intención de Siembra";
+    ViewBag.Title = "Administrar Intencion de Siembra " + temporada.Nombre;
+
+    var puedeEditar = SYS_User.Current().HasPermiso(1004);
+    var puedeElimimar = SYS_User.Current().HasPermiso(1005);
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "intencionsiembra", new { id = 0 }, FormMethod.Get))
+    {
+        @Html.Partial("TemporadaSelector")
+        @Html.Partial("CultivoSelector")
+
+        <input type="text" name="key" value="@ViewData["key"]" />
+            <input type="submit" value="Buscar" />
+    }
+
+    <div style="margin-top: 10px">
+        @Html.ActionLink("Exportar", "indexexport", new { idTemporada = temporada.IdTemporada, idCultivo = ViewData["idCultivo"], key = ViewData["key"] }, new { @class = "exportlink" })
+    </div>
+
+</div>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">
+            Nombre
+        </th>
+        <th align="left">
+            Cultivo
+        </th>
+        <th align="left">
+            Comuna
+        </th>
+        <th align="right">
+            Ton
+        </th>
+        <th align="right">
+            Há
+        </th>
+        @if (puedeEditar)
+        {
+            <th align="center">
+                Editar
+            </th>
+        }
+        @if (puedeElimimar)
+        {
+            <th align="center">
+                Eliminar
+            </th>
+        }
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="9" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        var itemParams = Model.RouteValues(new RouteValueDictionary() { { "id", item.IdIntencionSiembra } });
+
+        <tr valign="top">
+            <td align="left">
+                @item.Agricultor.Nombre
+            </td>
+            <td align="left">
+                @item.Cultivo.Nombre
+            </td>
+            <td align="left">
+                @item.Comuna.Nombre
+            </td>
+            <td align="right">
+                @String.Format("{0:#,##0}", item.Cantidad / 1000M)
+            </td>
+            <td align="right">
+                @String.Format("{0:#,##0}", item.Superficie)
+            </td>
+            @if (puedeEditar)
+            {
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "Editar", itemParams)
+                </td>
+            }
+            @if (puedeElimimar)
+                {
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "Eliminar", itemParams)
+                </td>
+            }
+        </tr>
+    }
+    <tr>
+        <td colspan="9" class="pager">
+            @Model.Paginator("index", "intencionsiembra", ViewContext.RequestContext)
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,130 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<AgricultoresPendientesLiquidacionResult>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "Pendientes Liquidación " + temporada.Nombre;
+
+    var puedeLiquidar = SYS_User.Current().HasPermiso(48);
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("pendientes", "liquidaciones", new { id = 0 }, FormMethod.Get))
+    {
+        @Html.Partial("TemporadaSelector")
+        @Html.Partial("EmpresaSelector")
+        <input type="text" name="key" value="@ViewData["key"]" />
+        <input type="submit" value="Buscar" />
+    }
+</div>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th colspan="2" style="background-color: transparent;"></th>
+        <th align="center" colspan="3">Pendientes</th>
+    </tr>
+    <tr>
+        <th align="left">
+            Nombre
+        </th>
+        <th align="left">
+            Empresa
+        </th>
+        <th align="left">
+            Cultivo
+        </th>
+        <th align="right">
+            Ingresos
+        </th>
+        <th align="right">
+            Ton
+        </th>
+        <th align="right">
+            Días Última Llegada
+        </th>
+        <th align="center">
+            Última Entrega
+        </th>
+        @if (puedeLiquidar)
+        {
+            <th align="center">
+                
+            </th>
+        }
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="9" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        var itemParams = Model.RouteValues(new RouteValueDictionary() { 
+            { "id", item.IdAgricultor },
+            { "idEmpresaLiq", item.IdEmpresa },
+            { "idTemporadaLiq", temporada.IdTemporada },
+            { "idCultivo", item.IdCultivo }
+        });
+        
+        var htmlAttr = new Dictionary<String, Object>() { { "class", "command" } };
+        <tr valign="top">
+            <td align="left">
+                @item.Nombre
+            </td>
+            <td align="left">
+                @item.Empresa
+            </td>
+            <td align="left">
+                @item.Cultivo
+            </td>
+            <td align="right">
+                @item.Ingresos
+            </td>
+            <td align="right">
+                @String.Format("{0:#,##0}", item.PesoNoLiquidado / 1000M)
+            </td>
+            <td align="right">
+                @item.DiasUltimaLlegada
+            </td>
+            <td align="center">
+                @Html.ListCheckBox(item.UltimasEntregas > 0)
+            </td>
+
+            @if (puedeLiquidar)
+            {
+                <td align="center">
+                    @Html.ActionLink("Liquidar", "liquidar", itemParams, htmlAttr)
+                </td>
+            }
+        </tr>
+    }
+    <tr>
+        <td colspan="9" class="pager">
+            @Model.Paginator("pendientes", "liquidaciones", ViewContext.RequestContext)
+        </td>
+    </tr>
+</table>

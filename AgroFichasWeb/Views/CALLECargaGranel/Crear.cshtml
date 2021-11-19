@@ -1,0 +1,386 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_LECargaGranel
+@{
+    ViewBag.Title = "Listas de Empaque de Carga a Granel";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    PlantaProduccion plantaProduccion = new PlantaProduccion();
+    int idOrden = 0;
+    if (Model.IdLECargaGranel == 0)
+    {
+        ViewBag.SubTitle = "Crear Lista de Empaque";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Lista de Empaque";
+        AgroFichasDBDataContext dc = new AgroFichasDBDataContext();
+        plantaProduccion = dc.PlantaProduccion.Where(X => X.IdPlantaProduccion == Model.CAL_OrdenProduccion.IdPlanta).FirstOrDefault();
+        idOrden = Model.IdOrdenProduccion;
+    }
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+    <link rel="stylesheet" href="~/Content/porto/vendor/summernote/summernote.css" />
+    <link href="~/Content/porto/vendor/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+    <script src="~/Content/porto/vendor/summernote/summernote.js"></script>
+    <script src="~/Content/porto/vendor/select2/js/select2.min.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function DeleteBarcos() {
+            $("#IdBarco option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Barco)', '</option>');
+            $("#IdBarco").html(options.join(''));
+        }
+
+        function GetBarcos() {
+            var id = $('#IdCarrier').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdBarco'));
+            }
+            $.getJSON(uri + '/Barcos/Get?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay barcos disponibles");
+                        DeleteConsignatarios();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Barco)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdBarco, '">',
+                                result[i].Nombre, '</option>');
+                        }
+                        $("#IdBarco").html(options.join(''));
+
+                        var idBarco = '@(Model.IdBarco == 0 ? "" : Model.IdBarco.ToString())';
+                        var idCarrier = '@(Model.IdCarrier == 0 ? "" : Model.IdCarrier.ToString())';
+                        if (!$.isEmptyObject(idBarco) && id == idCarrier) {
+                            $("#IdBarco").val(idBarco);
+                        }
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+
+        function DeleteLotes() {
+            $("#IdOrdenProduccion option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Lote Comercial)', '</option>');
+            $("#IdOrdenProduccion").html(options.join(''));
+        }
+
+        function GetLotes() {
+            var id = $('#IdPlanta').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdOrdenProduccion'));
+            }
+            $.getJSON(uri + '/OrdenProduccion/GetLotesByPlantaGranel?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay lotes disponibles");
+                        DeleteLotes();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Lote Comercial)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdOrdenProduccion, '">',
+                                result[i].LoteComercial, '</option>');
+                        }
+                        $("#IdOrdenProduccion").html(options.join(''));
+
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function GetLotesEdit() {
+            var id = $('#IdPlanta').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdOrdenProduccion'));
+            }
+            $.getJSON(uri + '/OrdenProduccion/GetLotesByPlantaGranel?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay lotes disponibles");
+                        DeleteLotes();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Lote Comercial)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdOrdenProduccion, '">',
+                                result[i].LoteComercial, '</option>');
+                        }
+                        $("#IdOrdenProduccion").html(options.join(''));
+                        $("#IdOrdenProduccion").val(@idOrden);
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function SetBarco() {
+            var id = $('#IdOrdenProduccion').val();
+            $.getJSON(uri + '/OrdenProduccion/GetBarco?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (jQuery.isEmptyObject(result)) {
+                        alert("No hay barco disponible");
+                    }
+                    else {
+                        $("#IdBarco").val(result.IdBarco);
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="', '', '">', 'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        function SetCarrier() {
+            var id = $('#IdOrdenProduccion').val();
+            $.getJSON(uri + '/OrdenProduccion/GetCarrier?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (jQuery.isEmptyObject(result)) {
+                        alert("No hay carrier disponible");
+                    }
+                    else {
+                        $("#IdCarrier").val(result.IdCarrier);
+
+                        GetBarcos();
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        function SetReserva() {
+            $("#NReserva").val("");
+
+            var id = $('#IdOrdenProduccion').val();
+            $.getJSON(uri + '/OrdenProduccion/GetReserva?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (jQuery.isEmptyObject(result)) {
+                        alert("No hay reserva disponible");
+                    }
+                    else {
+                        $("#NReserva").val(result);
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdOrdenProduccion").change(function () {
+            DeleteBarcos();
+            SetCarrier();
+            SetReserva();
+        });
+
+        $("#IdCarrier").change(function () {
+            DeleteBarcos();
+            GetBarcos();
+        });
+
+        $("#IdPlanta").change(function () {
+            DeleteLotes();
+            GetLotes();
+        });
+
+        $(document).ready(function () {
+            if ($("#IdCarrier").val() != 0) {
+                GetBarcos();
+            }
+            if ($("#IdPlanta").val() != 0) {
+                GetLotesEdit();
+            }
+        });
+
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Planta de producción <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @if (Model.IdLECargaGranel == 0)
+                                        {
+                                            @Html.DropDownList("IdPlanta", Model.GetPlantaProduccion(), "(Seleccione Planta)", new { @class = "form-control" });
+
+                                        }
+                                        else
+                                        {
+                                            <input type="text" class="form-control" value="@plantaProduccion.Nombre" readonly />
+                                            <input type="hidden" id="IdPlanta" class="form-control" value="@plantaProduccion.IdPlantaProduccion" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Lote Comercial <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @* @Html.DropDownList("IdOrdenProduccion", Model.GetLotes(Model.IdOrdenProduccion), "(Seleccione Lote Comercial)", new { @class = "form-control populate", @data_plugin_selectTwo = "" })*@
+                                        @Html.DropDownList("IdOrdenProduccion", new List<SelectListItem>(), "(Seleccione Lote Comercial)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdOrdenProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Carrier <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdCarrier", Model.GetCarriers(Model.IdCarrier), "(Seleccione Carrier)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdCarrier")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Barco <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdBarco", new List<SelectListItem>(), "(Seleccione Barco)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdBarco")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Reserva <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("NReserva", Model.NReserva, new { @class = "form-control", maxlength = "32" })
+                                        @Html.ValidationMessage("NReserva")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Puerto de Embarque <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("PuertoEmbarque", Model.PuertoEmbarque, new { @class = "form-control", maxlength = "128" })
+                                        @Html.ValidationMessage("PuertoEmbarque")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Puerto de Destino <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("PuertoDestino", Model.PuertoDestino, new { @class = "form-control", maxlength = "128" })
+                                        @Html.ValidationMessage("PuertoDestino")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Declaración Única de Salida <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("DUS", Model.DUS, new { @class = "form-control", maxlength = "32" })
+                                        @Html.ValidationMessage("DUS")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Número de Factura </label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("NFactura", Model.NFactura, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("NFactura")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="@(Model.IdLECargaGranel == 0 ? "Guardar" : "Editar") este Lista de Empaque" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

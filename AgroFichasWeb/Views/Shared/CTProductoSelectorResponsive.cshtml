@@ -1,0 +1,6 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var productosList = (IEnumerable<SelectListItem>)ViewData["productosList"];
+}
+
+@Html.DropDownList("IdProducto", productosList, "(Todos las Productos)", new { @class = "form-control" })

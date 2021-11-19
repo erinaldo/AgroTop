@@ -1,0 +1,6 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var tipoContratoList = (IEnumerable<SelectListItem>)ViewData["tipoContratoList"];
+}
+
+@Html.DropDownList("IdTipoContrato", tipoContratoList, "Seleccione Tipo Contrato", new { @class = "heavy std" })

@@ -1,0 +1,68 @@
+﻿@using AgroFichasWeb.Models
+
+@{
+    ViewBag.NombreSeccion = "Informes de Recepciones";
+    ViewBag.Title = "Seleccione el Informe";
+}
+<style>
+    ul.inpagemenu li {
+        margin: 20px 0px;
+    }
+</style>
+
+<h2>@ViewBag.Title</h2>
+<ul class="inpagemenu">
+    @if (SYS_User.Current().HasPermiso(63))
+    {
+        <li>@Html.ActionLink("Detalle de Recepciones *", "detallerecepciones", null, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(77))
+    {
+        <li>@Html.ActionLink("Recepciones por Rut *", "recepcionesporrut", null, new { @class = "command" })</li>
+    }      
+    @if (SYS_User.Current().HasPermiso(73))
+    {
+        <li>@Html.ActionLink("Recepciones por Día *", "recepcionespordia", null, new { @class = "command" })</li>
+    }  
+    @if (SYS_User.Current().HasPermiso(76))
+    {
+        <li>@Html.ActionLink("Recepciones Diarias por Bodega", "recepcionespordiaybodega", null, new { @class = "command" })</li>
+    }  
+    @if (SYS_User.Current().HasPermiso(83))
+    {
+        <li>@Html.ActionLink("Recepciones Diarias por Manga", "recepcionespordiaymanga", null, new { @class = "command" })</li>
+    }  
+    @if (SYS_User.Current().HasPermiso(84))
+    {
+        <li>@Html.ActionLink("Composición de Mangas", "composicionmangas", null, new { @class = "command" })</li>
+    }  
+    @if (SYS_User.Current().HasPermiso(65))
+    {
+        <li>@Html.ActionLink("Tiempos de Proceso en Planta *", "tiempoprocesoplanta", null, new { @class = "command" })</li>
+    }  
+    @if (SYS_User.Current().HasPermiso(66))
+    {
+        <li>@Html.ActionLink("Resultados de Análisis", "resultadosanalisis", new { idcultivo = 1 }, new { @class = "command" })</li>
+    }        
+    @if (SYS_User.Current().HasPermiso(67))
+    {
+        <li>@Html.ActionLink("Recepciones Valorizadas", "recepcionesvalorizadas", null, new { @class = "command" })</li>
+    }  
+    @if (SYS_User.Current().HasPermiso(71))
+    {
+        <li>@Html.ActionLink("Cobertura de Tipo de Cambio", "coberturatipocambio", null, new { @class = "command" })</li>
+    }  
+    @if (SYS_User.Current().HasPermiso(75))
+    {
+        <li>@Html.ActionLink("Cumplimiento de Contratos", "cumplimientocontratos", new { idcultivo = 1 }, new { @class = "command" })</li>
+    }  
+    @if (SYS_User.Current().HasPermiso(86))
+    {
+        <li>@Html.ActionLink("Recepciones Mangas", "recepcionesmangas", null, new { @class = "command" })</li>
+    }
+    @if (SYS_User.Current().HasPermiso(1001))
+    {
+        <li>@Html.ActionLink("Análisis Diarios por Analista", "analisisdiariosanalista", null, new { @class = "command" })</li>
+    }
+    
+</ul>

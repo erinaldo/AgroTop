@@ -1,0 +1,19 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var tipos = (List<TipoDescuento>)ViewData["tiposDescuento"];
+}    
+    <ul>
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(40))
+        {
+            <li><a href="@Url.Content("~/saldosctacte")">Listado</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(37))
+        {
+            <li><a href="@Url.Content("~/saldosctacte/crear")">Crear Saldo Cuenta Corriente</a></li>
+        }
+        @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(44))
+        {
+            <li><a href="@Url.Content("~/saldosctacte/importar")">Importar</a></li>
+        }
+    </ul>
+    <div style="clear:both;"></div>

@@ -1,0 +1,207 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.SoftwareCalidad
+@model DespachoPalletsViewModel
+@{
+    ViewBag.Title = "Despachos Carga de Pallets";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    CAL_OrdenProduccion ordenProduccion = (CAL_OrdenProduccion)ViewData["ordenProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            },
+            "pageLength": 100
+        });
+    </script>
+}
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">O/P N° @ordenProduccion.LoteComercial</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Espesor</th>
+                    <th>Saco</th>
+                    <th>Sacos Requeridos</th>
+                    <th>Sacos Por Contenedor</th>
+                    <th>Contenedores<br> Requeridos/Utilizados</th>
+                    <th>% Avance Carga Contenedores</th>
+                    <th>% Avance Total de Carga</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var avanceCargaPallet in Model.AvanceCargaPallet)
+                {
+                    <tr valign="top">
+                        <td>@avanceCargaPallet.NombreProducto.ToUpper()</td>
+                        <td>@(string.Format("{0:N2}-{1:N2} mm", avanceCargaPallet.Min, avanceCargaPallet.Max))</td>
+                        <td>@avanceCargaPallet.NombreSaco</td>
+                        <td>@string.Format("{0:N0}", avanceCargaPallet.CantidadSacos)</td>
+                        <td>@string.Format("{0:N0}", avanceCargaPallet.SacosPorContenedor)</td>
+                        <td>
+                            @string.Format("{0:N0}", avanceCargaPallet.CantidadContenedores) / @string.Format("{0:N0}", avanceCargaPallet.ContenedorUtilizado)
+                        </td>
+                        <td>
+                            @foreach (var contenedoresAvanceCargaPallet in Model.ContenedoresAvanceCargaPale)
+                            {
+                                if (avanceCargaPallet.IdDetalleOrdenProduccion == contenedoresAvanceCargaPallet.IdDetalleOrdenProduccion)
+                                {
+                                    foreach (var contenedoresAvanceCargaPaleTotal in Model.ContenedoresAvanceCargaPaleTotal)
+                                    {
+                                        if (contenedoresAvanceCargaPallet.NContenedor == contenedoresAvanceCargaPaleTotal.NContenedor)
+                                        {
+                                            if (contenedoresAvanceCargaPaleTotal.AvanceCargaPallet == 100)
+                                            {
+                                                <div class="alert alert-success">
+                                                    CONTENEDOR: <strong>@contenedoresAvanceCargaPaleTotal.NContenedor </strong> <span>@string.Format("{0:N0}", contenedoresAvanceCargaPallet.SacosDespachados)</span>
+                                                    <div class="progress progress-striped light active m-md">
+                                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet);">
+                                                            @string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet)
+                                                        </div>
+                                                    </div>
+                                                    CARGADO: <strong>@string.Format("{0:N0}", contenedoresAvanceCargaPallet.SacosDespachados)</strong>
+                                                </div>
+                                            }
+                                            if (contenedoresAvanceCargaPaleTotal.AvanceCargaPallet == 0)
+                                            {
+                                                <div class="alert alert-danger">
+                                                    CONTENEDOR: <strong>@contenedoresAvanceCargaPaleTotal.NContenedor </strong><span>@string.Format("{0:N0}", contenedoresAvanceCargaPallet.SacosDespachados)</span>
+                                                    <div class="progress progress-striped light active m-md">
+                                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet);">
+                                                            @string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet)
+                                                        </div>
+                                                    </div>
+                                                    CARGADO: <strong>@string.Format("{0:N0}", contenedoresAvanceCargaPallet.SacosDespachados)</strong>
+                                                </div>
+                                            }
+                                            if (contenedoresAvanceCargaPaleTotal.AvanceCargaPallet > 0 && contenedoresAvanceCargaPaleTotal.AvanceCargaPallet < 100)
+                                            {
+                                                <div class="alert alert-warning">
+                                                    CONTENEDOR: <strong>@contenedoresAvanceCargaPaleTotal.NContenedor </strong>
+                                                    <div class="progress progress-striped light active m-md">
+                                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet);">
+                                                            @string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet)
+                                                        </div>
+                                                    </div>
+                                                    CARGADO: <strong>@string.Format("{0:N0}", contenedoresAvanceCargaPallet.SacosDespachados)</strong>
+                                                </div>
+                                            }
+                                            if (contenedoresAvanceCargaPaleTotal.AvanceCargaPallet > 100)
+                                            {
+                                                <div class="alert alert-success">
+                                                    CONTENEDOR: <strong>@contenedoresAvanceCargaPaleTotal.NContenedor </strong> 
+                                                    <div class="progress progress-striped light active m-md">
+                                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet);">
+                                                            @string.Format("{0:N2}%", contenedoresAvanceCargaPaleTotal.AvanceCargaPallet)
+                                                        </div>
+                                                    </div>
+                                                    CARGADO: <strong>@string.Format("{0:N0}", contenedoresAvanceCargaPallet.SacosDespachados)</strong>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        </td>
+                        <td>
+                            @if (avanceCargaPallet.AvanceCargaPallet == 100)
+                            {
+                                <div class="alert alert-success">
+                                    El porcentaje de avance de carga es de @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet);">
+                                            @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (avanceCargaPallet.AvanceCargaPallet == 0)
+                            {
+                                <div class="alert alert-danger">
+                                    El porcentaje de avance de carga es de @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet);">
+                                            @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (avanceCargaPallet.AvanceCargaPallet > 0 && avanceCargaPallet.AvanceCargaPallet < 100)
+                            {
+                                <div class="alert alert-warning">
+                                    El porcentaje de avance de carga es de @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet).
+                                    <div class="progress progress-striped light active m-md">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="@string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet);">
+                                            @string.Format("{0:N2}%", avanceCargaPallet.AvanceCargaPallet)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </td>
+                        <td>
+                            <button id="@string.Format("view_{0}", avanceCargaPallet.IdOrdenProduccion)" onclick="window.location.href='@Url.Action("VerPallets", new { id = avanceCargaPallet.IdDetalleOrdenProduccion })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Pallets"> <i class="fa fa-eye"></i></button>
+                            <button onclick="window.location.href='@Url.Action("QRDespachoPallet", "CALDespachosPallets")'" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="QR-Code Despacho"> <i class="fa fa-qrcode"></i></button>
+                            @if (permisosUsuario.CrearCargaDividida)
+                            {
+                                <button onclick="window.location.href='@Url.Action("QRCargaDivididaPallet", "CALDespachosPallets")'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="QR-Code Carga Dividida"> <i class="fa fa-qrcode"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

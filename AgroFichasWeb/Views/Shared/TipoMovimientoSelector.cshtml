@@ -1,0 +1,6 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var tipoMovimientosList = (IEnumerable<SelectListItem>)ViewData["tipoMovimientosList"];
+}
+
+@Html.DropDownList("idTipoMovimiento", tipoMovimientosList, "Seleccione Tipo Movimiento", new { @class = "heavy std" })

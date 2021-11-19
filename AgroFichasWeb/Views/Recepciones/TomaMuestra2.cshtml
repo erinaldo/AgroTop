@@ -1,0 +1,34 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+
+@model MuestraViewModel
+@{
+   
+    ViewBag.NombreSeccion = "Registrar Toma de Muestra " + Model.ProcesoIngreso.Temporada.Nombre;
+    ViewBag.Title = "Ingresar Datos";
+
+}
+
+
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm("tomamuestra2", "recepciones", (RouteValueDictionary)ViewData["indexRouteValues"], FormMethod.Post))
+    {
+        @Html.Hidden("IdProcesoIngreso", Model.IdProcesoIngreso)
+        <fieldset class="dataForm">
+            @Html.Partial("Ingreso", Model.ProcesoIngreso)
+            <p>
+                <label>PIN</label>
+                @Html.Password("Pin", "", new { autocomplete = "off" })
+                @Html.ValidationMessage("Pin", ".")
+            </p>
+            <p class="okcancel">
+                <input type="submit" value="Registrar Toma de Muestra" /> o @Html.ActionLink("Cancelar", "tomamuestra1", (RouteValueDictionary)ViewData["indexRouteValues"]) 
+            </p>
+        </fieldset>
+
+        <script type="text/javascript">
+
+        </script>   
+    }

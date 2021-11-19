@@ -1,0 +1,346 @@
+﻿@using AgroFichasWeb.Models
+
+@model ADQ_SolicitudCompra
+
+<div class="row invoice">
+    <div class="col-12">
+        <div class="invoice-contents" leftmargin="0" marginwidth="0" topmargin="0" marginheight="0"
+             offset="0"
+             style="background-color:#ffffff; height:auto; max-width:830px; font-family: Helvetica,Arial,sans-serif !important; position: relative;">
+            <table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0"
+                   style="width:100%; background-color:#ffffff;border-collapse:separate !important; border-spacing:0;color:#242128; margin:0;padding:30px;"
+                   heigth="auto">
+
+                <tbody>
+                    <tr>
+                        <td align="left" valign="center"
+                            style="padding-bottom:35px; padding-top:15px; border-top:0;width:100% !important;">
+                            <img src="http://sys.empresasagrotop.cl/content/images/logo.png" />
+                        </td>
+                        <td align="right" valign="center"
+                            style="padding-bottom:35px; padding-top:15px; border-top:0;width:100% !important;">
+                            <p style="color: #8f8f8f; font-weight: normal; line-height: 1.2; font-size: 12px; white-space: nowrap; ">
+                                <b>Solicitud OC #: @Model.IdSolicitud</b><br>
+                                @if (Model.NumeroOrdenCompra != null)
+                                {<b>Num. OC. #: @Model.NumeroOrdenCompra</b><br>}
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding-top:30px; border-top:1px solid #f1f0f0">
+                            <table style="width: 100%;">
+                                <tbody>
+                                    <tr>
+
+                                        <td style="vertical-align:middle; border-radius: 3px; padding:30px; background-color: #f9f9f9; border-right: 5px solid white;">
+                                            <p style="color:#303030; font-size: 14px;  line-height: 1.6; margin:0; padding:0;">
+                                                Empresa: @Model.Empresa.Nombre<br>Tipo Compra: @Model.ADQ_TipoCompra.Nombre<br>Centro Costo: @Model.ADQ_CentroCosto.Nombre<br>
+
+
+                                            </p>
+                                        </td>
+
+                                        @foreach (var proyecto in Model.ADQ_Proyecto)
+                                        {
+                                            if (!string.IsNullOrEmpty(proyecto.Nombre) && proyecto.Numero != null && !string.IsNullOrEmpty(proyecto.ADQ_DetalleProyecto.Nombre))
+                                            {
+                                                <td style="text-align: right; padding-top:0px; padding-bottom:0; vertical-align:middle; padding:30px; background-color: #f9f9f9; border-radius: 3px; border-left: 5px solid white;">
+                                                    <p style="color:#8f8f8f; font-size: 14px; padding: 0; line-height: 1.6; margin:0; ">
+                                                        Nombre Proyecto:  @proyecto.Nombre<br>
+                                                        Número Proyecto:  @proyecto.Numero<br>
+                                                        Detalle Proyecto: @proyecto.ADQ_DetalleProyecto.Nombre
+                                                    </p>
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0"
+                                   style="bottom:0; width:100%; background-color:#ffffff; border-spacing:0;color:#242128; margin-top:40px;padding:30px; padding-top: 20px;"
+                                   heigth="auto">
+                                <tr>
+                                    @if (!string.IsNullOrEmpty(Model.Proveedor))
+                                    {
+
+                                        <td>
+                                            <p style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: justify;">
+                                                Proveedor :
+                                            </p>
+                                        </td>
+                                        <td style="padding-top:0px; text-align: justify;">
+                                            <p style="font-size: 13px; line-height: 1.6; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap; margin-left:15px">
+                                                @Model.Proveedor
+                                            </p>
+                                        </td>
+                                    }
+
+                                </tr>
+                            </table>
+                            <table style="width: 100%; margin-top:40px;">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:left; font-size: 10px; color:#8f8f8f; padding-bottom: 15px;">
+                                            CÓDIGO
+                                        </th>
+                                        <th style="text-align:left; font-size: 10px; color:#8f8f8f; padding-bottom: 15px;">
+                                            CANTIDAD
+                                        </th>
+                                        <th style="text-align:left; font-size: 10px; color:#8f8f8f; padding-bottom: 15px;">
+                                            DESCRIPCIÓN
+                                        </th>
+                                        <th style="text-align:right; font-size: 10px; color:#8f8f8f; padding-bottom: 15px;">
+                                            PRECIO
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var detalle in Model.ADQ_DetalleSolicitudCompra)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <p href="#"
+                                                   style="font-size: 13px; text-decoration: none; line-height: 1; color:#909090; margin-top:0px; margin-bottom:0;">
+                                                    @detalle.Codigo
+                                                </p>
+                                            </td>
+                                            <td>
+                                                <p href="#"
+                                                   style="font-size: 13px; text-decoration: none; line-height: 1; color:#909090; margin-top:0px; margin-bottom:0;">
+                                                    @detalle.Cantidad
+                                                </p>
+                                            </td>
+                                            <td style="padding-top:0px; padding-bottom:5px;">
+                                                <h4 style="font-size: 16px; line-height: 1; margin-bottom:0; color:#303030; font-weight:500; margin-top: 10px;">
+                                                    @detalle.Descripcion
+                                                </h4>
+                                            </td>
+                                            <td style="padding-top:0px; padding-bottom:0; text-align: right;">
+                                                <p style="font-size: 13px; line-height: 1; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap;">
+                                                    $
+                                                    @detalle.Precio
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0"
+                   style="bottom:0; width:100%; background-color:#ffffff;border-collapse:separate !important; border-spacing:0;color:#242128; margin:0;padding:30px; padding-top: 20px;"
+                   heigth="auto">
+                <tr>
+                    <td colspan="3" style="border-top:1px solid #f1f0f0">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="width: 100%">
+
+                        @if (Model.IdEstado == 1)
+                        {
+                            <p href="#"
+                               style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                <span class="@Model.CreateCSSClassResponsive()">@Model.ADQ_Estado.Descripcion</span> :
+                            </p>
+                        }
+                        else
+                        {
+                            <p href="#"
+                               style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                Solicitud Recepcionada
+                            </p>
+                        }
+
+                    </td>
+                    <td style="padding-top:0px; text-align: right;">
+                        <p style="font-size: 13px; line-height: 1.6; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap; margin-left:15px">
+                            @string.Format("{0:dd/MM/yy HH:mm}", Model.FechaHoraIns)
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    @if (Model.IdEstado >= 2 && Model.IdEstado != 99)
+                    {
+                        <td colspan="2" style="width: 100%">
+                            @if (Model.IdEstado == 2)
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    <span class="@Model.CreateCSSClassResponsive()">@Model.ADQ_Estado.Descripcion</span> :
+                                </p>
+                            }
+                            else
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    Solicitud En Cotización :
+                                </p>
+                            }
+                        </td>
+
+                        <td style="padding-top:0px; text-align: right;">
+                            <p style="font-size: 13px; line-height: 1.6; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap; margin-left:15px">
+                                @string.Format("{0:dd/MM/yy HH:mm}", Model.FechaHoraEnCotizacionIns)
+                            </p>
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    @if (Model.IdEstado >= 3 && Model.IdEstado != 99)
+                    {
+                        <td colspan="2" style="width: 100%">
+                            @if (Model.IdEstado == 3)
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    <span class="@Model.CreateCSSClassResponsive()">@Model.ADQ_Estado.Descripcion</span> :
+                                </p>
+                            }
+                            else
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    Solicitud En Proc. Aut :
+                                </p>
+                            }
+                        </td>
+
+                        <td style="padding-top:0px; text-align: right;">
+                            <p style="font-size: 13px; line-height: 1.6; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap; margin-left:15px">
+                                @string.Format("{0:dd/MM/yy HH:mm}", Model.FechaHoraEnProcesoAutIns)
+                            </p>
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    @if (Model.IdEstado >= 4 && Model.IdEstado != 99)
+                    {
+                        <td colspan="2" style="width: 100%">
+                            @if (Model.IdEstado == 4)
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    <span class="@Model.CreateCSSClassResponsive()">@Model.ADQ_Estado.Descripcion</span> :
+                                </p>
+                            }
+                            else
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    OC Enviada a Proveedor :
+                                </p>
+                            }
+                        </td>
+
+                        <td style="padding-top:0px; text-align: right;">
+                            <p style="font-size: 13px; line-height: 1.6; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap; margin-left:15px">
+                                @string.Format("{0:dd/MM/yy HH:mm}", Model.FechaHoraOCEnviadaProveedorIns)
+                            </p>
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    @if (Model.IdEstado >= 5 && Model.IdEstado != 99)
+                    {
+                        <td colspan="2" style="width: 100%">
+                            @if (Model.IdEstado == 5)
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    <span class="@Model.CreateCSSClassResponsive()">@Model.ADQ_Estado.Descripcion</span> :
+                                </p>
+                            }
+                            else
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    Recepcionado en Bodega :
+                                </p>
+                            }
+                        </td>
+
+                        <td style="padding-top:0px; text-align: right;">
+                            <p style="font-size: 13px; line-height: 1.6; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap; margin-left:15px">
+                                @string.Format("{0:dd/MM/yy HH:mm}", Model.FechaHoraRecepcionadaBodegaIns)
+                            </p>
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    @if (Model.IdEstado == 6)
+                    {
+                        <td colspan="2" style="width: 100%">
+                            @if (Model.IdEstado == 6)
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    <span class="@Model.CreateCSSClassResponsive()">@Model.ADQ_Estado.Descripcion</span> :
+                                </p>
+                            }
+                            else
+                            {
+                                <p href="#"
+                                   style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: right;">
+                                    Solicitud Cerrada
+                                </p>
+                            }
+                        </td>
+
+                        <td style="padding-top:0px; text-align: right;">
+                            <p style="font-size: 13px; line-height: 1.6; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap; margin-left:15px">
+                                @string.Format("{0:dd/MM/yy HH:mm}", Model.FechaHoraCerradaIns)
+                            </p>
+                        </td>
+                    }
+                </tr>
+                <tr>
+                    <td colspan="3" style="border-top:1px solid #f1f0f0">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align:justify;">
+                        <table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0"
+                               style="bottom:0; width:100%; background-color:#ffffff; border-spacing:0;color:#242128; margin:0;padding:30px; padding-top: 20px;"
+                               heigth="auto">
+                            <tr>
+                                @if (!string.IsNullOrEmpty(Model.Observacion))
+                                {
+
+                                    <td>
+                                        <p style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: justify;">
+                                            Observación :
+                                        </p>
+                                    </td>
+                                    <td style="padding-top:0px; text-align: justify;">
+                                        <p style="font-size: 13px; line-height: 1.6; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap; margin-left:15px">
+                                            @Html.Raw(Model.Observacion)
+                                        </p>
+                                    </td>
+                                }
+
+                            </tr>
+                            <tr>
+                                @if (!string.IsNullOrEmpty(Model.ObservacionRecepcionadaBodega))
+                                {
+
+                                    <td>
+                                        <p style="font-size: 13px; text-decoration: none; line-height: 1.6; color:#909090; margin-top:0px; margin-bottom:0; text-align: justify;">
+                                            Observación Bodega :
+                                        </p>
+                                    </td>
+                                    <td style="padding-top:0px; text-align: justify;">
+                                        <p style="font-size: 13px; line-height: 1.6; color:#303030; margin-bottom:0; margin-top:0; vertical-align:top; white-space:nowrap; margin-left:15px">
+                                            @Html.Raw(Model.ObservacionRecepcionadaBodega)
+                                        </p>
+                                    </td>
+                                }
+
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

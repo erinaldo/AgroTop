@@ -1,0 +1,102 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model ConvenioCambioMoneda
+
+@{
+    ViewBag.NombreSeccion = "Convenios de Cambio de Moneda";   
+    var dc = new AgroFichasDBDataContext();
+ 
+    Temporada temporada;
+    
+    if (Model.IdConvenioCambioMoneda == 0) {
+        ViewBag.Title = "Crear Convenio de Cambio de Moneda";
+        temporada = (Model.Contrato != null) ? Model.Contrato.Temporada : Temporada.TemporadaActiva();
+    }
+    else {
+        ViewBag.Title = "Editar Convenio de Cambio de Moneda";
+        temporada = Model.Contrato.Temporada;
+    }
+    
+    var monedas = ((List<Moneda>)ViewData["monedas"]);
+    var monedaOrigen = monedas.Single(m => m.IdMoneda == Model.IdMonedaOrigen);
+    var monedaDestino = monedas.Single(m => m.IdMoneda == Model.IdMonedaDestino);
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm())
+    {
+        <fieldset class="dataForm">
+            <p>
+                <label>ID</label>
+                <b>@Model.IdConvenioCambioMoneda</b>
+            </p>
+            <div class="p">
+                <label>Contrato</label>
+                @Html.Partial("~/Views/Controls/ContratoSelector.cshtml", new ContratoSelectorViewModel() { 
+                    IdContrato = Model.IdContrato, 
+                    Temporada = temporada,                    
+                    NumeroContrato = (Model.Contrato != null) ? Model.Contrato.NumeroContrato : "",
+                    Nombre = (Model.Contrato != null) ? Model.Contrato.Agricultor.Nombre : "&nbsp;",
+                    NombreCultivo = (Model.Contrato != null) ? Model.Contrato.DescripcionCultivos(", ") : "",
+                    NombreEmpresa = (Model.Contrato != null) ? Model.Contrato.Empresa.Nombre : ""
+                })
+                @Html.ValidationMessage("IdContrato", ".")  
+                @Html.Hidden("IdContrato", Model.IdContrato)
+                
+            </div>    
+            <p>
+                <label>Cantidad a Cambiar</label>
+                @Html.TextBox("Cantidad", Model.Cantidad) @monedaOrigen.Simbolo
+                @Html.ValidationMessage("Cantidad", ".")
+                @Html.Hidden("IdMonedaOrigen", Model.IdMonedaOrigen)
+            </p>
+            <p>
+                <label>Tasa de Cambio</label>
+                @Html.TextBox("PrecioUnidad", Model.PrecioUnidad) @monedaDestino.Simbolo / @monedaOrigen.Simbolo
+                @Html.ValidationMessage("PrecioUnidad", ".") 
+                @Html.Hidden("IdMonedaDestino", Model.IdMonedaDestino)                
+            </p>
+            <p>
+                <label>Comentarios</label>
+                @Html.TextArea("Comentarios", Model.Comentarios, new { @class = "std", rows = 5 })  
+                @Html.ValidationMessage("Comentarios", ".")  
+            </p>
+            <p>
+                <label for="EnPortada">Habilitado</label>
+                @Html.CheckBox("Habilitado", Model.Habilitado)   Permitir el uso de este Convenio de Cambio de Moneda
+                @Html.ValidationMessage("Habilitado", ".") 
+            </p>
+            <p class="okcancel">
+                <input type="submit" value="Guardar Este Convenio de Cambio de Moneda" /> o 
+                @if (!String.IsNullOrEmpty(Request.QueryString["backto"]))
+                {
+                    <a href="@Request.QueryString["backto"]">Cancelar</a>
+                }
+                else
+                {
+                    @Html.ActionLink("Cancelar", "Index", (RouteValueDictionary)ViewData["indexRouteValues"])
+                }
+            </p>
+        </fieldset>
+
+    }
+
+    <script type="text/javascript">
+        function cosCallback(idContrato, nombre, numero, empresa, idTemporada, nombreTemporada) {
+            $("#IdContrato").val(idContrato);
+        }
+    </script>   

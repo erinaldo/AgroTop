@@ -1,0 +1,14 @@
+﻿.tabla2 .header {
+    background-color: darkgray;
+    padding: 5px;
+    text-transform: uppercase;
+}
+
+.tabla2 .header2 {
+    background-color: lightgray;
+    padding: 5px;
+}
+
+.tabla2 label {
+    width: 200px;
+}

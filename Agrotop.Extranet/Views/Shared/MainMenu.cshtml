@@ -1,0 +1,26 @@
+﻿@{
+    var user = Agrotop.Extranet.Models.UserState.Current();
+}
+
+<div class="un-TopBar">
+    <div class="un-TopBar-Logo">
+        <a href="http://empresasagrotop.cl"><img src="~/content/img/logo_topbar.png" alt="Empresas Agrotop" border="0" /></a>
+    </div>
+    <div class="un-TopBar-Content">
+        <ul class="un-TopMenu">
+        @if (user != null)
+        {
+            <li>@Html.ActionLink("Asesorías en Terreno", "index", "fichas")</li>
+            <li>@Html.ActionLink("Recepciones", "index", "recepciones")</li>
+            <li>@Html.ActionLink("Liquidaciones", "index", "liquidaciones")</li>
+            <li>@Html.ActionLink("Plataforma Productiva", "index", "produccion")</li>
+        }
+        </ul>
+    </div>
+    @if (user != null)
+    {
+        <div class="logout">
+            @user.FullName, @Html.ActionLink("Cerrar Sesión", "logout", "account")
+        </div>
+    }
+</div>

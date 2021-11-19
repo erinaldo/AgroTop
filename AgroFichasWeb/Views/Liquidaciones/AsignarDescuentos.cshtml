@@ -1,0 +1,181 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Liquidaciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model AsignarDescuentosViewModel
+@{
+
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = String.Format("Asignar descuenuentos {1} {0}", Model.Liquidacion.Empresa.Nombre, Model.Liquidacion.Temporada.Nombre);
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+
+<h2>@ViewBag.Title</h2>
+<form action="@Url.Action("asignardescuentos", "liquidaciones", (RouteValueDictionary)ViewData["indexRouteValues"])#formPos" method="post">
+    @Html.Hidden("IdLiquidacion", Model.IdLiquidacion)
+    <fieldset class="dataForm">
+        <p>
+            <label>Liquidacion</label>
+            @Model.Liquidacion.IdLiquidacion
+        </p>
+        <p>
+            <label>Rut</label>
+            @Model.Liquidacion.Agricultor.Rut
+        </p>
+        <p>
+            <label>Nombre</label>
+            @Model.Liquidacion.Agricultor.Nombre
+        </p>        
+        <div class="p">
+            <label style="display:block; float: left">Descuentos<a name="formPos">&nbsp;</a></label>
+            <div style="float: left">
+                @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+                <table class="form1">
+                    @if (Model.Descuentos != null && Model.Descuentos.Count > 0)
+                    {
+                        <tr valign="top">
+                            <td class="label">Nro</td>
+                            <td class="label">Agricultor</td>
+                            <td class="label">Tipo</td>
+                            <td class="label">Nro Doc</td>
+                            <td class="label">Insitución</td>
+                            <td class="label" align="right">Monto</td>
+                            <td class="label" align="right">Saldo</td>
+                            <td class="label" align="right">Asignado</td>
+                        </tr>
+                        foreach (var d in Model.Descuentos)
+                        {
+                            var keyDC = "Descuentos[" + d.ID + "].";
+                            var moneda = Model.Monedas.Single(m => m.IdMoneda == d.IdMoneda);
+                            <tr valign="top">
+                                <td>
+                                    @Html.Hidden("Descuentos.Index", d.ID)
+                                    @Html.Hidden(keyDC + "ID", d.ID)
+                                    @Html.Hidden(keyDC + "IdDescuento", d.IdDescuento)
+                                    @Html.Hidden(keyDC + "IdSaldoCtaCte", d.IdSaldoCtaCte)
+                                    @Html.Hidden(keyDC + "Rut", d.Rut)
+                                    @Html.Hidden(keyDC + "Nombre", d.Nombre)
+                                    @Html.Hidden(keyDC + "TipoDescuento", d.TipoDescuento)
+                                    @Html.Hidden(keyDC + "NumeroDocumento", d.NumeroDocumento)
+                                    @Html.Hidden(keyDC + "Instituccion", d.Instituccion)
+                                    @Html.Hidden(keyDC + "Monto", d.Monto)
+                                    @Html.Hidden(keyDC + "Saldo", d.Saldo)
+                                    @Html.Hidden(keyDC + "IdMoneda", d.IdMoneda)
+
+                                    @d.IdDescuento.ToString("#")
+                                </td>
+                                <td>@d.Nombre<br />@d.Rut</td>
+                                <td>@d.TipoDescuento</td>
+                                <td>@d.NumeroDocumento.ToString("#")</td>
+                                <td>@d.Instituccion</td>
+                                <td align="right">@String.Format(moneda.Formato2, d.Monto)</td>
+                                <td align="right">@String.Format(moneda.Formato2, d.Saldo)</td>
+                                <td align="right">
+                                    @Html.ValidationMessage(keyDC + "MontoAsignado", " ")
+                                    @Html.TextBox(keyDC + "MontoAsignado", d.MontoAsignado.ToString("0.####"), new { @class = "montoAsignado", data_id = d.IdDescuento, data_max = d.Saldo, style = "text-align: right; width: 80px;" })
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="7" align="right" class="label">Total Ingresos</td>
+                            <td>
+                                <input type="text" id="txtTotalLiquidacion" class="readonly" style="text-align: right; width: 90px;" readonly />
+                            </td>
+                        </tr>                        
+                        <tr>
+                            <td colspan="7" align="right" class="label">Total Descuentos</td>
+                            <td>
+                                <input type="text" id="txtTotalDescuentos" class="readonly" style="text-align: right; width: 90px;" readonly />
+                                @Html.ValidationMessage("txtTotalDescuentos", " ")
+                            </td>
+                        </tr>   
+                        <tr>
+                            <td colspan="7" align="right" class="label">Saldo a Pagar</td>
+                            <td>
+                                <input type="text" id="txtSaldoPagar" class="readonly" style="text-align: right; width: 90px;" readonly />
+                            </td>
+                        </tr>                                                                       
+                    }
+                    else
+                    {
+                        <tr>
+                            <td align="center"><i>No hay descuentos disponibles para esta liquidación</i></td>
+                        </tr>   
+                    }
+                </table>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <p>
+            <label>Observaciones</label>
+            @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "std", rows = 5 })
+        </p>
+        <p class="okcancel">
+            <input type="submit" id="btnGO" value="Asignar Descuentos" /> o @Html.ActionLink("Cancelar", "asignardescuentosindex", (RouteValueDictionary)ViewData["indexRouteValues"])
+        </p>
+    </fieldset>
+</form>
+
+<script>
+
+    $(document).ready(function () {
+        
+        $(".montoAsignado").change(function () {
+            calcular();
+        });
+
+        $(".montoAsignado").keyup(function () {
+            calcular();
+        });
+
+        calcular();
+
+    });
+
+    function calcular() {
+
+        var totalDescuentos = 0;
+
+        $(".montoAsignado").removeClass("input-validation-error");
+        $("#txtSaldoPagar").removeClass("input-validation-error");
+        $("#txtTotalDescuentos").removeClass("input-validation-error");
+
+        $(".montoAsignado").each(function (ix, el) {
+            var max = parseInt($(this).attr("data-max"));
+            var val = parseInt($(this).val());
+
+            if (isNaN(val) || val < 0 || val > max) {
+                $(this).addClass("input-validation-error");
+            }
+
+            if (!isNaN(val))
+                totalDescuentos += val;
+
+        });
+
+        var totalPagarLiq = @(Model.Liquidacion.TotalPagar);
+        var saldo = totalPagarLiq - totalDescuentos;
+
+        $("#txtTotalLiquidacion").val(numberWithCommas(totalPagarLiq));
+        $("#txtTotalDescuentos").val(numberWithCommas(totalDescuentos));
+        $("#txtSaldoPagar").val(numberWithCommas(saldo));
+
+        if (saldo < 0) {
+            $("#txtTotalDescuentos").addClass("input-validation-error");
+            $("#txtSaldoPagar").addClass("input-validation-error");
+        }
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+</script>

@@ -1,0 +1,95 @@
+﻿@using Agrotop.Extranet.Models
+
+@model PRO_Actividad
+@{
+    var temporadas = (IEnumerable<Temporada>)ViewData["temporadas"];
+    var temporada = (Temporada)ViewData["temporada"];
+    var agricultor = (Agricultor)ViewData["agricultor"];
+    var predio = (PRO_Predio)ViewData["predio"];
+    var selectList = (IEnumerable<SelectListItem>)ViewData["selectList"];
+    var mesesSelectList = (IEnumerable<SelectListItem>)ViewData["mesesSelectList"];
+
+    ViewBag.Title = "Plataforma Productiva " + temporada.Nombre;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<div class="titulo1-consubmenu">@ViewBag.Title</div>
+<div class="submenu">
+    @foreach (var t in temporadas)
+    {
+        <div class="submenuitem">
+            @if (t.IdTemporada != temporada.IdTemporada)
+            {
+                @Html.ActionLink(t.Nombre, "index", new { id = t.IdTemporada })
+            }
+            else
+            {
+                <span class="submenuitem-selected">@t.Nombre</span>
+            }
+        </div>
+    }
+    <div style="clear: both"></div>
+</div>
+
+<h2>Editar Mano de Obra</h2>
+
+@using (Html.BeginForm("EditarManoObra", "Produccion", FormMethod.Post))
+{
+    <table class="tabla2">
+        <tr>
+            <td><label>Descripción Mano de Obra</label></td>
+            <td>
+                @Html.DropDownList("Descripcion", selectList, "(Seleccione Descripción Mano de Obra)", new { })
+                @Html.ValidationMessage("Descripcion")
+            </td>
+            <td><label>Descripción Agricultor</label></td>
+            <td>
+                @Html.TextBox("DescripcionAgricultor", Model.DescripcionAgricultor)
+                @Html.ValidationMessage("DescripcionAgricultor")
+            </td>
+        </tr>
+        <tr>
+            <td><label>Mes</label></td>
+            <td>
+                @Html.DropDownList("Mes", mesesSelectList, "(Seleccione Mes)", new { })
+                @Html.ValidationMessage("Mes")
+            </td>
+            <td><label>Cantidad</label></td>
+            <td>
+                @Html.TextBox("Cantidad", Model.Cantidad)
+                @Html.ValidationMessage("Cantidad")
+            </td>
+        </tr>
+        <tr>
+            <td><label>Unidad</label></td>
+            <td>
+                @Html.TextBox("Unidad", Model.Unidad)
+                @Html.ValidationMessage("Unidad")
+            </td>
+            <td><label>Valor Unitario</label></td>
+            <td>
+                @Html.TextBox("ValorUnitario", Model.ValorUnitario)
+                @Html.ValidationMessage("ValorUnitario")
+            </td>
+        </tr>
+        <tr>
+            <td><label>Valor Ítem</label></td>
+            <td>
+                @Html.TextBox("ValorItem", Model.ValorItem)
+                @Html.ValidationMessage("ValorItem")
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="3">
+                <input type="submit" value="Guardar Cambios" />
+                <input type="button" value="Cancelar" onclick="javascript:window.history.back();" />
+            </td>
+        </tr>
+    </table>
+    @Html.Hidden("IdActividad", Model.IdActividad)
+    @Html.Hidden("IdPotrero", Model.IdPotrero)
+    @Html.Hidden("IdTipoActividad", Model.IdTipoActividad)
+}

@@ -1,0 +1,266 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model List<CAL_AnalisisPale>
+@{
+    ViewBag.Title = "Análisis de Pallets";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    var plantas = (IEnumerable<SelectListItem>)ViewData["PlantasProduccion"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="~/Content/porto/javascripts/tables/footable.all.min.js"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#foo-filtering').dataTable({
+            "aLengthMenu": [100, 300, 500],
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+
+        // Filtro
+        var filtering = $('#foo-filtering');
+        filtering.footable().on('footable_filtering', function (e) {
+            var selected = $('#foo-filter-status').find(':selected').val();
+            e.filter += (e.filter && e.filter.length > 0) ? ' ' + selected : selected;
+            e.clear = !e.filter;
+        });
+
+        // Filter status
+        $('#foo-filter-status').change(function (e) {
+            e.preventDefault();
+            filtering.trigger('footable_filter', { filter: $(this).val() });
+        });
+
+        // Search input
+        $('#foo-search').on('input', function (e) {
+            e.preventDefault();
+            filtering.trigger('footable_filter', { filter: $(this).val() });
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <div class="panel-actions"></div>
+                <h2 class="panel-title">Filtro de búsqueda</h2>
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal form-bordered" method="get">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-3"></div>
+                                <div class="col-sm-2">
+                                    <select id="foo-filter-status" class="form-control">
+                                        <option value="">(Todos los Estados)</option>
+                                        <option value="Cargado">Cargado</option>
+                                        <option value="Liberado">Liberado</option>
+                                        <option value="Reprocesado">Reprocesado</option>
+                                        <option value="Retenido">Retenido</option>
+                                    </select>
+                                </div>
+                                <div class="visible-xs mb-md"></div>
+                                <div class="col-sm-3">
+                                    <input id="foo-search" type="text" placeholder="Buscar" class="form-control" autocomplete="on">
+                                </div>
+                                <div class="visible-xs mb-md"></div>
+                                <div class="col-sm-4"> </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br />
+                <div class="form-horizontal form-bordered">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @using (Html.BeginForm("index", "calanalisispallets", new { id = 0 }, FormMethod.Get))
+                            {
+                                <div class="row">
+                                    <div class="col-sm-3"></div>
+                                    <div class="col-sm-2">
+
+                                        @Html.DropDownList("IdPlantaProduccion", plantas, new { @class = "form-control" })
+
+
+                                    </div>
+                                    <div class="visible-xs mb-md"></div>
+                                    <div class="col-sm-3">
+                                        <input class="btn btn-default" type="submit" value="Buscar" />
+                                    </div>
+                                    <div class="visible-xs mb-md"></div>
+                                    <div class="col-sm-4"> </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Análisis de Pallets</h2>
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="foo-filtering" data-page-size="100">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha Análisis</th>
+                    <th>Lote</th>
+                    <th>Cantidad Paletizada</th>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdAnalisisPale</td>
+                        <td>@string.Format("{0:dd/MM/yyyy}", item.FechaHoraIns)</td>
+                        <td>@item.CAL_OrdenProduccion.LoteComercial</td>
+                        <td>@item.CAL_Pale.CantidadPaletizada</td>
+                        <td>@item.IdPale<br />@item.CAL_Pale.CodigoInterno</td>
+                        <td>
+                            @item.CAL_DetalleOrdenProduccion.CAL_Producto.Nombre<br />
+                            <small>@item.CAL_DetalleOrdenProduccion.CAL_Subproducto.Nombre</small>
+                        </td>
+                        <td>
+                            @if (!item.Reprocesado(item.IdPale))
+                            {
+                                <span class="label label-@(item.Reprocesado(item.IdPale) ? "" : "warning")" style="display: block">@(item.Reprocesado(item.IdPale) ? "" : "Reprocesado")</span>
+                            }
+                            else if (item.Cargado(item.IdPale))
+                            {
+                                if (!item.RetenidoAut.Value && !item.Retenido)
+                                {
+                                    <span class="label label-@(!item.Retenido && !item.RetenidoAut.Value ? "success" : "")" style="display: block">
+                                        Liberado Sincronizado
+                                    </span>
+                                }
+                                else if (item.Liberado)
+                                {
+                                    <span class="label label-@(item.Liberado ? "success" : "")" style="display: block">
+                                        Liberado
+                                    </span>
+                                }
+                                else if (item.RetenidoAut.Value)
+                                {
+                                    <span class="label label-danger" style="display: block">
+                                        Retenido Automático
+                                    </span>
+                                }
+                                else if (item.Retenido || !item.Retenido)
+                                {
+                                    <span class="label label-@(item.Retenido ? "danger" : "success")" style="display: block">
+                                        @(item.Retenido ? "Retenido Analista" : "Liberado Analista")
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="label label-@(item.Cargado(item.IdPale) ? "" : "info")" style="display: block">@(item.Cargado(item.IdPale) ? "" : "Cargado")</span>
+                            }
+                            <div class="bill-info" style="margin-top: 5px;">
+                                @foreach (CAL_AnalisisPaleTest cAL_AnalisisPaleTest in item.GetParametros(item.IdPale))
+                                {
+                                    if (!cAL_AnalisisPaleTest.ValidValue.Value)
+                                    {
+                                        <div class="form-group" style="padding-bottom: 0;margin-bottom: 0;">
+                                            <div class="col-sm-6">
+                                                <small><span class="text-dark text-weight-semibold">@cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.Nombre.ToUpper():</span></small>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <small><span class="value @(cAL_AnalisisPaleTest.ValidValue.Value ? "cal-ValidValue" : "cal-NoValidValue")">@Formatter.Format(cAL_AnalisisPaleTest.Value, cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.UM, cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.FormatString, cAL_AnalisisPaleTest.CAL_FTParametroAnalisis.CAL_ParametroAnalisis.IdParametroAnalisis)</span></small>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <button id="@string.Format("view_{0}", item.IdAnalisisPale)" onclick="window.location.href='@Url.Action("VerAnalisisPale", new { id = item.CAL_Pale.IdPale })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Análisis"> <i class="fa fa-eye"></i></button>
+                            @if (!item.Reprocesado(item.IdPale))
+                            {
+                                <button id="reproceso_@item.IdPale" onclick="window.location.href='@Url.Action("VerReproceso","CALReprocesoPallets", new { id = item.IdPale })'" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Detalle Reproceso"> <i class="fa fa-eye"></i></button>
+                            }
+                            else if (item.Cargado(item.IdPale))
+                            {
+                                if (permisosUsuario.Actualizar && !item.Liberado)
+                                {
+                                    <button id="edit_@item.IdAnalisisPale" onclick="window.location.href='@Url.Action("Editar", new { id = item.IdAnalisisPale })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                                }
+                                if (permisosUsuario.Borrar && !item.Liberado)
+                                {
+                                    <button id="delete_@item.IdAnalisisPale" onclick="window.location.href='@Url.Action("Eliminar", new { id = item.IdAnalisisPale })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                                }
+                                <button id="reproceso_@item.IdAnalisisPale" onclick="window.location.href='@Url.Action("CrearReproceso","CALReprocesoPallets", new { id = item.IdAnalisisPale })'" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Reproceso"> <i class="fa fa-recycle"></i></button>
+                                if (permisosUsuario.LiberarRetenidoPallet)
+                                {
+                                    if (item.RetenidoAut.Value && !item.Liberado)
+                                    {
+                                        <button id="liberar_@item.IdAnalisisPale" onclick="window.location.href='@Url.Action("Liberar", "CALAnalisisPallets", new { id = item.IdAnalisisPale })'" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Liberar"> <i class="fa fa-unlock-alt"></i></button>
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+<!-- end: page -->

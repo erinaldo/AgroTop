@@ -1,0 +1,11 @@
+﻿@model AgroFichasWeb.Models.Contrato
+<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(11))
+    {
+        <li><a href="@Url.Content("~/contratos")">Listado de Contratos</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(1006))
+    {
+        <li><a href="@Url.Content(string.Format("~/contratos/creardocto/{0}", Model.IdContrato))">Crear Documento de Contrato</a></li>
+    }
+</ul>

@@ -1,0 +1,603 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="agrofichas" Class="OperacionesDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=MACBOOK;Initial Catalog=agrofichas;Persist Security Info=True;User ID=SA" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="agrofichasConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.OPR_Area" Member="OPR_Area">
+    <Type Name="OPR_Area">
+      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_Area_OPR_RegistroDetencion" Member="OPR_RegistroDetencion" ThisKey="IdArea" OtherKey="IdArea" Type="OPR_RegistroDetencion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_Balanza" Member="OPR_Balanza">
+    <Type Name="OPR_Balanza">
+      <Column Name="IdBalanza" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OPR_Balanza_OPR_RegistroBalanza" Member="OPR_RegistroBalanza" ThisKey="IdBalanza" OtherKey="IdBalanza" Type="OPR_RegistroBalanza" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_CausaDetencion" Member="OPR_CausaDetencion">
+    <Type Name="OPR_CausaDetencion">
+      <Column Name="IdCausaDetencion" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_CausaDetencion_OPR_RegistroDetencion" Member="OPR_RegistroDetencion" ThisKey="IdCausaDetencion" OtherKey="IdCausaDetencion" Type="OPR_RegistroDetencion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_Densidad" Member="OPR_Densidad">
+    <Type Name="OPR_Densidad">
+      <Column Name="IdDensidad" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdTipoDensidad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Valor" Type="System.Decimal" DbType="Decimal(14,3) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OPR_Densidad_OPR_Silo" Member="OPR_Silo" ThisKey="IdDensidad" OtherKey="IdDensidad" Type="OPR_Silo" />
+      <Association Name="OPR_TipoDensidad_OPR_Densidad" Member="OPR_TipoDensidad" ThisKey="IdTipoDensidad" OtherKey="IdTipoDensidad" Type="OPR_TipoDensidad" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_Equipo" Member="OPR_Equipo">
+    <Type Name="OPR_Equipo">
+      <Column Name="IdEquipo" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(90) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OPR_Equipo_OPR_EquipoPorLineaProduccion" Member="OPR_EquipoPorLineaProduccion" ThisKey="IdEquipo" OtherKey="IdEquipo" Type="OPR_EquipoPorLineaProduccion" />
+      <Association Name="OPR_Equipo_OPR_RegistroDetencion" Member="OPR_RegistroDetencion" ThisKey="IdEquipo" OtherKey="IdEquipo" Type="OPR_RegistroDetencion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_EquipoPorLineaProduccion" Member="OPR_EquipoPorLineaProduccion">
+    <Type Name="OPR_EquipoPorLineaProduccion">
+      <Column Name="IdLineaProduccion" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdEquipo" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_Equipo_OPR_EquipoPorLineaProduccion" Member="OPR_Equipo" ThisKey="IdEquipo" OtherKey="IdEquipo" Type="OPR_Equipo" IsForeignKey="true" />
+      <Association Name="OPR_LineaProduccion_OPR_EquipoPorLineaProduccion" Member="OPR_LineaProduccion" ThisKey="IdLineaProduccion" OtherKey="IdLineaProduccion" Type="OPR_LineaProduccion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_Silo" Member="OPR_Silo">
+    <Type Name="OPR_Silo">
+      <Column Name="IdSilo" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdTipoSilo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="AlturaBase" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="AlturaCono" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IdDensidad" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OPR_Silo_OPR_RegistroSilo" Member="OPR_RegistroSilo" ThisKey="IdSilo" OtherKey="IdSilo" Type="OPR_RegistroSilo" />
+      <Association Name="OPR_Densidad_OPR_Silo" Member="OPR_Densidad" ThisKey="IdDensidad" OtherKey="IdDensidad" Type="OPR_Densidad" IsForeignKey="true" />
+      <Association Name="OPR_TipoSilo_OPR_Silo" Member="OPR_TipoSilo" ThisKey="IdTipoSilo" OtherKey="IdTipoSilo" Type="OPR_TipoSilo" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_TipoDensidad" Member="OPR_TipoDensidad">
+    <Type Name="OPR_TipoDensidad">
+      <Column Name="IdTipoDensidad" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Sigla" Type="System.String" DbType="VarChar(12) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OPR_TipoDensidad_OPR_Densidad" Member="OPR_Densidad" ThisKey="IdTipoDensidad" OtherKey="IdTipoDensidad" Type="OPR_Densidad" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_TipoDetencion" Member="OPR_TipoDetencion">
+    <Type Name="OPR_TipoDetencion">
+      <Column Name="IdTipoDetencion" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_TipoDetencion_OPR_RegistroDetencion" Member="OPR_RegistroDetencion" ThisKey="IdTipoDetencion" OtherKey="IdTipoDetencion" Type="OPR_RegistroDetencion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_TipoSilo" Member="OPR_TipoSilo">
+    <Type Name="OPR_TipoSilo">
+      <Column Name="IdTipoSilo" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Sigla" Type="System.String" DbType="VarChar(12) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="SiglaUM" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="UM" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="UnidadesMaximas" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_TipoSilo_OPR_Silo" Member="OPR_Silo" ThisKey="IdTipoSilo" OtherKey="IdTipoSilo" Type="OPR_Silo" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_TipoTurno" Member="OPR_TipoTurno">
+    <Type Name="OPR_TipoTurno">
+      <Column Name="IdTipoTurno" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_TipoTurno_OPR_Turno" Member="OPR_Turno" ThisKey="IdTipoTurno" OtherKey="IdTipoTurno" Type="OPR_Turno" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_LineaProduccion" Member="OPR_LineaProduccion">
+    <Type Name="OPR_LineaProduccion">
+      <Column Name="IdLineaProduccion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OPR_LineaProduccion_OPR_EquipoPorLineaProduccion" Member="OPR_EquipoPorLineaProduccion" ThisKey="IdLineaProduccion" OtherKey="IdLineaProduccion" Type="OPR_EquipoPorLineaProduccion" />
+      <Association Name="OPR_LineaProduccion_OPR_CapacidadLineaProduccion" Member="OPR_CapacidadLineaProduccion" ThisKey="IdLineaProduccion" OtherKey="IdLineaProduccion" Type="OPR_CapacidadLineaProduccion" />
+      <Association Name="OPR_LineaProduccion_OPR_RegistroDetencion" Member="OPR_RegistroDetencion" ThisKey="IdLineaProduccion" OtherKey="IdLineaProduccion" Type="OPR_RegistroDetencion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_TipoProducto" Member="OPR_TipoProducto">
+    <Type Name="OPR_TipoProducto">
+      <Column Name="IdTipoProducto" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_TipoProducto_OPR_Producto" Member="OPR_Producto" ThisKey="IdTipoProducto" OtherKey="IdTipoProducto" Type="OPR_Producto" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_Cliente" Member="OPR_Cliente">
+    <Type Name="OPR_Cliente">
+      <Column Name="IdCliente" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OPR_Cliente_OPR_RegistroEnvasado" Member="OPR_RegistroEnvasado" ThisKey="IdCliente" OtherKey="IdCliente" Type="OPR_RegistroEnvasado" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_Producto" Member="OPR_Producto">
+    <Type Name="OPR_Producto">
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdTipoProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OPR_Producto_OPR_RegistroEnvasado" Member="OPR_RegistroEnvasado" ThisKey="IdProducto" OtherKey="IdProducto" Type="OPR_RegistroEnvasado" />
+      <Association Name="OPR_TipoProducto_OPR_Producto" Member="OPR_TipoProducto" ThisKey="IdTipoProducto" OtherKey="IdTipoProducto" Type="OPR_TipoProducto" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_Version" Member="OPR_Version">
+    <Type Name="OPR_Version">
+      <Column Name="IdVersion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Activa" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_Version_OPR_Configuracion" Member="OPR_Configuracion" ThisKey="IdVersion" OtherKey="IdVersion" Type="OPR_Configuracion" />
+      <Association Name="OPR_Version_OPR_CapacidadLineaProduccion" Member="OPR_CapacidadLineaProduccion" ThisKey="IdVersion" OtherKey="IdVersion" Type="OPR_CapacidadLineaProduccion" />
+      <Association Name="OPR_Version_OPR_RegistroTurno" Member="OPR_RegistroTurno" ThisKey="IdVersion" OtherKey="IdVersion" Type="OPR_RegistroTurno" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_Configuracion" Member="OPR_Configuracion">
+    <Type Name="OPR_Configuracion">
+      <Column Name="IdConfiguracion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdVersion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LINEA_1_Y_2" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ESTABILIZADO_1" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ESTABILIZADO_2" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CORTADO" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LAMINADO" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_Version_OPR_Configuracion" Member="OPR_Version" ThisKey="IdVersion" OtherKey="IdVersion" Type="OPR_Version" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_CapacidadLineaProduccion" Member="OPR_CapacidadLineaProduccion">
+    <Type Name="OPR_CapacidadLineaProduccion">
+      <Column Name="IdCapacidadLineaProduccion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdLineaProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Valor" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IdVersion" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="OPR_LineaProduccion_OPR_CapacidadLineaProduccion" Member="OPR_LineaProduccion" ThisKey="IdLineaProduccion" OtherKey="IdLineaProduccion" Type="OPR_LineaProduccion" IsForeignKey="true" />
+      <Association Name="OPR_Version_OPR_CapacidadLineaProduccion" Member="OPR_Version" ThisKey="IdVersion" OtherKey="IdVersion" Type="OPR_Version" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_RegistroGeneracionMaxisacos" Member="OPR_RegistroGeneracionMaxisacos">
+    <Type Name="OPR_RegistroGeneracionMaxisacos">
+      <Column Name="IdRegistroGeneracionMaxisacos" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Despedradora" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Desperdicio" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Sortex" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroGeneracionMaxisacos" Member="OPR_RegistroTurno" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroTurno" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_RegistroTurno" Member="OPR_RegistroTurno">
+    <Type Name="OPR_RegistroTurno">
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Correlativo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdVersion" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Observaciones" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroGeneracionMaxisacos" Member="OPR_RegistroGeneracionMaxisacos" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroGeneracionMaxisacos" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroSilo" Member="OPR_RegistroSilo" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroSilo" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroBalanza" Member="OPR_RegistroBalanza" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroBalanza" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroEnvasado" Member="OPR_RegistroEnvasado" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroEnvasado" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroDetencion" Member="OPR_RegistroDetencion" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroDetencion" />
+      <Association Name="OPR_Version_OPR_RegistroTurno" Member="OPR_Version" ThisKey="IdVersion" OtherKey="IdVersion" Type="OPR_Version" IsForeignKey="true" />
+      <Association Name="OPR_Turno_OPR_RegistroTurno" Member="OPR_Turno" ThisKey="IdTurno" OtherKey="IdTurno" Type="OPR_Turno" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_RegistroSilo" Member="OPR_RegistroSilo">
+    <Type Name="OPR_RegistroSilo">
+      <Column Name="IdRegistroSilo" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdSilo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Unidades" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CantidadCubicada" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroSilo" Member="OPR_RegistroTurno" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroTurno" IsForeignKey="true" />
+      <Association Name="OPR_Silo_OPR_RegistroSilo" Member="OPR_Silo" ThisKey="IdSilo" OtherKey="IdSilo" Type="OPR_Silo" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_RegistroBalanza" Member="OPR_RegistroBalanza">
+    <Type Name="OPR_RegistroBalanza">
+      <Column Name="IdRegistroBalanza" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdBalanza" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Contador" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_Balanza_OPR_RegistroBalanza" Member="OPR_Balanza" ThisKey="IdBalanza" OtherKey="IdBalanza" Type="OPR_Balanza" IsForeignKey="true" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroBalanza" Member="OPR_RegistroTurno" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroTurno" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_Turno" Member="OPR_Turno">
+    <Type Name="OPR_Turno">
+      <Column Name="IdTurno" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdTipoTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DiaDeLaSemana" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Horas" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="InicioTurno" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
+      <Column Name="FinTurno" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_Turno_OPR_RegistroTurno" Member="OPR_RegistroTurno" ThisKey="IdTurno" OtherKey="IdTurno" Type="OPR_RegistroTurno" />
+      <Association Name="OPR_TipoTurno_OPR_Turno" Member="OPR_TipoTurno" ThisKey="IdTipoTurno" OtherKey="IdTipoTurno" Type="OPR_TipoTurno" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_OPR_RegistroTurnos" Member="vw_OPR_RegistroTurnos">
+    <Type Name="vw_OPR_RegistroTurnos">
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Correlativo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdTipoTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="IdTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Horas" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="InicioTurno" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
+      <Column Name="FinTurno" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Observaciones" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_PresupuestoProduccionConsumo" Member="OPR_PresupuestoProduccionConsumo">
+    <Type Name="OPR_PresupuestoProduccionConsumo">
+      <Column Name="IdPresupuestoProduccionConsumo" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Mes" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Año" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ProduccionTotal" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ProduccionHojuela" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ProduccionHarina" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ProductoRetenido" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ProductoRechazado" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ConsumoAvena" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="RendimientoTeorico" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ProduccionTnPorH" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_RegistroEnvasado" Member="OPR_RegistroEnvasado">
+    <Type Name="OPR_RegistroEnvasado">
+      <Column Name="IdRegistroEnvasado" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCliente" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Lote" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="EnvasadoSac" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Retenido" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Peso" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_Cliente_OPR_RegistroEnvasado" Member="OPR_Cliente" ThisKey="IdCliente" OtherKey="IdCliente" Type="OPR_Cliente" IsForeignKey="true" />
+      <Association Name="OPR_Producto_OPR_RegistroEnvasado" Member="OPR_Producto" ThisKey="IdProducto" OtherKey="IdProducto" Type="OPR_Producto" IsForeignKey="true" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroEnvasado" Member="OPR_RegistroTurno" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroTurno" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.OPR_RegistroDetencion" Member="OPR_RegistroDetencion">
+    <Type Name="OPR_RegistroDetencion">
+      <Column Name="IdRegistroDetencion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdTipoDetencion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdLineaProduccion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCausaDetencion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdEquipo" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HoraDetencion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="HoraPartida" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Observaciones" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdArea" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="OPR_Area_OPR_RegistroDetencion" Member="OPR_Area" ThisKey="IdArea" OtherKey="IdArea" Type="OPR_Area" IsForeignKey="true" />
+      <Association Name="OPR_CausaDetencion_OPR_RegistroDetencion" Member="OPR_CausaDetencion" ThisKey="IdCausaDetencion" OtherKey="IdCausaDetencion" Type="OPR_CausaDetencion" IsForeignKey="true" />
+      <Association Name="OPR_Equipo_OPR_RegistroDetencion" Member="OPR_Equipo" ThisKey="IdEquipo" OtherKey="IdEquipo" Type="OPR_Equipo" IsForeignKey="true" />
+      <Association Name="OPR_LineaProduccion_OPR_RegistroDetencion" Member="OPR_LineaProduccion" ThisKey="IdLineaProduccion" OtherKey="IdLineaProduccion" Type="OPR_LineaProduccion" IsForeignKey="true" />
+      <Association Name="OPR_RegistroTurno_OPR_RegistroDetencion" Member="OPR_RegistroTurno" ThisKey="IdRegistroTurno" OtherKey="IdRegistroTurno" Type="OPR_RegistroTurno" IsForeignKey="true" />
+      <Association Name="OPR_TipoDetencion_OPR_RegistroDetencion" Member="OPR_TipoDetencion" ThisKey="IdTipoDetencion" OtherKey="IdTipoDetencion" Type="OPR_TipoDetencion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Function Name="dbo.OPR_GetRegistroTurnoBalanzaEfectivoPorCorrelativo" Method="OPR_GetRegistroTurnoBalanzaEfectivoPorCorrelativo">
+    <Parameter Name="Correlativo" Parameter="correlativo" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.OPR_GetRegistroTurnoSiloEfectivoPorCorrelativo" Method="OPR_GetRegistroTurnoSiloEfectivoPorCorrelativo">
+    <Parameter Name="Correlativo" Parameter="correlativo" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.OPR_GetEquiposNoAsociadosPorLineaProduccion" Method="OPR_GetEquiposNoAsociadosPorLineaProduccion">
+    <Parameter Name="IdLineaProduccion" Parameter="idLineaProduccion" Type="System.Int32" DbType="Int" />
+    <ElementType Name="OPR_GetEquiposNoAsociadosPorLineaProduccionResult">
+      <Column Name="IdEquipo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(90) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.OPR_GetEquiposAsociadosPorLineaProduccion" Method="OPR_GetEquiposAsociadosPorLineaProduccion">
+    <Parameter Name="IdLineaProduccion" Parameter="idLineaProduccion" Type="System.Int32" DbType="Int" />
+    <ElementType Name="OPR_GetEquiposAsociadosPorLineaProduccionResult">
+      <Column Name="IdEquipo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(90) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.OPR_GetLineaProduccionPorEquipo" Method="OPR_GetLineaProduccionPorEquipo">
+    <Parameter Name="IdLineaProduccion" Parameter="idLineaProduccion" Type="System.Int32" DbType="Int" />
+    <ElementType Name="OPR_GetLineaProduccionPorEquipoResult">
+      <Column Name="IdEquipo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(90) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_ProduccionTurno" Method="rpt_OPR_ProduccionTurno" IsComposable="true">
+    <Parameter Name="IdRegistroTurno" Parameter="idRegistroTurno" Type="System.Int32" DbType="Int" />
+    <Parameter Name="HorasTurno" Parameter="horasTurno" Type="System.Int32" DbType="Int" />
+    <Return Type="object" />
+  </Function>
+  <Function Name="dbo.rpt_OPR_ProduccionTurnoEstabilizado" Method="rpt_OPR_ProduccionTurnoEstabilizado" IsComposable="true">
+    <Parameter Name="IdRegistroTurno" Parameter="idRegistroTurno" Type="System.Int32" DbType="Int" />
+    <Parameter Name="HorasTurno" Parameter="horasTurno" Type="System.Int32" DbType="Int" />
+    <Return Type="object" />
+  </Function>
+  <Function Name="dbo.rpt_OPR_ResumenDelDia" Method="rpt_OPR_ResumenDelDia">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_ResumenDelDiaResult">
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="ConsumoMateriaPrima" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="FlujoProm" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="ProduccionGroat" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="Rendimiento" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="TotalEnvasadoHojuela" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="TotalEnvasadoGroat" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="TotalCascara" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="TotalSubproducto" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_OperadoresDelDia" Method="rpt_OPR_OperadoresDelDia">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_OperadoresDelDiaResult">
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Correlativo" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HorasTurno" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserName" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="FullName" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_TotalDespachoDelDia" Method="rpt_OPR_TotalDespachoDelDia">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_TotalDespachoDelDiaResult">
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Correlativo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="TotalDespacho" Type="System.Decimal" DbType="Decimal(38,2)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_TotalPlantaDelDia" Method="rpt_OPR_TotalPlantaDelDia">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_TotalPlantaDelDiaResult">
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Correlativo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="TotalPlanta" Type="System.Decimal" DbType="Decimal(38,2)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_TurnosDelDia" Method="rpt_OPR_TurnosDelDia">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_TurnosDelDiaResult">
+      <Column Name="IdRegistroTurno" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Correlativo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Horas" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_InformeDiario_Detenciones" Method="rpt_OPR_InformeDiario_Detenciones">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_InformeDiario_DetencionesResult">
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Titulo" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="CantidadTurnos" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetTotales" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetTotalesMant" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetTotalesExterno" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetTotalesProd" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetTotalesContr" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetTotalesDesc" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetParciales" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetParcialesMant" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetParcialesExterno" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetParcialesProd" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetParcialesContr" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MinDetParcialesDesc" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_InformeDiario_EvolucionProduccionesDiarias" Method="rpt_OPR_InformeDiario_EvolucionProduccionesDiarias">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_InformeDiario_EvolucionProduccionesDiariasResult">
+      <Column Name="Fecha" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Produccion" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_InformeDiario_ProduccionEnPlanta" Method="rpt_OPR_InformeDiario_ProduccionEnPlanta">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_InformeDiario_ProduccionEnPlantaResult">
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Titulo" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="CantidadTurnos" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ProduccionTotal" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="ProduccionHojuela" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="ProduccionHarina" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="ProductoRetenido" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="ProductoRechazado" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="ConsumoAvena" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="RendimientoTeorico" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="ProduccionTnPorH" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PM_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PM_Mes" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PM_Año" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PM_ProduccionTotal" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PM_ProduccionHojuela" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PM_ProduccionHarina" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PM_ProductoRetenido" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PM_ProductoRechazado" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PM_ConsumoAvena" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PM_RendimientoTeorico" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="PM_ProduccionTnPorH" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_InformeDiario_ConsumosDiariosMateriaPrima" Method="rpt_OPR_InformeDiario_ConsumosDiariosMateriaPrima">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_InformeDiario_ConsumosDiariosMateriaPrimaResult">
+      <Column Name="Fecha" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="ConsumoMP" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.rpt_OPR_InformeDiario_ConsumoAcumuladoMateriaPrima" Method="rpt_OPR_InformeDiario_ConsumoAcumuladoMateriaPrima">
+    <Parameter Name="FechaHoraIns" Parameter="fechaHoraIns" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="rpt_OPR_InformeDiario_ConsumoAcumuladoMateriaPrimaResult">
+      <Column Name="Fecha" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="ConsumoMP" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+      <Column Name="ConsumoMPAcumulado" Type="System.Decimal" DbType="Decimal(14,2)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.OPR_GetTurnoAnteriorSiguiente" Method="OPR_GetTurnoAnteriorSiguiente">
+    <Parameter Name="Correlativo" Parameter="correlativo" Type="System.Int32" DbType="Int" />
+    <ElementType Name="OPR_GetTurnoAnteriorSiguienteResult">
+      <Column Name="IdAnterior" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdActual" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdSiguiente" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+</Database>

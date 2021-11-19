@@ -1,0 +1,69 @@
+﻿@using AgroFichasWeb.Models
+<div id="fertilizanteDialog" class="modal-block modal-block-primary mfp-hide">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Ferilizante</h2>
+        </header>
+        <div class="panel-body">
+            <form id="fertilizanteForm" class="form-horizontal mb-lg" novalidate="novalidate">
+                <input type="hidden" id="ferId" />
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">N</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ferN" name="ferN" />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">P2O5</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ferP2O5" name="ferP2O5" />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">KO2</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ferKO2" name="ferKO2" />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">MgO</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ferMgO" name="ferMgO" />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">S</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ferS" name="ferS" />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">B</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ferB" name="ferB" />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">Zn</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ferZn" name="ferZn" />
+                    </div>
+                </div>
+                <div class="form-group mt-lg">
+                    <label class="col-sm-3 control-label">CaO</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="ferCaO" name="ferCaO" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <footer class="panel-footer">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-primary fertilizante-selector-confirm">Guardar</button>
+                    <button class="btn btn-default fertilizante-selector-dismiss">Cancelar</button>
+                </div>
+            </div>
+        </footer>
+    </section>
+</div>

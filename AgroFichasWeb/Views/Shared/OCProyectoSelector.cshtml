@@ -1,0 +1,6 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var proyectosList = (IEnumerable<SelectListItem>)ViewData["proyectosList"];
+}
+
+@Html.DropDownList("IdProyecto", proyectosList, "(Todos los Proyectos)", new { @class = "std" })

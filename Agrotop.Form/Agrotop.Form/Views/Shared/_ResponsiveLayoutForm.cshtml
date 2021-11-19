@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "_ResponsiveLayoutBaseForm.cshtml";
+}
+
+@section CustomScripts {
+    @RenderSection("CustomScripts", required: false)
+}
+
+
+<div class="contact1">
+    <div class="container-contact1">
+        <div class="contact1-pic js-tilt" data-tilt>
+            <img src="~/Content/ContactFrom/images/camiongo.png" alt="camiongo">
+        </div>
+        <!-- start: page -->
+        @RenderBody()
+        <!-- end: page -->
+    </div>
+</div>

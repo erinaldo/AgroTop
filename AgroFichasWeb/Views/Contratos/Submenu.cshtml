@@ -1,0 +1,10 @@
+﻿<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(11))
+    {
+        <li><a href="@Url.Content("~/contratos")">Listado</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(12))
+    {
+        <li><a href="@Url.Content("~/contratos/crear")">Crear Contrato</a></li>
+    }
+</ul>

@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.NombreSeccion = "Control del Camión en Planta";
+    ViewBag.Title = "Registrar Pasos en Planta de Origen Paso 2";
+
+    var firma = (string)ViewData["firma"];
+    var proximoPaso = (string)ViewData["proximoPaso"];
+    var pasoActual = (string)ViewData["pasoActual"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Paso Actual</label>
+            @pasoActual
+        </p>
+        <p>
+            <label for="Titulo">Próximo Paso</label>
+            @proximoPaso
+        </p>
+        @Html.Hidden("Firma", firma)
+        <p class="okcancel">
+            <input type="submit" value="Registrar" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

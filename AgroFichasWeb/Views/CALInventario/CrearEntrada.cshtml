@@ -1,0 +1,185 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_InsumoEntrada
+@{
+    ViewBag.Title = "Inventario";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdInsumoEntrada == 0)
+    {
+        ViewBag.SubTitle = "Crear Entrada de Insumo";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Entrada de Insumo";
+    }
+}
+@section VendorCSS
+{
+    <!-- Specific Page Vendor CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/Scripts/datetimepicker-2.5.11/jquery.datetimepicker.css")" />
+}
+@section VendorScripts
+{
+    <!-- Specific Page Vendor -->
+    <script src="@Url.Content("~/Scripts/datetimepicker-2.5.11/build/jquery.datetimepicker.full.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        jQuery.datetimepicker.setLocale('es');
+        jQuery('#FechaCompra').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", (Model.FechaCompra == null ? DateTime.Now : Model.FechaCompra))',
+            weeks: true
+        });
+        jQuery('#FechaLlegada').datetimepicker({
+            i18n: {
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            startDate: new Date(),
+            dayOfWeekStart: 1,
+            format: 'Y/m/d',
+            mask: true,
+            timepicker: false,
+            todayButton: true,
+            value: '@string.Format("{0:yyyy/MM/dd}", (Model.FechaLlegada == null ? DateTime.Now : Model.FechaLlegada))',
+            weeks: true
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Proveedor <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdProveedor", Model.GetProveedores(Model.IdProveedor), "(Seleccione Proveedor)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdProveedor")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fecha Compra <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("FechaCompra", Model.FechaCompra, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("FechaCompra")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">O/C <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("OrdenCompra", Model.OrdenCompra, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("OrdenCompra")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Fecha Llegada <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("FechaLlegada", Model.FechaLlegada, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("FechaLlegada")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cantidad <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Cantidad", Model.Cantidad, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("Cantidad")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Reingreso <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.CheckBox("Reingreso", Model.Reingreso)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Causa de Reingreso <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdCausaReingreso", Model.GetCausaReingreso(Model.IdCausaReingreso), "(Seleccione Causa de Reingreso)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdCausaReingreso")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Insumo" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

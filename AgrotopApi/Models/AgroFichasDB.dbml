@@ -1,0 +1,396 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="agrofichas" Class="AgroFichasDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=DESKTOP-06BQI0O\SQLEXPRESS;Initial Catalog=agrofichas;Integrated Security=True" SettingsObjectName="AgrotopApi.Properties.Settings" SettingsPropertyName="AgroFichasConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.API_Permiso" Member="API_Permiso">
+    <Type Name="API_Permiso">
+      <Column Name="IdPermiso" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Orden" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="API_Permiso_API_PermisoUsuario" Member="API_PermisoUsuario" ThisKey="IdPermiso" OtherKey="IdPermiso" Type="API_PermisoUsuario" />
+    </Type>
+  </Table>
+  <Table Name="dbo.API_PermisoUsuario" Member="API_PermisoUsuario">
+    <Type Name="API_PermisoUsuario">
+      <Column Name="IdPermiso" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="API_Permiso_API_PermisoUsuario" Member="API_Permiso" ThisKey="IdPermiso" OtherKey="IdPermiso" Type="API_Permiso" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="API_User_API_PermisoUsuario" Member="API_User" ThisKey="UserID" OtherKey="UserID" Type="API_User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.API_User" Member="API_User">
+    <Type Name="API_User">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="PrivateKey" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Disabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="API_User_API_PermisoUsuario" Member="API_PermisoUsuario" ThisKey="UserID" OtherKey="UserID" Type="API_PermisoUsuario" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ClienteEmpresa" Member="ClienteEmpresa">
+    <Type Name="ClienteEmpresa">
+      <Column Name="IdCliente" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Empresa_ClienteEmpresa" Member="Empresa" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="Empresa" IsForeignKey="true" />
+      <Association Name="Cliente_ClienteEmpresa" Member="Cliente" ThisKey="IdCliente" OtherKey="IdCliente" Type="Cliente" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Empresa" Member="Empresa">
+    <Type Name="Empresa">
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Sigla" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="Empresa_ClienteEmpresa" Member="ClienteEmpresa" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="ClienteEmpresa" />
+      <Association Name="Empresa_CTR_ProductoEmpresa" Member="CTR_ProductoEmpresa" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="CTR_ProductoEmpresa" />
+      <Association Name="Empresa_CTR_PlanificacionSemanal" Member="CTR_PlanificacionSemanal" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="CTR_PlanificacionSemanal" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CTR_Producto" Member="CTR_Producto">
+    <Type Name="CTR_Producto">
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CTR_Producto_CTR_ProductoEmpresa" Member="CTR_ProductoEmpresa" ThisKey="IdProducto" OtherKey="IdProducto" Type="CTR_ProductoEmpresa" />
+      <Association Name="CTR_Producto_CTR_ProductoEnvase" Member="CTR_ProductoEnvase" ThisKey="IdProducto" OtherKey="IdProducto" Type="CTR_ProductoEnvase" />
+      <Association Name="CTR_Producto_CTR_PlanificacionSemanal" Member="CTR_PlanificacionSemanal" ThisKey="IdProducto" OtherKey="IdProducto" Type="CTR_PlanificacionSemanal" />
+      <Association Name="CTR_Producto_CTR_ProductoPlanta" Member="CTR_ProductoPlanta" ThisKey="IdProducto" OtherKey="IdProducto" Type="CTR_ProductoPlanta" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CTR_ProductoEmpresa" Member="CTR_ProductoEmpresa">
+    <Type Name="CTR_ProductoEmpresa">
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CTR_Producto_CTR_ProductoEmpresa" Member="CTR_Producto" ThisKey="IdProducto" OtherKey="IdProducto" Type="CTR_Producto" IsForeignKey="true" />
+      <Association Name="Empresa_CTR_ProductoEmpresa" Member="Empresa" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="Empresa" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CTR_ProductoEnvase" Member="CTR_ProductoEnvase">
+    <Type Name="CTR_ProductoEnvase">
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdEnvase" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CTR_Producto_CTR_ProductoEnvase" Member="CTR_Producto" ThisKey="IdProducto" OtherKey="IdProducto" Type="CTR_Producto" IsForeignKey="true" />
+      <Association Name="CTR_Envase_CTR_ProductoEnvase" Member="CTR_Envase" ThisKey="IdEnvase" OtherKey="IdEnvase" Type="CTR_Envase" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CTR_Envase" Member="CTR_Envase">
+    <Type Name="CTR_Envase">
+      <Column Name="IdEnvase" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CTR_Envase_CTR_ProductoEnvase" Member="CTR_ProductoEnvase" ThisKey="IdEnvase" OtherKey="IdEnvase" Type="CTR_ProductoEnvase" />
+      <Association Name="CTR_Envase_CTR_PlanificacionSemanal" Member="CTR_PlanificacionSemanal" ThisKey="IdEnvase" OtherKey="IdEnvase" Type="CTR_PlanificacionSemanal" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CTR_PlanificacionSemanal" Member="CTR_PlanificacionSemanal">
+    <Type Name="CTR_PlanificacionSemanal">
+      <Column Name="IdPlanificacionSemanal" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Semana" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdEnvase" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCliente" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Destino" Type="System.String" DbType="VarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="OC" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="LC" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Lunes" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaLunes" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Martes" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaMartes" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Miercoles" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaMiercoles" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Jueves" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaJueves" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Viernes" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaViernes" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Sabado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaSabado" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Domingo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaDomingo" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="PaisCodigo" Type="System.String" DbType="Char(3) NOT NULL" CanBeNull="false" />
+      <Column Name="Año" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Lote" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="DUS" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Reserva" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="LineaCreditoRechazada" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="ObservacionLineaCreditoRechazada" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Association Name="CTR_Envase_CTR_PlanificacionSemanal" Member="CTR_Envase" ThisKey="IdEnvase" OtherKey="IdEnvase" Type="CTR_Envase" IsForeignKey="true" />
+      <Association Name="CTR_Producto_CTR_PlanificacionSemanal" Member="CTR_Producto" ThisKey="IdProducto" OtherKey="IdProducto" Type="CTR_Producto" IsForeignKey="true" />
+      <Association Name="Empresa_CTR_PlanificacionSemanal" Member="Empresa" ThisKey="IdEmpresa" OtherKey="IdEmpresa" Type="Empresa" IsForeignKey="true" />
+      <Association Name="Pais_CTR_PlanificacionSemanal" Member="Pais" ThisKey="PaisCodigo" OtherKey="PaisCodigo" Type="Pais" IsForeignKey="true" />
+      <Association Name="Cliente_CTR_PlanificacionSemanal" Member="Cliente" ThisKey="IdCliente" OtherKey="IdCliente" Type="Cliente" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SYS_User" Member="SYS_User">
+    <Type Name="SYS_User">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserName" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Disabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LastLogin" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IdSeccion" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Telefono" Type="System.String" DbType="VarChar(11)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Pais" Member="Pais">
+    <Type Name="Pais">
+      <Column Name="PaisCodigo" Type="System.String" DbType="Char(3) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PaisNombre" Type="System.String" DbType="Char(52) NOT NULL" CanBeNull="false" />
+      <Column Name="PaisContinente" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="PaisRegion" Type="System.String" DbType="VarChar(26) NOT NULL" CanBeNull="false" />
+      <Column Name="PaisArea" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="PaisIndependencia" Type="System.Int16" DbType="SmallInt" CanBeNull="true" />
+      <Column Name="PaisPoblacion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PaisExpectativaDeVida" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="PaisProductoInternoBruto" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="PaisProductoInternoBrutoAntiguo" Type="System.Double" DbType="Float" CanBeNull="true" />
+      <Column Name="PaisNombreLocal" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="PaisGobierno" Type="System.String" DbType="VarChar(45) NOT NULL" CanBeNull="false" />
+      <Column Name="PaisJefeDeEstado" Type="System.String" DbType="VarChar(60)" CanBeNull="true" />
+      <Column Name="PaisCapital" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PaisCodigo2" Type="System.String" DbType="Char(2) NOT NULL" CanBeNull="false" />
+      <Association Name="Pais_CTR_PlanificacionSemanal" Member="CTR_PlanificacionSemanal" ThisKey="PaisCodigo" OtherKey="PaisCodigo" Type="CTR_PlanificacionSemanal" />
+      <Association Name="Pais_Cliente" Member="Cliente" ThisKey="PaisCodigo" OtherKey="PaisCodigo" Type="Cliente" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Cliente" Member="Cliente">
+    <Type Name="Cliente">
+      <Column Name="IdCliente" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="DNI" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="RazonSocial" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="PaisCodigo" Type="System.String" DbType="Char(3)" CanBeNull="true" />
+      <Column Name="Telefono" Type="System.String" DbType="VarChar(15) NOT NULL" CanBeNull="false" />
+      <Column Name="Telefono2" Type="System.String" DbType="VarChar(15) NOT NULL" CanBeNull="false" />
+      <Column Name="EmailCliente" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="EmailContactoComercial" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IDOleotop" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IDAvenatop" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IDGranotop" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IDSaprosem" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IDICI" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Cliente_ClienteEmpresa" Member="ClienteEmpresa" ThisKey="IdCliente" OtherKey="IdCliente" Type="ClienteEmpresa" />
+      <Association Name="Cliente_CTR_PlanificacionSemanal" Member="CTR_PlanificacionSemanal" ThisKey="IdCliente" OtherKey="IdCliente" Type="CTR_PlanificacionSemanal" />
+      <Association Name="Pais_Cliente" Member="Pais" ThisKey="PaisCodigo" OtherKey="PaisCodigo" Type="Pais" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LOG_Transportista" Member="LOG_Transportista">
+    <Type Name="LOG_Transportista">
+      <Column Name="IdTransportista" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RUT" Type="System.String" DbType="VarChar(15) NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Telefono" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="IdBanco" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="NumeroCuenta" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Observacion" Type="System.String" DbType="VarChar(300) NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IDOleotop" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IDAvenatop" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IDGranotop" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IDSaprosem" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Comuna" Member="Comuna">
+    <Type Name="Comuna">
+      <Column Name="IdComuna" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdProvincia" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Orden" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Comuna_PlantaProduccion" Member="PlantaProduccion" ThisKey="IdComuna" OtherKey="IdComuna" Type="PlantaProduccion" />
+      <Association Name="Provincia_Comuna" Member="Provincia" ThisKey="IdProvincia" OtherKey="IdProvincia" Type="Provincia" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Provincia" Member="Provincia">
+    <Type Name="Provincia">
+      <Column Name="IdProvincia" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdRegion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Provincia_Comuna" Member="Comuna" ThisKey="IdProvincia" OtherKey="IdProvincia" Type="Comuna" />
+      <Association Name="Region_Provincia" Member="Region" ThisKey="IdRegion" OtherKey="IdRegion" Type="Region" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Region" Member="Region">
+    <Type Name="Region">
+      <Column Name="IdRegion" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Orden" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DoSync" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Region_Provincia" Member="Provincia" ThisKey="IdRegion" OtherKey="IdRegion" Type="Provincia" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CTR_ProductoPlanta" Member="CTR_ProductoPlanta">
+    <Type Name="CTR_ProductoPlanta">
+      <Column Name="IdProducto" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdPlantaProduccion" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="CTR_Producto_CTR_ProductoPlanta" Member="CTR_Producto" ThisKey="IdProducto" OtherKey="IdProducto" Type="CTR_Producto" IsForeignKey="true" />
+      <Association Name="PlantaProduccion_CTR_ProductoPlanta" Member="PlantaProduccion" ThisKey="IdPlantaProduccion" OtherKey="IdPlantaProduccion" Type="PlantaProduccion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlantaProduccion" Member="PlantaProduccion">
+    <Type Name="PlantaProduccion">
+      <Column Name="IdPlantaProduccion" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdComuna" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Habilitado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="PlantaProduccion_CTR_ProductoPlanta" Member="CTR_ProductoPlanta" ThisKey="IdPlantaProduccion" OtherKey="IdPlantaProduccion" Type="CTR_ProductoPlanta" />
+      <Association Name="Comuna_PlantaProduccion" Member="Comuna" ThisKey="IdComuna" OtherKey="IdComuna" Type="Comuna" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Bodega" Member="Bodega">
+    <Type Name="Bodega">
+      <Column Name="IdBodega" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdSucursal" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Habilitada" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="EsManga" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="NombreCorto" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="IDOleotop" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IDAvenatop" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IDGranotop" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaHoraIns" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IpIns" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="UserUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="FechaHoraUpd" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="IpUpd" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="IDSaprosem" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Function Name="dbo.OC_Liquidaciones" Method="OC_Liquidaciones">
+    <ElementType Name="OC_LiquidacionesResult">
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NombreEmpresa" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="IdProyecto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DescripcionProyecto" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdLiquidacion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DescripcionEstado" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaDocumento" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdProveedor" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="NombreProveedor" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="IdCentroCosto" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="NombreCentroCosto" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="IdMaterial" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="NombreMaterial" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="Moneda" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="Cantidad" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PrecioUnitario" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PrecioTotal" Type="System.Decimal" DbType="Decimal(14,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CondicionPago" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.OC_LiquidacionesAgrupadas" Method="OC_LiquidacionesAgrupadas">
+    <ElementType Name="OC_LiquidacionesAgrupadasResult">
+      <Column Name="IdProyecto" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DescripcionProyecto" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdLiquidacion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CTR_GetSemanasPorAño" Method="CTR_GetSemanasPorAño">
+    <Parameter Name="dt" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="CTR_GetSemanasPorAñoResult">
+      <Column Name="WeekNumber" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CTR_GetSemanasDisponibles" Method="CTR_GetSemanasDisponibles">
+    <ElementType Name="CTR_GetSemanasDisponiblesResult">
+      <Column Name="Semana" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Año" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.CTR_GetDiasDeLaSemanaPorDia" Method="CTR_GetDiasDeLaSemanaPorDia">
+    <Parameter Name="dt" Type="System.DateTime" DbType="DateTime" />
+    <ElementType Name="CTR_GetDiasDeLaSemanaPorDiaResult">
+      <Column Name="dates" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="theday" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.ReceptoresNotificacionEdicionOrdenProduccion" Method="ReceptoresNotificacionEdicionOrdenProduccion">
+    <ElementType Name="ReceptoresNotificacionEdicionOrdenProduccionResult">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserName" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.ReceptoresNotificacionCreacionOrdenProduccion" Method="ReceptoresNotificacionCreacionOrdenProduccion">
+    <ElementType Name="ReceptoresNotificacionCreacionOrdenProduccionResult">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserName" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+</Database>

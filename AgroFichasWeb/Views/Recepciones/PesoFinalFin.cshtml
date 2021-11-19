@@ -1,0 +1,32 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model ProcesoIngreso
+@{
+   
+    ViewBag.NombreSeccion = "Registrar Peso Final " + Model.Temporada.Nombre;
+    ViewBag.Title = "El peso final ha sido registrado con éxito";
+}
+
+
+    <h2>@ViewBag.Title</h2>
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+    <fieldset class="dataForm">
+        @Html.Partial("Ingreso", Model)
+        <p class="okcancel">
+            <input type="submit" value="Imprimir Este Pesaje" id="btnPrint" onclick="javascript: printIngreso(1);"  /> o @Html.ActionLink("Registrar otro peso final", "pesofinal1", "recepciones", new { idTemporada = Model.IdTemporada }, null)  
+        </p>
+    </fieldset>
+
+    <script type="text/javascript">
+
+        function printIngreso(copias) {
+
+            var idCultivo = @(Model.CultivoContrato.IdCultivo);
+            
+            window.open('@Url.Action("printingresofinal", "recepciones", new { idCultivo = Model.CultivoContrato.IdCultivo , id = Model.IdProcesoIngreso, copias = "cpis"})'.replace('cpis', copias));
+            
+        }
+
+    </script>    

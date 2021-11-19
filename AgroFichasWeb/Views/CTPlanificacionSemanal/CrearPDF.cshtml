@@ -1,0 +1,127 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_PlanificacionSemanal
+
+@{
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = "Crear PDF";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+    @if (Model.fDia.HasValue)
+    {
+        <script>
+            $(document).ready(function () {
+                $("#fDia").val('@Model.fDia.Value.Date.ToShortDateString()');
+            });
+        </script>
+    }
+}
+
+<section role="main" class="content-body">
+    @if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+    {
+        <div class="row">
+            @if (!string.IsNullOrEmpty(Request["errMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["errMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Request["okMsg"]))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["okMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                </header>
+                @using (Html.BeginForm())
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Año <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@ViewData["yy"]</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Semana <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <span class="form-control" disabled>@ViewData["wk"]</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Día de la Semana <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("fDia", Model.GetDiasSemana(Model.Año, Model.Semana), "(Todas los Días de la Semana)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("fDia")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            @Html.DropDownList("IdEmpresa", Model.GetEmpresas(Model.IdEmpresa), "(Todas las Empresas)", new { @class = "form-control" })
+                                            @Html.ValidationMessage("IdEmpresa")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @Html.Hidden("Año", Model.Año)
+                    @Html.Hidden("Semana", Model.Semana)
+
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <input type="submit" class="btn btn-primary" value="Crear PDF" />
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

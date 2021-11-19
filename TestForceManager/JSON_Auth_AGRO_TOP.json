@@ -1,0 +1,33 @@
+{
+  "id": "",
+  "name": "AGRO_TOP 67508",
+  "values": [
+    {
+      "key": "api_url",
+      "value": "api.forcemanager.net",
+      "enabled": true,
+      "type": "text"
+    },
+    {
+      "key": "publicKey",
+      "value": "615796b5efc06991f98b85dea16d280650f5d1",
+      "enabled": true,
+      "type": "text"
+    },
+    {
+      "key": "privateKey",
+      "value": "b1d6cca7e5382de3737353c8c3ead78e67d2f6eedc19e6036741cd5289945bec52a5f11b4f7e2bb",
+      "enabled": true,
+      "type": "text"
+    },
+    {
+      "key": "X-FM-Token",
+      "value": "",
+      "enabled": true,
+      "type": "text"
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2019-02-18T14:04:31.291Z",
+  "_postman_exported_using": "Postman/6.0.10"
+}

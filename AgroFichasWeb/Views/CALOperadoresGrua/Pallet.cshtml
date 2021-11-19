@@ -1,0 +1,32 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_Pale
+@{
+    ViewBag.Title = string.Format("Pallet {0}", Model.IdPale);
+    Layout = "~/Views/Shared/_OperadorLayout.cshtml";
+}
+<script>
+    function imprimirDocumento(numeroDeCopias) {
+        var count = 0;
+        while (count < numeroDeCopias) {
+            window.print();
+            count++;
+        }
+    }
+</script>
+
+<div class="row">
+    <div class="col-lg-12 text-center">
+        <h4>Pallet @Model.IdPale</h4>
+    </div>
+    <div class="col-lg-12 text-center">
+        <img src="@Model.GetImgSrc()" width="200" />
+        <div style="clear: both"></div>
+        <span style="font-family: Consolas; word-break: break-word">@Model.CodigoInterno</span>
+    </div>
+    <div class="col-lg-12 text-center no-print">
+        <p><a class="btn btn-primary" onclick="imprimirDocumento(3)">Imprimir</a></p>
+    </div>
+    <div class="col-lg-12 text-center no-print">
+        <p><a href="@Url.Action("Index", new { okMsg = "El pallet ha sido elaborado" })">Volver a lista de Pallets</a></p>
+    </div>
+</div>

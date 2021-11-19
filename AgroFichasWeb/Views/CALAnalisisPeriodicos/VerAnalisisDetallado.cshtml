@@ -1,0 +1,126 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.SoftwareCalidad
+@model CAL_AnalisisPeriodico
+@{
+    ViewBag.Title = "Análisis Periódicos";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+    CAL_TipoAnalisis cAL_TipoAnalisis = (CAL_TipoAnalisis)ViewData["cAL_TipoAnalisis"];
+    List<CAL_AnalisisPesticidaTest> analisisPesticidaTestList = (List<CAL_AnalisisPesticidaTest>)ViewData["analisisPesticidaTestList"];
+    List<CAL_AnalisisMetalPesadoTest> analisisMetalPesadoTestList = (List<CAL_AnalisisMetalPesadoTest>)ViewData["analisisMetalPesadoTestList"];
+    List<CAL_AnalisisMicotoxinaTest> analisisMicotoxinaTestList = (List<CAL_AnalisisMicotoxinaTest>)ViewData["analisisMicotoxinaTestList"];
+    List<CAL_AnalisisMicrobiologiaTest> analisisMicrobiologiaTestList = (List<CAL_AnalisisMicrobiologiaTest>)ViewData["analisisMicrobiologiaTestList"];
+    List<CAL_AnalisisNutricionalTest> analisisNutricionalTestList = (List<CAL_AnalisisNutricionalTest>)ViewData["analisisNutricionalTestList"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Ver <strong>@cAL_TipoAnalisis.Descripcion</strong> #@Model.IdAnalisisPeriodico de @Model.CAL_DetalleOrdenProduccion.CAL_Producto.Nombre (@Model.CAL_DetalleOrdenProduccion.CAL_Subproducto.Nombre) - @Model.CAL_DetalleOrdenProduccion.CAL_OrdenProduccion.LoteComercial</h2>
+    </header>
+    <div class="panel-body">
+        <div class="invoice">
+            <div class="bill-info" style="margin-top: 20px;">
+                <h3 class="h3 mt-none mb-sm text-dark text-weight-bold">PARÁMETROS</h3>
+                <div class="text-left">
+                    <table class="table h5 text-dark" style="border: none">
+                        <thead>
+                            <tr>
+                                <th colspan="2">Parámetro</th>
+                                <th>Mínimo</th>
+                                <th>Máximo</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @switch (cAL_TipoAnalisis.IdTipoAnalisis)
+                            {
+                                case 1:
+                                    foreach (CAL_AnalisisMetalPesadoTest analisisMetalPesadoTest in analisisMetalPesadoTestList)
+                                    {
+                                        <tr class="b-top-none">
+                                            <td colspan="2"><span class="text-dark text-weight-semibold">@analisisMetalPesadoTest.CAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.Nombre.ToUpper() (@analisisMetalPesadoTest.CAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.UM.ToUpper()):</span></td>
+                                            <td>@Formatter.Format(analisisMetalPesadoTest.CAL_FTParametroMetalPesado.MinValidValue.Value, analisisMetalPesadoTest.CAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.UM, analisisMetalPesadoTest.CAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.FormatString)</td>
+                                            <td>@Formatter.Format(analisisMetalPesadoTest.CAL_FTParametroMetalPesado.MaxValidValue.Value, analisisMetalPesadoTest.CAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.UM, analisisMetalPesadoTest.CAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.FormatString)</td>
+                                            <td class="text-left"><span class="value @(analisisMetalPesadoTest.ValidValue.Value ? "cal-ValidValue" : "cal-NoValidValue")">@Formatter.Format(analisisMetalPesadoTest.Value, analisisMetalPesadoTest.CAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.UM, (analisisMetalPesadoTest.FormatString.Value ? analisisMetalPesadoTest.CAL_FTParametroMetalPesado.CAL_ParametroMetalPesado.FormatString : "#"))</span></td>
+                                        </tr>
+                                    }
+                                    break;
+                                case 2:
+                                    foreach (CAL_AnalisisMicotoxinaTest analisisMicotoxinaTest in analisisMicotoxinaTestList)
+                                    {
+                                        <tr class="b-top-none">
+                                            <td colspan="2"><span class="text-dark text-weight-semibold">@analisisMicotoxinaTest.CAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.Nombre.ToUpper() (@analisisMicotoxinaTest.CAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.UM.ToUpper()):</span></td>
+                                            <td>@Formatter.Format(analisisMicotoxinaTest.CAL_FTParametroMicotoxina.MinValidValue.Value, analisisMicotoxinaTest.CAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.UM, analisisMicotoxinaTest.CAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.FormatString)</td>
+                                            <td>@Formatter.Format(analisisMicotoxinaTest.CAL_FTParametroMicotoxina.MaxValidValue.Value, analisisMicotoxinaTest.CAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.UM, analisisMicotoxinaTest.CAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.FormatString)</td>
+                                            <td class="text-left"><span class="value @(analisisMicotoxinaTest.ValidValue.Value ? "cal-ValidValue" : "cal-NoValidValue")">@Formatter.Format(analisisMicotoxinaTest.Value, analisisMicotoxinaTest.CAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.UM, (analisisMicotoxinaTest.FormatString.Value ? analisisMicotoxinaTest.CAL_FTParametroMicotoxina.CAL_ParametroMicotoxina.FormatString : "#"))</span></td>
+                                        </tr>
+                                    }
+                                    break;
+                                case 3:
+                                    foreach (CAL_AnalisisMicrobiologiaTest analisisMicrobiologiaTest in analisisMicrobiologiaTestList)
+                                    {
+                                        <tr class="b-top-none">
+                                            <td colspan="2"><span class="text-dark text-weight-semibold">@analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.Nombre.ToUpper() (@analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.UM.ToUpper()):</span></td>
+                                            <td>@Formatter.Format(analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.MinValidValue.Value, analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.UM, analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.FormatString)</td>
+                                            <td>@Formatter.Format(analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.MaxValidValue.Value, analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.UM, analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.FormatString)</td>
+                                            <td class="text-left"><span class="value @(analisisMicrobiologiaTest.ValidValue.Value ? "cal-ValidValue" : "cal-NoValidValue")">@Formatter.Format(analisisMicrobiologiaTest.Value, analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.UM, (analisisMicrobiologiaTest.FormatString.Value ? analisisMicrobiologiaTest.CAL_FTParametroMicrobiologia.CAL_ParametroMicrobiologia.FormatString : "#") )</span></td>
+                                        </tr>
+                                    }
+                                    break;
+                                case 4:
+                                    foreach (CAL_AnalisisNutricionalTest analisisNutricionalTest in analisisNutricionalTestList)
+                                    {
+                                        <tr class="b-top-none">
+                                            <td colspan="2"><span class="text-dark text-weight-semibold"><em>@analisisNutricionalTest.CAL_FTParametroNutricional.CAL_ParametroNutricional.Nombre.ToUpper() (@analisisNutricionalTest.CAL_FTParametroNutricional.CAL_ParametroNutricional.UM.ToUpper())</em>:</span></td>
+                                            <td>@Formatter.Format(analisisNutricionalTest.CAL_FTParametroNutricional.MinValidValue.Value, analisisNutricionalTest.CAL_FTParametroNutricional.CAL_ParametroNutricional.UM, analisisNutricionalTest.CAL_FTParametroNutricional.CAL_ParametroNutricional.FormatString)</td>
+                                            <td>@Formatter.Format(analisisNutricionalTest.CAL_FTParametroNutricional.MaxValidValue.Value, analisisNutricionalTest.CAL_FTParametroNutricional.CAL_ParametroNutricional.UM, analisisNutricionalTest.CAL_FTParametroNutricional.CAL_ParametroNutricional.FormatString)</td>
+                                            <td class="text-left"><span class="value @(analisisNutricionalTest.ValidValue.Value ? "cal-ValidValue" : "cal-NoValidValue")">@Formatter.Format(analisisNutricionalTest.Value, analisisNutricionalTest.CAL_FTParametroNutricional.CAL_ParametroNutricional.UM, (analisisNutricionalTest.FormatString.Value ? analisisNutricionalTest.CAL_FTParametroNutricional.CAL_ParametroNutricional.FormatString : "#,##0.00"))</span></td>
+                                        </tr>
+                                    }
+                                    break;
+                                case 5:
+                                    foreach (CAL_AnalisisPesticidaTest analisisPesticidaTest in analisisPesticidaTestList)
+                                    {
+                                        <tr class="b-top-none">
+                                            <td colspan="2"><span class="text-dark text-weight-semibold">@analisisPesticidaTest.CAL_FTParametroPesticida.CAL_ParametroPesticida.Nombre.ToUpper() (@analisisPesticidaTest.CAL_FTParametroPesticida.CAL_ParametroPesticida.UM.ToUpper()):</span></td>
+                                            <td>@Formatter.Format(analisisPesticidaTest.CAL_FTParametroPesticida.MinValidValue.Value, analisisPesticidaTest.CAL_FTParametroPesticida.CAL_ParametroPesticida.UM, analisisPesticidaTest.CAL_FTParametroPesticida.CAL_ParametroPesticida.FormatString)</td>
+                                            <td>@Formatter.Format(analisisPesticidaTest.CAL_FTParametroPesticida.MaxValidValue.Value, analisisPesticidaTest.CAL_FTParametroPesticida.CAL_ParametroPesticida.UM, analisisPesticidaTest.CAL_FTParametroPesticida.CAL_ParametroPesticida.FormatString)</td>
+                                            <td class="text-left"><span class="value @(analisisPesticidaTest.ValidValue.Value ? "cal-ValidValue" : "cal-NoValidValue")">@Formatter.Format(analisisPesticidaTest.Value, analisisPesticidaTest.CAL_FTParametroPesticida.CAL_ParametroPesticida.UM, (analisisPesticidaTest.FormatString.Value ? analisisPesticidaTest.CAL_FTParametroPesticida.CAL_ParametroPesticida.FormatString : "#"))</span></td>
+                                        </tr>
+                                    }
+                                    break;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

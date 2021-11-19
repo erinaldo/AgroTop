@@ -1,0 +1,128 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model ExportarRecepcionesViewModel
+
+@{
+    ViewBag.NombreSeccion = "Exportar Recepciones";
+    ViewBag.Title = "Crear Lote de Exportación de Recepciones " + Model.Temporada.Nombre;
+}
+
+@section headSection {
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+
+@using (Html.BeginForm("crear", "exportarrecepciones", FormMethod.Post, new { id = "frm" }))
+{
+    @Html.Hidden("IdTemporada", Model.IdTemporada)
+    @Html.Hidden("IdEmpresa", Model.IdEmpresa)
+    
+    <fieldset class="dataForm">
+        <p>
+            <label>Empresa</label>
+            @Model.Empresa.Nombre
+        </p>
+        <p>
+            <label>Temporada</label>
+            @Html.Partial("TemporadaSelector")
+        </p>
+        <div class="p">
+            <label>Ingresos</label>
+            <table class="sublist2" style="margin-bottom: 10px; display: inline-block; width: 770px;">
+            <thead>
+                <tr>
+                    <td class="label"><input type="checkbox" id="chkSelectAll" /></td>
+                    <td class="label small">Nro</td>
+                    <td class="label small">Fecha</td>
+                    <td class="label small" colspan="2">Agricultor</td>
+                    <td class="label small">Sucursal</td>
+                    <td class="label small" colspan="2">Bodega</td>
+                    <td class="label small" colspan="2">Cultivo</td>
+                    <td class="label small">Kg Neto</td>
+                    <td class="label small">Liquidación</td>
+                    <td class="label small">Comentario</td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items != null)
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        var keyI = "Items[" + item.IdProcesoIngreso + "].";
+                        <tr valign="top">
+                            <td>
+                                @if (item.EsExportable)
+                                {
+                                    @Html.CheckBox(keyI + "Seleccionado", item.Seleccionado, new { @class = "exportchk" })
+                                }
+                                else
+                                {
+                                    @Html.Hidden(keyI + "Seleccionado", item.Seleccionado)   
+                                }
+                            </td>
+                            <td class="small">
+                                @item.IdProcesoIngreso
+                                @Html.Hidden("Items.Index", item.IdProcesoIngreso)
+                                @Html.Hidden(keyI + "IdProcesoIngreso", item.IdProcesoIngreso)
+                                @Html.Hidden(keyI + "EsExportable", item.EsExportable)
+                                @Html.Hidden(keyI + "Nombre", item.Nombre)
+                                @Html.Hidden(keyI + "NombreSucursal", item.NombreSucursal)
+                                @Html.Hidden(keyI + "NombreBodega", item.NombreBodega)
+                                @Html.Hidden(keyI + "NombreCultivoContrato", item.NombreCultivoContrato)
+                                @Html.Hidden(keyI + "PesoBruto", item.PesoBruto)
+                                @Html.Hidden(keyI + "MotivoNoExportable", item.MotivoNoExportable)
+                                @Html.Hidden(keyI + "Fecha", item.Fecha)
+                                @Html.Hidden(keyI + "IdBodegaSAP", item.IdBodegaSAP)
+                                @Html.Hidden(keyI + "IdAgricultorSAP", item.IdAgricultorSAP)
+                                @Html.Hidden(keyI + "IdProductoSAP", item.IdProductoSAP)
+                            </td>
+                            <td class="small">@item.Fecha.ToString("dd/MM/yy")</td>
+                            <td class="small">@item.Nombre</td>
+                            <td class="small">@item.IdAgricultorSAP</td>
+                            <td class="small">@item.NombreSucursal</td>
+                            <td class="small">@item.NombreBodega</td>
+                            <td class="small">@item.IdBodegaSAP</td>
+                            <td class="small">@item.NombreCultivoContrato</td>
+                            <td class="small">@item.IdProductoSAP</td>
+                            <td class="small" align="right">@item.PesoBruto.ToString("#,##0")</td>
+                            <td class="small" align="right">@((item.IdLiquidacion ?? 0).ToString("0"))</td>
+                            <td class="small" style="color: red">@item.MotivoNoExportable</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            </table>
+        </div>
+        <p class="okcancel">
+            <input type="submit" value="Exportar Ingresos Seleccionados" /> o @Html.ActionLink("Cancelar", "index")
+        </p>
+    </fieldset>
+}
+
+@using (Html.BeginForm("crear", "exportarrecepciones", FormMethod.Get, new { id = "frmChange" }))
+{
+    @Html.Hidden("idEmpresa")
+    @Html.Hidden("idTemporada")   
+}
+<script>
+
+    $(document).ready(function () {
+        $("#chkSelectAll").change(function () {
+            $(".exportchk").prop("checked", $("#chkSelectAll").prop("checked"));
+        });
+
+        $("#idTemporada").change(function () {
+            var idTemporada = $("#idTemporada").val();
+            location.href = '@(new MvcHtmlString(Url.Action("crear", "exportarrecepciones", new { idEmpresa = Model.IdEmpresa, idTemporada = "IDTEMPORADA" })))'.replace('IDTEMPORADA', idTemporada);
+        });
+    });
+
+</script>

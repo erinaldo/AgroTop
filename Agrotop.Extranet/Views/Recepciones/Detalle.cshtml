@@ -1,0 +1,155 @@
+﻿@using Agrotop.Extranet.Models
+@using Agrotop.Extranet.AppLayer.Extensions
+
+@model ProcesoIngreso
+@{
+    
+    ViewBag.Title = "Ingreso #" + Model.IdProcesoIngreso;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+
+}
+
+<div class="titulo1-consubmenu">Recepciones @Model.Temporada.Nombre</div>
+
+<h2>Ingreso #@Model.IdProcesoIngreso</h2>
+
+<table class="tabla2">
+<tr>
+    <td><label>Número</label></td>
+    <td>@Model.IdProcesoIngreso @(Model.UltimaEntrega ? " - <b>Última Entrega</b>".ToMvcHtmlString() : "".ToMvcHtmlString())</td>
+    <td><label>Sucursal</label></td>
+    <td>@Model.Sucursal.Nombre</td>
+</tr>
+<tr>
+    <td><label>Razón Social</label></td>
+    <td>@Model.Agricultor.Nombre</td>
+    <td><label>Rut</label></td>
+    <td>@Model.Agricultor.Rut</td>
+</tr>
+<tr>
+    <td><label>Cultivo</label></td>
+    <td>@Model.CultivoContrato.Nombre</td>
+    <td><label>Guía</label></td>
+    <td>@Model.NumeroGuia</td>
+</tr>
+<tr>
+    <td><label>Vehículo</label></td>
+    <td>@Model.TipoVehiculo.Nombre @Model.Patente</td>
+    <td><label>Chofer</label></td>
+    <td>@Model.Chofer</td>
+</tr>
+<tr>
+    <td><label>Peso Inicial</label></td>
+    <td>@(Model.PesoInicial.HasValue ? Model.PesoInicial.Value.ToString("#,##0.## Kg") : "-")</td>
+    <td><label>Peso Final</label></td>
+    <td>@(Model.PesoFinal.HasValue ? Model.PesoFinal.Value.ToString("#,##0.## Kg") : "-")</td>
+</tr>
+<tr>
+    <td><label>Peso Neto</label></td>
+    <td>@(Model.PesoBruto.HasValue ? Model.PesoBruto.Value.ToString("#,##0.## Kg") : "-")</td>
+    <td><label>Peso Standard</label></td>
+    <td>@(Model.PesoNormal.HasValue ? Model.PesoNormal.Value.ToString("#,##0.## Kg") : "-")</td>
+</tr>
+<tr>
+    <td><label>Liquidación</label></td>
+    <td colspan="3">                
+        @foreach (var idLiquidacion in Model.IdsLiquidaciones())
+        {
+            <a href="@Url.Action("detalle", "liquidaciones", new { id = idLiquidacion})" class="command">@idLiquidacion</a><text>&nbsp;</text>
+        }
+    </td>
+</tr>
+<tr valign="top">
+    <td><label style="margin-top: 7px">Análisis</label></td>
+    <td colspan="3">
+        @if (Model.ValorAnalisis.Count > 0)
+        {
+            int i = 0;
+            bool open = false;
+        <table class="sublist2" style="margin-bottom: 10px;">
+            @foreach (var valor in Model.ValorAnalisis)
+            {
+                if (i % 3 == 0)
+                {
+                    @(new MvcHtmlString(open ? "</tr>" : ""))
+                    @(new MvcHtmlString("<tr>"))
+                    open = true;
+                }
+                i++;
+                <td><b>@valor.ParametroAnalisis.Nombre</b></td>
+                if (valor.ParametroAnalisis.UM.Equals(""))
+                {
+                    if(valor.ToString().Equals("1 "))
+                    {
+                        <td>Aceptado</td>
+                    }
+                    else
+                    {
+                        <td>Rechazado</td>
+                    }
+
+                }
+                else
+                {
+                    <td>@valor.ToString()</td>
+                }
+            }
+            @(new MvcHtmlString(open ? "</tr>" : ""))
+            @*<tr valign="top">
+            <td><b>Observaciones</b></td>
+            <td colspan="5">@Model.ObservacionesAnalisis</td>
+        </tr>*@
+        </table>
+        }
+        else
+        {
+            <text>-</text>
+        }
+    </td>
+</tr>
+<tr valign="top">
+    <td><label style="margin-top: 7px">Estado</label></td>
+    <td colspan="1">
+        <span class="estado" style="background-color: @Model.EstadoProcesoIngreso.Color; border: solid 1px  @Model.EstadoProcesoIngreso.Color">
+            <span class="estadoLabel">@Model.EstadoProcesoIngreso.Nombre</span>
+        </span>
+    </td>
+    <td><label style="margin-top: 7px">Historia</label></td>
+    <td>
+        <table class="sublist">
+        @if (Model.FechaHoraLlegada.HasValue)
+        {
+            <tr><td>Llegada</td><td>@Model.FechaHoraLlegada.Value.ToString("dd MMM - HH:mm")</td></tr>
+        }
+        @if (Model.FechaHoraTomaMuestra.HasValue)
+        {
+            <tr><td>Toma Muestra</td><td>@Model.FechaHoraTomaMuestra.Value.ToString("dd MMM - HH:mm")</td></tr>
+        }
+        @if (Model.FechaHoraLaboratorio.HasValue)
+        {
+            <tr><td>Llega Laboratorio</td><td>@Model.FechaHoraLaboratorio.Value.ToString("dd MMM - HH:mm")</td></tr>
+        }
+        @if (Model.FechaHoraAnalisis.HasValue)
+        {
+            <tr><td>Análisis</td><td>@Model.FechaHoraAnalisis.Value.ToString("dd MMM - HH:mm")</td></tr>
+        }
+        @if (Model.Autorizado.HasValue)
+        {
+            <tr>
+                <td>@(Model.Autorizado == ProcesoIngreso.ANALISIS_AUTORIZADO ? "Autorización" : "Rechazo")</td>
+                <td>@((Model.AutorizadoAuto.Value ? Model.FechaHoraAnalisis.Value : Model.FechaHoraAutoriza.Value).ToString("dd MMM - HH:mm"))</td>
+            </tr>
+        }        
+        @if (Model.PesoInicial.HasValue)
+        {
+            <tr><td>Peso Inicial</td><td>@Model.FechaPesoInicial.Value.ToString("dd MMM - HH:mm")</td></tr>
+        }
+        @if (Model.PesoFinal.HasValue)
+        {
+            <tr><td>Peso Final</td><td>@Model.FechaPesoFinal.Value.ToString("dd MMM - HH:mm")</td></tr>
+        }
+        </table>
+    </td>
+</tr>
+</table>
+<a href="javascript:history.back(1);">&lt; Volver</a>

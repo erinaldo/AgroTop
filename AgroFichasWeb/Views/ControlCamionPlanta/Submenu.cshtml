@@ -1,0 +1,22 @@
+﻿<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(141))
+    {
+        <li><a href="@Url.Content("~/controlcamionplanta/")">Ver Estados</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(141))
+    {
+        <li><a href="@Url.Content("~/controlcamionplanta/crearvoucherllegadaorigen")">Crear Voucher de Llegada a Origen</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(141))
+    {
+        <li><a href="@Url.Content("~/controlcamionplanta/registrarpasosplantaorigenpaso1")">Registrar Pasos en Origen</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(141))
+    {
+        <li><a href="@Url.Content("~/controlcamionplanta/crearvoucherllegadadestino")">Crear Voucher de Llegada a Destino</a></li>
+    }
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(141))
+    {
+        <li><a href="@Url.Content("~/controlcamionplanta/registrarpasosplantadestinopaso1")">Registrar Pasos en Destino</a></li>
+    }
+</ul>

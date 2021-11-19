@@ -1,0 +1,139 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<OC_OrdenCompra>
+
+@{
+    ViewBag.NombreSeccion = "Órdenes de Compra";
+    ViewBag.Title = "Administrar Órdenes de Compra";
+    var puedeEditar = (bool)ViewData["puedeEditar"];
+    var puedeEliminar = (bool)ViewData["puedeEliminar"];
+    var columnas = (int)ViewData["columnas"];
+    string[] materialesNoEditables = { "FIPRPA01", "FIDEPE01" };
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+@if (Request["msgerr"] != null && Request["msgerr"] != "")
+{
+    <div class="validation-summary-errors">
+        @Request["msgerr"]
+    </div>
+}
+
+@if (Request["msgok"] != null && Request["msgok"] != "")
+{
+    <div class="validation-summary-oks">
+        @Request["msgok"]
+    </div>
+}
+
+<div style="margin: 20px 0px">
+    @using (Html.BeginForm("index", "ordenescompra", new { id = 0 }, FormMethod.Get))
+    {
+        @Html.Partial("EmpresaSelector")
+        @Html.Partial("OCProyectoSelector")
+        @Html.Partial("OCEstadoSelector")
+        @Html.Partial("FechaDesdeSelector")
+        @Html.Partial("FechaHastaSelector")
+        <input type="text" name="key" value="@ViewData["key"]" /> <input type="submit" value="Buscar" />
+    }
+</div>
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">Empresa</th>
+        <th align="left">Proyecto</th>
+        <th align="left">Núm. Liq.</th>
+        <th align="left">Proveedor</th>
+        <th align="left">Estado</th>
+        <th align="left">Fecha</th>
+        <th align="center">Cantidad</th>
+        <th align="center">Precio Unitario</th>
+        <th align="center">Precio Total</th>
+        <th align="left">Núm. O/C - DocEntry</th>
+        <th align="center">Crear XML</th>
+        @if (puedeEditar)
+        {
+            <th align="center">Editar</th>
+        }
+        @if (puedeEliminar)
+        {
+            <th align="center">Eliminar</th>
+        }
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="@columnas" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        <tr valign="top">
+            <td align="left">@item.Empresa.Nombre</td>
+            <td align="left">@item.OC_Proyecto.Descripcion</td>
+            <td align="left">@item.IdLiquidacion</td>
+            <td align="left">@item.IdProveedor</td>
+            <td align="left" class="oc-@item.OC_Estado.Descripcion">@item.OC_Estado.Descripcion</td>
+            <td align="left">@string.Format("{0:dd/MM/yyyy hh:mm}", item.FechaDocumento)</td>
+            <td align="right">@item.Cantidad.ToString("N0")</td>
+            <td align="right"><span class="@(item.PrecioUnitario < 0 ? "oc-NumeroNegativo" : "")">@item.PrecioUnitario.ToString("C2")</span></td>
+            <td align="right"><span class="@(item.PrecioTotal < 0 ? "oc-NumeroNegativo" : "")">@item.PrecioTotal.ToString("C2")</span></td>
+            <td align="left">@item.OC</td>
+            @if (item.OC.HasValue == false && item.Firma == "" && !materialesNoEditables.Contains(item.OC_Material.CodigoMaterial))
+            {
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/xml.png"), "CrearXml", new { idLiquidacion = item.IdLiquidacion, idProyecto = item.IdProyecto })
+                </td>
+            }
+            else
+            {
+                if (!materialesNoEditables.Contains(item.OC_Material.CodigoMaterial))
+                {
+                    <td align="center">
+                        <img src="@Url.Content("~/Content/images/xml_tick.png")" />
+                    </td>
+                }
+                else
+                {
+                    <td align="center"></td>
+                }
+            }
+            @if (puedeEditar && !materialesNoEditables.Contains(item.OC_Material.CodigoMaterial))
+            {
+                <td align="center">@Html.ActionImage(Url.Content("~/Content/images/editar.png"), "editar", new { idLiquidacion = item.IdLiquidacion, idProyecto = item.IdProyecto })</td>
+            }
+            else
+            {
+                <td align="center"></td>
+            }
+            @if (puedeEliminar && !materialesNoEditables.Contains(item.OC_Material.CodigoMaterial))
+            {
+                <td align="center">@Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "eliminar", new { idLiquidacion = item.IdLiquidacion })</td>
+            }
+            else
+            {
+                <td align="center"></td>
+            }
+        </tr>
+    }
+    <tr>
+        <td colspan="@columnas" class="pager">
+            @Model.Paginator("index", "ordenescompra", ViewContext.RequestContext)
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,53 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var user = SYS_User.Current();
+}
+
+    <div class="menu">
+        <div class="sub-menu">
+            <div class="scroll">
+                <nav>
+                    <ul class="list-unstyled">
+                        @foreach (var modulo in user.Modulos)
+                        {
+
+                            <li class="@(user.IdModuloActivo == modulo.ID ? "active" : "")">
+                                @if (modulo.ID == 11)
+                                {
+                                    <a href="@Url.Content(modulo.Url)"><i class="iconsminds-shop-4"></i><span>@modulo.Nombre</span></a>                             
+                                }
+                            else
+                            {<a href="@Url.Content(modulo.Url)"><span>@modulo.Nombre</span></a>}
+
+                                <ul class="dropdown-menu">
+                                    @foreach (var menu in user.ItemsMenu(modulo.ID))
+                                    {
+                                        <li class="@(menu.ContieneSubMenu ? "dropdown-submenu" : "")">
+                                            <a class="dropdown-toggle">@menu.Nombre</a>
+                                            @if (menu.ContieneSubMenu)
+                                            {
+                                                <ul class="dropdown-menu">
+                                                    @foreach (var submenu in user.ItemsSubMenu(menu.ID))
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Content(submenu.Url)">
+                                                                @submenu.Nombre
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+
+

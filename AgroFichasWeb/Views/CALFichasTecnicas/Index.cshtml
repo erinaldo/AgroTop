@@ -1,0 +1,199 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using System.Collections
+
+@model List<CAL_FT>
+@{
+    ViewBag.Title = "Fichas Técnicas";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    @foreach (var item in Model)
+    {
+        <script>
+            $("#clone_@item.IdFichaTecnica").click(function () {
+                swal({
+                    title: "¿Estás seguro que deseas clonar esta ficha técnica?",
+                    text: "ID: " +@item.IdFichaTecnica+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SÍ, Clonar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("Clonar", new { id = item.IdFichaTecnica })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+            $("#delete_@item.IdFichaTecnica").click(function() {
+                swal({
+                    title: "¿Estás seguro que deseas eliminar esta ficha técnica?",
+                    text: "ID: " +@item.IdFichaTecnica+ "",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI, Eliminar!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = '@Url.Action("eliminar", new { id = item.IdFichaTecnica })'
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+            });
+        </script>
+    }
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [6, 'desc'],
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<section class="panel">
+    <header class="panel-heading">
+        <h2 class="panel-title">Administrar Fichas Técnicas</h2>
+        @if (permisosUsuario.Crear)
+        {
+            <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                <a href="@Url.Action("CrearPaso1", "CALFichasTecnicas")" class="btn btn-primary">Crear Ficha Técnica <i class="fa fa-plus"></i></a>
+            </div>
+        }
+    </header>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped mb-none" id="datatable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cliente</th>
+                    <th>País</th>
+                    <th>Código</th>
+                    <th>Versión</th>
+                    <th>Producto</th>
+                    <th>Última modificación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr valign="top">
+                        <td>@item.IdFichaTecnica</td>
+                        <td>@item.GetCliente(item.IdCliente).RazonSocial</td>
+                        <td>@item.GetPais(item.PaisCodigo).PaisNombreLocal</td>
+                        <td><span style="font-family: Consolas">@item.Codigo</span></td>
+                        <td>@item.GetControlVersion()</td>
+                        <td>
+                            @item.CAL_Producto.Nombre
+                            <div style="clear: both"></div>
+                            <small>@item.CAL_Subproducto.Nombre</small>
+                        </td>
+                        @if (item.FechaHoraUpd != null)
+                        {
+                            <td>@string.Format("{0:dd/MM/yyyy}", item.FechaHoraUpd)</td>
+                        }
+                        else
+                        {
+                            <td>@string.Format("{0:dd/MM/yyyy}", item.FechaHoraIns)</td>
+                        }
+                        <td>
+                            <button id="@string.Format("view_{0}", item.IdFichaTecnica)" onclick="window.location.href='@Url.Action("Ver", new { id = item.IdFichaTecnica })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Ficha Técnica"> <i class="fa fa-eye"></i></button>
+                            @if (permisosUsuario.Crear)
+                            {
+                                <button id="@string.Format("parametersofpesticide_{0}"   , item.IdFichaTecnica)" onclick="window.location.href='@Url.Action("Index", "CALFTParametroPesticida"     , new { id = item.IdFichaTecnica })'" class="btn btn-tertiary" data-toggle="tooltip" data-placement="top" title="Ver Pesticidas" style="background-color:#0088cc;color: white">   <i class="fa fa-flask"></i></button>
+                                <button id="@string.Format("parametersofheavymetals_{0}" , item.IdFichaTecnica)" onclick="window.location.href='@Url.Action("Index", "CALFTParametroMetalesPesados", new { id = item.IdFichaTecnica })'" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Ver Metales Pesados">      <i class="fa fa-flask"></i></button>
+                                <button id="@string.Format("parametersofmycotoxins_{0}"  , item.IdFichaTecnica)" onclick="window.location.href='@Url.Action("Index", "CALFTParametroMicotoxinas"   , new { id = item.IdFichaTecnica })'" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Ver Micotoxinas"> <i class="fa fa-flask"></i></button>
+                                <button id="@string.Format("parametersofmicrobiology_{0}", item.IdFichaTecnica)" onclick="window.location.href='@Url.Action("Index", "CALFTParametroMicrobiologia" , new { id = item.IdFichaTecnica })'" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Ver Microbiología">     <i class="fa fa-flask"></i></button>
+                                <button id="@string.Format("parametersofnutritional_{0}" , item.IdFichaTecnica)" onclick="window.location.href='@Url.Action("Index", "CALFTParametroNutricionales" , new { id = item.IdFichaTecnica })'" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Ver Nutricionales">        <i class="fa fa-flask"></i></button>
+                            }
+                            @if (permisosUsuario.AdminControlVersiones)
+                            {
+                                <button id="@string.Format("versioncontrol_{0}", item.IdFichaTecnica)" onclick="window.location.href='@Url.Action("Index", "CALFTControlVersion", new { id = item.IdFichaTecnica })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Control de Versiones"> <i class="fa fa-exchange"></i></button>
+                            }
+                            @if (permisosUsuario.AdminDctos)
+                            {
+                                <button id="@string.Format("dctos_{0}", item.IdFichaTecnica)" onclick="window.location.href='@Url.Action("Index", "CALFTDoc", new { id = item.IdFichaTecnica })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Dctos."> <i class="fa fa-file-image-o"></i></button>
+                            }
+                            @if (permisosUsuario.AdminFrecuenciaAnalisis)
+                            {
+                                <button id="@string.Format("frequency_{0}", item.IdFichaTecnica)" onclick="window.location.href='@Url.Action("Index", "CALFTFrecuenciaAnalisis", new { id = item.IdFichaTecnica })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ver Frecuencias de Análisis"> <i class="fa fa-refresh"></i></button>
+                            }
+                            @if (permisosUsuario.Crear)
+                            {
+                                <button id="clone_@item.IdFichaTecnica" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Clonar"> <i class="fa fa-clone"></i></button>
+                            }
+                            @if (permisosUsuario.Actualizar)
+                            {
+                                <button id="edit_@item.IdFichaTecnica" onclick="window.location.href='@Url.Action("Editar", new { id = item.IdFichaTecnica })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                            }
+                            @if (permisosUsuario.Borrar)
+                            {
+                                <button id="delete_@item.IdFichaTecnica" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

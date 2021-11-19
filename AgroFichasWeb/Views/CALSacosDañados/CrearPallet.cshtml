@@ -1,0 +1,119 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_Pale
+@{
+    ViewBag.Title = "Sacos Dañados";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    CAL_ReprocesoSacosDañadosPallets cAL_ReprocesoSacosDañadosPallets = (CAL_ReprocesoSacosDañadosPallets)ViewData["reprocesoSacosDañadosPallets"];
+    AgroFichasDBDataContext dc = new AgroFichasDBDataContext();
+
+    PlantaProduccion planta = dc.PlantaProduccion.Where(X => X.IdPlantaProduccion == cAL_ReprocesoSacosDañadosPallets.CAL_Pale.CAL_DetalleOrdenProduccion.CAL_OrdenProduccion.IdPlanta).FirstOrDefault();
+}
+
+@section VendorCSS
+{
+}
+@section VendorScripts
+{
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function DeleteCntMax() {
+            $("#CntMax").val(0);
+        }
+
+        function GetCntMax() {
+            var id = $('#IdTipoPale').val();
+            if (jQuery.isEmptyObject(id)) {
+                alert("El tipo de pallet es requerido");
+            }
+            $.getJSON(uri + '/Pale/GetTipoPale?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay tipos de pallets disponibles");
+                        DeleteCntMax();
+                        return;
+                    }
+                    else {
+                        $("#CntMax").val(result.CntMax);
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdTipoPale").change(function () {
+            DeleteCntMax();
+            GetCntMax();
+        });
+    </script>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Crear Pallet</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Planta productiva <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" readonly value="@planta.Nombre" class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Tipo <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdTipoPale", Model.GetTipoPales(Model.IdTipoPale), "(Seleccione Tipo)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdTipoPale")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cantidad Cargada <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("CntCargada", Model.CntCargada, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("CntCargada")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @Html.Hidden("CntMax", Model.CntMax)
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Pallet" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

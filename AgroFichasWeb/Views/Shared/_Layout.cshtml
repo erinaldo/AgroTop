@@ -1,0 +1,42 @@
+﻿@using AgroFichasWeb.Models
+@using System.Data.Linq
+@{
+    Layout = "~/Views/Shared/_LayoutBase.cshtml";
+
+    var userAdmin = SYS_User.Current();
+}
+
+@section scripts {
+    @RenderSection("headSection", false)    
+}
+
+@section topcontent {
+    <div id="infoBar">
+        <span class="userName">@User.Identity.Name</span> | @Html.ActionLink("Cerrar Sesión", "Logout", "Account") &nbsp;
+    </div>
+}
+    <div id="menu1">        
+        <ul>
+        @foreach (var item in userAdmin.Modulos)
+        {
+            <li class="@((item.Selected) ? "selected" : "")"><a href="@Url.Content(item.Url)">@item.Nombre</a></li>
+        }
+        </ul>
+    </div>
+    <div id="menu3">
+        <ul>
+        @foreach (var item in userAdmin.ItemsMenuActivo())
+        {
+            <li><a href="@Url.Content(item.Url)">@item.Nombre</a></li>
+        }
+            @*<li style="list-style: none; padding-bottom: 300px;">&nbsp;</li>*@
+        </ul>
+    </div>
+    <div id="workArea">
+        <h1>@ViewBag.NombreSeccion</h1>
+        <div id="menu2" style="@ViewBag.OverrideStyleMenu2">
+            @RenderSection("submenuSection", false)
+        </div>
+        @RenderBody()
+    </div>
+    <div style="clear: both"></div>

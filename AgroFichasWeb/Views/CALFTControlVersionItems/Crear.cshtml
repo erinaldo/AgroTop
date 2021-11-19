@@ -1,0 +1,62 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_FTControlVersionItem
+@{
+    ViewBag.Title = "Control de Versiones";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+
+    if (Model.IdItem == 0)
+    {
+        ViewBag.SubTitle = "Crear Ítem de Control de Versión";
+    }
+    else
+    {
+        ViewBag.SubTitle = "Editar Ítem de Control de Versión";
+    }
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Nombre <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.TextBox("Nombre", Model.Nombre, new { @class = "form-control", maxlength = "50" })
+                                        @Html.ValidationMessage("Nombre")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar este Ítem de Control de Versión" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

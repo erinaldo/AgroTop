@@ -1,0 +1,432 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model Agricultor
+@{
+    ViewBag.NombreSeccion = "Agricultores";
+    ViewBag.Title = "Fichas del Agricultor";
+    var temporadas = (IOrderedQueryable<Temporada>)ViewData["temporadas"];
+    var puedeEliminarFichas = SYS_User.Current().HasPermiso(9);
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>@Model.Nombre</h2>
+
+    @foreach (var temporada in temporadas)
+    {
+        <hr />
+        <h2>@temporada.Nombre</h2>
+        foreach (var predio in Model.Predio)
+        {
+
+            var iSiembra = predio.Siembra.Count(t => t.IdTemporada == temporada.IdTemporada);
+            var iFicha = predio.Ficha.Count(t => t.IdTemporada == temporada.IdTemporada);
+            var iFichaPreSiembra = predio.FichaPreSiembra.Count(t => t.IdTemporada == temporada.IdTemporada);
+
+            if (iSiembra + iFicha + iFichaPreSiembra > 0)
+            {
+                <h2>Predio: @predio.Nombre en comuna de @predio.Comuna.Nombre</h2>
+                <h3>Fichas Pre-Siembra</h3>
+
+                <table class="dataList" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 50px;">
+                    <tr>
+                        <th align="left">
+                            Fecha
+                        </th>
+                        <th align="left">
+                            Tipo
+                        </th>
+                        <th align="left">
+                            Potreros
+                        </th>
+                        <th align="left">
+                            Observaciones
+                        </th>
+                        <th align="left">
+                            Recomendaciones
+                        </th>
+                        <th align="left">
+                            Creación
+                        </th>
+                    </tr>
+                    @foreach (var ficha in predio.FichaPreSiembra.Where(t => t.IdTemporada == temporada.IdTemporada).OrderBy(f => f.Fecha))
+                    {
+                        <tr valign="top">
+                            <td align="left">
+                                @ficha.Fecha.ToString("dd MMM")
+                            </td>
+                            <td align="left">
+                                <b>Pre-Siembra</b><br /><a href="@Url.Content(ficha.PdfUrl + "&nolog=1")">Descargar</a><br />
+                                <i>@ficha.LecturaMailFichaPreSiembra.Count() descargas(s)</i>
+                            </td>
+                            <td align="left">
+                                @foreach (var sp in ficha.FichaPreSiembraPotrero)
+                                {
+                                    @(sp.Potrero.Nombre + " " + @sp.Potrero.Superficie.ToString("#,##0 há")) <br />
+                                }
+                            </td>
+                            <td>
+                                @ficha.Observaciones
+                                <p>Estado Siembra: @ficha.EstadoSiembra.Nombre</p>
+                                <p>Impotancia Seguimiento: @ficha.ImportanciaSeguimiento.Nombre</p>
+                            </td>
+                            <td>
+                                <ul class="recs">
+                                    @foreach (var rec in ficha.RecomendacionPreSiembra)
+                                    {
+                                        <li>
+                                            <b>@rec.Quimico.TipoRecomendacion.Nombre &gt; @rec.Quimico.Nombre</b><br />
+                                            @if (rec.Quimico.IdTipoRecomendacion != 3)
+                                            {
+                                                @rec.Dosis.ToString("#,###0.#### ")  @rec.UM.Nombre<br />
+                                            }
+                                            else
+                                            {
+                                                <table>
+                                                    <tr>
+                                                        <td>N</td>
+                                                        <td>P2O5</td>
+                                                        <td>KO2</td>
+                                                        <td>MgO</td>
+                                                        <td>S</td>
+                                                        <td>B</td>
+                                                        <td>Zn</td>
+                                                        <td>CaO</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>@rec.FerN.ToString("#,##0.####")</td>
+                                                        <td>@rec.FerP2O5.ToString("#,##0.####")</td>
+                                                        <td>@rec.FerKO2.ToString("#,##0.####")</td>
+                                                        <td>@rec.FerMgO.ToString("#,##0.####")</td>
+                                                        <td>@rec.FerS.ToString("#,##0.####")</td>
+                                                        <td>@rec.FerB.ToString("#,##0.####")</td>
+                                                        <td>@rec.FerZn.ToString("#,##0.####")</td>
+                                                        <td>@rec.FerCaO.ToString("#,##0.####")</td>
+                                                    </tr>
+                                                </table>
+                                            }
+                                            @if (rec.FechaAplicacion.HasValue)
+                                            {
+                                                <text>Aplicar</text> @rec.FechaAplicacion.Value.ToString("dd MMM yyyy");
+                                            }
+                                            @if (puedeEliminarFichas)
+                                            {
+                                                <br />
+                                                <a href="#" data-id="@rec.IdRecomendacionPreSiembra" class="deleteRecomendacionPreSiembra eliminar">Eliminar Recomendación</a>
+                                            }
+
+                                        </li>
+                                    }
+                                </ul>
+                            </td>
+                            <td class="audit">
+                                Creado: @(ficha.UserIns + " " + ficha.FechaHoraIns.ToString("dd/MM/yy hh:mm"))
+
+                                @if (ficha.FechaHoraUpd.HasValue)
+                                {
+                                    <br />
+                                    <text>Actualizado:</text> @(ficha.UserUpd + " " + ficha.FechaHoraUpd.Value.ToString("dd/MM/yy hh:mm"))
+                                }
+                                @if (puedeEliminarFichas)
+                                {
+                                    <br />
+                                    <a href="#" data-id="@ficha.IdFichaPreSiembra" class="deleteFichaPreSiembra eliminar">Eliminar Ficha</a>
+                                }
+                            </td>
+                        </tr>
+                        if (ficha.FotoFichaPreSiembra.Count > 0)
+                        {
+                            foreach (var foto in ficha.FotoFichaPreSiembra)
+                            {
+                                <tr valign="top">
+                                    <td colspan="2">
+                                        <a href="@foto.FotoUrl" target="_blank"><img src="@foto.FotoUrl" width="200" /></a>
+                                    </td>
+                                    <td colspan="4">
+                                        <div>@foto.Observaciones</div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                    @if (iFichaPreSiembra == 0)
+                    {
+                        <tr>
+                            <td colspan="7" class="norecords">
+                                No hay registros
+                            </td>
+                        </tr>
+                    }
+                </table>
+
+                <h3>Siembra</h3>
+
+                <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <th align="left">
+                        Potreros
+                    </th>
+                    <th align="left">
+                        Variedad
+                    </th>
+                    <th align="right">
+                        Dosis
+                    </th>
+                    <th align="right">
+                        Fecha
+                    </th>
+                    <th align="left">
+                        Tipo
+                    </th>
+                    <th align="left">
+                        Cultivo Anterior
+                    </th>
+                    <th align="left">
+                        Creación
+                    </th>
+                </tr>   
+                @foreach (var siembra in predio.Siembra.Where(t => t.IdTemporada == temporada.IdTemporada))
+                {
+                    <tr valign="top">
+                        <td align="left">
+                            @foreach (var sp in siembra.SiembraPotrero)
+                            {
+                                @(sp.Potrero.Nombre + " " + sp.Potrero.Superficie.ToString("#,##0 há")) <br />   
+                            }
+                        </td>
+                        <td align="left">
+                            @siembra.Variedad.Cultivo.Nombre @siembra.Variedad.Nombre
+                        </td>
+                        <td align="right">
+                            @siembra.Dosis.ToString("#,##0.#### Kg")
+                        </td>
+                        <td align="right">
+                            @siembra.FechaSiembra.ToString("dd MMM")
+                        </td>
+                        <td>
+                            @siembra.TipoSiembra.Nombre
+                        </td>
+                        <td>
+                            @siembra.Cultivo.Nombre
+                        </td>
+                        <td class="audit">
+                            Creado: @(siembra.UserIns + " " + siembra.FechaHoraIns.ToString("dd/MM/yy hh:mm"))
+                            
+                            @if (siembra.FechaHoraUpd.HasValue)
+                            {
+                                <br />
+                                <text>Actualizado:</text> @(siembra.UserUpd + " " + siembra.FechaHoraUpd.Value.ToString("dd/MM/yy hh:mm"))
+                            }
+                            @if (puedeEliminarFichas)
+                            {
+                                <br />
+                                <a href="#" class="deleteDatoSiembra eliminar" data-id="@siembra.IdSiembra">Eliminar Dato de Siembra</a>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (iSiembra == 0)
+                {
+                    <tr>
+                        <td colspan="7" class="norecords">
+                            No hay registros
+                        </td>
+                    </tr>
+                }
+                </table>
+
+                <h3>Fichas de Visitas</h3>
+
+                <table class="dataList" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 50px;">
+                <tr>
+                    <th align="left">
+                        Fecha
+                    </th>
+                    <th align="left">
+                        Tipo
+                    </th>
+                    <th align="left">
+                        Potreros
+                    </th>
+                    <th align="left">
+                        Observaciones
+                    </th>
+                    <th align="left">
+                        Recomendaciones
+                    </th>
+                    <th align="left">
+                        Creación
+                    </th>
+                </tr>   
+                @foreach (var ficha in predio.Ficha.Where(t => t.IdTemporada == temporada.IdTemporada).OrderBy(f => f.Fecha))
+                {
+                    <tr valign="top">
+                        <td align="left">
+                            @ficha.Fecha.ToString("dd MMM")
+                        </td>
+                        <td align="left">
+                            <b>@ficha.TipoFicha.Nombre</b><br /><a href="@Url.Content(ficha.PdfUrl)">Descargar</a><br />
+                            <i>@ficha.LecturaMailFicha.Count() descargas(s)</i>
+                        </td>
+                        <td align="left">
+                            @foreach (var sp in ficha.FichaPotrero)
+                            {
+                                @(sp.Potrero.Nombre + " " + @sp.Potrero.Superficie.ToString("#,##0 há")) <br />   
+                            }
+                        </td>
+                        <td>
+                            @ficha.Observaciones
+                            <p>Estado Siembra: @ficha.EstadoSiembra.Nombre</p>
+                            <p>Impotancia Seguimiento: @ficha.ImportanciaSeguimiento.Nombre</p>
+                        </td>
+                        <td>
+                            <ul class="recs">
+                            @foreach (var rec in ficha.Recomendacion)
+                            {
+                                <li><b>@rec.Quimico.TipoRecomendacion.Nombre &gt; @rec.Quimico.Nombre</b><br /> 
+                                    @if (rec.Quimico.IdTipoRecomendacion != 3)
+                                    {
+                                        @rec.Dosis.ToString("#,###0.#### ")  @rec.UM.Nombre<br />
+                                    }
+                                    else
+                                    {
+                                        <table>
+                                        <tr>
+                                            <td>N</td>
+                                            <td>P2O5</td>
+                                            <td>KO2</td>
+                                            <td>MgO</td>
+                                            <td>S</td>
+                                            <td>B</td>
+                                            <td>Zn</td>
+                                            <td>CaO</td>
+                                        </tr> 
+                                        <tr>
+                                            <td>@rec.FerN.ToString("#,##0.####")</td>
+                                            <td>@rec.FerP2O5.ToString("#,##0.####")</td>
+                                            <td>@rec.FerKO2.ToString("#,##0.####")</td>
+                                            <td>@rec.FerMgO.ToString("#,##0.####")</td>
+                                            <td>@rec.FerS.ToString("#,##0.####")</td>
+                                            <td>@rec.FerB.ToString("#,##0.####")</td>
+                                            <td>@rec.FerZn.ToString("#,##0.####")</td>
+                                            <td>@rec.FerCaO.ToString("#,##0.####")</td>
+                                        </tr>  
+                                        </table>
+                                    }
+                                    @if (rec.FechaAplicacion.HasValue)
+                                    {
+                                        <text>Aplicar</text> @rec.FechaAplicacion.Value.ToString("dd MMM yyyy");
+                                    }
+                                    @if (puedeEliminarFichas)
+                                    {
+                                        <br />
+                                        <a href="#" data-id="@rec.IdRecomendacion" class="deleteRecomendacion eliminar">Eliminar Recomendación</a>
+                                    }
+
+                                </li>
+                            }
+                            </ul>
+                        </td>
+                        <td class="audit">
+                            Creado: @(ficha.UserIns + " " + ficha.FechaHoraIns.ToString("dd/MM/yy hh:mm"))
+                            
+                            @if (ficha.FechaHoraUpd.HasValue)
+                            {
+                                <br />
+                                <text>Actualizado:</text> @(ficha.UserUpd + " " + ficha.FechaHoraUpd.Value.ToString("dd/MM/yy hh:mm"))
+                            }
+                            @if (puedeEliminarFichas)
+                            {
+                                <br />
+                                <a href="#" data-id="@ficha.IdFicha" class="deleteFicha eliminar">Eliminar Ficha</a>
+                            }
+                        </td>
+                    </tr>
+                    if (ficha.FotoFicha.Count > 0)
+                    {
+                        foreach (var foto in ficha.FotoFicha)
+                        {
+                        <tr valign="top">
+                            <td colspan="2">
+                                <a href="@foto.FotoUrl" target="_blank"><img src="@foto.FotoUrl" width="200" /></a>
+                            </td>
+                            <td colspan="4">
+                                <div>@foto.Observaciones</div>
+                            </td>
+                        </tr>
+                        }
+                    }
+                }
+                @if (iFicha == 0)
+                {
+                    <tr>
+                        <td colspan="7" class="norecords">
+                            No hay registros
+                        </td>
+                    </tr>
+                }
+                </table>
+            }
+        }
+
+    }
+
+    <script>
+
+        $(document).ready(function () {
+
+            $(".deleteDatoSiembra").click(function() {
+                var id = $(this).attr("data-id");
+                if (confirm("¿Está seguro que desea eliminar este datos de siembra?")) {
+                    window.location.href = '@Url.Action("DeleteSiembra", new { id = 0, idAgricultor = Model.IdAgricultor })'.replace(0, id);
+                }
+                return false;
+            });
+
+            $(".deleteFicha").click(function () {
+                var id = $(this).attr("data-id");
+                if (confirm("¿Está seguro que desea eliminar esta ficha?")) {
+                    window.location.href = '@Url.Action("DeleteFicha", new { id = 0, idAgricultor = Model.IdAgricultor })'.replace(0, id);
+                }
+                return false;
+            });
+
+            $(".deleteRecomendacion").click(function () {
+                var id = $(this).attr("data-id");
+                if (confirm("¿Está seguro que desea eliminar esta recomendación?")) {
+                    window.location.href = '@Url.Action("DeleteRecomendacion", new { id = 0, idAgricultor = Model.IdAgricultor })'.replace(0, id);
+                }
+                return false;
+            });
+
+            $(".deleteFichaPreSiembra").click(function () {
+                var id = $(this).attr("data-id");
+                if (confirm("¿Está seguro que desea eliminar esta ficha de pre-siembra?")) {
+                    window.location.href = '@Url.Action("DeleteFichaPreSiembra", new { id = 0, idAgricultor = Model.IdAgricultor })'.replace(0, id);
+                }
+                return false;
+            });
+
+            $(".deleteRecomendacionPreSiembra").click(function () {
+                var id = $(this).attr("data-id");
+                if (confirm("¿Está seguro que desea eliminar esta recomendación?")) {
+                    window.location.href = '@Url.Action("DeleteRecomendacionPreSiembra", new { id = 0, idAgricultor = Model.IdAgricultor })'.replace(0, id);
+                }
+                return false;
+            });
+
+        });
+
+    </script>   
+        
+        
+        

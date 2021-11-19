@@ -1,0 +1,1142 @@
+﻿@using AgroFichasWeb.Models
+@model CTR_ControlTiempo
+
+@{
+    AgroFichasDBDataContext dc = new AgroFichasDBDataContext();
+    List<CTR_ControlTiempo_Detalle> ctr_d = (from c in dc.CTR_ControlTiempo_Detalle where c.IdControlTiempo == Model.IdControlTiempo && c.NumeroGuia != null select c).OrderBy(c => c.IdControlTiempoDetalle).ToList();
+
+    string nguias = "";
+
+    if (ctr_d.Count() > 0)
+    {
+        foreach (var item in ctr_d)
+        {
+            if (nguias.Length == 0)
+            {
+                nguias += item.NumeroGuia;
+            }
+            else
+            {
+                nguias += " - " + item.NumeroGuia;
+            }
+        }
+
+    }
+    else
+    {
+        nguias = "No existen números de guía asociados";
+    }
+
+    ViewBag.Title = "Control de Tiempo";
+    ViewBag.SubTitle = "Registrar Pesaje Final | Camion N° " + Model.IdControlTiempo + " | " + nguias;
+
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+    decimal? PesoFinal = 0;
+    if (Model.PesoFinal != null)
+    {
+        PesoFinal = (decimal)(Model.PesoFinal - Model.PesoInicial);
+    }
+
+    //Variables para api
+
+
+
+
+}
+@section VendorCSS
+{
+    <link href="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.css")" rel="stylesheet" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/javascripts/ui-elements/jquery.sweet-alert.init.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/sweetalert/dist/sweetalert.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        var uri = 'http://190.13.134.173/Soindus/SoindusApi/RegCom/';
+        var strParams = { pIdBalanza: "BALANZA2" };
+        var urlGeneral = '@Url.Content("~/")';
+
+
+
+        $(document).ready(function () {
+
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+
+
+
+            $('#NumeroGuia').on('keypress', function (e) {
+                if (e.which == 32) {
+                    return false;
+                }
+            });
+
+            $("#btn_registrar_peso").click(function () {
+                if ($("#documentos_asignados").val().length > 0) {
+
+                    if (Number($("#PesoFinal").val()) == 0) {
+                        alert("El peso final no puede ser 0")
+                        return;
+                    }
+
+                    $.ajax({
+                        url: $('#formPeso').attr('action'),
+                        type: 'POST',
+                        data: $('#formPeso').serialize(),
+                        success: function () {
+                            $("#documentos_asignados").val('')
+                            $("#pesoUnitario").val('')
+                            CargaTablaPlanificacionDetalle();
+                            CargaTablaGuiasSinAsignar();
+                        }
+                    });
+
+                } else {
+                    alert("Por favor asigne al menos un documento")
+                }
+            });
+
+
+
+            CargaTablaPlanificacionDetalle();
+            CargaTablaGuiasSinAsignar();
+
+
+
+
+
+        });
+
+
+        function CargaTablaPlanificacionDetalle() {
+            $('#divLineas').load(urlGeneral + 'CTRegistrarPesajeFinal/GetTablaDetallePlanificacionSemanal/'+ @Model.IdPlanificacionSemanal, function (response, status, xhr) {
+            });
+        }
+
+        function CargaTablaGuiasSinAsignar() {
+            $('#divGuiasSinAsignar').load(urlGeneral + 'CTRegistrarPesajeFinal/GetTablaGuiasSinNumero/' + @Model.IdControlTiempo, function (response, status, xhr) {
+            });
+        }
+
+
+
+
+        function getPesoFinal(str) {
+            $('#PesoFinal').val('Cargando. . .');
+
+            $.getJSON(uri + '@ViewBag.Romana.RomanaSalida')
+                .done(function (result) {
+                    $('#PesoFinal').val(result["StrValue"]);
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err)
+                    alert("Ha ocurrido un error a la hora de traer el pesaje, por favor ingreselo manualmente.")
+                    $('#PesoFinal').val(0);
+                });
+        }
+
+        function GenerarGuia() {
+            $.getJSON('http://190.13.134.173/Soindus/SoindusApi/EntregaSBO')
+                .done(function (result) {
+                    $('#NumeroGuia').val(result.DocNum)
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err)
+                });
+        }
+
+
+        function ImprimirGuia() {
+            var input = $("#NumeroGuia").val();
+            var val = $("#GuiasAsociadas").val();
+            if (input.length > 0) {
+                if (val.length > 0) {
+                    $("#GuiasAsociadas").val(val + ',' + input);
+                } else {
+                    $("#GuiasAsociadas").val(input);
+                }
+            }
+        }
+
+        function SacarGuia() {
+            var val = $("#GuiasAsociadas").val();
+            var input = $("#NumeroGuia").val();
+            if (val.includes(',' + input)) {
+                $("#GuiasAsociadas").val(val.replace(',' + input, ''));
+            } else {
+                if (val.includes(input + ',')) {
+                    $("#GuiasAsociadas").val(val.replace(input + ',', ''));
+                } else {
+                    $("#GuiasAsociadas").val(val.replace(input, ''));
+                }
+
+            }
+        }
+
+        function AddOVS() {
+            var val = $("#OVSAsignadas").val();
+            var input = $("#OVS_SELECT").val();
+            if (input.length > 0) {
+                if (val.length > 0) {
+                    $("#OVSAsignadas").val(val + ',' + input);
+                } else {
+                    $("#OVSAsignadas").val(input);
+                }
+            }
+        }
+        function DeleteOVS() {
+            var val = $("#OVSAsignadas").val();
+            var input = $("#OVS_SELECT").val();
+            if (val.includes(',' + input)) {
+                $("#OVSAsignadas").val(val.replace(',' + input, ''));
+            } else {
+                if (val.includes(input + ',')) {
+                    $("#OVSAsignadas").val(val.replace(input + ',', ''));
+                } else {
+                    $("#OVSAsignadas").val(val.replace(input, ''));
+                }
+
+            }
+        }
+
+        function AddFRS() {
+            var val = $("#FRSAsignadas").val();
+            var input = $("#FRS_SELECT").val();
+            if (input.length > 0) {
+                if (val.length > 0) {
+                    $("#FRSAsignadas").val(val + ',' + input);
+                } else {
+                    $("#FRSAsignadas").val(input);
+                }
+            }
+        }
+        function DeleteFRS() {
+            var val = $("#FRSAsignadas").val();
+            var input = $("#FRS_SELECT").val();
+            if (val.includes(',' + input)) {
+                $("#FRSAsignadas").val(val.replace(',' + input, ''));
+            } else {
+                if (val.includes(input + ',')) {
+                    $("#FRSAsignadas").val(val.replace(input + ',', ''));
+                } else {
+                    $("#FRSAsignadas").val(val.replace(input, ''));
+                }
+
+            }
+        }
+
+        function GuardarSoloPeso() {
+            var pesoFinal = $("#PesoFinal").val();
+            if (pesoFinal.length == 0) {
+                alert("Por favor ingrese peso final")
+                return;
+            }
+
+            if (Number(pesoFinal) == 0) {
+                alert("El peso final no puede ser 0")
+                return;
+            }
+            window.location.href = '/ctregistrarpesajefinal/RegistrarSoloPeso?id=@Model.IdControlTiempo&peso=' + pesoFinal;
+        }
+
+        function AddDocumento(element) {
+            var currentRow = $(element).closest("tr");
+            var aux = $("#documentos_asignados").val();
+            var val = currentRow.find("td:eq(0)").text() + ',' + currentRow.find("td:eq(1)").text() + ',' + $("#pesoUnitario").val();
+            var cantidad = $("#pesoUnitario").val();
+
+            //Validaciones cantidad
+
+            if (jQuery.isEmptyObject(cantidad)) {
+                alert("Por favor, ingrese cantidad")
+                return;
+            }
+
+
+            if (Number(cantidad) == 0) {
+                alert("La cantidad no puede ser 0")
+                return;
+            }
+
+
+            if ($("#pesoUnitario").val().length > 0) {
+                if (aux.length > 0) {
+                    $("#documentos_asignados").val(aux + '-' + val)
+                } else {
+                    $("#documentos_asignados").val(val)
+                }
+            }
+        }
+
+        function ValidarComas(txt, evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode == 46) {
+                if (txt.value.length == 0 && txt.value.indexOf('.') === -1) {
+                    return false;
+                }
+                if (txt.value.indexOf('.') === -1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                if (charCode > 31 &&
+                    (charCode < 48 || charCode > 57))
+                    return false;
+            }
+            return true;
+        }
+
+
+        function DeleteDocumento(element) {
+            var currentRow = $(element).closest("tr");
+            var aux = $("#documentos_asignados").val();
+            var val = currentRow.find("td:eq(0)").text() + ',' + currentRow.find("td:eq(1)").text() + ',' + $("#pesoUnitario").val();
+            if ($("#documentos_asignados").val().includes('-' + val)) {
+                $("#documentos_asignados").val($("#documentos_asignados").val().replace('-' + val, ''))
+            } else if ($("#documentos_asignados").val().includes(val + '-')) {
+                $("#documentos_asignados").val($("#documentos_asignados").val().replace(val + '-', ''))
+            } else {
+                $("#documentos_asignados").val('')
+            }
+        }
+        function GuiasSubmit() {
+            var aux = ''
+                swal({
+                    title: "¿Estás seguro que deseas registrar este número de guía? No es modificable",
+                    text: "Número: " + $("#NumeroGuia").val(),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "SI!",
+                    cancelButtonText: "NO, Cancelar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        $("#table tbody tr").each(function () {
+                            var row = $(this);
+                            aux = row.find("td").eq(0).html()
+                            if ($("#aux_guias").val().length > 0) {
+                                $("#aux_guias").val($("#aux_guias").val() + ',' + aux)
+                            } else {
+                                $("#aux_guias").val(aux)
+                            }
+                        });
+                        $("#guiaForm").submit();
+                    } else {
+                        swal("Cancelado", "No se efectuo la acción", "error");
+                    }
+                });
+
+
+        }
+        function ReasignarLinea(element) {
+            var currentRow = $(element).closest("tr");
+            var array = [];
+            var object = {
+                IdControlTiempoDetalle: currentRow.find("td:eq(0)").text(),
+                PesoAsociado: currentRow.find("td:eq(3)").text()
+            }
+            array.push(object)
+            var data = JSON.stringify(array)
+            $.ajax({
+                url: urlGeneral + "CTRegistrarPesajeFinal/ReasignarLineas",
+                type: 'POST',
+                data: { "jsonResult": data, "id_control": $("#id_control").val() },
+                success: function (response) {
+                    if (response.IsSuccess == true) {
+                        //window.location.href = '/ctregistrarpesajefinal/registrar/' + response.Id
+                        CargaTablaPlanificacionDetalle();
+                        CargaTablaGuiasSinAsignar();
+                    } else {
+                        swal("Cancelado", "Error al reasignar detalle control tiempo", "error");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    swal("Cancelado", error, "error");
+                }
+            });
+
+        }
+
+        function GenerarGuiaDespacho() {
+
+            swal({
+                title: "¿Estás seguro que deseas registrar este número de guía? No es modificable",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "SI!",
+                cancelButtonText: "NO, Cancelar!",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    /*$("#table tbody tr").each(function () {
+                        var row = $(this);
+                        aux = row.find("td").eq(0).html()
+                        if ($("#aux_guias").val().length > 0) {
+                            $("#aux_guias").val($("#aux_guias").val() + ',' + aux)
+                        } else {
+                            $("#aux_guias").val(aux)
+                        }
+                    });*/
+                    Enviar();
+                } else {
+                    swal("Cancelado", "No se efectuo la acción", "error");
+                }
+            });
+        }
+        function Enviar() {
+            var detalle = [];
+            $("#table tbody tr").each(function () {
+                var array_lote = []
+                var row = $(this);
+                aux = row.find("td").eq(0).html()
+                $("#datatable tbody tr").each(function () {
+                    var rowlote = $(this);
+                    console.log(rowlote.find("td").eq(1).html())
+                    console.log(row.find("td").eq(1).html())
+                    if (rowlote.find("td").eq(0).html() == row.find("td").eq(1).html()) {
+                        var lotes = {
+                            "BatchNumber": rowlote.find("td").eq(1).html(),
+                            "Quantity": rowlote.find("td").eq(2).html()
+                        }
+                        array_lote.push(lotes)
+                    }
+                });
+                var BaseLine = row.find("td").eq(6).html();
+                var BaseType = "";
+                var TipoDocumento = row.find("td").eq(7).html();
+                if (TipoDocumento == 1) {
+                    BaseType = "17";
+                } else if (TipoDocumento == 2) {
+                    BaseType = "13";
+                }
+                var obj = {
+                    "BaseDocNum": null,
+                    "DocEntry": null,
+                    "LineNum": null,
+                    "BaseType": BaseType,
+                    "BaseEntry": row.find("td").eq(1).html(),
+                    "BaseLine": BaseLine,
+                    "ItemCode": row.find("td").eq(2).html(),
+                    "Quantity": row.find("td").eq(4).html().replace(',', ''),
+                    "WhsCode": row.find("td").eq(5).html(),
+                    "LineStatus": null,
+                    "Lotes": array_lote
+                }
+                detalle.push(obj)
+            });
+
+
+            var id = $('#IdEmpresa').val();
+
+
+            var CodigoCliente = "";
+            var Empresa = "";
+            var UrlEntregaSBO = "";
+
+            if (id == 1) {
+                CodigoCliente = "@Model.Cliente.IDOleotop"
+                Empresa = "Oleotop"
+                UrlEntregaSBO = '@System.Configuration.ConfigurationManager.AppSettings["URL_OLEOTOP"]'
+            }
+
+            if (id == 2) {
+                //url para avenatop
+                CodigoCliente = "@Model.Cliente.IDAvenatop"
+                Empresa = "Avenatop"
+                UrlEntregaSBO = '@System.Configuration.ConfigurationManager.AppSettings["URL_AVENATOP"]'
+                if (jQuery.isEmptyObject(UrlEntregaSBO)) {
+                    UrlEntregaSBO = '@System.Configuration.ConfigurationManager.AppSettings["URL_FASE_PRUEBAS"]'
+                }
+            }
+
+            if (id == 3) {
+                //url para granotop
+                CodigoCliente = "@Model.Cliente.IDGranotop"
+                Empresa = "Granotop"
+                UrlEntregaSBO = '@System.Configuration.ConfigurationManager.AppSettings["URL_GRANOTOP"]'
+            }
+
+            if (id == 4) {
+                //url para saprosem
+                CodigoCliente = "@Model.Cliente.IDSaprosem"
+                Empresa = "Saprosem"
+                UrlEntregaSBO = '@System.Configuration.ConfigurationManager.AppSettings["URL_SAPROSEM"]'
+            }
+
+            if (id == 5) {
+                //url para industry
+                CodigoCliente = "@Model.Cliente.IDICI"
+                Empresa = "Industrial Community International"
+            }
+
+            if (CodigoCliente.length == 0) {
+                swal("Cancelado", "No existe código de cliente", "error");
+                return;
+            }
+
+            if (UrlEntregaSBO.length == 0) {
+                swal("Cancelado", "[SAP] No existe url api para la empresa " + Empresa, "error");
+                return;
+            }
+
+            var email_chofer = "@Model.EmailChofer"
+            if (email_chofer.length == 0) {
+                swal("Cancelado", "[CHOFER] No se pueden generar números de guía sin el correo electrónico del chofer", "error");
+                return;
+            }
+
+
+            UrlEntregaSBO += 'EntregaSBO';
+
+           var data = {
+                    "DocEntry": null,
+                    "DocNum": null,
+                    "CardCode": CodigoCliente,
+                    "DocDate": null,
+                    "DocDueDate": null,
+                    "TaxDate": null,
+                    "Comments": "Prueba API Rest4",
+                    "Indicator": "52",
+                    "U_SDG_DTE_TT": "1",
+                    "U_SDG_DTE_CHOFER": "@Model.NombreChofer",
+                    "U_SDG_DTE_PATENTE": "@Model.Patente",
+                    "U_SDG_DTE_RUT_CHOFER": "@Model.RutChofer",
+                    "U_SDG_DTE_FACRESERVA": "N",
+                    "U_SDG_DTE_AUTO_PRN": "1",
+                    "U_SDG_DTE_PRINTER": "NO_IMPRIMIR",
+                    "U_SDG_DTE_MAIL_PDF": "@Model.EmailChofer",
+                    "U_Email_Chofer": "@Model.EmailChofer",
+                    "Detalle": detalle
+            };
+            console.log(JSON.stringify(data, null, '\t'));
+            $.ajax({
+                type: "POST",
+                url: UrlEntregaSBO,
+                data: {
+                    "DocEntry": null,
+                    "DocNum": null,
+                    "CardCode": CodigoCliente,
+                    "DocDate": null,
+                    "DocDueDate": null,
+                    "TaxDate": null,
+                    "Comments": "Prueba API Rest4",
+                    "Indicator": "52",
+                    "U_SDG_DTE_TT": "1",
+                    "U_SDG_DTE_CHOFER": "@Model.NombreChofer",
+                    "U_SDG_DTE_PATENTE": "@Model.Patente",
+                    "U_SDG_DTE_RUT_CHOFER": "@Model.RutChofer",
+                    "U_SDG_DTE_FACRESERVA": "N",
+                    "U_SDG_DTE_AUTO_PRN": "1",
+                    "U_SDG_DTE_PRINTER": "NO_IMPRIMIR",
+                    "U_SDG_DTE_MAIL_PDF": "@Model.EmailChofer",
+                    "U_Email_Chofer": "@Model.EmailChofer",
+                    "Detalle": detalle },
+                success: function (response) {
+                    console.log(response)
+                    if (response.Estado == "OK") {
+                        $("#NumeroGuia").val(response.Documento);
+                        $("#table tbody tr").each(function () {
+                            var row = $(this);
+                            aux = row.find("td").eq(0).html()
+                            if ($("#aux_guias").val().length > 0) {
+                                $("#aux_guias").val($("#aux_guias").val() + ',' + aux)
+                            } else {
+                                $("#aux_guias").val(aux)
+                            }
+                        });
+                        swal({
+                            title: "Todo ha salido bien",
+                            text: "¡Los datos han sido enviados satisfactoriamente!",
+                            type: "success",
+                            confirmButtonColor: '#DD6B55',
+                            confirmButtonText: 'Continuar',
+                            closeOnConfirm: false
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+                                $("#guiaForm").submit();
+                            }
+                        });
+
+                    } else {
+                        swal("Cancelado", "[SAP] " + response.ErrMsg, "error");
+                        return;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    swal("Cancelado", "[ERROR DE CONEXIÓN] " + xhr.responseText, "error");
+                }
+            });
+        }
+
+        function AgregarLote() {
+            var documento = $("#Documento").val();
+            var numero = $("#nlote").val();
+            var cantidad = $("#cantidadLote").val();
+
+            if (documento.length == 0) {
+                alert("Seleccione un documento");
+                RefrescaLote()
+                return;
+            }
+            if (numero.length == 0) {
+                alert("Seleccione un número valido")
+                RefrescaLote()
+                return
+            }
+            if (cantidad.length == 0) {
+                alert("Ingrese una cantidad válida")
+                RefrescaLote()
+                return
+            }
+
+            var newtr = '<tr class="item" data-id="lote_' + numero + '">';
+            newtr += '<td>' + documento + '</td>';
+            newtr += '<td>' + numero + '</td>';
+            newtr += '<td>' + cantidad + '</td>';
+            newtr += '<td><button type="button" class="btn btn-danger btn-xs remove-item"><i class="fa fa-times"></i></button></td>';
+            newtr += '</tr>';
+
+            $("#LoteSelected").append(newtr);
+            RefrescaLote()
+            VerificarCantidad(documento);
+            $('.remove-item').off().click(function (e) {
+                var doc = $(this).find("td").eq(0).html();
+                document.getElementById("doc_" + documento).disabled = false;
+                $(this).parent('td').parent('tr').remove();
+
+                RefrescaLote()
+            });
+
+        }
+
+        function VerificarCantidad(documento) {
+            cantidad = 0;
+            cantidadTotal = 0;
+            $("#datatable tbody tr").each(function () {
+                var row = $(this);
+                if (row.find("td").eq(0).html() == documento) {
+                    cantidad += Number(row.find("td").eq(2).html())
+                }
+            });
+            $("#table tbody tr").each(function () {
+                var row = $(this);
+                if (row.find("td").eq(1).html() == documento) {
+                    cantidadTotal += Number(row.find("td").eq(4).html())
+                }
+            });
+            console.log(cantidad)
+            console.log(cantidadTotal)
+            if (cantidad == cantidadTotal) {
+                document.getElementById("doc_" + documento).disabled = true;
+            }
+
+        }
+
+        function PasarASalida() {
+            swal({
+                title: "¿Estás seguro de pasar el camion a salida? No es modificable",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "SI!",
+                cancelButtonText: "NO, Cancelar!",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    $.ajax({
+                        url: '/ctregistrarpesajefinal/PasarASalida',
+                        type: 'POST',
+                        data: { id: "@Model.IdControlTiempo" },
+                        success: function (response) {
+                            if (response.IsSuccess == true) {
+                                window.location.href = '/ctregistrarpesajefinal'
+                            } else {
+                                swal("Cancelado", response.Message, "error");
+                            }
+                        }
+                    });
+                } else {
+                    swal("Cancelado", "No se efectuo la acción", "error");
+                }
+            });
+        }
+
+        function RefrescaLote() {
+            $("#Documento").val('');
+            $("#nlote").val('');
+            $("#cantidadLote").val('');
+        }
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">@ViewBag.SubTitle</h2>
+                    <h4 class="text-primary">¿Error de tipeo? <a onclick="window.location.href='@Url.Action("editar", new { id = Model.IdControlTiempo })'">modificar formulario</a></h4>
+                </header>
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formPeso" }))
+                {
+                    <div class="panel-body">
+                        <div class="form-horizontal form-bordered">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Planta Producción</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.PlantaProduccion.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Empresa</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.Empresa.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            <input type="hidden" value="@Model.Empresa.IdEmpresa" id="IdEmpresa" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Producto</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.CTR_Producto.Nombre" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">RUT</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.RutTransportista" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Transportista</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.NombreTransportista" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Patente</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.Patente" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Estado</label>
+                                        <div class="col-sm-6">
+                                            <label class="col-sm-0 control-label"><span id="estado_description" class="@Model.CreateCSSClassResponsive()">@Model.CTR_Estado.Descripcion</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Peso Inicial</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" value="@Model.PesoInicial.Value.ToString("N0")" id="inputReadOnly" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cliente</label>
+                                        <div class="col-sm-6">
+                                            @if (!Model.IdCliente.HasValue)
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.Cliente.RazonSocial" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">D.U.S.</label>
+                                        <div class="col-sm-6">
+                                            @if (string.IsNullOrEmpty(Model.DUS))
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.DUS" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Reserva</label>
+                                        <div class="col-sm-6">
+                                            @if (string.IsNullOrEmpty(Model.Reserva))
+                                            {
+                                                <input type="text" value="" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@Model.Reserva" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Peso Neto</label>
+                                        <div class="col-sm-6">
+                                            @if (Model.PesoFinal == null)
+                                            {
+                                                <input type="text" value="Indefinido" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                            else
+                                            {
+                                                <input type="text" value="@PesoFinal.Value.ToString("N0")" id="inputReadOnly" class="form-control" readonly="readonly">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Cantidad</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" id="pesoUnitario" class="form-control" onkeypress="return ValidarComas(this, event);" onpaste="return false" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*
+                                @if (ViewBag.Lineas != null)
+                                {
+                                    if (Enumerable.Count(ViewBag.Lineas) > 0)
+                                    {
+                                        <div class="form-group center">
+                                            <div class="row">
+                                                <div class="">
+                                                    <div class="col-sm-6" style="float:none;margin:auto;">
+                                                        <table class="table table-bordered table-striped mb-sm">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>N° Documento</th>
+                                                                    <th>Codigo</th>
+                                                                    <th>Producto</th>
+                                                                    <th>Saldo</th>
+                                                                    <th style="margin:auto;">Acciones</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (CTR_PlanificacionSemanal_Detalle linea in ViewBag.Lineas)
+                                                                {
+                                                                    <tr valign="top">
+                                                                        <td class="hide">@linea.IdPlanificacionDetalle</td>
+                                                                        <td>@linea.NumeroDocumento</td>
+                                                                        <td>@linea.Codigo</td>
+                                                                        <td>@linea.NombreProducto</td>
+                                                                        @{
+                                                                            decimal saldoParse = (decimal)linea.Saldo;
+                                                                        }
+                                                                        <td>@String.Format("{0:N2}", saldoParse) </td>
+                                                                        <td>
+                                                                            <div class="btn-group center" role="group" aria-label="Botones de acción">
+                                                                                <button type="button" id="addDocumento" onclick="AddDocumento(this);" class="btn btn-primary btn-sm">Asignar</button>
+                                                                                <button type="button" id="deleteDocumento" onclick="DeleteDocumento(this);" class="btn btn-danger btn-sm">Borrar</button>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            *@
+                            <div id="divLineas"></div>
+
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Documentos asignados</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" readonly id="documentos_asignados" name="documentos_asignados" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="col-sm-3 control-label">Peso Final <span class="required">*</span></label>
+                                        @if (ViewBag.Romana != null)
+                                        {
+                                            if (ViewBag.Romana.EsPesajeAutomatico == true)
+                                            {
+                                                <div class="col-sm-4">
+                                                    @if (Model.PesoFinal == null)
+                                                    {
+                                                        @Html.TextBox("PesoFinal", Model.PesoFinal, new { @class = "form-control", @readonly = "readonly" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextBox("PesoFinal", Model.PesoFinal, new { @class = "form-control", @readonly = "readonly" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <input type="button" onclick="getPesoFinal('')" class="btn btn-danger btn-sm" value="Romana salida" />
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-sm-6">
+                                                    @if (Model.PesoFinal == null)
+                                                    {
+                                                        @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control", onkeypress = "return ValidarComas(this, event);", onpaste = "return false" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control", onkeypress = "return ValidarComas(this, event);", onpaste = "return false" })
+                                                        @Html.ValidationMessage("PesoFinal")
+                                                    }
+
+                                                </div>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <div class="col-sm-6">
+                                                @if (Model.PesoFinal == null)
+                                                {
+                                                    @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control", onkeypress = "return ValidarComas(this, event);", onpaste = "return false" })
+                                                    @Html.ValidationMessage("PesoFinal")
+                                                }
+                                                else
+                                                {
+                                                    @Html.TextBox("PesoFinal", @Model.PesoFinal, new { @class = "form-control", onkeypress = "return ValidarComas(this, event);", onpaste = "return false" })
+                                                    @Html.ValidationMessage("PesoFinal")
+                                                }
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+                        </div>
+                    </div>
+
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <div class="btn-group" role="group" aria-label="Botones de acción">
+                                    <input type="button" class="btn btn-primary" id="btn_registrar_peso" value="Guardar pesos y asignaciones" />
+                                    <button type="button" onclick="GuardarSoloPeso();" class="btn btn-primary">Guardar solo peso</button>
+                                    <a id="btnTicket" class="btn btn-primary" target="_blank" href="~/ctregistrarpesajefinal/GenerarTicket/@Model.IdControlTiempo">Generar Ticket</a>
+                                    <a id="btnTicketEmail" class="btn btn-primary" target="_blank" href="~/ctregistrarpesajefinal/EnviarTicket/@Model.IdControlTiempo">Enviar email</a>
+                                    <a class="btn btn-danger" onclick="PasarASalida();">Pasar a salida</a>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                }
+                @*
+                    <form id="guiaForm" action="~/CTRegistrarPesajeFinal/InsertarGuias" method="post">
+
+                        @if (ViewBag.LineasAsociadas != null)
+                        {
+                            if (Enumerable.Count(ViewBag.LineasAsociadas) > 0)
+                            {
+                                <div class="panel-body">
+                                    <div class="form-horizontal form-bordered">
+
+
+                                        <div class="form-group center">
+                                            <div class="row">
+                                                <div class="">
+                                                    <div class="col-sm-6" style="float:none;margin:auto;">
+                                                        <table class="table table-bordered table-striped mb-sm" id="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Documentos asociados</th>
+                                                                    <th>Codigo</th>
+                                                                    <th>Productos asociados</th>
+                                                                    <th>Cantidad asignada</th>
+                                                                    <th>Acciones</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="TBODY_lineas">
+                                                                @foreach (CTR_ControlTiempo_Detalle linea in ViewBag.LineasAsociadas)
+                                                                {
+                                                                    <tr valign="top" id="row">
+                                                                        <td class="hide" id="controldetalle">@linea.IdControlTiempoDetalle</td>
+                                                                        <td id="numerodocumento">@linea.CTR_PlanificacionSemanal_Detalle.NumeroDocumento</td>
+                                                                        <td id="numerodocumento">@linea.CTR_PlanificacionSemanal_Detalle.Codigo</td>
+                                                                        <td id="nombre">@linea.CTR_PlanificacionSemanal_Detalle.NombreProducto</td>
+                                                                        @{
+                                                                            decimal pesoAsociado = (decimal)linea.PesoAsociado;
+                                                                        }
+                                                                        <td id="pesoasociado">@String.Format("{0:N2}", pesoAsociado) </td>
+                                                                        <td class="hide">@linea.CTR_PlanificacionSemanal_Detalle.WhsCode</td>
+                                                                        <td class="hide">@linea.CTR_PlanificacionSemanal_Detalle.Linea</td>
+                                                                        <td class="hide">@linea.CTR_PlanificacionSemanal_Detalle.TipoDocumento</td>
+                                                                        <td> <button type="button" class="btn btn-danger btn-sm" id="borrarLineaAsociada" onclick="ReasignarLinea(this);">Reasignar</button></td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <label class="col-sm-3 control-label">Lotes</label>
+                                                    <div class="col-sm-6">
+                                                        <button type="button" class="btn btn-info" id="btnModal" data-toggle="modal" data-target="#ModalLote">(Agregar Lote)</button>
+                                                        <table id="datatable" class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Documento</th>
+                                                                    <th>Número de lote</th>
+                                                                    <th>Cantidad</th>
+                                                                    <th>Acciones</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="LoteSelected">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div id="lote-HiddenKeys">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group hide">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <label class="col-sm-3 control-label">Guia</label>
+                                                    <div class="col-sm-5">
+                                                        @Html.TextBox("NumeroGuia", Model.NumeroGuia, new { @class = "form-control" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <input id="aux_guias" type="hidden" name="aux_guias" />
+                                <input type="hidden" value="@Model.IdControlTiempo" id="id_control" name="id_control" />
+                                <footer class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-lg-12 center">
+                                            <button type="button" onclick="GenerarGuiaDespacho();" class="btn btn-primary">Generar número de guía</button>
+
+                                        </div>
+                                    </div>
+                                </footer>
+
+                                <div class="modal fade" id="ModalLote" role="dialog">
+                                    <div class="modal-dialog">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Agregar Lote a la Lista</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label>Documento</label>
+                                                    <select class="form-control" id="Documento" name="Documento" tabindex="-1" aria-hidden="true">
+                                                        <option value="">(Seleccione un documento)</option>
+                                                        @foreach (CTR_ControlTiempo_Detalle linea in ViewBag.LineasAsociadas)
+                                                        {
+                                                            <option id="doc_@linea.CTR_PlanificacionSemanal_Detalle.NumeroDocumento" value="@linea.CTR_PlanificacionSemanal_Detalle.NumeroDocumento">@linea.CTR_PlanificacionSemanal_Detalle.NumeroDocumento</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>N° Lote</label>
+                                                    <input class="form-control" id="nlote" name="nlote" tabindex="-1" aria-hidden="true" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Cantidad</label>
+                                                    <input class="form-control" id="cantidadLote" name="cantidadLote" tabindex="-1" aria-hidden="true" onkeypress="return ValidarComas(this, event);" onpaste="return false" />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" onclick="AgregarLote()" class="btn btn-default" data-dismiss="modal">Agregar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </form>
+                *@
+                <div id="divGuiasSinAsignar"></div>
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+
+</section>
+

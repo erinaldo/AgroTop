@@ -1,0 +1,134 @@
+﻿@using AgroFichasWeb.ViewModels.Operaciones
+@model LineaProduccionViewModel
+
+@{
+    ViewBag.Title = "Líneas de Producción";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/javascripts/tables/row.with.details.js")"></script>
+}
+
+@section CustomScripts
+{
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    @if (false == string.IsNullOrWhiteSpace(Model.MensajeError) || false == string.IsNullOrWhiteSpace(Model.MensajeExito))
+    {
+        <div class="row">
+            @if (false == string.IsNullOrWhiteSpace(Model.MensajeError))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Model.MensajeError
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (false == string.IsNullOrWhiteSpace(Model.MensajeExito))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Model.MensajeExito
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Administrar Líneas de Producción</h2>
+            @if (Model.PuedeCrear || Model.PuedeVerEquipos)
+            {
+                <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                    @if (Model.PuedeCrear)
+                    {
+                        <a href="@Url.Action("Crear", "LineasProduccion")" class="btn btn-primary" id="addLineaProduccion">Nueva LÍnea de Producción <i class="fa fa-plus"></i></a>
+                    }
+                    @if (Model.PuedeVerEquipos)
+                    {
+                        <a href="@Url.Action("Index", "Equipos")" class="btn btn-primary" id="viewEquipos">Equipos <i class="fa fa-eye"></i></a>
+                    }
+                </div>
+            }
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripción</th>
+                        <th class="hidden">Equipos</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var equiposPorLineaProduccion in Model.ListaEquiposPorLineaProduccion)
+                    {
+                        <tr role="row" class="odd">
+                            <td class="sorting_@equiposPorLineaProduccion.LineaProduccion.IdLineaProduccion">@equiposPorLineaProduccion.LineaProduccion.IdLineaProduccion</td>
+                            <td>@equiposPorLineaProduccion.LineaProduccion.Descripcion</td>
+                            <td class="hidden">
+                                @if (equiposPorLineaProduccion.Equipos.Count == 0)
+                                {
+                                    <span>No hay equipos asociados</span>
+                                }
+                                else
+                                {
+                                    int J = equiposPorLineaProduccion.Equipos.Count;
+                                    foreach (var equipo in equiposPorLineaProduccion.Equipos)
+                                    {
+                                        J--;
+                                        if (J == 0)
+                                        {
+                                            <span>@equipo.Descripcion</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@equipo.Descripcion, </span>
+                                        }
+                                    }
+                                }
+                            </td>
+                            <td class="actions">
+                                @if (Model.PuedeAsociarEquipos)
+                                {
+                                    <button id="edit_@equiposPorLineaProduccion.LineaProduccion.IdLineaProduccion" onclick="window.location.href='@Url.Action("EquiposAsociadosPorLineaProduccion", "LineasProduccion", new { id = equiposPorLineaProduccion.LineaProduccion.IdLineaProduccion })'" class="btn btn-success">Asociar Equipos <i class="fa fa-plus"></i></button>
+                                }
+                                @if (Model.PuedeEditar)
+                                {
+                                    <button id="edit_@equiposPorLineaProduccion.LineaProduccion.IdLineaProduccion" onclick="window.location.href='@Url.Action("Editar", "LineasProduccion", new { id = equiposPorLineaProduccion.LineaProduccion.IdLineaProduccion })'" class="btn btn-default"><i class="fa fa-edit"></i></button>
+                                }
+                                @if (Model.PuedeEliminar)
+                                {
+                                    <button id="delete_@equiposPorLineaProduccion.LineaProduccion.IdLineaProduccion" onclick="window.location.href='@Url.Action("Eliminar", "LineasProduccion", new { id = equiposPorLineaProduccion.LineaProduccion.IdLineaProduccion })'" class="btn btn-default"><i class="fa fa-trash-o"></i></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- end: page -->
+</section>

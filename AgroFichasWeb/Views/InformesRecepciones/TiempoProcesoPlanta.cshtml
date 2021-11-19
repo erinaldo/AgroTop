@@ -1,0 +1,104 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model List<rpt_DetalleRecepcionesResult>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.Title = "Tiempos de Proceso en Planta " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+}
+
+
+@section filter {
+    @using(Html.BeginForm()) {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("EmpresaSelector")</td>
+                <td>@Html.Partial("SucursalSelector")</td>
+                <td><input type="text" name="key" value="@ViewData["key"]" /></td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Empresa:</td>
+        <td nowrap="nowrap">@ViewData["empresaLabel"]</td>
+        <td class="RptLabel">Planta:</td>
+        <td nowrap="nowrap">@ViewData["sucursalLabel"]</td>
+        <td class="RptLabel">Filtro:</td>
+        <td width="100%">
+            @(!String.IsNullOrWhiteSpace(ViewData["key"].ToString()) ? ViewData["key"] : "(ninguno)")
+            @Html.ActionLink("Exportar", "TiempoProcesoPlantaExport", new { idTemporada = temporada.IdTemporada, idEmpresa = ViewData["idEmpresa"], idSucursal = ViewData["idSucursal"], key = ViewData["key"] }, new { @class = "exportlink" })
+        </td>
+    </tr>
+    </table>
+    <p><small><i>(*) Todos los tiempos en minutos</i></small></p>
+    <table width="100%" cellpadding="2" cellspacing="2">
+        <tr>
+            <td class="RptEncabezadoListado">Nro</td>
+            <td class="RptEncabezadoListado">Fecha</td>
+            <td class="RptEncabezadoListado">Agricultor</td>
+            <td class="RptEncabezadoListado">Planta</td>
+            <td class="RptEncabezadoListado">Cultivo</td>
+            <td class="RptEncabezadoListado" align="right">Ton<br />Neto</td>
+            <td class="RptEncabezadoListado" align="right">Hora<br />Llegada</td>
+            <td class="RptEncabezadoListado" align="right">Hora<br />Peso Inicial</td>
+            <td class="RptEncabezadoListado" align="right">Hora<br />Salida</td>
+            <td class="RptEncabezadoListado" align="right">Muestreo</td>
+            <td class="RptEncabezadoListado" align="right">Ingreso Lab</td>
+            <td class="RptEncabezadoListado" align="right">Análisis</td>
+            <td class="RptEncabezadoListado" align="right">Peso Inicial</td>
+            <td class="RptEncabezadoListado" align="right">Peso Final</td>
+            <td class="RptEncabezadoListado" align="right">Total</td>
+        </tr>
+    @foreach (var item in Model)
+    {
+    <tr class="RptItemListado" valign="top">
+        <td nowrap="nowrap">@item.IdProcesoIngreso</td>
+        <td nowrap="nowrap" align="right">@item.FechaHoraLlegada.Value.ToString("dd/MM")</td>
+        <td>@item.Nombre</td>
+        <td>@item.Sucursal</td>
+        <td>@item.Cultivo</td>
+        <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", item.PesoBruto.Value / 1000M)</td>
+        <td align="right">@item.FechaHoraLlegada.Value.ToString("HH:mm")</td>
+        <td align="right">@item.FechaPesoInicial.Value.ToString("HH:mm")</td>
+        <td align="right">@item.FechaPesoFinal.ToString("HH:mm", "")</td>
+        <td align="right">@item.TiempoTomaMuestra</td>
+        <td align="right">@item.TiempoLaboratorio</td>
+        <td align="right">@item.TiempoAnalisis</td>
+        <td align="right">@item.TiempoPesoInicial</td>
+        <td align="right">@item.TiempoPesoFinal</td>
+        <td align="right">@item.TiempoTotalPesoFinal</td>
+    </tr>
+    }
+    <tr>
+        <td class="RptPieListado" colspan="5">&nbsp;</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => m.PesoBruto).Sum().Value / 1000M)</td>
+        <td class="RptPieListado" colspan="2" align="right">Promedios</td>
+        <td class="RptPieListado" align="right">
+            @Model.Where(m => m.TiempoTomaMuestra.HasValue).Select(m => m.TiempoTomaMuestra).Average().ToString("#,##0")
+        </td>
+        <td class="RptPieListado" align="right">
+            @Model.Where(m => m.TiempoLaboratorio.HasValue).Select(m => m.TiempoLaboratorio).Average().ToString("#,##0")
+        </td>
+        <td class="RptPieListado" align="right">
+            @Model.Where(m => m.TiempoAnalisis.HasValue).Select(m => m.TiempoAnalisis).Average().ToString("#,##0")
+        </td>
+        <td class="RptPieListado" align="right">
+            @Model.Where(m => m.TiempoPesoInicial.HasValue).Select(m => m.TiempoPesoInicial).Average().ToString("#,##0")
+        </td>
+        <td class="RptPieListado" align="right">
+            @Model.Where(m => m.TiempoPesoFinal.HasValue).Select(m => m.TiempoPesoFinal).Average().ToString("#,##0")
+        </td>
+        <td class="RptPieListado" align="right">
+            @Model.Where(m => m.TiempoTotalPesoFinal.HasValue).Select(m => m.TiempoTotalPesoFinal).Average().ToString("#,##0")
+        </td>
+    </tr>
+</table>

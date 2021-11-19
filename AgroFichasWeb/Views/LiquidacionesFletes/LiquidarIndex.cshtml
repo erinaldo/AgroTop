@@ -1,0 +1,105 @@
+﻿@using AgroFichasWeb.ViewModels.Logistica
+@model PropuestaLiquidacionViewModel
+
+@{
+    ViewBag.NombreSeccion = "Liquidaciones de Fletes";
+    ViewBag.Title = "Crear Propuesta de Liquidación";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+@section headSection {
+    <style>
+        #btnLiquidar {
+            float: right;
+            margin-top: 10px;
+        }
+    </style>
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+
+@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="validation-summary-errors">
+        @Html.Raw(Model.ErrorMessage)
+    </div>
+}
+
+@using (Html.BeginForm("crearpropuestapaso1", "liquidacionesfletes", FormMethod.Post))
+{
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="left">
+            </th>
+            <th align="left">
+                Núm. Ped.
+            </th>
+            <th align="left">
+                Núm. Guía
+            </th>
+            <th align="left">
+                Cultivo
+            </th>
+            <th align="left">
+                Transportista
+            </th>
+            <th align="left">
+                Origen
+            </th>
+            <th align="left">
+                Destino
+            </th>
+        </tr>
+        @if (Model.PedidosALiquidar.Count == 0)
+        {
+            <tr>
+                <td colspan="7" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+
+        @foreach (var item in Model.PedidosALiquidar)
+        {
+            <tr valign="top">
+                <td>
+                    <input type="checkbox" name="pedidos" value="@item.IdPedido" />
+                </td>
+                <td align="left">
+                    <strong>@item.IdPedido</strong>
+                </td>
+                <td align="left">
+                    <strong>@item.NumeroGuia</strong>
+                </td>
+                <td align="left">
+                    @item.Cultivo
+                </td>
+                <td align="left">
+                    @item.RutTransportista @item.NombreTransportista
+                </td>
+                <td align="left">
+                    @item.Origen
+                </td>
+                <td align="left">
+                    @item.Destino
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="7" class="pager"></td>
+        </tr>
+    </table>
+    <input type="submit" id="btnLiquidar" name="btnLiquidar" value="Liquidar estos Pedidos" />
+
+    <!-- hidden -->
+    @Html.HiddenFor(model => model.IdRequerimiento)
+}

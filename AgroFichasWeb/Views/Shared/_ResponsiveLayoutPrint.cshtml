@@ -1,0 +1,17 @@
+﻿@using AgroFichasWeb.Models
+@{
+    Layout = "_ResponsiveLayoutBasePrint.cshtml";
+}
+@section VendorCSS {
+    @RenderSection("VendorCSS", required: false)
+}
+@section VendorScripts {
+    @RenderSection("VendorScripts", required: false)
+}
+@section CustomScripts {
+    <script src="~/Scripts/validate.js"></script>
+    @RenderSection("CustomScripts", required: false)
+}
+<!-- start: page -->
+@RenderBody()
+<!-- end: page -->

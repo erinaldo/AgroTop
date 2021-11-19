@@ -1,0 +1,662 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Liquidaciones
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model LiquidarViewModel
+@{
+
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = String.Format("Liquidar Agricultor {2} {0} {1}", Model.Cultivo.Nombre, Model.Empresa.Nombre, Model.Temporada.Nombre);
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/validate.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+<form action="@Url.Action("liquidar", "liquidaciones", (RouteValueDictionary)ViewData["indexRouteValues"])#formPos" method="post">
+
+    @Html.Hidden("IdLiquidacion", Model.IdLiquidacion)
+    @Html.Hidden("IdAgricultor", Model.IdAgricultor)
+    @Html.Hidden("IdEmpresaLiq", Model.IdEmpresaLiq)
+    @Html.Hidden("IdTemporadaLiq", Model.IdTemporadaLiq)
+    @Html.Hidden("IdCultivo", Model.IdCultivo)
+
+    <fieldset class="dataForm" style="text-align: left">
+        <p>
+            <label>Rut</label>
+            @Model.Agricultor.Rut
+        </p>
+        <p>
+            <label>Nombre</label>
+            @Model.Agricultor.Nombre
+        </p>
+        <a name="formPos">&nbsp;</a>
+        @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+            
+        <table class="form1">
+        @if (Model.Ingresos != null && Model.Ingresos.Count > 0)
+        {
+            <tr valign="top">
+                <td class="label">&nbsp;</td>
+                <td class="label">Ingreso</td>
+                <td class="label">Fecha</td>
+                <td class="label">Planta</td>
+                <td class="label">Guía</td>
+                <td class="label">Cultivo</td>
+                <td class="label" align="center">Precios
+                    <table>
+                        <tr>
+                            <td class="label">Precio</td>
+                            <td class="label">Bono</td>
+                            <td class="label">Bono</td>
+                            <td class="label">Dscto</td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="label" align="right">Neto</td>
+                @foreach (var par in Model.ParametrosAnalisis)
+                {
+                    <td class="label">@par.NombreCorto</td>
+                }
+                <td class="label" align="right">Standard</td>
+                <td class="label" align="right">Total</td>
+            </tr>            
+            foreach (var pi in Model.Ingresos)
+            {
+                var keyPI = "Ingresos[" + pi.IdProcesoIngreso + "].";
+                <tr>
+                    <td>
+                        @Html.CheckBox(keyPI + "Usar", pi.Usar, new { @class = "usarIngreso", data_id = pi.IdProcesoIngreso }) 
+                        @Html.Hidden("Ingresos.Index", pi.IdProcesoIngreso)
+                        @Html.Hidden(keyPI + "IdProcesoIngreso", pi.IdProcesoIngreso)
+                        @Html.Hidden(keyPI + "Fecha", pi.Fecha)
+                        @Html.Hidden(keyPI + "NumeroGuia", pi.NumeroGuia)
+                        @Html.Hidden(keyPI + "CultivoContrato", pi.CultivoContrato)
+                        @Html.Hidden(keyPI + "PesoBruto", pi.PesoBruto)
+                        @Html.Hidden(keyPI + "PesoNormal", pi.PesoNormal)
+                        @Html.Hidden(keyPI + "NombreSucursal", pi.NombreSucursal)
+                    </td>
+                    <td>
+                        @Html.ActionLink(pi.IdProcesoIngreso.ToString(), "detalleingreso", "recepciones", new { id = pi.IdProcesoIngreso }, new { @class = "command", target = "_blank" })
+                    </td>
+                    <td>@pi.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@pi.NombreSucursal</td>
+                    <td>@pi.NumeroGuia</td>
+                    <td>@pi.CultivoContrato</td>
+                    <td>
+                        <table width="100%">
+                            @foreach (var precio in pi.Precios)
+                            {
+                                <tr>
+                                    <td>@precio.PrecioUnidadBase.ToString("0.##")</td>
+                                    <td>@precio.BonoUnidad.ToString("0.##")</td>
+                                    <td>@string.Format("{0:0.##}%", precio.SobrePrecioPor)</td>
+                                    <td>@string.Format("{0:0.##}%", precio.DescuentoPor)</td>
+                                </tr>
+                            }
+                        </table>
+                    </td>
+                    <td align="right">@pi.PesoBruto.ToString("#,##0") Kg</td>
+                    @foreach (var par in Model.ParametrosAnalisis)
+                    {
+                        var val = Model.ValoresAnalisis.SingleOrDefault(va => va.IdProcesoIngreso == pi.IdProcesoIngreso && va.IdParametroAnalisis == par.IdParametroAnalisis);
+                        <td nowrap="nowrap">
+                            @(val != null ? val.ToString() : "")
+                        </td>
+                    }
+                    <td align="right"><b>@pi.PesoNormal.ToString("#,##0") Kg</b></td>
+                    <td align="right"><input type="text" id="txtTotalNeto-@pi.IdProcesoIngreso" class="readonly" style="text-align: right; width: 90px;" readonly /></td>
+                    <td align="center"><a href="#" class="editar command" data-id="@pi.IdProcesoIngreso">Editar</a></td>
+                    <td>
+                        <div  id="tblPI-@pi.IdProcesoIngreso" class="ingresoWindow" style="display: none" title="Editar Cierre">
+                            <table class="form1" style="width: 100%">
+                                <tr>
+                                    <td class="label" colspan="1"></td>
+                                    <td class="label" colspan="1">Contrato</td>
+                                    <td class="label" colspan="4">Convenio de Precio</td>
+                                    <td class="label" colspan="3">Liquidación</td>
+                                </tr>
+                                <tr>
+                                    <td class="label" align="center">&nbsp;</td>
+                                    <td class="label" align="left">Nro</td>
+                                    <td class="label" align="left">Agricultor</td>
+                                    <td class="label" align="right">Nro</td>
+                                    <td class="label" align="left">Disponible</td>
+                                    <td class="label" align="right">Precio / Kg</td>
+                                    <td class="label" align="right">Bono</td>
+                                    <td class="label" align="right">Dscto</td>
+                                    <td class="label" align="right">Kg</td>
+                                    <td class="label" align="right">Tasa Cambio</td>
+                                    <td class="label" align="right">Total</td>
+                                </tr>
+                                @if (pi.Precios != null)
+                                {
+                                    foreach (var precio in pi.Precios)
+                                    {
+                                        var key = keyPI + "Precios[" + precio.IdPrecioIngreso + "].";
+                                        <tr valign="top">
+                                            <td align="center">
+                                                @if (precio.Seleccionable)
+                                                {
+                                                    @Html.CheckBox(key + "Usar", precio.Usar, new { @class = "usarPrecio" })
+                                                }
+                                                else
+                                                {
+                                                    <text>Liquidado</text>
+                                                    @Html.Hidden(key + "Usar", precio.Usar)
+                                                }
+                                            </td>
+                                            <td align="left">
+                                                @(precio.NroContrato)
+                                                @Html.Hidden(keyPI + "Precios.Index", precio.IdPrecioIngreso)
+                                                @Html.Hidden(key + "IdPrecioIngreso", precio.IdPrecioIngreso)
+                                                @Html.Hidden(key + "IdItemContrato", precio.IdItemContrato)
+                                                @Html.Hidden(key + "IdConvenioPrecio", precio.IdConvenioPrecio)
+                                                @Html.Hidden(key + "Nombre", precio.Nombre)
+                                                @Html.Hidden(key + "Rut", precio.Rut)
+                                                @Html.Hidden(key + "NroContrato", precio.NroContrato)
+                                                @Html.Hidden(key + "IdContrato", precio.IdContrato)
+                                                @Html.Hidden(key + "Seleccionable", precio.Seleccionable)
+                                                @Html.Hidden(key + "PesoBruto", precio.PesoBruto)
+                                                @Html.Hidden(key + "PesoNormal", precio.PesoNormal)
+                                            </td>
+                                            <td align="left">@precio.Nombre</td>
+                                            <td align="right">@(precio.IdConvenioPrecio.HasValue ? precio.IdConvenioPrecio.ToString() : "-")</td>
+                                            <td align="right">
+                                                @if (precio.IdConvenioPrecio.HasValue)
+                                                {
+                                                    @Html.TextBox(key + "Disponible", "", new { @class = "disponible readonly", data_id = precio.IdPrecioIngreso, style = "text-align: right; width: 80px;", @readonly = "readonly" })
+                                                }
+                                                else
+                                                {
+                                                    <text>-</text>
+                                                }
+                                            </td>
+                                            <td align="right" nowrap="nowrap">
+                                                @if (precio.IdConvenioPrecio.HasValue)
+                                                {
+                                                    <text>Base:</text> @String.Format(precio.FormatoMoneda, precio.PrecioUnidadBase)<br />
+                                                    <text>Bono:</text> @String.Format(precio.FormatoMoneda, precio.BonoUnidad)<br />
+                                                    if (precio.EsPiso)
+                                                    {
+                                                     <br /><i><b>Piso</b></i>   
+                                                    }                                                    
+                                                    @Html.Hidden(key + "PrecioUnidadBase", precio.PrecioUnidadBase)
+                                                    @Html.Hidden(key + "BonoUnidad", precio.BonoUnidad)
+                                                    @Html.Hidden(key + "IdMoneda", precio.IdMoneda, new { @class="idMoneda", data_id = precio.IdPrecioIngreso, data_parent = pi.IdProcesoIngreso })
+                                                    @Html.Hidden(key + "SimboloMoneda", precio.SimboloMoneda)
+                                                    @Html.Hidden(key + "FormatoMoneda", precio.FormatoMoneda)
+                                                }
+                                                else
+                                                {
+                                                    var monedas = from m in Model.Monedas
+                                                                  select new SelectListItem()
+                                                                  {
+                                                                      Text = m.Simbolo,
+                                                                      Value = m.IdMoneda.ToString(),
+                                                                      Selected = m.IdMoneda == precio.IdMoneda
+                                                                  };
+                                                    var puAttr = new Dictionary<String, Object>() {
+                                                        { "class", "precioUnidadBase" },
+                                                        { "style", "width:50px;text-align:right" }
+                                                    };
+                                                    @Html.ValidationMessage(key + "PrecioUnidadBase", " ")
+                                                    @Html.ValidationMessage(key + "BonoUnidad", " ")
+                                                    if (precio.Seleccionable)
+                                                    {
+                                                        @Html.DropDownList(key + "IdMoneda", monedas, new { @class="idMoneda", data_id = precio.IdPrecioIngreso, data_parent = pi.IdProcesoIngreso })
+                                                    }
+                                                    else
+                                                    {
+                                                        puAttr["class"] = puAttr["class"].ToString() + " readonly";
+                                                        puAttr.Add("readonly", "readonly");                                                        
+
+                                                        @Html.Hidden(key + "IdMoneda", precio.IdMoneda, new { @class="idMoneda", data_id = precio.IdPrecioIngreso, data_parent = pi.IdProcesoIngreso })
+                                                        @Html.Hidden(key + "SimboloMoneda", precio.SimboloMoneda)
+                                                        @Html.Hidden(key + "FormatoMoneda", precio.FormatoMoneda)
+                                                        @precio.SimboloMoneda
+                                                    }
+                                                    <br />
+                                                    <text>Base:</text> @Html.TextBox(key + "PrecioUnidadBase", precio.PrecioUnidadBase, puAttr)<br/>
+                                                    <text>Bono:</text> @Html.TextBox(key + "BonoUnidad", precio.BonoUnidad, puAttr)
+}
+                                            </td>
+                                            <td align="right">
+                                                @if (precio.Seleccionable)
+                                                {
+                                                    <a href="#" class="sobrepreciopor" style="color:#ff0000" data-id="@precio.IdPrecioIngreso">@(precio.SobrePrecioPor.ToString("0.#####"))%</a>
+                                                }
+                                                else
+                                                {
+                                                    @(precio.SobrePrecioPor.ToString("0.#####") + "%")
+                                                }
+                                                @Html.Hidden(key + "SobrePrecioPor", precio.SobrePrecioPor, new { id = "sobrepreciopor_" + precio.IdPrecioIngreso })
+                                            </td>
+                                            <td align="right">
+                                                @if (precio.Seleccionable)
+                                                {
+                                                    <a href="#" class="descuentopor" style="color:#ff0000" data-id="@precio.IdPrecioIngreso">@(precio.DescuentoPor.ToString("0.#####"))%</a>
+                                                }
+                                                else
+                                                {
+                                                    @(precio.SobrePrecioPor.ToString("0.#####") + "%")
+                                                }
+                                                @Html.Hidden(key + "DescuentoPor", precio.DescuentoPor, new { id = "descuentopor_" + precio.IdPrecioIngreso })
+                                            </td>
+                                            <td align="right" nowrap="nowrap">
+                                                @{
+                                                    var caAttrib = new Dictionary<String, Object>() { 
+                                                        { "class", "qtyAsignada qtyAsignada-" + pi.IdProcesoIngreso },
+                                                        { "data-id", precio.IdPrecioIngreso}, 
+                                                        { "data-max", precio.MaxCantidadAsignada },
+                                                        { "data-bruto", precio.PesoBruto },
+                                                        { "data-normal", precio.PesoNormal },
+                                                        { "style", "text-align: right; width: 80px;"}
+                                                    };
+                                                    
+                                                    if (!precio.Seleccionable)
+                                                    {
+                                                        caAttrib["class"] = caAttrib["class"].ToString() + " readonly";
+                                                        caAttrib.Add("readonly", "readonly");
+                                                    }
+                                                }
+                                                @Html.ValidationMessage(key + "CantidadAsignada", " ")
+                                                @Html.TextBox(key + "CantidadAsignada", precio.CantidadAsignada, caAttrib)
+                                                @Html.Hidden(key + "MaxCantidadAsignada", precio.MaxCantidadAsignada)
+                                            </td>
+                                            <td align="right" nowrap="nowrap">
+                                                @Html.ValidationMessage(key + "TasaCambio", " ")
+                                                @Html.TextBox(key + "TasaCambio", precio.TasaCambio, new {
+                                                    @class = "tasaCambio",
+                                                    data_id = precio.IdPrecioIngreso, 
+                                                    data_tcdolar = precio.TasaCambioDolar, 
+                                                    data_editable = (precio.Seleccionable ? "1" : "0"),
+                                                    style = "text-align: right; width: 80px;" 
+                                                })
+                                                @Html.Hidden(key + "TasaCambioDolar", precio.TasaCambioDolar)
+                                            </td>
+                                            <td align="right" nowrap="nowrap">
+                                                @Html.ValidationMessage(key + "TotalLineaPrecio", " ")
+                                                @Html.TextBox(key + "TotalLineaPrecio", "", new { @class = "totalLinea readonly", data_id = precio.IdPrecioIngreso, style = "text-align: right; width: 80px;", @readonly = "readonly" })
+                                            </td>
+                                        </tr>
+                                        if (!String.IsNullOrWhiteSpace(precio.ComentariosContrato) || precio.TieneConvenioMoneda)
+                                        {
+                                        <tr>
+                                            <td></td>
+                                            <td colspan="8" align="left">
+                                                @((!String.IsNullOrWhiteSpace(precio.ComentariosContrato) ? "<b>Comentarios:</b> " + precio.ComentariosContrato + ". " : "").ToMvcHtmlString())
+                                                @if (precio.TieneConvenioMoneda)
+                                                {
+                                                    <text><br /></text>
+                                                    @Html.ActionLink("Este contrato tiene un convenio de cambio de moneda asociado", "index", "conveniosmoneda", new { key = precio.Nombre }, new { @class = "command", target = "_blank" })   
+                                                }
+                                            </td>
+                                        </tr>
+                                        }                                    
+                                    }
+                                }
+                                <tr>
+                                    <td colspan="8" class="label" align="right">Kg Asignado</td>
+                                    <td align="right">
+                                        @Html.ValidationMessage(keyPI + "TotalAsignado", " ")
+                                        @Html.TextBox(keyPI + "TotalAsignado", "", new { @class="readonly", style="text-align: right; width: 80px;", @readonly="readonly" })
+                                    </td>
+                                    <td class="label" align="right">Total Neto Ingreso</td>
+                                    <td align="right">
+                                        @Html.ValidationMessage(keyPI + "TotalNeto", " ")
+                                        @Html.TextBox(keyPI + "TotalNeto", "", new { @class="readonly", style="text-align: right; width: 80px;", @readonly="readonly" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8" class="label" align="right">Kg Pendiente</td>
+                                    <td align="right">
+                                        @Html.TextBox(keyPI + "PendienteAsignacion", "", new { @class="readonly", style="text-align: right; width: 80px;", @readonly="readonly" })
+                                    </td>
+                                    <td class="label" align="right">Total Neto a Liquidar</td>
+                                    <td align="right">
+                                        @Html.ValidationMessage(keyPI + "TotalLiquidar", " ")
+                                        @Html.TextBox(keyPI + "TotalLiquidar", "", new { @class="readonly", style="text-align: right; width: 80px;", @readonly="readonly" })
+                                    </td>
+
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="@(9 + Model.ParametrosAnalisis.Count)" align="right" class="label">Total Neto</td>
+                <td>
+                    <input type="text" id="txtTotalNeto" class="readonly" style="text-align: right; width: 90px;" readonly />
+                    @Html.ValidationMessage("TotalNeto", " ")
+                </td>
+            </tr>
+            <tr>
+                <td colspan="@(9 + Model.ParametrosAnalisis.Count)" align="right" class="label">Iva</td>
+                <td><input type="text" id="txtIva"  class="readonly" style="text-align: right; width: 90px;" readonly /></td>
+            </tr>
+            <tr>
+                <td colspan="@(9 + Model.ParametrosAnalisis.Count)" align="right" class="label">Total</td>
+                <td><input type="text" id="txtTotal" class="readonly" style="text-align: right; width: 90px;" readonly /></td>
+            </tr>                        
+        }
+        else
+        {
+            <tr>
+                <td colspan="11" align="center"><i>No hay ingresos disponibles para la liquidación de este agricultor</i></td>
+            </tr>
+        }
+        </table>
+        <p>
+            <label>Observaciones</label>
+            @Html.TextArea("Observaciones", Model.Observaciones, new { @class = "std", rows = 5 })
+        </p>
+        <p class="okcancel">
+            <input type="button" id="btnGO" value="Crear Liquidación" /> o @Html.ActionLink("Cancelar", "pendientes", (RouteValueDictionary)ViewData["indexRouteValues"])
+        </p>
+    </fieldset>
+</form>
+
+<script>
+    $(document).ready(function () {
+
+        $("#btnGO").click(function () {
+            $(".ingresoWindow").each(function (ix, el) {
+                $(this).appendTo($('form:first'));
+            });
+            $('form:first').submit();
+        });
+
+        $(".editar").click(function () {
+            var id = $(this).attr("data-id");
+            $("#tblPI-" + id).dialog({
+                width: 1080,
+                height: 500,
+                modal: true,
+                buttons: {
+                    Aceptar: function () {
+                        $(this).dialog("close");
+                    }
+                },
+            });
+
+            return false;
+        });
+
+        $(".qtyAsignada").keyup(function () {
+            calcular();
+        });
+
+        $(".qtyAsignada").change(function () {
+            calcular();
+        });
+
+        $(".precioUnidadBase").keyup(function () {
+            calcular();
+        });
+
+        $(".precioUnidadBase").change(function () {
+            calcular();
+        });
+
+        $(".tasaCambio").keyup(function () {
+            calcular();
+        });
+
+        $(".tasaCambio").change(function () {
+            calcular();
+        });
+
+        $(".idMoneda").change(function () {
+            changeMoneda(this);
+            calcular();
+        });
+
+        $(".usarIngreso").change(function () {
+            calcular();
+        });
+
+        $(".usarPrecio").change(function () {
+            calcular();
+        });
+
+        $(".idMoneda").each(function () {
+            changeMoneda(this);
+        });
+
+        $(".usarIngreso").each(function () {
+            calcular();
+        });
+
+
+        $(".sobrepreciopor").click(function () {
+                    
+            var idConvenio  = $(this).attr("data-id");
+            var por = $("#sobrepreciopor_" + idConvenio).val();
+            var newPor = prompt("Ingrese el PORCENTAJE de bono en el precio", por);
+            if (!newPor)
+                return false;
+            if (!EsNumeric(newPor, 0, 50)) {
+                alert('El porcentaje no es válido. Debe estar entre 0 y 50');
+                return false;
+            }
+                    
+            var floatPor = parseFloat(newPor);
+            $("#sobrepreciopor_" + idConvenio).val(floatPor);
+            $(this).html(newPor + "%");
+            calcular();
+
+            return false;
+        });
+
+        $(".descuentopor").click(function () {
+
+            var idConvenio = $(this).attr("data-id");
+            var por = $("#descuentopor_" + idConvenio).val();
+            var newPor = prompt("Ingrese el PORCENTAJE de descuento", por);
+            if (!newPor)
+                return false;
+            if (!EsNumeric(newPor, 0, 50)) {
+                alert('El porcentaje no es válido. Debe estar entre 0 y 50');
+                return false;
+            }
+
+            var floatPor = parseFloat(newPor);
+            $("#descuentopor_" + idConvenio).val(floatPor);
+            $(this).html(newPor + "%");
+            calcular();
+
+            return false;
+        });
+
+        calcular();
+    });
+
+    function changeMoneda(obj) {
+
+        var id = $(obj).attr('data-id');
+        var parent = $(obj).attr('data-parent');
+        var txtTasaCambio = preciosObj(parent, id, "TasaCambio");
+
+        if ($(obj).val() == "1") { //CLP
+            $(txtTasaCambio).addClass("readonly");
+            $(txtTasaCambio).prop("readonly", true);
+            $(txtTasaCambio).val("1");
+        }
+        else { //USD
+            if ($(txtTasaCambio).attr("data-editable") == "1")
+            {
+                $(txtTasaCambio).removeClass("readonly");
+                $(txtTasaCambio).prop("readonly", false);
+                if ($(txtTasaCambio).val() == "1")
+                    $(txtTasaCambio).val($(txtTasaCambio).attr("data-tcdolar"));
+            }
+            else 
+            {
+                $(txtTasaCambio).addClass("readonly");
+                $(txtTasaCambio).prop("readonly", true);
+            }
+        }
+    }
+
+    function calcular() {
+
+        var totalGralNeto = 0;
+
+        $(".usarIngreso").each(function (ix, el) {
+
+            var idProcesoIngreso = $(this).attr("data-id");
+            var txtTotalAsignado = ingresosObj(idProcesoIngreso, "TotalAsignado");
+            var txtPendienteAsignacion = ingresosObj(idProcesoIngreso, "PendienteAsignacion");
+            var txtTotalNeto     = ingresosObj(idProcesoIngreso, "TotalNeto");
+            var txtTotalLiquidar = ingresosObj(idProcesoIngreso, "TotalLiquidar");
+            
+            $(txtTotalAsignado).removeClass("input-validation-error");
+            $(txtPendienteAsignacion).removeClass("input-validation-error");
+            $(".qtyAsignada-"  + idProcesoIngreso).removeClass("input-validation-error");
+            $(".precioUnidadBase-" + idProcesoIngreso).removeClass("input-validation-error");
+
+            var totalAsignado = 0;
+            var totalNeto = 0;
+            var totalLiquidar = 0;
+
+            $(".qtyAsignada-" + idProcesoIngreso).each(function (ix, el) {
+
+                var id = parseInt($(this).attr("data-id"));
+
+                //Kilos asignados
+                var max = parseInt($(this).attr("data-max"));
+                var val = parseInt($(this).val());
+
+                if (isNaN(val) || val < 0 || (!isNaN(max) && val > max))
+                    $(this).addClass("input-validation-error");
+                else
+                    $(this).removeClass("input-validation-error");
+
+                if (!isNaN(val)) 
+                    totalAsignado += val;
+
+                //Kilos para bono
+                var pesoBruto = parseInt($(this).attr("data-bruto"));
+                var pesoNormal = parseInt($(this).attr("data-normal"));
+                var bonoCantidad = Math.round(val / pesoNormal * pesoBruto);
+
+                //Disponible
+                var txtDisponible = preciosObj(idProcesoIngreso, id, "Disponible");
+                if (txtDisponible.length > 0)
+                {
+                    var disponible = (!isNaN(val) && !isNaN(max)) ? max - val : max;
+                    $(txtDisponible).val(numberWithCommas(disponible));
+                }
+
+                //Precio por kilo
+                var txtPrecio = preciosObj(idProcesoIngreso, id, "PrecioUnidadBase");
+                var precio = parseFloat(txtPrecio.val());
+
+                if (isNaN(precio) || precio <= 0)
+                    $(txtPrecio).addClass("input-validation-error");
+                else
+                    $(txtPrecio).removeClass("input-validation-error");
+
+                //Bono por kilo
+                var txtBonoUnidad = preciosObj(idProcesoIngreso, id, "BonoUnidad");
+                var bonoUnidad = parseFloat(txtBonoUnidad.val());
+
+                if (isNaN(bonoUnidad))
+                    $(txtBonoUnidad).addClass("input-validation-error");
+                else
+                    $(txtBonoUnidad).removeClass("input-validation-error");
+
+                //Tasa de cambio
+                var txtTasaCambio = preciosObj(idProcesoIngreso, id, "TasaCambio");
+                var tasaCambio = parseFloat(txtTasaCambio.val());
+
+                if (isNaN(tasaCambio) || tasaCambio <= 0)
+                    $(txtTasaCambio).addClass("input-validation-error");
+                else
+                    $(txtTasaCambio).removeClass("input-validation-error");
+
+                //Bono
+                var bono = parseFloat($("#sobrepreciopor_" + id).val()) / 100;
+
+                //console.log("bono= " + bono);
+
+                //Dscto
+                var dscto = parseFloat($("#descuentopor_" + id).val()) / 100;
+
+                //console.log("dscto= " + dscto);
+
+                //Total
+                //debugger;
+                var txtTotalLinea = preciosObj(idProcesoIngreso, id, "TotalLineaPrecio");
+                var totalLinea = Math.round((precio * val * tasaCambio + (1 + bono - dscto) * tasaCambio + bonoUnidad * bonoCantidad * tasaCambio));
+
+                //console.log("totalLinea= " + totalLinea);
+
+                txtTotalLinea.val(numberWithCommas(totalLinea));
+
+                if (isNaN(totalLinea) || totalLinea < 0)
+                    $(txtTotalLinea).addClass("input-validation-error");
+                else
+                    $(txtTotalLinea).removeClass("input-validation-error");
+
+                if (!isNaN(totalLinea)) 
+                {
+                    totalNeto += totalLinea;
+                    
+                    if(preciosObj(idProcesoIngreso, id, "Usar").is(':checked'))
+                        totalLiquidar += totalLinea;
+                }
+            });
+
+            var pesoNormal = $(ingresosObj(idProcesoIngreso, "PesoNormal")).val();
+            var pendiente = pesoNormal - totalAsignado;
+
+            $(txtTotalAsignado).val(numberWithCommas(totalAsignado));
+            $(txtPendienteAsignacion).val(numberWithCommas(pendiente));
+            $(txtTotalNeto).val(numberWithCommas(totalNeto));
+            $(txtTotalLiquidar).val(numberWithCommas(totalLiquidar));
+
+            $("#txtTotalNeto-" + idProcesoIngreso).val(numberWithCommas(totalLiquidar));
+
+            if (totalAsignado != pesoNormal)
+                $(txtTotalAsignado).addClass("input-validation-error");
+
+            if (pendiente != 0)
+                $(txtPendienteAsignacion).addClass("input-validation-error");
+
+            if ($(this).is(':checked'))
+                totalGralNeto += totalLiquidar;
+        });
+
+        var ivaGral   = Math.round(totalGralNeto * @(Parametros.FactorIva.ToString().Replace(",", ".")));
+        var totalGral = totalGralNeto + ivaGral;
+
+        $("#txtTotalNeto").val(numberWithCommas(totalGralNeto));
+        $("#txtIva").val(numberWithCommas(ivaGral));
+        $("#txtTotal").val(numberWithCommas(totalGral));
+
+    }
+
+    function ingresosObj(idProcesoIngreso, property) {
+        return $("#Ingresos_" + idProcesoIngreso + "__" + property);
+    }
+
+    function preciosObj(idProcesoIngreso, idPrecio, property) {
+        return $("#Ingresos_" + idProcesoIngreso + "__Precios_" + idPrecio  + "__" + property);
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+
+</script>

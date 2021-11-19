@@ -1,0 +1,123 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model AgroFichasWeb.Controllers.PaginatedList<PrecioServicio>
+
+@{
+    var cultivo = (Cultivo)ViewData["cultivo"];
+    var monedas = (List<Moneda>)ViewData["monedas"];
+    var tipoServicio = (List<TipoServicio>)ViewData["tipoServicio"];
+    //var sucursales = (List<Sucur>)ViewData["sucursal"];
+    var monedaCLP = monedas.Single(m => m.IdMoneda == 1);
+    var monedaUSD = monedas.Single(m => m.IdMoneda == 2);
+
+    var puedeEditar = SYS_User.Current().HasPermiso(2003);
+    var puedeElimimar = SYS_User.Current().HasPermiso(2004);
+
+    ViewBag.NombreSeccion = "Precios Servicios";
+    ViewBag.Title = "Administrar Precios Servicios de " + cultivo.Nombre;
+    ViewBag.OverrideStyleMenu2 = "height: auto";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $(".dataList tr:even").addClass("even");
+    });
+</script>
+
+<h2>@ViewBag.Title</h2>
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+@if (SYS_User.Current().HasPermiso(2002))
+{
+    <div style="margin: 20px 0px">
+        <a href="@Url.Content("~/preciosservicio/crear?cultivo=" + cultivo.IdCultivo)">Crear Precio Servicios de  @cultivo.Nombre</a>
+    </div>
+}
+@Html.ValidationSummary("No fue posible procesar su solicitud")
+
+<table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <th align="left">
+            Fecha
+        </th>
+        <th>
+            Sucursal
+        </th>
+        @foreach (var tp in tipoServicio)
+        {
+            <th align="right">
+                CLP / Kg - @tp.Nombre
+            </th>
+        }
+        @*<th align="right">
+            @monedaUSD.Simbolo / Kg
+        </th>*@
+        @if (puedeEditar)
+        {
+            <th align="center">
+                Editar
+            </th>
+        }
+        @if (puedeElimimar)
+        {
+            <th align="center">
+                Eliminark
+            </th>
+        }
+    </tr>
+    @if (Model.Count == 0)
+    {
+        <tr>
+            <td colspan="6" class="norecords">
+                No hay registros
+            </td>
+        </tr>
+    }
+
+    @foreach (var item in Model)
+    {
+        
+        
+            object itemParams = new { id = item.IdCultivo, fecha = item.Fecha.ToString("dd/MM/yyyy") };
+        <tr valign="top">
+            <td align="left">
+                @item.Fecha.ToString("dd/MM/yyyy")
+            </td>
+            <td>
+                @item.Sucursal
+            </td>
+            
+            <td align="right">
+                @item.TipoServicio - Valor: @String.Format(monedaCLP.Formato2, item.Valor)
+            </td>
+            
+            @*<td align="right">
+                    @(item.ValorUSD.HasValue ? String.Format(monedaUSD.Formato2, item.ValorUSD) : "")
+                </td>*@
+            @if (puedeEditar)
+            {
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/editar.png"), "Editar", itemParams)
+                </td>
+            }
+            @if (puedeElimimar)
+            {
+                <td align="center">
+                    @Html.ActionImage(Url.Content("~/Content/images/eliminar.png"), "Eliminar", itemParams)
+                </td>
+            }
+        </tr>
+        
+    }
+    <tr>
+        <td colspan="6" class="pager">
+            @Html.Paginador(Model.PageIndex, Model.TotalPages, "", "PreciosServicio", "")
+        </td>
+    </tr>
+
+</table>

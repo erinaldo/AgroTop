@@ -1,0 +1,148 @@
+﻿@using AgroFichasWeb.Models
+@model CAL_AnalisisPeriodico
+@{
+    ViewBag.Title = "Análisis Periódicos";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+}
+@section CustomScripts
+{
+    <script>
+        // Llamado al API de Empresas Agrotop
+
+        var uri = '@ApiRealUrl.GetApiUrl()';
+
+        function SetCargando(element) {
+            var options = [];
+            options.push('<option value="', '', '">', 'Cargando...', '</option>');
+            element.html(options.join(''));
+        }
+
+        function DeleteLotes() {
+            $("#IdOrdenProduccion option").remove();
+            var options = [];
+            options.push('<option value="',
+                '', '">',
+                '(Seleccione Lote Comercial)', '</option>');
+            $("#IdOrdenProduccion").html(options.join(''));
+        }
+
+        function GetLotes() {
+            var id = $('#IdCliente').val();
+            if (!jQuery.isEmptyObject(id)) {
+                SetCargando($('#IdOrdenProduccion'));
+            }
+            $.getJSON(uri + '/OrdenProduccion/GetLotes?id=' + id)
+                .done(function (result) {
+                    var options = [];
+
+                    if (result.length == 0) {
+                        alert("No hay lotes disponibles");
+                        DeleteLotes();
+                    }
+                    else {
+                        options.push('<option value="',
+                            '', '">',
+                            '(Seleccione Lote Comercial)', '</option>');
+                        for (var i = 0; i < result.length; i++) {
+                            options.push('<option value="',
+                                result[i].IdOrdenProduccion, '">',
+                                result[i].LoteComercial, '</option>');
+                        }
+                        $("#IdOrdenProduccion").html(options.join(''));
+                    }
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    console.log(err);
+                });
+        }
+
+        $("#IdCliente").change(function () {
+            DeleteLotes();
+            GetLotes();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(Request["errMsg"]) || !string.IsNullOrEmpty(Request["okMsg"]))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Request["okMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Request["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Request["errMsg"]))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @Html.Raw(Server.UrlDecode(Request["errMsg"]))
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">
+                    Seleccione Orden de Producción a Analizar
+                </h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Cliente <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdCliente", Model.GetClientes(Model.IdCliente), "(Seleccione Cliente)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdCliente")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Lote Comercial <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @Html.DropDownList("IdOrdenProduccion", new List<SelectListItem>(), "(Seleccione Lote Comercial)", new { @class = "form-control" })
+                                        @Html.ValidationMessage("IdOrdenProduccion")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Buscar" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

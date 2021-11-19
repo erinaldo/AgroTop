@@ -1,0 +1,86 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels.Recepciones
+
+@model PesoInicialViewModel
+@{
+
+    ViewBag.NombreSeccion = "Registrar Peso Inicial " + Model.ProcesoIngreso.Temporada.Nombre;
+    ViewBag.Title = "Ingresar Datos";
+
+    var bodegas = (from bo in Model.Bodegas
+                   select new SelectListItem { Value = bo.IdBodega.ToString(), Text = bo.Nombre, Selected = bo.IdBodega == Model.IdBodega }).Distinct();
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+<form action="@Url.Action("pesoinicial2", "recepciones", (RouteValueDictionary)ViewData["indexRouteValues"])#formPos" method="post">
+    @Html.Hidden("IdProcesoIngreso", Model.IdProcesoIngreso)
+    <fieldset class="dataForm">
+        @Html.Partial("Ingreso", Model.ProcesoIngreso)
+        <p>
+            @if (ViewBag.Romana != null)
+            {
+                if (ViewBag.Romana.EsPesajeAutomatico == true)
+                {
+                    <label>Peso Inicial (Kg)</label>
+                    @Html.TextBox("PesoInicial", Model.PesoInicial, new { @class = "std" })
+                    @Html.ValidationMessage("PesoInicial", ".")
+                    <input type="button" onclick="getPesoInicial('')" class="btn btn-danger btn-sm" value="Romana entrada" />
+                    <input type="button" onclick="getPesoInicial('')" class="btn btn-danger btn-sm" value="Romana salida" />
+                }
+                else
+                {
+                    <label>Peso Inicial (Kg)</label>
+                    @Html.TextBox("PesoInicial", Model.PesoInicial, new { @class = "std" })
+                    @Html.ValidationMessage("PesoInicial", ".")
+                }
+            }
+            else
+            {
+                <label>Peso Inicial (Kg)</label>
+                @Html.TextBox("PesoInicial", Model.PesoInicial, new { @class = "std" })
+                @Html.ValidationMessage("PesoInicial", ".")
+            }
+
+        </p>
+        <p>
+            <label>Bodega</label>
+            @Html.DropDownList("IdBodega", bodegas, new { @class = "std" })
+            @Html.ValidationMessage("IdBodega", ".")
+        </p>
+        <p>
+            <label>Enviar a Secador</label>
+            @Html.CheckBox("Secador", Model.Secador)
+        </p>
+        <p>
+            <label>Observaciones</label>
+            @Html.TextArea("ObservacionesPesoInicial", Model.ObservacionesPesoInicial, new { @class = "std", rows = 5 })
+        </p>
+        <p>
+            <label>PIN</label>
+            @Html.Password("Pin", "", new { autocomplete = "off" })
+            @Html.ValidationMessage("Pin", ".")
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Registrar Peso Inicial" /> o @Html.ActionLink("Cancelar", "pesoinicial1", (RouteValueDictionary)ViewData["indexRouteValues"])
+        </p>
+    </fieldset>
+
+    <script type="text/javascript">
+
+    </script>
+</form>
+<script>
+    var uri = 'http://190.13.134.173/Soindus/SoindusApi/RegCom';
+    var strParams = { pIdBalanza: "BALANZA2" };
+    $(document).ready(function () {
+
+    });
+    function getPesoInicial(str) {
+        $('#PesoInicial').val('Cargando. . .');
+        $.getJSON(uri + '@ViewBag.Romana.RomanaEntrada', function (data) {
+            $('#PesoInicial').val(data["StrValue"])
+        });
+    }
+</script>

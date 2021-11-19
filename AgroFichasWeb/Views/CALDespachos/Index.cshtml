@@ -1,0 +1,23 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@model List<CAL_DespachoPale>
+@{
+    ViewBag.Title = "Despachos";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    Permiso permisosUsuario = (Permiso)ViewData["permisosUsuario"];
+}
+
+<section class="section">
+    <div class="container container-with-sidebar">
+        <div class="row center">
+            <div class="col-md-12 mb-xlg">
+                <h2 class="text-dark mb-xs text-weight-light mt-xlg">Escanea tu <strong>QR-Code</strong></h2>
+                <a class="btn btn-3d btn-xlg mt-md mb-xlg" href="@Url.Action("QRDespachoPallet", "CALDespachosPallets")" style="align-items: center; background-color: #383f48; border-color: #383f48 #383f48 #22262b; color: #fff;"><i class="fa fa-qrcode fa-4x"></i><br> DESPACHO CARGA</a>
+                @if (permisosUsuario.CrearCargaDividida)
+                {
+                    <a class="btn btn-3d btn-xlg mt-md mb-xlg" href="@Url.Action("QRCargaDivididaPallet", "CALDespachosPallets")" style="background-color: #383f48; border-color: #383f48 #383f48 #22262b; color: #fff;"><i class="fa fa-qrcode fa-4x"></i><br> DIVIDIR CARGA</a>
+                }
+            </div>
+        </div>
+    </div>
+</section>

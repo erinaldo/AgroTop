@@ -1,0 +1,74 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model List<rpt_CumplimientoContratoResult>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    
+    ViewBag.Title = "Cumplimiento de Contratos " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+}
+
+
+@section filter {
+    @using(Html.BeginForm()) {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("CultivoSelector")</td>
+                <td><input type="text" name="key" value="@ViewData["key"]" /></td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Cultivo:</td>
+        <td nowrap="nowrap" width="100%">@ViewData["cultivoLabel"]</td>
+    </tr>
+    </table>
+    <br />
+    <table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptEncabezadoListado">Rut</td>
+        <td class="RptEncabezadoListado">Agricultor</td>
+        <td class="RptEncabezadoListado">Cultivo</td>
+        <td class="RptEncabezadoListado" align="right">Ton<br />Contratadas</td>
+        <td class="RptEncabezadoListado" align="right">Ton<br />Recibidas Cerradas</td>
+        <td class="RptEncabezadoListado" align="right">Ton<br />Recibidas Sin Cerrar</td>
+        <td class="RptEncabezadoListado" align="right">Ton<br />Pendientes</td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        var color = "#ffffff";
+        if (item.CantidadPendiente < 0)
+        {
+            color = "#ff0000";
+        }
+        else if (item.CantidadPendiente < 30000 * 3)
+        {
+            color = "yellow";
+        }
+        <tr class="RptItemListado" valign="top">
+            <td nowrap="nowrap">@item.Rut</td>
+            <td>@item.Nombre</td>
+            <td>@item.CultivoContrato</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", item.CantidadContratada / 1000M)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", item.CantidadCerrados / 1000M)</td>
+            <td nowrap="nowrap" align="right">@String.Format("{0:#,##0.0}", item.CantidadAbiertos / 1000M)</td>
+            <td nowrap="nowrap" align="right" style="background-color: @color">@String.Format("{0:#,##0.0}", item.CantidadPendiente / 1000M)</td>
+        </tr>
+    }
+    <tr>
+        <td class="RptPieListado" colspan="3" align="right">Sumas</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => m.CantidadContratada).Sum() / 1000M)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => m.CantidadCerrados).Sum() / 1000M)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => m.CantidadAbiertos).Sum() / 1000M)</td>
+        <td class="RptPieListado" align="right">@String.Format("{0:#,##0.0}", Model.Select(m => m.CantidadPendiente).Sum() / 1000M)</td>
+    </tr>
+</table>

@@ -1,0 +1,180 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.AppLayer.Extensions
+
+@model AgroFichasWeb.Controllers.PaginatedList<ProcesoIngreso>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.NombreSeccion = "Registrar Peso Inicial " + temporada.Nombre;
+    ViewBag.Title = "Seleccione el Ingreso";
+}
+
+
+@section submenuSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+
+    @Html.Partial("TemporadaSelectorUL", new AgroFichasWeb.ViewModels.Recepciones.TemporadaSelectorViewModel()
+        {
+            Temporada = temporada,
+            Temporadas = (List<Temporada>)ViewData["temporadas"],
+            HrefMask = Url.Action("PesoInicial1", "Recepciones", new { idTemporada = "IDTEMPORADA" })
+        })
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>@ViewBag.Title</h2>
+
+    <div style="margin: 20px 0px">
+        @using (Html.BeginForm("pesoinicial1", "recepciones", new { id = 0 }, FormMethod.Get))
+        {
+            <input type="text" name="key" value="@ViewData["key"]" />
+            <input type="hidden" name="idTemporada" value="@temporada.IdTemporada" />
+            <input type="submit" value="Buscar" />
+        }
+    </div>
+
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="center">
+                Estado
+            </th>    
+            <th align="left">
+                Planta
+            </th>
+            <th align="left">
+                Número
+            </th>                         
+            <th align="left">
+                Nombre
+            </th>
+            <th align="left">
+                Guía
+            </th>
+            <th align="left">
+                Cultivo
+            </th>
+            <th align="left">
+                Vehículo
+            </th>
+            <th align="left">
+                Destino
+            </th>  
+            <th align="left">
+                Punto Descarga
+            </th>
+            <th align="center">
+                &nbsp;
+            </th>
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="9" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+        
+        @foreach (var item in Model) 
+        {
+            var itemParams = Model.RouteValues(new RouteValueDictionary() { { "id", item.IdProcesoIngreso } });
+            var htmlAttr = new Dictionary<String, Object>() { {"class", "command" }};
+            
+            <tr valign="top">
+                <td align="center" style="background-color: @item.EstadoProcesoIngreso.Color">
+                    @item.EstadoProcesoIngreso.Nombre
+                </td>
+                <td align="left">
+                    @item.Sucursal.Nombre
+                </td>
+                <td align="left">
+                    @item.IdProcesoIngreso
+                </td>
+                <td align="left">
+                    @item.Agricultor.Nombre
+                </td>
+                <td align="left">
+                    @item.NumeroGuia
+                </td>
+                <td align="left" class="cultivo-@item.CultivoContrato.IdCultivo" style="color: white">
+                    @item.CultivoEmpresa
+                </td>
+                <td align="left">
+                    <b>@item.TipoVehiculo.Nombre @item.Patente</b>
+                </td>
+                <td align="left">
+                    <b>@item.Bodega.Nombre</b>
+                    @(item.Secador.HasValue && item.Secador.Value ? "<br/><b>Enviado a Secador</b>".ToMvcHtmlString() : "".ToMvcHtmlString())
+                </td>
+                <td>
+                    @if (item.IdPuntoDescarga.HasValue)
+                    {
+                        @item.PuntoDescarga.Nombre <a href="#" class="delPuntoDescarga command" style="font-size: 12px; text-decoration:none;" data-id="@item.IdProcesoIngreso">x</a>
+                    }
+                    else
+                    {
+                        <a href="#" class="setPuntoDescarga" data-id="@item.IdProcesoIngreso" data-suc="@item.IdSucursal"  style="color: blue">Asignar</a>
+                    }   
+                </td>
+                <td>
+                    @Html.ActionLink("Ingresar Peso", "pesoinicial2", itemParams, htmlAttr)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="10" class="pager">
+                &nbsp;
+            </td>
+        </tr>
+    </table>
+
+    <form id="frmSetPuntoDescarga" action="@Url.Action("asignarpuntodescarga", "recepciones", (RouteValueDictionary)ViewData["indexRouteValues"])" method="post">
+        <input type="hidden" id="AsignarPuntoDescargaIdPuntoDescarga" name="IdPuntoDescarga" value="" />
+        <input type="hidden" id="AsignarPuntoDescargaIdProcesoIngreso" name="IdProcesoIngreso" value="" />
+    </form>
+
+    
+    <form id="frmDelPuntoDescarga" action="@Url.Action("eliminarpuntodescarga", "recepciones", (RouteValueDictionary)ViewData["indexRouteValues"])" method="post">
+        <input type="hidden" id="EliminarPuntoDescargaIdProcesoIngreso" name="IdProcesoIngreso" value="" />
+    </form>
+
+    @Html.Partial("PuntoDescarga")
+
+    <script>
+
+        $(document).ready(function () {
+            $(".setPuntoDescarga").click(function () {
+                setPuntoDescarga($(this).attr("data-id"), $(this).attr("data-suc"));
+                return false;
+            });
+
+            $(".delPuntoDescarga").click(function () {
+                delPuntoDescarga($(this).attr("data-id"));
+                return false;
+            });
+        });
+
+        function setPuntoDescarga(id, idSucursal) {
+            descargaShow(id, idSucursal);
+        }
+
+        function delPuntoDescarga(id) {
+            $("#EliminarPuntoDescargaIdProcesoIngreso").val(id);
+            $("#frmDelPuntoDescarga")[0].submit();
+        }
+
+        function descargaCallback(id, idPunto) {
+            $("#AsignarPuntoDescargaIdPuntoDescarga").val(idPunto);
+            $("#AsignarPuntoDescargaIdProcesoIngreso").val(id);
+            $("#frmSetPuntoDescarga")[0].submit();
+        }
+    </script>

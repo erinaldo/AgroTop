@@ -1,0 +1,50 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.NombreSeccion = "Registrar Llegada " + temporada.Nombre;
+    ViewBag.Title = "Seleccione al Agricultor";
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("TemporadaSelectorUL", new AgroFichasWeb.ViewModels.Recepciones.TemporadaSelectorViewModel()
+    {
+        Temporada = temporada,
+        Temporadas = (List<Temporada>)ViewData["temporadas"],
+        HrefMask = Url.Action("LlegadaPaso1", "Recepciones", new { idTemporada = "IDTEMPORADA" })
+    })
+}
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm("llegadapaso2", "recepciones", FormMethod.Post, new { id = "frm" }))
+    {
+        @Html.Hidden("IdTemporada", temporada.IdTemporada)
+        <fieldset class="dataForm">
+            <div class="p" style="margin-bottom: 400px;">
+                <label>Agricultor</label>
+                @Html.Partial("~/Views/Controls/AgricultorSelector.cshtml", new AgricultorSelectorViewModel() { IdAgricultor = 0, Nombre = "&nbsp;", Titulo = temporada.Nombre })
+                @Html.ValidationMessage("IdAgricultor", ".")  
+                @Html.Hidden("IdAgricultor")
+            </div>
+        </fieldset>
+    }
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            agsSelectAgricultor();
+        });
+
+        function agsCallback(idAgricultor, nombre) {
+            $("#IdAgricultor").val(idAgricultor);
+
+            if (idAgricultor != "0" && idAgricultor != "")
+                $('#frm')[0].submit();
+        }
+    </script>   

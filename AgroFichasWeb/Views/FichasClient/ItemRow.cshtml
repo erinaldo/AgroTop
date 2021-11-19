@@ -1,0 +1,15 @@
+﻿@model AgroFichasWeb.Models.Agricultor
+<tr id="itemRow-@Model.IdAgricultor">
+    <td>@Model.Nombre</td>
+    <td class="actions text-center">
+        @if (true)
+        {
+            <img id="editSpinner-@Model.IdAgricultor" src="~/Content/spinner.svg" height="18" style="display: none; margin-right:10px" />
+                <a href="#" id="editButton-@Model.IdAgricultor" class="editItem" data-id="@Model.IdAgricultor" style="margin-right:10px"><i class="fa fa-pencil"></i></a>
+        }
+        @if (true)
+        {
+            <a href="@Url.Action("agricultor", new { id = Model.IdAgricultor })" style="margin-right:10px"><i class="fa fa-list-ul"></i></a>
+        }        
+    </td>
+</tr>

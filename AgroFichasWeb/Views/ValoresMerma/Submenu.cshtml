@@ -1,0 +1,6 @@
+﻿<ul>
+    @if (AgroFichasWeb.Models.SYS_User.Current().HasPermiso(101))
+    {
+        <li><a href="@Url.Content("~/valoresmerma/crear")">Crear Valor Merma</a></li>
+    }
+</ul>

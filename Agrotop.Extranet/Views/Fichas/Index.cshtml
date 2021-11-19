@@ -1,0 +1,204 @@
+﻿@using Agrotop.Extranet.Models
+@{
+    var temporadas = (IEnumerable<Temporada>)ViewData["temporadas"];
+    var temporada = (Temporada)ViewData["temporada"];
+    var agricultor = (Agricultor)ViewData["agricultor"];
+    var fichasXTemporada = (Dictionary<int, List<Ficha>>)ViewData["fichas"];
+    var siembrasXTemporada = (Dictionary<int, List<Siembra>>)ViewData["siembras"];
+    var prediosXTemporada = (Dictionary<int, List<Predio>>)ViewData["predios"];
+
+    ViewBag.Title = "Asesorías en Terreno " + temporada.Nombre;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<div class="titulo1-consubmenu">@ViewBag.Title</div>
+<div class="submenu">
+    @foreach (var t in temporadas)
+    {
+        <div class="submenuitem">
+            @if (t.IdTemporada != temporada.IdTemporada)
+            {
+                @Html.ActionLink(t.Nombre, "index", new { id = t.IdTemporada })
+            }
+            else
+            {
+                <span class="submenuitem-selected">@t.Nombre</span>
+            }
+        </div>
+    }
+    <div style="clear: both"></div>
+</div>
+
+<div style="margin: 50px 0px 0px 0px;">
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+    @{
+        var fichas = fichasXTemporada[temporada.IdTemporada];
+        var siembras = siembrasXTemporada[temporada.IdTemporada];
+
+    }
+    @if (fichas.Count > 0 || siembras.Count > 0)
+    {
+        foreach (var predio in prediosXTemporada[temporada.IdTemporada])
+        {
+            var siembrasPredio = siembras.Where(p => p.IdPredio == predio.IdPredio).OrderBy(s => s.Variedad.Cultivo.Nombre);
+
+            <h2>@((predio.Nombre.ToUpper().Contains("PREDIO") ? "" : "Predio ") + predio.Nombre.Trim())</h2>
+
+            <table class="tabla1" id="tablaDatosSiembra">
+                <tr class="header">
+                    <td colspan="4">Datos de Siembra</td>
+                </tr>
+                @foreach (var siembra in siembrasPredio)
+                {
+                    foreach (var sp in siembra.SiembraPotrero)
+                    {
+                        <tr>
+                            <td>@((sp.Potrero.Nombre.ToUpper().Contains("POTRERO") ? "" : "Potrero ") + sp.Potrero.Nombre.Trim())</td>
+                            <td>@sp.Potrero.Superficie.ToString("#,##0 há")</td>
+                            <td>@siembra.Variedad.Cultivo.Nombre</td>
+                            <td>@siembra.Variedad.Nombre</td>
+                        </tr>
+                    }
+                }
+                @if (siembrasPredio.Count() == 0)
+                {
+                    <tr>
+                        <td colspan="4"><i>No hay información</i></td>
+                    </tr>
+                }
+            </table>
+
+            <table class="tabla1" id="tablaFichas">
+                <tr class="header">
+                    <td colspan="5">Visitas a Terreno</td>
+                </tr>
+                <tr class="header">
+                    <td>Fecha / Etapa</td>
+                    <td>Potreros</td>
+                    <td>Observaciones</td>
+                </tr>
+                @{ int iFicha = 0;}
+                @foreach (var ficha in fichas.Where(p => p.IdPredio == predio.IdPredio).OrderBy(f => f.IdFicha))
+                {
+                    var fertilizantes = ficha.Recomendacion.Where(r => r.Quimico.IdTipoRecomendacion == 3);
+                    var quimicos = ficha.Recomendacion.Where(r => r.Quimico.IdTipoRecomendacion != 3);
+
+                    <tr valign="top" class="@(++iFicha % 2 != 0 ? "alt" : "alt2")">
+                        <td nowrap="nowrap" align="left">
+                            @ficha.Fecha.ToString("dd MMM")<br />@ficha.TipoFicha.Nombre
+                            <p><a href="@Url.Content(ficha.PdfUrl)">Descargar Ficha</a></p>
+                        </td>
+                        <td nowrap="nowrap" align="left">
+                            @foreach (var sp in ficha.FichaPotrero)
+                            {
+                                @(sp.Potrero.Nombre) <br />
+                            }
+                        </td>
+                        <td>
+                            @ficha.Observaciones
+                            @if (fertilizantes.Count() > 0)
+                            {
+                                <table cellpadding="0" cellspacing="0" id="fertilizante">
+                                    @foreach (var rec in fertilizantes)
+                                    {
+                                        <tr valign="top" class="header">
+                                            <td>@rec.Quimico.TipoRecomendacion.Nombre</td>
+                                            <td>N</td>
+                                            <td>P2O5</td>
+                                            <td>KO2</td>
+                                            <td>MgO</td>
+                                            <td>S</td>
+                                            <td>B</td>
+                                            <td>Zn</td>
+                                            <td>CaO</td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td>@rec.FerN.ToString("#,##0.####")</td>
+                                            <td>@rec.FerP2O5.ToString("#,##0.####")</td>
+                                            <td>@rec.FerKO2.ToString("#,##0.####")</td>
+                                            <td>@rec.FerMgO.ToString("#,##0.####")</td>
+                                            <td>@rec.FerS.ToString("#,##0.####")</td>
+                                            <td>@rec.FerB.ToString("#,##0.####")</td>
+                                            <td>@rec.FerZn.ToString("#,##0.####")</td>
+                                            <td>@rec.FerCaO.ToString("#,##0.####")</td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            @if (quimicos.Count() > 0)
+                            {
+                                <table cellpadding="0" cellspacing="0" id="quimicos">
+                                    <tr class="header">
+                                        <td>Químico</td>
+                                        <td>Dósis</td>
+                                        <td>Fecha Aplicación</td>
+                                    </tr>
+                                    @foreach (var rec in quimicos)
+                                    {
+                                        <tr valign="top">
+                                            @if (rec.Quimico.IdTipoRecomendacion != 3)
+                                            {
+                                                <td>@rec.Quimico.Nombre</td>
+                                                <td>
+                                                    @rec.Dosis.ToString("#,###0.#### ")  @rec.UM.Nombre
+                                                </td>
+                                                <td>
+                                                    @if (rec.FechaAplicacion.HasValue)
+                                                    {
+                                                        @rec.FechaAplicacion.Value.ToString("dd MMM yyyy")
+                                                    }
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>@rec.Quimico.TipoRecomendacion.Nombre</td>
+                                                <td colspan="2">
+                                                    <table class="fertilizante">
+                                                        <tr>
+                                                            <td>N</td>
+                                                            <td>P2O5</td>
+                                                            <td>KO2</td>
+                                                            <td>MgO</td>
+                                                            <td>S</td>
+                                                            <td>B</td>
+                                                            <td>Zn</td>
+                                                            <td>CaO</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@rec.FerN.ToString("#,##0.####")</td>
+                                                            <td>@rec.FerP2O5.ToString("#,##0.####")</td>
+                                                            <td>@rec.FerKO2.ToString("#,##0.####")</td>
+                                                            <td>@rec.FerMgO.ToString("#,##0.####")</td>
+                                                            <td>@rec.FerS.ToString("#,##0.####")</td>
+                                                            <td>@rec.FerB.ToString("#,##0.####")</td>
+                                                            <td>@rec.FerZn.ToString("#,##0.####")</td>
+                                                            <td>@rec.FerCaO.ToString("#,##0.####")</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            }
+
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (siembras.Count() == 0)
+                {
+                    <tr>
+                        <td colspan="4"><i>No hay visitas registradas</i></td>
+                    </tr>
+                }
+            </table>
+
+            <div style="clear:both; margin-bottom: 50px"></div>
+        }
+    }
+    else
+    {
+        <div>No hay datos registrados para esta temporada</div>
+    }
+</div>

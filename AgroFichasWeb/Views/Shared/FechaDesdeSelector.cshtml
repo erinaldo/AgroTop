@@ -1,0 +1,56 @@
+﻿@using AgroFichasWeb.Models
+@{
+    DateTime? fechaDesde = null;
+    if (ViewData["fechaDesde"] != null)
+    {
+        fechaDesde = (DateTime?)ViewData["fechaDesde"];
+    }
+}
+
+<!-- this should go after your </body> -->
+<script src="~/Scripts/jquery-1.8.2.min.js"></script>
+<link href="~/Scripts/datetimepicker-master/jquery.datetimepicker.css" rel="stylesheet" />
+<script src="~/Scripts/datetimepicker-master/build/jquery.datetimepicker.full.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var currentDate = new Date();
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1;
+        var year = currentDate.getFullYear();
+        var startDate = year + "/" + month + "/" + day;
+        jQuery.datetimepicker.setLocale('es');
+        jQuery('#datetimepicker1').datetimepicker({
+            i18n: {
+                de: {
+                    months: [
+                        'Januar', 'Februar', 'März', 'April',
+                        'Mai', 'Juni', 'Juli', 'August',
+                        'September', 'Oktober', 'November', 'Dezember',
+                    ],
+                    dayOfWeek: [
+                        "So.", "Mo", "Di", "Mi",
+                        "Do", "Fr", "Sa.",
+                    ]
+                },
+                es: {
+                    months: [
+                        'Enero', 'Febrero', 'Marzo', 'Abril',
+                        'Mayo', 'Junio', 'Julio', 'Agosto',
+                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+                    ],
+                    dayOfWeek: [
+                        "Do", "Lu", "Ma", "Mi",
+                        "Ju", "Vi", "Sa",
+                    ]
+                }
+            },
+            dayOfWeekStart: 1,
+            startDate: new Date(),
+            format: 'Y/m/d H:i',
+            timepicker: true,
+            weeks: true,
+        });
+    });
+</script>
+
+@Html.TextBox("fechaDesde", fechaDesde, new { @class = "heavy std", id = "datetimepicker1", placeholder = "Desde" })

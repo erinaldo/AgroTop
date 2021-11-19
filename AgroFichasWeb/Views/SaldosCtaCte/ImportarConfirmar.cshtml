@@ -1,0 +1,88 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.ViewModels
+
+@model ImportarSaldosCtaCteViewModel
+
+@{
+    ViewBag.NombreSeccion = "Saldos Cuenta Corriente";
+    ViewBag.Title = "Confirmar Saldos a Importar";
+
+    var dc = new AgroFichasDBDataContext();
+
+    var empresas = (List<Empresa>)ViewData["empresas"];
+    var invalids = Model.Items.Where(i => !i.Valid);
+}
+
+@section headSection {
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+
+
+@using (Html.BeginForm("importarfinal", "saldosctacte"))
+{
+    <fieldset class="dataForm">
+        <p>
+            <label>Empresa</label>
+            @empresas.Single(e => e.IdEmpresa == Model.IdEmpresa).Nombre
+            @Html.Hidden("IdEmpresa", Model.IdEmpresa)
+            @Html.Hidden("FilePath", Model.FilePath)
+        </p>
+        <p>
+            <label>Agricultores</label>
+            @Model.CuentaItems.ToString("#,##0")
+        </p>
+        <p>
+            <label>Monto Cta Cte</label>
+            @Model.TotalMontoSaldoCtaCte.ToString("#,##0")
+        </p>
+        <p>
+            <label>Monto Documentado</label>
+            @Model.TotalMontoDocumentado.ToString("#,##0")
+        </p>
+        <p>
+            <label>Monto Total</label>
+            @((Model.TotalMontoDocumentado + Model.TotalMontoSaldoCtaCte).ToString("#,##0"))
+        </p>
+        @if (invalids.Count() > 0)
+        {
+                <div class="validation-summary-errors">No fue posible procesar su solicitud. por favor haga las siguientes correcciones:</div>
+                <table class="sublist2">
+                    <tr>
+                        <td align="right"><b>#</b></td>
+                        <td><b>Rut</b></td>
+                        <td><b>Nombre</b></td>
+                        <td><b>CtaCte</b></td>
+                        <td><b>Documentado</b></td>
+                        <td><b>Motivo</b></td>
+                    </tr>
+                    @foreach (var item in invalids)
+                    {
+                        <tr valign="top">
+                            <td align="right">@item.NumeroLinea.ToString("#,##0")</td>
+                            <td>@item.Rut</td>
+                            <td>@item.Nombre</td>
+                            <td align="right">@item.MontoCtaCte.ToString("#,##0")</td>
+                            <td align="right">@item.MontoDocumentado.ToString("#,##0")</td>
+                            <td style="color: red;">@item.ValidMessage</td>
+                        </tr>
+                    }
+                </table>
+        }
+        else
+        {
+            <p class="okcancel">
+                <input type="submit" value="Importar Estos Datos" />  o @Html.ActionLink("Cambiar Datos", "Importar")
+            </p>
+        }
+</fieldset>
+}
+

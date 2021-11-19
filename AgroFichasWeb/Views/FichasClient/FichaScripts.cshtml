@@ -1,0 +1,481 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var temporada = Temporada.TemporadaActivaFichas();
+}
+<script>
+ //Fichas de Visita
+
+        //Create
+        $('#addItemFicha').click(function () {
+
+            var jqxhr = $.post('@Url.Action("getpotrerosparaficha")', { id: @Model.IdPredio, idTemporada: @temporada.IdTemporada },
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showDangerPopUp(data.msg);
+                        }
+                        else {
+                            loadItemFicha({
+                                Id: 0,
+                                IdTipoFicha: 0, 
+                                Fecha: '',
+                                Observaciones: '',
+                                IdEstadoSiembra: 5,
+                                IdImportanciaSeguimiento: 20,
+                                Potreros: data.item.Potreros,
+                                Recomendaciones: [],
+                                Fotos: []
+                            });
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showDangerPopUp(parsePostFail(jqXHR, errorThrown));
+                    })
+                    .always(function () {
+                    });
+
+            });
+
+        //Edit
+        $("#datatable-ficha tbody").on("click", ".editItemFicha", function (e) {
+
+            e.preventDefault();
+            var idItem = $(this).attr("data-id");
+
+            $("#editButtonFicha-" + idItem).hide();
+            $("#editSpinnerFicha-" + idItem).show();
+
+            var jqxhr = $.post('@Url.Action("getficha")', { id: idItem },
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showDangerPopUp(data.msg);
+                        }
+                        else {
+                            loadItemFicha(data.item);
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showDangerPopUp(parsePostFail(jqXHR, errorThrown));
+                    })
+                    .always(function () {
+                        $("#editButtonFicha-" + idItem).show();
+                        $("#editSpinnerFicha-" + idItem).hide();
+                    });
+
+            });
+
+            //Load Data
+            function loadItemFicha(item) {
+
+                $("#validationErrorsFicha").hide();
+                $("#footerButtonsFicha").show();
+                $("#footerSpinnerFicha").hide();
+
+
+                $("#idFicha").val(item.Id);
+                $("#idtipoficha").val(item.IdTipoFicha);
+                $("#fechaficha").val(item.Fecha);
+                $("#observacionesficha").val(item.Observaciones);
+                $("#idestadosiembra").val(item.IdEstadoSiembra);
+                $("#idimportanciaseguimiento").val(item.IdImportanciaSeguimiento);
+
+                $("#tblPotrerosFicha tbody tr").remove();
+                $("#tblRecomendacionesFicha tbody tr").remove();
+                $("#tblFotosFicha tbody tr").remove();
+
+                for (var i = 0; i < item.Potreros.length; i++) {
+                    renderPotreroFicha(item.Potreros[i]);
+                }
+
+                for (var i = 0; i < item.Recomendaciones.length; i++) {
+                    renderRecomendacionFicha(item.Recomendaciones[i]);
+                }
+
+                for (var i = 0; i < item.Fotos.length; i++) {
+                    renderFotoFicha(item.Fotos[i]);
+                }
+
+                $("#formTitleFicha").html((item.Id== 0 ? "Nueva" : "Editar") + " Ficha");
+
+                showFichaForm();
+            }
+
+            function showFichaForm() {
+                $.magnificPopup.open({
+                    items: {
+                        src: '#modalFormFicha', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            function renderPotreroFicha(subItem) {
+
+                var s = '<tr id="potreroFichaRow-' + subItem.IdPotrero + '">';
+
+                s += '<td>';
+                s += '<input type="hidden" name="SubItems.Index" value="' + subItem.IdPotrero + '" />';
+                s += '<input type="hidden" name="SubItems[' + subItem.IdPotrero + '].NombrePotrero" value="' + subItem.NombrePotrero + '" />';
+                s += '<input type="hidden" name="SubItems[' + subItem.IdPotrero + '].IdPotrero" value="' + subItem.IdPotrero + '" />';
+                s += '<input type="checkbox" name="SubItems[' + subItem.IdPotrero + '].Seleccionado" value="true" ' + (subItem.Seleccionado ? "checked" : "") + ' />';
+                s += '<input type="hidden"   name="SubItems[' + subItem.IdPotrero + '].Seleccionado" value="false" />';
+                s += '</td>';
+                s += '<td>' + subItem.NombrePotrero + '</td> ';
+                s += '</tr>';
+
+                return $("#tblPotrerosFicha tbody").append(s);
+            }
+
+            //FOTOS FICHA
+            function renderFotoFicha(subItem) {
+
+                var s = '<tr id="fotoFichaRow-' + subItem.Id + '">';
+
+                s += '<td>';
+                s += '<input type="hidden" name="Fotos.Index" value="' + subItem.Id + '" />';
+                s += '<input type="hidden" id="fotoFicha-Id-' + subItem.Id + '" name="Fotos[' + subItem.Id + '].Id" value="' + subItem.Id + '" />';
+                s += '<input type="hidden" id="fotoFicha-FileName-' + subItem.Id + '" name="Fotos[' + subItem.Id + '].FileName" value="' + subItem.FileName + '" />';
+                s += '<input type="hidden" id="fotoFicha-FotoUrl-' + subItem.Id + '" name="Fotos[' + subItem.Id + '].FotoUrl" value="' + subItem.FotoUrl + '" />';
+                s += '<input type="hidden" id="fotoFicha-Observaciones-' + subItem.Id + '" name="Fotos[' + subItem.Id + '].Observaciones" value="' + subItem.Observaciones + '" />';
+                s += '<img src="' + subItem.FotoUrl + '" width="150" />';
+                s += '</td>';
+                s += '<td>' + subItem.Observaciones + '</td>';
+                s += '<td>';
+                s += '<a href="#" class="editFotoFicha" data-id="' + subItem.Id + '" style="margin-right: 10px"><i class="fa fa-pencil"></i></a>';
+                s += '<a href="#" class="deleteFotoFicha" data-id="' + subItem.Id + '" style="margin-right: 10px"><i class="fa fa-trash-o"></i></a>';
+                s += '</td > ';
+                s += '</tr>';
+
+                return $("#tblFotosFicha tbody").append(s);
+            }
+
+            $("#tblFotosFicha tbody").on("click", ".editFotoFicha", function (e) {
+
+                e.preventDefault();
+                var idSubItem = $(this).attr("data-id");
+
+                showFotoFicha({
+                    Id: idSubItem,
+                    FileName: $("#fotoFicha-FileName-" + idSubItem).val(),
+                    FotoUrl: $("#fotoFicha-FotoUrl-" + idSubItem).val(),
+                    Observaciones: $("#fotoFicha-Observaciones-" + idSubItem).val()
+                });
+
+                return false;
+            });
+
+            $("#tblFotosFicha tbody").on("click", ".deleteFotoFicha", function (e) {
+
+                e.preventDefault();
+                var idSubItem = $(this).attr("data-id");
+
+                $("#fotoFichaRow-" + idSubItem).remove();
+
+                return false;
+            });
+
+            $("#addFotoFicha").click(function (e) {
+
+                e.preventDefault();
+                $.magnificPopup.close();
+
+                showFotoFicha({
+                    Id: 0,
+                    FileName: '',
+                    FotoUrl: '',
+                    Observaciones: ''
+                });
+
+                return false;
+            });
+
+            function showFotoFicha(subItem) {
+
+                fofiRequestCode = 'Ficha'
+                fofiSetFoto(subItem);
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#fotoFichaForm', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            //function fofiCancel() {
+            //    $.magnificPopup.close();
+            //    if (fofiRequestCode == 'Ficha') {
+            //        showFichaForm();
+            //    }
+            //}
+
+            var indexFotoFicha = 0;
+            //function fofiCallback(result) {
+
+            //    fofiCancel();
+            //    if (result.Id == 0) {
+            //        result.Id = --indexFotoFicha;
+            //    }
+            //    else{
+            //        $("#fotoFichaRow-" + result.Id).remove();
+            //    }
+
+            //    renderFotoFicha(result);
+            //}
+
+            // RECOMENDACIONES FICHA
+            function renderRecomendacionFicha(subItem) {
+
+                var quimico;
+                var dosis;
+                var edit;
+
+                if (subItem.IdTipoRecomendacion == 3) { // Fertilizante
+                    quimico = subItem.NombreTipoRecomendacion;
+                    dosis =
+                        'N: ' + subItem.FerN + ' - ' +
+                        'P2O5: ' + subItem.FerP2O5 + ' - ' +
+                        'KO2: ' + subItem.FerKO2 + ' - ' +
+                        'MgO: ' + subItem.FerMgO + ' - ' +
+                        'S: ' + subItem.FerS + ' - ' +
+                        'B: ' + subItem.FerB + ' - ' +
+                        'Zn: ' + subItem.FerZn + ' - ' +
+                        'CaO: ' + subItem.FerCaO;
+                    edit = '<a href="#" class="editFertilizanteFicha" data-id="' + subItem.Id + '" style="margin-right: 10px"><i class="fa fa-pencil"></i></a>';
+                }
+                else {
+                    quimico = subItem.NombreTipoRecomendacion + ' > ' + subItem.NombreQuimico
+                    dosis = subItem.Dosis + " " + subItem.NombreUM;
+                    edit = '<a href="#" class="editRecomendacionFicha" data-id="' + subItem.Id + '" style="margin-right: 10px"><i class="fa fa-pencil"></i></a>';
+                }
+
+                var s = '<tr id="recomendacionFichaRow-' + subItem.Id + '">';
+
+                s += '<td>';
+                s += '<input type="hidden" name="Recomendaciones.Index" value="' + subItem.Id + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-Id-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].Id" value="' + subItem.Id + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-IdTipoRecomendacion-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].IdTipoRecomendacion" value="' + subItem.IdTipoRecomendacion + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-IdQuimico-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].IdQuimico" value="' + subItem.IdQuimico + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-Dosis-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].Dosis" value="' + subItem.Dosis + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-IdUM-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].IdUM" value="' + subItem.IdUM + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-FechaAplicacion-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FechaAplicacion" value="' + subItem.FechaAplicacion + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-FerN-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerN" value="' + subItem.FerN + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-FerP2O5-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerP2O5" value="' + subItem.FerP2O5 + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-FerKO2-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerKO2" value="' + subItem.FerKO2 + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-FerMgO-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerMgO" value="' + subItem.FerMgO + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-FerS-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerS" value="' + subItem.FerS + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-FerB-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerB" value="' + subItem.FerB + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-FerZn-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerZn" value="' + subItem.FerZn + '" />';
+                s += '<input type="hidden" id="recomendacionFicha-FerCaO-' + subItem.Id + '" name="Recomendaciones[' + subItem.Id + '].FerCaO" value="' + subItem.FerCaO + '" />';
+                s += quimico + '<br />' + dosis;
+                s += '</td>';
+                s += '<td>';
+                s += edit;
+                s += '</td>';
+                s += '</tr>';
+
+                return $("#tblRecomendacionesFicha tbody").append(s);
+            }
+
+            $("#addRecomendacionFicha").click(function (e) {
+
+                e.preventDefault();
+                $.magnificPopup.close();
+
+                showRecomendacionFicha({
+                    Id: 0,
+                    IdTipoRecomendacion: 0,
+                    IdQuimico: 0,
+                    Dosis: 0,
+                    IdUM: 0,
+                    FechaAplicacion: ''
+                });
+                return false;
+            });
+
+            function showRecomendacionFicha(subItem) {
+
+                recRequestCode = 'Ficha'
+                recSetRecomendacion(subItem);
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#recomendacionDialog', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            $("#tblRecomendacionesFicha tbody").on("click", ".editRecomendacionFicha", function (e) {
+
+                e.preventDefault();
+                var idSubItem = $(this).attr("data-id");
+
+                showRecomendacionFicha({
+
+                    Id: idSubItem,
+                    IdTipoRecomendacion: $("#recomendacionFicha-IdTipoRecomendacion-" + idSubItem).val(),
+                    IdQuimico: $("#recomendacionFicha-IdQuimico-" + idSubItem).val(),
+                    Dosis: $("#recomendacionFicha-Dosis-" + idSubItem).val(),
+                    IdUM: $("#recomendacionFicha-IdUM-" + idSubItem).val(),
+                    FechaAplicacion: $("#recomendacionFicha-FechaAplicacion-" + idSubItem).val(),
+                });
+
+                return false;
+            });
+
+            /*function recCancel() {
+                $.magnificPopup.close();
+                if (recRequestCode == 'Ficha') {
+                    showFichaForm();
+                }
+            }*/
+
+            var indexRecomendacionFicha = 0;
+            //function recCallback(result) {
+
+            //    recCancel();
+            //    if (result.Id == 0) {
+            //        result.Id = --indexRecomendacionFicha;
+            //    }
+            //    else {
+            //        $("#recomendacionFichaRow-" + result.Id).remove();
+            //    }
+            //    renderRecomendacionFicha(result);
+            //}
+
+            //FERTILIZANTE FICHA
+            $("#addFertilizanteFicha").click(function (e) {
+
+                e.preventDefault();
+                $.magnificPopup.close();
+
+                showFertilizanteFicha({
+                    Id: 0,
+                    FerN   : 0,
+                    FerP2O5: 0,
+                    FerKO2 : 0,
+                    FerMgO : 0,
+                    FerS   : 0,
+                    FerB   : 0,
+                    FerZn  : 0,
+                    FerCaO : 0
+                });
+                return false;
+            });
+
+            function showFertilizanteFicha(subItem) {
+
+                ferRequestCode = 'Ficha'
+                ferSetFertilizante(subItem);
+
+                $.magnificPopup.open({
+                    items: {
+                        src: '#fertilizanteDialog', // can be a HTML string, jQuery object, or CSS selector
+                        type: 'inline',
+                        preloader: false,
+                        modal: true
+                    }
+                });
+            }
+
+            $("#tblRecomendacionesFicha tbody").on("click", ".editFertilizanteFicha", function (e) {
+
+                e.preventDefault();
+                var idSubItem = $(this).attr("data-id");
+
+                showFertilizanteFicha({
+
+                    Id: idSubItem,
+                    FerN: $("#recomendacionFicha-FerN-" + idSubItem).val(),
+                    FerP2O5: $("#recomendacionFicha-FerP2O5-" + idSubItem).val(),
+                    FerKO2: $("#recomendacionFicha-FerKO2-" + idSubItem).val(),
+                    FerMgO: $("#recomendacionFicha-FerMgO-" + idSubItem).val(),
+                    FerS: $("#recomendacionFicha-FerS-" + idSubItem).val(),
+                    FerB: $("#recomendacionFicha-FerB-" + idSubItem).val(),
+                    FerZn: $("#recomendacionFicha-FerZn-" + idSubItem).val(),
+                    FerCaO: $("#recomendacionFicha-FerCaO-" + idSubItem).val()
+                });
+
+                return false;
+            });
+
+            //function ferCancel() {
+            //    $.magnificPopup.close();
+            //    if (ferRequestCode == 'Ficha') {
+            //        showFichaForm();
+            //    }
+            //}
+
+            //function ferCallback(result) {
+
+            //    ferCancel();
+            //    if (result.Id == 0) {
+            //        result.Id = --indexRecomendacionFicha;
+            //    }
+            //    else {
+            //        $("#recomendacionFichaRow-" + result.Id).remove();
+            //    }
+            //    renderRecomendacionFicha(result);
+            //}
+
+            //Save
+            $('.modal-confirmFicha').click(function (e) {
+                e.preventDefault();
+
+                $("#validationErrorsFicha").hide();
+                $("#footerButtonsFicha").hide();
+                $("#footerSpinnerFicha").show();
+
+                var idItem = $("#idFicha").val();
+                var postUrl = idItem == 0 ? '@Url.Action("createficha")' : '@Url.Action("editficha")';
+
+                var jqxhr = $.post(postUrl, $("#formItemFicha").serialize(),
+                    function (data, textStatus, jqXHR) {
+                        if (!data.ok) {
+                            showValidationErrors(data.msg, data.errors, "#validationErrorsFicha");
+                        }
+                        else {
+                            $.magnificPopup.close();
+
+                            new PNotify({
+                                title: 'Ficha',
+                                text: data.msg,
+                                type: 'success'
+                            });
+
+                            if (idItem != 0) {
+                                $("#itemRowFicha-" + idItem).replaceWith(data.view);
+                            }
+                            else {
+                                $("#datatable-ficha tbody").append(data.view);
+                            }
+                        }
+                    })
+                    .done(function () {
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        showValidationErrors(parsePostFail(jqXHR, errorThrown), null, "#validationErrorsFicha");
+                    })
+                    .always(function () {
+                        $("#footerSpinnerFicha").hide();
+                        $("#footerButtonsFicha").show();
+                    });
+            });
+
+            //Close
+            $('.modal-dismissFicha').click(function (e) {
+                e.preventDefault();
+                $.magnificPopup.close();
+            });
+
+</script>  

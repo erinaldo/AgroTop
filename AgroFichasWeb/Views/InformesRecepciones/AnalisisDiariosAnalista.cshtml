@@ -1,0 +1,95 @@
+﻿@using AgroFichasWeb.Models
+@model List<rpt_AnalisisPorDiaYAnalistaResult>
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    ViewBag.Title = "Análisis Diarios por Analista " + temporada.Nombre;
+    Layout = "~/Views/Shared/_ReportLayout.cshtml";
+
+    var dc = new AgroFichasDBDataContext();
+    var dias = Model.Select(i => i.Fecha).Distinct().OrderBy(i => i.Value);
+    var bodegasIndex = dc.Bodega.ToList();
+    var sucursalesIndex = dc.Sucursal.ToList();
+}
+
+
+@section filter {
+    @using (Html.BeginForm())
+    {
+        <table class="filter">
+            <tr>
+                <td>@Html.ActionLink("Volver", "index")</td>
+                <td>@Html.Partial("TemporadaSelector")</td>
+                <td>@Html.Partial("CultivoSelector")</td>
+                <td>@Html.Partial("SucursalSelector")</td>
+                <td><input type="submit" value="Buscar" /></td>
+            </tr>
+        </table>
+    }
+
+}
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr>
+        <td class="RptLabel">Temporada:</td>
+        <td nowrap="nowrap">@temporada.Nombre</td>
+        <td class="RptLabel">Cultivo:</td>
+        <td nowrap="nowrap">@ViewData["cultivoLabel"]</td>
+        <td class="RptLabel">Planta:</td>
+        <td width="100%" nowrap="nowrap">@ViewData["sucursalLabel"]</td>
+    </tr>
+</table>
+<ul style="font-style: italic; font-size: 12px;">
+    <li>Según fecha de ingreso inicial de análisis</li>
+</ul>
+
+<table width="100%" cellpadding="2" cellspacing="2">
+    <tr valign="bottom">
+        <td class="RptEncabezadoListado" align="left">Fecha</td>
+        @foreach (var analista in Model.Select(m => m.UserAnalisis).Distinct().OrderBy(m => m))
+        {
+            <td class="RptEncabezadoListado" align="right">@analista</td>
+        }
+        <td class="RptEncabezadoListado" align="right">Total</td>
+    </tr>
+    @foreach (var dia in dias)
+    {
+        <tr class="RptItemListado" valign="top">
+            <td align="left">@dia.Value.ToString("dd/MMM")</td>
+            @foreach (var analista in Model.Select(m => m.UserAnalisis).Distinct().OrderBy(m => m))
+            {
+                var valor = Model.SingleOrDefault(i => i.Fecha == dia.Value && i.UserAnalisis == analista);
+                if (valor != null)
+                {
+                    <td align="right">@(valor.QtyAnalisis.Value.ToString("#,##0"))</td>
+                }
+                else
+                {
+                    <td align="right"></td>
+                }
+            }
+            <td align="right">
+                @((Model.Where(i => i.Fecha.Value == dia.Value).Select(i => i.QtyAnalisis).Sum() ?? 0).ToString("#,##0"))
+            </td>
+        </tr>
+    }
+    <tr>
+        <td class="RptPieListado" colspan="1">&nbsp;</td>
+        @foreach (var analista in Model.Select(m => m.UserAnalisis).Distinct().OrderBy(m => m))
+        {
+            <td class="RptPieListado" align="right">
+                @((Model.Where(i => i.UserAnalisis == analista).Select(i => i.QtyAnalisis).Sum() ?? 0).ToString("#,##0"))
+            </td>
+        }
+        <td class="RptPieListado" align="right">
+            @((Model.Select(i => i.QtyAnalisis).Sum() ?? 0).ToString("#,##0"))
+        </td>
+    </tr>
+    <tr valign="bottom">
+        <td class="RptPieListado" align="left"></td>
+        @foreach (var analista in Model.Select(m => m.UserAnalisis).Distinct().OrderBy(m => m))
+        {
+            <td class="RptPieListado" align="right">@analista</td>
+        }
+        <td class="RptPieListado" align="right"></td>
+    </tr>
+
+</table>

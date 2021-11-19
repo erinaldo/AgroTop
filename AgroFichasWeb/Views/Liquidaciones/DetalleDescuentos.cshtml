@@ -1,0 +1,91 @@
+﻿@using AgroFichasWeb.Models
+@model Liquidacion
+@{
+    Layout = null;
+
+    var dc = new AgroFichasDBDataContext();
+    var monedas = dc.Moneda.ToList();
+    var clp = monedas.Single(m => m.IdMoneda == 1);
+}
+
+<link href="~/Content/Site.css" rel="stylesheet" />
+
+<table class="procesoIngreso">
+    <tr valign="top">
+        <td colspan="3">
+            @if (Model.DescuentoLiquidacion.Count > 0 ||
+                 Model.SaldoCtaCteLiquidacion.Count > 0 ||
+                 Model.TotalDescuentos.HasValue ||
+                 Model.DescuentoLiquidacionNulo.Count > 0 ||
+                 Model.SaldoCtaCteLiquidacionNulo.Count > 0)
+            {
+                <table class="form1" style="margin-bottom: 10px;">
+                    <tr>
+                        <td class="label">Nro</td>
+                        <td class="label">Agricultor</td>
+                        <td class="label">Tipo</td>
+                        <td class="label">Nro Doc</td>
+                        <td class="label">Insitución</td>
+                        <td class="label" align="right">Monto</td>
+                    </tr>
+                    @foreach (var d in Model.DescuentoLiquidacion)
+                    {
+                        <tr valign="top">
+                            <td>@d.IdDescuento.ToString("#")</td>
+                            <td>@d.Descuento.Agricultor.Nombre<br />@d.Descuento.Agricultor.Rut</td>
+                            <td>@d.Descuento.TipoDescuento.Nombre</td>
+                            <td>@(d.Descuento.NumeroDocumento.HasValue ? d.Descuento.NumeroDocumento.Value.ToString("#") : "")</td>
+                            <td>@d.Descuento.Institucion</td>
+                            <td align="right">@String.Format(d.Descuento.Moneda.Formato2, d.Monto)</td>
+                        </tr>
+                    }
+                    @foreach (var d in Model.SaldoCtaCteLiquidacion)
+                    {
+                        <tr valign="top">
+                            <td>-</td>
+                            <td>@d.SaldoCtaCte.Agricultor.Nombre<br />@d.SaldoCtaCte.Agricultor.Rut</td>
+                            <td>Saldo Cte Cte</td>
+                            <td>-</td>
+                            <td>@d.SaldoCtaCte.Empresa.Nombre</td>
+                            <td align="right">@String.Format(clp.Formato2, d.Monto)</td>
+                        </tr>
+                    }
+                    @foreach (var d in Model.DescuentoLiquidacionNulo)
+                    {
+                        <tr valign="top">
+                            <td>@d.IdDescuento.ToString("#")</td>
+                            <td>@d.NombreAgricultorDescuento<br />@d.RutAgricultorDescuento</td>
+                            <td>@d.NombreTipoDescuento</td>
+                            <td>@(d.NumeroDocumento.HasValue ? d.NumeroDocumento.Value.ToString("#") : "")</td>
+                            <td>@d.Institucion</td>
+                            <td align="right">@String.Format(d.Moneda.Formato2, d.Monto)</td>
+                        </tr>
+                    }
+                    @foreach (var d in Model.SaldoCtaCteLiquidacionNulo)
+                    {
+                        <tr valign="top">
+                            <td>-</td>
+                            <td>@d.NombreAgricultorSaldoCtaCte<br />@d.RutAgricultorSaldoCtaCte</td>
+                            <td>Saldo Cte Cte</td>
+                            <td>-</td>
+                            <td>@d.NombreEmpresa</td>
+                            <td align="right">@String.Format(clp.Formato2, d.Monto)</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="5" class="label" align="right">Total Descuentos</td>
+                        <td class="label" align="right" nowrap="nowrap">@String.Format(Model.Moneda.Formato2, Model.TotalDescuentos.Value)</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Observaciones</td>
+                        <td colspan="5">@Model.ObservacionesDescuentos</td>
+                    </tr>
+                </table>
+            }
+            else
+            {
+                <text>-</text>
+            }
+        </td>
+    </tr>
+</table>

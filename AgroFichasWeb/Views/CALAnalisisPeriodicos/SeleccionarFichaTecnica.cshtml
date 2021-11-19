@@ -1,0 +1,85 @@
+﻿@using AgroFichasWeb.Models
+@model List<CAL_FT>
+@{
+    ViewBag.Title = "Análisis Periódicos";
+    ViewBag.SubTitle = "Seleccione Ficha Técnica";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+}
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+
+@if (!string.IsNullOrEmpty(ViewData["errMsg"].ToString()) || !string.IsNullOrEmpty(ViewData["okMsg"].ToString()))
+{
+    <div class="row">
+        @if (!string.IsNullOrEmpty(ViewData["okMsg"].ToString()))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-success">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @ViewData["okMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(ViewData["errMsg"].ToString()))
+        {
+            <div class="col-sm-12">
+                <div class="mb-md">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        @ViewData["errMsg"]
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm())
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Ficha Técnica <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        @foreach (var ft in Model)
+                                        {
+                                            @Html.RadioButton("IdFichaTecnica", ft.IdFichaTecnica) @(string.Format("{0} {1:dd/MM/yyyy}", ft.Codigo, ft.FechaHoraIns))
+                                            <div style="clear: both"></div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Seleccionar Ficha Técnica" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->

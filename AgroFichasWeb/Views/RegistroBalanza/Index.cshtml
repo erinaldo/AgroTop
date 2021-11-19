@@ -1,0 +1,191 @@
+﻿@using AgroFichasWeb.ViewModels.Operaciones
+@using System.Globalization
+@model RegistroBalanzaViewModel
+
+@{
+    ViewBag.Title = "Registro de Turno de Balanzas";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+    CultureInfo ci = new CultureInfo("es-ES");
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        $('#datatable-inicial').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": false,
+            "iDisplayLength": 25,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            },
+        });
+
+        $('#datatable-final').dataTable({
+            "ordering": true,
+            "order": [0, 'asc'],
+            "searching": false,
+            "iDisplayLength": 25,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            },
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        @if (Model.TurnoAnteriorSiguiente.IdAnterior != 0)
+        {
+            <div class="col-md-2">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-primary" role="button" href="@Url.Action("index", "registrobalanza", new { id = Model.TurnoAnteriorSiguiente.IdAnterior })"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Turno Anterior</a>
+                </div>
+            </div>
+        }
+        @if (Model.TurnoAnteriorSiguiente.IdSiguiente != 0)
+        {
+            <div class="col-md-2 col-md-offset-8">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-primary" role="button" href="@Url.Action("index", "registrobalanza", new { id = Model.TurnoAnteriorSiguiente.IdSiguiente })">Turno Siguiente <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> </a>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="alert alert-info">
+                El <strong>inventario final</strong> del turno anterior <a href="#" class="alert-link">es el inicial del turno actual</a>
+            </div>
+        </div>
+    </div>
+    @if (false == string.IsNullOrWhiteSpace(Model.MensajeError) || false == string.IsNullOrWhiteSpace(Model.MensajeExito))
+    {
+        <div class="row">
+            @if (false == string.IsNullOrWhiteSpace(Model.MensajeError))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Model.MensajeError
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (false == string.IsNullOrWhiteSpace(Model.MensajeExito))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Model.MensajeExito
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <section class="panel">
+                <header class="panel-heading">
+                    @if (Model.RegistroTurnoEfectivo != null)
+                    {
+                        <h2 class="panel-title">Inventario inicial del Turno #@Model.RegistroTurnoEfectivo.Correlativo, @Model.RegistroTurnoEfectivo.OPR_Turno.OPR_TipoTurno.Descripcion del @String.Format("{0:dd/MM/yyyy}", Model.RegistroTurnoEfectivo.FechaHoraIns)</h2>
+                    }
+                    else
+                    {
+                        <h2 class="panel-title"><em>Sin información</em></h2>
+                    }
+                </header>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped mb-none col-md-6" id="datatable-inicial">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Balanza</th>
+                                <th>Contador</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var registroBalanza in Model.RegistroBalanzasEfectivo)
+                            {
+                                <tr role="row" class="odd">
+                                    <td class="sorting_@registroBalanza.IdRegistroBalanza">@registroBalanza.IdRegistroBalanza</td>
+                                    <td>@registroBalanza.OPR_Balanza.Descripcion</td>
+                                    <td>@registroBalanza.Contador.ToString("N0")</td>
+                                    <td class="actions">
+                                        <span class="label label-info">Sólo lectura</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+        <div class="col-md-6">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Inventario final del Turno #@Model.RegistroTurno.Correlativo, @Model.RegistroTurno.OPR_Turno.OPR_TipoTurno.Descripcion del @String.Format("{0:dd/MM/yyyy}", Model.RegistroTurno.FechaHoraIns)</h2>
+                    @if (Model.PuedeCrear)
+                    {
+                        <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                            <a href="@Url.Action("Registrar", "RegistroBalanza", new { id = Model.RegistroTurno.IdRegistroTurno })" class="btn btn-primary">Registrar Turno <i class="fa fa-plus"></i></a>
+                        </div>
+                    }
+                </header>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped mb-none" id="datatable-final">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Balanza</th>
+                                <th>Contador</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var registroBalanza in Model.RegistroBalanzas)
+                            {
+                                <tr role="row" class="odd">
+                                    <td class="sorting_@registroBalanza.IdRegistroBalanza">@registroBalanza.IdRegistroBalanza</td>
+                                    <td>@registroBalanza.OPR_Balanza.Descripcion</td>
+                                    <td>@registroBalanza.Contador.ToString("N0")</td>
+                                    <td class="actions">
+                                        @if (Model.PuedeEditar)
+                                        {
+                                            <button id="edit_@registroBalanza.IdRegistroBalanza" onclick="window.location.href='@Url.Action("EditarRegistro", "RegistroBalanza", new { id = registroBalanza.IdRegistroBalanza })'" class="btn btn-default"> <i class="fa fa-pencil"></i></button>
+                                        }
+                                        @if (Model.PuedeEliminar)
+                                        {
+                                            <button id="edit_@registroBalanza.IdRegistroBalanza" onclick="window.location.href='@Url.Action("EliminarRegistro", "RegistroBalanza", new { id = registroBalanza.IdRegistroBalanza })'" class="btn btn-default"> <i class="fa fa-trash-o"></i></button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

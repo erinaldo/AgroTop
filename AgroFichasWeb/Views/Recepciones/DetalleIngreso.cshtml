@@ -1,0 +1,48 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model ProcesoIngreso
+@{
+
+    ViewBag.NombreSeccion = "Recepciones " + Model.Temporada.Nombre;
+    ViewBag.Title = "Detalle del Ingreso";
+}
+
+
+<h2>@ViewBag.Title</h2>
+
+@Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+
+<fieldset class="dataForm">
+    @Html.Partial("Ingreso", Model)
+    <p class="okcancel">
+        @if (Model.CultivoContrato.IdCultivo == 10)
+        {
+            @*<a href="@Url.Action("printingreso", "recepciones", new { id = Model.IdProcesoIngreso })" target="_blank">Imprimir Maíz</a>*@
+            <input type="submit" value="Imprimir" id="btnPrint" onclick="javascript: printIngreso(1);" />
+            <a href="@Url.Action("printingresoanalista", "recepciones", new { id = Model.IdProcesoIngreso })" target="_blank">Imprimir Detalle</a>
+        }
+        else
+        {
+            <a href="@Url.Action("printingreso", "recepciones", new { id = Model.IdProcesoIngreso })" target="_blank">Imprimir</a>
+        }
+        @if (SYS_User.Current() != null && SYS_User.Current().HasPermiso(72) && SYS_User.Current().TieneAccesoSucursal(Model.IdSucursal, "recepcion"))
+        {
+            @Html.ActionLink("Editar", "editar", new { id = Model.IdProcesoIngreso, Model.IdAgricultor })
+        }
+    </p>
+</fieldset>
+
+<script type="text/javascript">
+
+        function printIngreso(copias) {
+
+            var idCultivo = @(Model.CultivoContrato.IdCultivo);
+
+            window.open('@Url.Action("printingresofinal", "recepciones", new { idCultivo = Model.CultivoContrato.IdCultivo , id = Model.IdProcesoIngreso, copias = "cpis"})'.replace('cpis', copias));
+
+        }
+
+</script>
+

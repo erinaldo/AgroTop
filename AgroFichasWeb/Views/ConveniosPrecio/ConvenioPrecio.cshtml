@@ -1,0 +1,377 @@
+﻿@using System.Data.Linq
+@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+@using AgroFichasWeb.ViewModels.Liquidaciones
+@using Newtonsoft.Json;
+
+@model ConvenioPrecioViewModel
+
+@{
+    ViewBag.NombreSeccion = "Convenios de Precio";
+
+    var dc = new AgroFichasDBDataContext();
+    Temporada temporada;
+
+    if (Model.IdConvenioPrecio == 0) {
+        ViewBag.Title = "Crear Convenio de Precio";
+        temporada = (Model.Contrato != null) ? Model.Contrato.Temporada : Temporada.TemporadaActiva();
+    }
+    else {
+        ViewBag.Title = "Editar Convenio de Precio";
+        temporada = Model.Contrato.Temporada;
+    }
+
+    var monedas = from m in (Model.Monedas)
+                  select new SelectListItem() { Text = m.Simbolo + " / Kg", Value = m.IdMoneda.ToString(), Selected = m.IdMoneda == Model.IdMoneda };
+
+    var tablaPrecios = Model.GetTablaPreciosExistente();
+}
+
+@section headSection {
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/validate.js"></script>
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <h2>@ViewBag.Title</h2>
+    @Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+    @using (Html.BeginForm())
+    {
+        <fieldset class="dataForm">
+            <p>
+                <label>ID</label>
+                <b>@Model.IdConvenioPrecio</b>
+            </p>
+            <div class="p">
+                <label>Contrato</label>
+                @Html.Partial("~/Views/Controls/ContratoSelector.cshtml", new ContratoSelectorViewModel() {
+                    IdContrato = Model.IdContrato,
+                    Temporada = temporada,
+                    NumeroContrato = (Model.Contrato != null) ? Model.Contrato.NumeroContrato : "",
+                    Nombre = (Model.Contrato != null) ? Model.Contrato.Agricultor.Nombre : "&nbsp;",
+                    NombreCultivo = (Model.Contrato != null) ? Model.Contrato.DescripcionCultivos(", ") : "",
+                    NombreEmpresa = (Model.Contrato != null) ? Model.Contrato.Empresa.Nombre : ""
+                })
+                @Html.ValidationMessage("IdContrato", ".")  
+                @Html.Hidden("IdContrato", Model.IdContrato)
+                
+            </div>
+            <p>
+                <label>Cantidad</label>
+                @Html.TextBox("Cantidad", Model.Cantidad) Kg
+                @Html.ValidationMessage("Cantidad", ".") 
+            </p>
+            <p>
+                <label>Precio</label>
+                @Html.TextBox("PrecioUnidad", Model.PrecioUnidad) @Html.DropDownList("IdMoneda", monedas)
+                @Html.ValidationMessage("PrecioUnidad", ".") @Html.ValidationMessage("IdMoneda", ".")
+            </p>
+            <div class="p">
+                <label style="float: left; margin-top: 0px;">Sucursales de Entrega</label>
+                <ul style="float: left; margin: 0px 0px 20px 0px; padding: 0px; list-style: none;">
+                    @foreach (var s in Model.Sucursales)
+                    {
+                        <li>
+                            <input type="hidden" name="Sucursales.Index" value="@s.IdSucursal" />
+                            <input type="hidden" name="Sucursales[@s.IdSucursal].IdSucursal" value="@s.IdSucursal" />
+                            <input type="hidden" name="Sucursales[@s.IdSucursal].NombreSucursal" value="@s.NombreSucursal" />
+                            <input type="checkbox" name="Sucursales[@s.IdSucursal].Seleccionado" value="true" @(s.Seleccionado ? "checked" : "") />
+                            <input type="hidden" name="Sucursales[@s.IdSucursal].Seleccionado" value="false" />
+                            @s.NombreSucursal
+                        </li>
+                    }
+                </ul>
+                <div style="clear: both"></div>
+            </div>
+            <div class="p">
+                <label>Bonos y Descuentos</label>
+            
+                <table id="bondes-table" class="sublist2" style="margin-bottom: 10px; display: inline-block; width: 700px">
+                    <tbody>
+                        <tr>
+                            <td colspan="4">
+                                <a href="#" id="bondes-add-bono" class="command">Agregar Bono</a>
+                                <a href="#" id="bondes-add-desc" class="command">Agregar Descuento</a>
+                                @Html.Partial("Ajuste")
+                                <script>
+                                    $(document).ready(function () {
+                                        $("#bondes-add-bono").click(function () {
+                                            bondesAdd("True");
+                                            return false;
+                                        });
+                                    });
+
+                                    $(document).ready(function () {
+                                        $("#bondes-add-desc").click(function () {
+                                            bondesAdd("False");
+                                            return false;
+                                        });
+                                    });
+
+                                    function bondesAdd(esBono) {
+                                        var newIdAjuste = parseInt($("#nextAjusteId").val(), 10);
+                                        bondesShow({
+                                            IdConvenioPrecioAjuste: newIdAjuste,
+                                            IdMotivoAjustePrecio: 0,
+                                            EsBono: esBono,
+                                            PrecioUnidad: '',
+                                            Cantidad: '',
+                                            Comentarios: '',
+                                            Sucursales: @(new MvcHtmlString(JsonConvert.SerializeObject(Model.SucursalesHabilitadas)))
+                                        });
+                                        $("#nextAjusteId").val(newIdAjuste + 1);
+                                    }
+
+                                    function bondesCallback(ajuste) {
+                                        agregarAjuste(ajuste);
+                                    };
+
+                                </script>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Tipo</b></td>
+                            <td><b>Motivo</b></td>
+                            <td align="right"><b>Precio ($/Kg)</b></td>
+                            <td align="right"><b>Cantidad (Kg)</b></td>
+                            <td><b>Sucursales</b></td>
+                            <td><b>Comentarios</b></td>
+                        </tr>
+                        @Html.Hidden("nextAjusteId", Model.NextAjusteId)
+                        @foreach (var ajuste in Model.Ajustes)
+                        {
+                            var ajusteClass = String.Format("ajuste-{0}", ajuste.IdConvenioPrecioAjuste);
+                            @Html.Hidden("Ajustes.Index", ajuste.IdConvenioPrecioAjuste, new { @class = "ajusteIndex " + ajusteClass })
+                            @Html.Hidden(String.Format("Ajustes[{0}].IdConvenioPrecioAjuste", ajuste.IdConvenioPrecioAjuste), ajuste.IdConvenioPrecioAjuste, new { @class = ajusteClass })
+                            @Html.Hidden(String.Format("Ajustes[{0}].IdMotivoAjustePrecio", ajuste.IdConvenioPrecioAjuste), ajuste.IdMotivoAjustePrecio, new { @class = ajusteClass })
+                            @Html.Hidden(String.Format("Ajustes[{0}].NombreMotivoAjustePrecio", ajuste.IdConvenioPrecioAjuste), ajuste.NombreMotivoAjustePrecio, new { @class = ajusteClass })
+                            @Html.Hidden(String.Format("Ajustes[{0}].Cantidad", ajuste.IdConvenioPrecioAjuste), ajuste.Cantidad, new { @class = ajusteClass })
+                            @Html.Hidden(String.Format("Ajustes[{0}].PrecioUnidad", ajuste.IdConvenioPrecioAjuste), ajuste.PrecioUnidad, new { @class = ajusteClass })
+                            @Html.Hidden(String.Format("Ajustes[{0}].EsBono", ajuste.IdConvenioPrecioAjuste), ajuste.EsBono, new { @class = ajusteClass })
+                            @Html.Hidden(String.Format("Ajustes[{0}].Comentarios", ajuste.IdConvenioPrecioAjuste), ajuste.Comentarios, new { @class = ajusteClass })
+                            @Html.Hidden(String.Format("Ajustes[{0}].NombresSucursales", ajuste.IdConvenioPrecioAjuste), ajuste.ListaSucursales(), new { @class = ajusteClass })
+                            foreach (var suc in ajuste.Sucursales)
+                            {
+                                @Html.Hidden(String.Format("Ajustes[{0}].Sucursales.Index", ajuste.IdConvenioPrecioAjuste), suc.IdSucursal, new { @class = "ajusteSucursalIndex " + ajusteClass })
+                                @Html.Hidden(String.Format("Ajustes[{0}].Sucursales[{1}].IdSucursal", ajuste.IdConvenioPrecioAjuste, suc.IdSucursal), suc.IdSucursal, new { @class = ajusteClass })
+                                @Html.Hidden(String.Format("Ajustes[{0}].Sucursales[{1}].NombreSucursal", ajuste.IdConvenioPrecioAjuste, suc.IdSucursal), suc.NombreSucursal, new { @class = ajusteClass })
+                                @Html.Hidden(String.Format("Ajustes[{0}].Sucursales[{1}].Seleccionado", ajuste.IdConvenioPrecioAjuste, suc.IdSucursal), suc.Seleccionado, new { @class = ajusteClass })
+                            }
+                        }
+                    </tbody>
+                </table>
+                <script>
+                    $(document).ready(function () {
+                        renderAjustes();
+                    });
+
+                    function renderAjustes() {
+                        $(".ajusteRow").remove();
+                        $(".ajusteIndex").each(function (ix, element) {
+                            var id = $(this).val();
+                            var s = '<tr class="ajusteRow" valign="top">' +
+                                    '<td>' + (getAjusteValue(id, 'EsBono') == 'True' ? "Bono" : "Descuento") + '</td>' +
+                                    '<td>' + getAjusteValue(id, "NombreMotivoAjustePrecio") + '</td>' +
+                                    '<td align="right">' + getAjusteValue(id, "PrecioUnidad") + '</td>' +
+                                    '<td align="right">' + getAjusteValue(id, "Cantidad") + '</td>' +
+                                    '<td>' + getAjusteValue(id, "NombresSucursales") + '</td>' +
+                                    '<td>' + getAjusteValue(id, "Comentarios") + '</td>' +
+                                    '<td><a href="javascript:editarAjuste(' + id + ');" class="command">Editar</a></td>' +
+                                    '<td><a href="javascript:quitarAjuste(' + id + ');" class="command">Quitar</a></td>' +
+                                    '</tr>';
+
+                            $("#bondes-table > tbody:last").append(s);
+                        });
+                    }
+
+                    function agregarAjuste(ajuste) {
+
+                        var id = ajuste.IdConvenioPrecioAjuste;
+
+                        //Nuevo ajuste
+                        if ($(".ajuste-" + id).length == 0) {
+
+                            var s = '';
+                            s += '<input class="ajusteIndex ajuste-' + id + '" id="Ajustes_Index" name="Ajustes.Index" type="hidden" value="' + id + '" />';
+                            s += renderAjuste(id, "IdConvenioPrecioAjuste", ajuste.IdConvenioPrecioAjuste);
+                            s += renderAjuste(id, "IdMotivoAjustePrecio", ajuste.IdMotivoAjustePrecio);
+                            s += renderAjuste(id, "NombreMotivoAjustePrecio", ajuste.NombreMotivoAjustePrecio);
+                            s += renderAjuste(id, "Cantidad", ajuste.Cantidad);
+                            s += renderAjuste(id, "PrecioUnidad", ajuste.PrecioUnidad);
+                            s += renderAjuste(id, "EsBono", ajuste.EsBono);
+                            s += renderAjuste(id, "Comentarios", ajuste.Comentarios);
+                            s += renderAjuste(id, "NombresSucursales", ajuste.NombresSucursales);
+
+                            ajuste.Sucursales.forEach(function (sucursal) {
+                                s += '<input class="ajusteSucursalIndex ajuste-' + id + '" id="Ajustes_' + id + '__Sucursales_Index" name="Ajustes[' + id + '].Sucursales.Index" type="hidden" value="' + sucursal.IdSucursal + '" />';
+                                s += renderSucursal(id, sucursal.IdSucursal, "IdSucursal", sucursal.IdSucursal);
+                                s += renderSucursal(id, sucursal.IdSucursal, "NombreSucursal", sucursal.NombreSucursal);
+                                s += renderSucursal(id, sucursal.IdSucursal, "Seleccionado", sucursal.Seleccionado);
+                            });
+
+                            $("form").first().append(s);
+                        }
+                        else { //Ajuste existente
+                                setAjusteValue(id, "IdConvenioPrecioAjuste", ajuste.IdConvenioPrecioAjuste) +
+                                setAjusteValue(id, "IdMotivoAjustePrecio", ajuste.IdMotivoAjustePrecio) +
+                                setAjusteValue(id, "NombreMotivoAjustePrecio", ajuste.NombreMotivoAjustePrecio) +
+                                setAjusteValue(id, "Cantidad", ajuste.Cantidad) +
+                                setAjusteValue(id, "PrecioUnidad", ajuste.PrecioUnidad) +
+                                setAjusteValue(id, "EsBono", ajuste.EsBono) +
+                                setAjusteValue(id, "Comentarios", ajuste.Comentarios);
+                                setAjusteValue(id, "NombresSucursales", ajuste.NombresSucursales);
+
+                                ajuste.Sucursales.forEach(function (sucursal) {
+                                    setSucursalValue(ajuste.IdConvenioPrecioAjuste, sucursal.IdSucursal, "Seleccionado", sucursal.Seleccionado);
+                                });
+                        }
+
+                        renderAjustes();
+                    }
+
+                    function editarAjuste(id) {
+
+                        var sucursales = new Array();
+                        var index = $('[name="Ajustes[' + id + '].Sucursales.Index"]');
+                        for (var i = 0; i < index.length; i++)
+                        {
+                            var idSucursal = $(index[i]).val();
+                            sucursales.push({
+                                IdSucursal: idSucursal,
+                                NombreSucursal: getSucursalValue(id, idSucursal, "NombreSucursal"),
+                                Seleccionado: getSucursalValue(id, idSucursal, "Seleccionado")
+                            });
+                        }
+
+                        bondesShow({
+                            IdConvenioPrecioAjuste: getAjusteValue(id, 'IdConvenioPrecioAjuste'),
+                            IdMotivoAjustePrecio: getAjusteValue(id, 'IdMotivoAjustePrecio'),
+                            NombreMotivoAjustePrecio: getAjusteValue(id, 'NombreMotivoAjustePrecio'),
+                            Cantidad: getAjusteValue(id, 'Cantidad'),
+                            PrecioUnidad: getAjusteValue(id, 'PrecioUnidad'),
+                            EsBono: getAjusteValue(id, 'EsBono'),
+                            Comentarios: getAjusteValue(id, 'Comentarios'),
+                            Sucursales: sucursales
+                        });
+                    }
+
+                    function quitarAjuste(id) {
+
+                        if (!confirm("¿Está seguto de que desea eliminar este bono/descuento?"))
+                            return;
+
+                        $(".ajuste-" + id).remove();
+                        renderAjustes();
+                    }
+
+                    function renderAjuste(id, field, value) {
+                        return '<input type="hidden" class="ajuste-' + id + '" id="Ajustes_' + id + '__' + field + '" name="Ajustes[' + id + '].' + field + '" value="' + value + '" />';
+                    }
+
+                    function renderSucursal(id, idSuc, field, value) {
+                        return '<input type="hidden" class="ajuste-' + id + '" id="Ajustes_' + id + '__Sucursales_' + idSuc + '__' + field + '" name="Ajustes[' + id + '].Sucursales[' + idSuc + '].' + field + '" value="' + value + '" />';
+                    }
+
+                    function getAjusteValue(id, field) {
+                        return $('#Ajustes_' + id + '__' + field).val();
+                    }
+
+                    function setAjusteValue(id, field, value) {
+                        return $('#Ajustes_' + id + '__' + field).val(value);
+                    }
+
+                    function getSucursalValue(id, idSuc, field) {
+                        return $('#Ajustes_' + id + '__Sucursales_' + idSuc + '__' + field).val();
+                    }
+
+                    function setSucursalValue(id, idSuc, field, value) {
+                        return $('#Ajustes_' + id + '__Sucursales_' + idSuc + '__' + field).val(value);
+                    }
+
+                </script>
+            </div>
+            @if (tablaPrecios != null && tablaPrecios.Count > 0)
+            {
+                var utilizadoConvenio = ConvenioPrecio.GetCantidaUtilizada(dc, Model.IdConvenioPrecio);
+                var disponibleConvenio = Model.Cantidad - utilizadoConvenio;
+
+                <div class="p">
+                    <label>Tabla de Precios</label>
+
+                    <table id="bondes-table" class="sublist2" style="margin-bottom: 10px; display: inline-block; width: 700px">
+                        <tbody>
+                            <tr>
+                                <td><b>Surcursal</b></td>
+                                <td align="right"><b>Cantidad (Kg)</b></td>
+                                <td align="right"><b>Base ($/Kg)</b></td>
+                                <td align="right"><b>Ajuste ($/Kg)</b></td>
+                                <td align="right"><b>Precio ($/Kg)</b></td>
+                                <td align="right"><b>Utilizado (Kg)</b></td>
+                                <td align="right"><b>Disponible (Kg)</b></td>
+                            </tr>
+                            @foreach (var item in tablaPrecios.OrderByDescending(t => t.Cantidad).OrderBy(t => t.Sucursal.Nombre))
+                            {
+                                int disponible;
+                                var utilizado = item.GetCantidaUtilizada(dc, out disponible);
+
+                                <tr>
+                                    <td>@item.Sucursal.Nombre</td>
+                                    <td align="right">@item.Cantidad.ToString("#,##0")</td>
+                                    <td align="right">@String.Format(Model.Moneda.Formato, Model.PrecioUnidad)</td>
+                                    <td align="right">@String.Format(Model.Moneda.Formato, item.PrecioUnidad - Model.PrecioUnidad)</td>
+                                    <td align="right">@String.Format(Model.Moneda.Formato, item.PrecioUnidad)</td>
+                                    <td align="right">@utilizado.ToString("#,##0")</td>
+                                    <td align="right">@disponible.ToString("#,##0")</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td><b>Total Convenio</b></td>
+                                <td align="right"><b>@Model.Cantidad.ToString("#,##0")</b></td>
+                                <td colspan="3"></td>
+                                <td align="right"><b>@utilizadoConvenio.ToString("#,##0")</b></td>
+                                <td align="right"><b>@disponibleConvenio.ToString("#,##0")</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+            <p>
+                <label for="EsPiso">Piso</label>
+                @Html.CheckBox("EsPiso", Model.EsPiso)   Este es un precio "Piso"
+                @Html.ValidationMessage("EsPiso", ".") 
+            </p>
+            <p>
+                <label>Comentarios</label>
+                @Html.TextArea("Comentarios", Model.Comentarios, new { @class = "std", rows = 5 })  
+                @Html.ValidationMessage("Comentarios", ".")  
+            </p>
+            <p>
+                <label for="EnPortada">Habilitado</label>
+                @Html.CheckBox("Habilitado", Model.Habilitado)   Permitir el uso de este Convenio de Precio
+                @Html.ValidationMessage("Habilitado", ".") 
+            </p>
+            <p class="okcancel">
+                <input type="submit" value="Guardar Este Convenio de Precio" /> o 
+                @if (!String.IsNullOrEmpty(Request.QueryString["backto"]))
+                {
+                    <a href="@Request.QueryString["backto"]">Cancelar</a>
+                }
+                else
+                {
+                    @Html.ActionLink("Cancelar", "Index", (RouteValueDictionary)ViewData["indexRouteValues"])
+                }
+            </p>
+        </fieldset>
+
+    }
+
+    <script type="text/javascript">
+        function cosCallback(idContrato, nombre, numero, empresa, idTemporada, nombreTemporada) {
+            $("#IdContrato").val(idContrato);
+        }
+    </script>   

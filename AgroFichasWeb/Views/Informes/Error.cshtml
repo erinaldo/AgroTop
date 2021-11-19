@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.NombreSeccion = "Informes de Fichas";
+    ViewBag.Title = "Error al ver el Informe";
+}
+<style>
+    ul.inpagemenu li {
+        margin: 20px 0px;
+    }
+
+    .errorMsg {
+        color: red;
+    }
+
+    .errorMsgTitle {
+        font-weight: bold
+    }
+</style>
+<h2>@ViewBag.Title</h2>
+<p class="errorMsgTitle errorMsg">Ha ocurrido un error:</p>
+<ul class="inpagemenu">
+    <li class="errorMsg">@ViewData["errorMsg"]</li>
+</ul>

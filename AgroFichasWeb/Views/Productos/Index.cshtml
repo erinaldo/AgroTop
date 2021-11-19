@@ -1,0 +1,117 @@
+﻿@using AgroFichasWeb.Models
+@model List<OPR_Producto>
+
+@{
+    ViewBag.Title = "Productos";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+
+    var MensajeError = (string)ViewData["MensajeError"];
+    var MensajeExito = (string)ViewData["MensajeExito"];
+    var PuedeCrear = (bool)ViewData["PuedeCrear"];
+    var PuedeEditar = (bool)ViewData["PuedeEditar"];
+    var PuedeEliminar = (bool)ViewData["PuedeEliminar"];
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "searching": true,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    @if (false == string.IsNullOrWhiteSpace(MensajeError) || false == string.IsNullOrWhiteSpace(MensajeExito))
+    {
+        <div class="row">
+            @if (false == string.IsNullOrWhiteSpace(MensajeError))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @MensajeError
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (false == string.IsNullOrWhiteSpace(MensajeExito))
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @MensajeExito
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Administrar Productos</h2>
+            @if (PuedeCrear)
+            {
+                <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                    <a href="@Url.Action("Crear", "Productos")" class="btn btn-primary" id="addProducto">Nuevo Producto <i class="fa fa-plus"></i></a>
+                </div>
+            }
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripción</th>
+                        <th>Tipo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var producto in Model)
+                    {
+                        <tr role="row" class="odd">
+                            <td class="sorting_@producto.IdProducto">@producto.IdProducto</td>
+                            <td>@producto.Descripcion</td>
+                            <td>@producto.OPR_TipoProducto.Descripcion</td>
+                            <td class="actions">
+                                @if (PuedeEditar)
+                                {
+                                    <button id="edit_@producto.IdProducto" onclick="window.location.href='@Url.Action("Editar", "Productos", new { id = producto.IdProducto })'" class="btn btn-default"> <i class="fa fa-edit"></i></button>
+                                }
+                                @if (PuedeEliminar)
+                                {
+                                    <button id="delete_@producto.IdProducto" onclick="window.location.href='@Url.Action("Eliminar", "Productos", new { id = producto.IdProducto })'" class="btn btn-default"> <i class="fa fa-trash-o"></i></button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- end: page -->
+</section>

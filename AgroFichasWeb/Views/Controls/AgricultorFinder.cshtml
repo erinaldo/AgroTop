@@ -1,0 +1,101 @@
+﻿@using AgroFichasWeb.ViewModels
+@model AgriculorFinderViewModel
+<div id="agsSearchWindow" style="display: none" title="Buscar Agricultor">
+    <div id="agsSearchWindow-Content">
+        <table class="form1" style="width: 100%; text-align: left;">
+        <tr>
+            <td class="label">Buscar:</td>
+            <td><input type="text" id="ags-keyword" style="width: 400px" /></td>
+            <td><input type="button" value="Buscar" id="ags-buscar" /></td>
+            <td></td>
+        </tr>
+        <tr class="title">
+            <td colspan="4">Resultados</td>
+        </tr>
+        <tr valign="top">
+            <td colspan="4">
+                <div  id="ags-results" style="height: 300px; overflow-y:scroll; width: 100%"></div>                        
+            </td>
+        </tr>
+        </table>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#ags-buscar").click(function () {
+            agsSearchAgricultor();
+        });
+
+    });
+
+    function agsClearAgricultor() {
+        agsSetAgricultor("", "", '&nbsp;')
+    }
+
+    function agsSetAgricultor(id, rut, nombre) {
+        agsCallback(id, rut, nombre);
+    }
+
+    function agsSelectAgricultor() {
+        $("#agsSearchWindow").dialog({
+            width: 600,
+            modal: true,
+            buttons: {
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+                $('#ags-results').html("");
+            }
+        });
+    }
+
+    function agsSearchAgricultor() {
+        $('#ags-results').html('<div class="cargando"></div>');
+        $.ajax({
+            type: "POST",
+            url: "@Url.Content("~/search/AgricultorFinderSearch")",
+            data: "{keyword: '" + $("#ags-keyword").val() + "', type: @((int)Model.SearchType), idAgricultorArgument: @Model.IdAgricultorArgument}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                var table = '<table class="form1">';
+
+                if (result.length == 0)
+                    table += "<tr><td><i>No se encontraron resultados</i></td></tr>";
+
+                for (var persona in result) {
+                    var row = "<tr>";
+                    row += '<td id="pr_' + result[persona].IdAgricultor + '" nowrap="nowrap">' + result[persona].Rut + '</td>';
+                    row += '<td id="p_' + result[persona].IdAgricultor + '"><a href="javascript:s(' + "'" + result[persona].IdAgricultor + "'" + ')">' + result[persona].Nombre + "</a></td>";
+                    row += "</tr>";
+                    table += row;
+                } 
+                table += "</table>";
+                $('#ags-results').html(table);
+            },
+            error: function (req, stat, err) {
+                var msg = '<div style="color:red;">';
+                msg += "Se produjo un error al ejecutar la búsqueda.";
+                msg += "<p>" + req.responseText + "</p>";
+                msg += "<p>" + req.statusText + "</p>";
+                msg += "</div>";
+                $('#ags-results').html(msg);
+            }
+        });
+    }
+
+    function s(id) {
+        var nombre = $("#p_" + id + " > a").text();
+        var rut = $("#pr_" + id).text();
+        agsSetAgricultor(id, rut, nombre);
+        $('#agsSearchWindow').dialog('close');
+    }
+
+
+</script>

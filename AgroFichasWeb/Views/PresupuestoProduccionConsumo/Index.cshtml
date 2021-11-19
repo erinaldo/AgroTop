@@ -1,0 +1,118 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using System.Globalization
+
+@model AgroFichasWeb.Controllers.PaginatedList<OPR_PresupuestoProduccionConsumo>
+@{
+    ViewBag.Title = "Presupuesto de Producción y Consumo";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2/css/select2.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/select2/js/select2.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+    <script src="@Url.Content("~/Scripts/datetimepicker-master/build/jquery.datetimepicker.full.min.js")"></script>
+}
+@section CustomScripts
+{
+    <script>
+        $('#datatable').dataTable({
+            "ordering": true,
+            "order": [0, 'desc'],
+            "searching": false,
+            "lengthChange": true,
+            "language": {
+                "emptyTable": "No hay registros"
+            }
+        });
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    @if (Request["errMsg"] != null && Request["errMsg"] != "" || Request["okMsg"] != null && Request["okMsg"] != "")
+    {
+        <div class="row">
+            @if (Request["errMsg"] != null && Request["errMsg"] != "")
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["errMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Request["okMsg"] != null && Request["okMsg"] != "")
+            {
+                <div class="col-sm-12">
+                    <div class="mb-md">
+                        <div class="alert alert-success">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @Request["okMsg"]
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Presupuesto de Producción y Consumo</h2>
+            <div class="mb-md" style="right: 15px;position: absolute;top: 15px;">
+                <a href="@Url.Action("Crear", "PresupuestoProduccionConsumo")" class="btn btn-primary">Crear Presupuesto <i class="fa fa-plus"></i></a>
+            </div>
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered table-striped mb-none" id="datatable">
+                <thead>
+                    <tr>
+                        <th>Mes</th>
+                        <th>Año</th>
+                        <th>Producción Total</th>
+                        <th>Producción de Hojuela</th>
+                        <th>Producción de Harina</th>
+                        <th>Producto Retenido</th>
+                        <th>Producto Rechazado</th>
+                        <th>Consumo de Avena</th>
+                        <th>Rendimiento Teórico (%)</th>
+                        <th>Producción ton/h</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr valign="top">
+                            <td>@(new DateTime(2010, item.Mes, 1).ToString("MMMM", CultureInfo.GetCultureInfo("es")))</td>
+                            <td>@item.Año</td>
+                            <td>@item.ProduccionTotal.ToString("N0")</td>
+                            <td>@item.ProduccionHojuela.ToString("N0")</td>
+                            <td>@item.ProduccionHarina.ToString("N0")</td>
+                            <td>@item.ProductoRetenido.ToString("N0")</td>
+                            <td>@item.ProductoRechazado.ToString("N0")</td>
+                            <td>@item.ConsumoAvena.ToString("N0")</td>
+                            <td>@item.RendimientoTeorico.ToString("N2")%</td>
+                            <td>@item.ProduccionTnPorH.ToString("N2")</td>
+                            <td>
+                                <button id="edit_@item.IdPresupuestoProduccionConsumo" onclick="window.location.href='@Url.Action("editar", new { id = item.IdPresupuestoProduccionConsumo })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Editar"> <i class="fa fa-edit"></i></button>
+                                <button id="delete_@item.IdPresupuestoProduccionConsumo" onclick="window.location.href='@Url.Action("eliminar", new { id = item.IdPresupuestoProduccionConsumo })'" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Eliminar"> <i class="fa fa-trash-o"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <!-- end: page -->
+</section>

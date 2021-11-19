@@ -1,0 +1,116 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+@using AgroFichasWeb.AppLayer.Extensions 
+
+@model AgroFichasWeb.Controllers.PaginatedList<Liquidacion>
+
+@{
+    var temporada = (Temporada)ViewData["temporada"];
+    var temporadas = (List<Temporada>)ViewData["temporadas"];
+
+    ViewBag.NombreSeccion = "Liquidaciones";
+    ViewBag.Title = "Autorizar Ingresos " + temporada.Nombre;
+}
+
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            $(".dataList tr:even").addClass("even");
+        });
+    </script>
+
+    <h2>@ViewBag.Title</h2>
+
+    <div style="margin: 20px 0px">
+        @using(Html.BeginForm("autorizaringresosindex", "liquidaciones", new { id = 0 }, FormMethod.Get)) {
+            @Html.Partial("TemporadaSelector")
+            @Html.Partial("EmpresaSelector")
+            <input type="text" name="key" value="@ViewData["key"]" />
+            <input type="submit" value="Buscar" />
+        }
+    </div>
+
+    @Html.Partial("~/Views/Controls/ActionResultMessages.cshtml")
+
+    <table class="dataList" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th align="center">
+                Estado
+            </th>    
+            <th align="right">
+                Fecha
+            </th>            
+            <th align="right">
+                Nro
+            </th>            
+            <th align="left">
+                Nombre
+            </th>
+            <th align="left">
+                Empresa
+            </th>
+            <th align="right">
+                Ingresos
+            </th>
+            <th align="right">
+                Descuentos
+            </th>
+            <th align="right">
+                Saldo
+            </th>
+            <th align="center">
+            </th>
+        </tr>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="11" class="norecords">
+                    No hay registros
+                </td>
+            </tr>
+        }
+        
+        @foreach (var item in Model) 
+        {
+            var itemParams = Model.RouteValues(new RouteValueDictionary() { {"id", item.IdLiquidacion} });
+            var htmlAttr = new Dictionary<String, Object>() { { "class", "command" } };
+            <tr valign="top">
+                <td align="center" style="color:#000000; background-color: @item.EstadoLiquidacion.Color" >
+                    @item.EstadoLiquidacion.Nombre
+                </td>
+                <td align="right">
+                    @item.FechaHoraCreacion.Value.Date.ToString("dd/MM/yyyy")
+                </td>
+                <td align="right">
+                    @item.IdLiquidacion
+                </td>
+                <td align="left">
+                    @item.Agricultor.Nombre
+                </td>
+                <td align="left">
+                    @item.Empresa.Nombre
+                </td>
+                <td align="right">
+                    @String.Format("{0:#,##0}", item.TotalPagar)
+                </td>
+                <td align="right">
+                    @(item.TotalDescuentos.HasValue ? String.Format("{0:#,##0}", item.TotalDescuentos.Value) : "")
+                </td>
+                <td align="right">
+                    @(item.Saldo.HasValue ? String.Format("{0:#,##0}", item.Saldo.Value) : "")
+                </td>
+                <td align="center">
+                    @Html.ActionLink("Autorizar", "autorizaringresos", itemParams, htmlAttr)
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="11" class="pager">
+                @Model.Paginator("index", "autorizaringresosindex", ViewContext.RequestContext)
+            </td>
+        </tr>
+    </table>

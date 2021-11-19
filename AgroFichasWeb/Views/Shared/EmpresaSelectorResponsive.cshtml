@@ -1,0 +1,16 @@
+﻿@using AgroFichasWeb.Models
+@{
+    var idEmpresa = (int)ViewData["idEmpresa"];
+    var empresas = (List<Empresa>)ViewData["empresas"];
+    var hideAll = ViewData["hideAllEmpresas"] != null && ViewData["hideAllEmpresas"] == "1";
+}
+<select id="idEmpresa" name="idempresa" class="form-control">
+    @if (!hideAll)
+    {
+        <option value="">(Todas las Empresas)</option>
+    }
+    @foreach (var t in empresas)
+    {
+        <option value="@t.IdEmpresa" @(t.IdEmpresa == idEmpresa ? "selected" : "")>@t.Nombre</option>
+    }
+</select>

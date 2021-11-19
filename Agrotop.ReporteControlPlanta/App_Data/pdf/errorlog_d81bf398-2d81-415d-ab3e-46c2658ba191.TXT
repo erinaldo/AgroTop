@@ -1,0 +1,5 @@
+System.Net.Mail.SmtpException: El cliente no tiene permiso para enviar correo a este servidor. La respuesta del servidor fue: 4.7.1 <facturacion@oleotop.cl>: Relay access denied
+   en System.Net.Mail.RecipientCommand.CheckResponse(SmtpStatusCode statusCode, String response)
+   en System.Net.Mail.SmtpTransport.SendMail(MailAddress sender, MailAddressCollection recipients, String deliveryNotify, Boolean allowUnicode, SmtpFailedRecipientException& exception)
+   en System.Net.Mail.SmtpClient.Send(MailMessage message)
+   en Agrotop.ReporteControlPlanta.MailHelper.Sendmail(rpt_CTR_EncabezadoControlSemanalPorEmpresaResult rpt) en D:\Proyectos\agrotop.agrofichas.api\Agrotop.ReporteControlPlanta\MailHelper.cs:línea 33

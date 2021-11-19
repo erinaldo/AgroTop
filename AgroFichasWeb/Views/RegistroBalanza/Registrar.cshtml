@@ -1,0 +1,152 @@
+﻿@using AgroFichasWeb.ViewModels.Operaciones
+@model RegistroBalanzaViewModel
+@{
+    ViewBag.Title = "Registro de Turno de Balanzas";
+    Layout = "~/Views/Shared/_ResponsiveLayout.cshtml";
+}
+
+@section VendorCSS
+{
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/select2-bootstrap-theme/select2-bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/css/datatables.css")" />
+}
+
+@section VendorScripts
+{
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/media/js/jquery.dataTables.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js")"></script>
+    <script src="@Url.Content("~/Content/porto/vendor/jquery-datatables-bs3/assets/js/datatables.js")"></script>
+}
+
+@section CustomScripts
+{
+    <script>
+        $(document).ready(function () {
+            $('#datatable-default').dataTable({
+                "ordering": false,
+                "searching": false,
+                "lengthChange": false
+            });
+
+            Reset();
+
+            $("#btnRegistrar").click(function (e) {
+                if (!Validar()) {
+                    e.preventDefault(e);
+                    return false;
+                }
+                else {
+                    $(this).submit();
+                }
+            });
+        });
+
+        function Reset() {
+            var idBalanzas, idBalanzasArray;
+            idBalanzas = $('#idBalanzas').val();
+            idBalanzasArray = idBalanzas.split(',');
+
+            for (I = 0; I < idBalanzasArray.length - 1; I++) {
+                $("#inputgroup_" + idBalanzasArray[I]).css("border", "1px solid #ccc").css("border-radius", "4px");
+                $("#msg_" + idBalanzasArray[I]).hide();
+            }
+        }
+
+        function Validar() {
+            Reset();
+
+            var idBalanzas, idBalanzasArray, OK = true;
+            idBalanzas = $('#idBalanzas').val();
+            idBalanzasArray = idBalanzas.split(',');
+
+            for (I = 0; I < idBalanzasArray.length - 1; I++) {
+                if ($("#contador_" + idBalanzasArray[I]).val() == "") {
+                    $("#inputgroup_" + idBalanzasArray[I]).css("border", "1px solid #FF2828").css("border-radius", "4px");
+                    $("#msg_" + idBalanzasArray[I]).show();
+                    OK = false;
+                }
+            }
+
+            return OK;
+        }
+
+        function isNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+
+        function contadorFinal() {
+            var idBalanzas, idBalanzasArray;
+            idBalanzas = $('#idBalanzas').val();
+            idBalanzasArray = idBalanzas.split(',');
+
+            for (I = 0; I < idBalanzasArray.length - 1; I++) {
+                var contadorInicial = document.getElementById("contadorInicial_" + idBalanzasArray[I]).value;
+                var contadorActual = document.getElementById("contador_" + idBalanzasArray[I]).value;
+                var contadorFinal = (contadorActual - contadorInicial);
+                var parseado = contadorFinal.toString().split('').reverse().join('').replace(/\d{3}(?=\d)/g, function (miles) { return miles + '.'; })
+                document.getElementById("contadorFinal_" + idBalanzasArray[I]).value = parseado.toString().split('').reverse().join('');
+            }
+        }
+    </script>
+}
+
+<section role="main" class="content-body">
+    <!-- start: page -->
+    <div class="row">
+        <div class="col-lg-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <h2 class="panel-title">Registro de Balanzas del Turno #@Model.RegistroTurno.Correlativo @Model.RegistroTurno.OPR_Turno.OPR_TipoTurno.Descripcion</h2>
+                </header>
+                @using (Html.BeginForm("Registrar", "RegistroBalanza", FormMethod.Post))
+                {
+                    <div class="panel-body">
+                        <table class="table table-bordered table-striped mb-none col-md-6" id="datatable-inicial">
+                            <thead>
+                                <tr>
+                                    <th>Turno Inicial</th>
+                                    <th>Turno Actual</th>
+                                    <th>Contador Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var balanza in Model.Balanzas)
+                                {
+                                    <tr role="row" class="odd">
+                                        <td>
+                                            <input type="text" class="form-control" readonly="" value="@Model.RegistroBalanzasEfectivo.Single(X => X.IdBalanza == balanza.IdBalanza).Contador.ToString("N0")">
+                                            <input type="hidden" class="form-control" id="contadorInicial_@balanza.IdBalanza" readonly="" value="@Model.RegistroBalanzasEfectivo.Single(X => X.IdBalanza == balanza.IdBalanza).Contador">
+                                        </td>
+                                        <td>
+                                            <div class="input-group mb-md no-margin-bottom" id="inputgroup_@balanza.IdBalanza">
+                                                <span class="input-group-addon">@balanza.Descripcion</span>
+                                                <input type="text" class="form-control" name="contador_@balanza.IdBalanza" id="contador_@balanza.IdBalanza" placeholder="Contador" onKeyUp="contadorFinal()" onkeypress="return isNumber(event)">
+                                            </div>
+                                            <span id="msg_@balanza.IdBalanza" style="color: red; display: none; margin-top: -10px;">Por favor ingrese el contador de la balanza</span>
+                                        </td>
+                                        <td><input type="text" class="form-control" id="contadorFinal_@balanza.IdBalanza" name="final" readonly=""></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <footer class="panel-footer">
+                        <div class="row">
+                            <div class="col-lg-12 center">
+                                <button type="submit" id="btnRegistrar" class="btn btn-primary">Registrar Balanzas</button>
+                            </div>
+                        </div>
+                    </footer>
+                    <input type="hidden" id="idRegistroTurno" name="idRegistroTurno" value="@Model.RegistroTurno.IdRegistroTurno" />
+                    <input type="hidden" id="idBalanzas" name="idBalanzas" value="@Model.IdBalanzas" />
+                }
+            </section>
+        </div>
+    </div>
+    <!-- end: page -->
+</section>

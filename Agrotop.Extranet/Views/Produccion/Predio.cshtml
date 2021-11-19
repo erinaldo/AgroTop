@@ -1,0 +1,99 @@
+﻿@using Agrotop.Extranet.Models
+
+@model PRO_Predio
+@{
+    var temporadas = (IEnumerable<Temporada>)ViewData["temporadas"];
+    var temporada = (Temporada)ViewData["temporada"];
+    var agricultor = (Agricultor)ViewData["agricultor"];
+    var selectList = (IEnumerable<SelectListItem>)ViewData["selectList"];
+
+
+    ViewBag.Title = "Plataforma Productiva " + temporada.Nombre;
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+}
+
+<div class="titulo1-consubmenu">@ViewBag.Title</div>
+<div class="submenu">
+    @foreach (var t in temporadas)
+    {
+        <div class="submenuitem">
+            @if (t.IdTemporada != temporada.IdTemporada)
+            {
+                @Html.ActionLink(t.Nombre, "index", new { id = t.IdTemporada })
+            }
+            else
+            {
+                <span class="submenuitem-selected">@t.Nombre</span>
+            }
+        </div>
+    }
+    <div style="clear: both"></div>
+</div>
+
+<h2>Predio: @Model.Nombre</h2>
+
+@using (Html.BeginForm("predio", "produccion", FormMethod.Post))
+{
+    <table class="tabla2">
+        <tr>
+            <td><label>@Html.LabelFor(m => m.Nombre)</label></td>
+            <td>
+                @Html.TextBoxFor(m => m.Nombre)
+                @Html.ValidationMessageFor(m => m.Nombre)
+            </td>
+            <td><label>@Html.LabelFor(m => m.IdComuna)</label></td>
+            <td>
+                @Html.DropDownListFor(m => m.IdComuna, selectList)
+                @Html.ValidationMessageFor(m => m.IdComuna)
+            </td>
+        </tr>
+        <tr>
+            <td valign="top"><label>Potreros</label></td>
+            <td colspan="3">
+                @Html.ActionLink("Crear Potrero", "crearpotrero", new { idPredio = Model.IdPredio, idTemporada = temporada.IdTemporada })
+                <table class="tabla1" style="width: 100%; margin-top: 10px;">
+                    <tr class="header">
+                        <td align="center">Predio</td>
+                        <td align="center">Hectáreas</td>
+                        <td align="center">Variedad</td>
+                        <td align="center">Resumen de Costos</td>
+                        <td align="center"></td>
+                        <td align="center"></td>
+                    </tr>
+                    @foreach (var r in Model.PRO_Potrero.Where(p => p.Habilitado == true))
+                    {
+                        <tr valign="top">
+                            <td>@r.Nombre</td>
+                            <td align="center">@r.Superficie</td>
+                            <td align="center">@r.Cultivo.Nombre</td>
+                            <td align="center">@Html.ActionLink("Ver Resumen", "ResumenCostos", new { id = r.IdPotrero })</td>
+                            <td align="center">@Html.ActionLink("Detalle", "Potrero", new { id = r.IdPotrero, idTemporada = temporada.IdTemporada })</td>
+                            <td align="center">@Html.ActionLink("Eliminar", "EliminarPotrero", new { id = r.IdPotrero }, new { @class = "deleteRecord" })</td>
+                        </tr>
+                    }
+                    @if (Model.PRO_Potrero.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="5" style="padding-top: 60px; text-align: center; font-style: italic">No hay predios para esta temporada</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="3">
+                <input type="submit" value="Guardar Cambios" />
+                <input type="button" value="Cancelar" onclick="javascript:window.history.back();" />
+            </td>
+        </tr>
+    </table>
+    @Html.HiddenFor(m => m.IdPredio, new { Value = Model.IdPredio })
+    @Html.HiddenFor(m => m.IdTemporada, new { Value = temporada.IdTemporada })
+
+    <script language="javascript" type="text/javascript">
+        $(".deleteRecord").click(function () {
+            return confirm('¿Está seguro que desea eliminar este potrero?');
+        });
+    </script>
+}

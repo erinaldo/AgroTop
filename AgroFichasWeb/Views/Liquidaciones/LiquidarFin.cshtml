@@ -1,0 +1,30 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.ViewModels
+
+@model Liquidacion
+@{
+
+    ViewBag.NombreSeccion = "Liquidar Agricultor " + Model.Temporada.Nombre;
+    ViewBag.Title = "La liquidación ha sido creada con éxito";
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+
+<fieldset class="dataForm">
+    @Html.Partial("Liquidacion", Model)
+    <p class="okcancel">
+        <input type="submit" value="Imprimir Esta Liquidación" id="btnPrint" onclick="javascript: printLiquidacion(1);" /> o @Html.ActionLink("Registrar otra liquidación", "pendientes", "liquidaciones")
+    </p>
+</fieldset>
+
+<script type="text/javascript">
+
+        function printLiquidacion(copias) {
+            window.open('@Url.Action("printliquidacion", "liquidaciones", new { id = Model.IdLiquidacion, copias = "cpis" })'.replace('cpis', copias));
+        }
+
+</script>    

@@ -1,0 +1,102 @@
+﻿@using AgroFichasWeb.Models
+@model ProcesoIngreso
+@{
+    Layout = null;
+    ViewBag.Title = "Ingreso #" + Model.IdProcesoIngreso.ToString();
+    int copies = int.Parse(ViewData["copias"].ToString());
+    var precioSpot = (List<PrecioSpot>)ViewData["precioSpot"];
+    var analista = (SYS_User)ViewData["analista"];
+    var responsable = (SYS_User)ViewData["responsable"];
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <style>
+        body 
+        {
+	        font-family:Verdana, Arial, Helvetica, sans-serif;
+	        font-size: 12px;
+        }
+
+        .procesoIngreso {
+        }
+        .procesoIngreso label {
+            font-weight:bold;
+        }
+
+        .procesoIngreso td {
+            border-bottom: solid 1px #d5dfe5;
+            padding: 5px 5px 5px 5px;
+            margin: 0px 0px 10px 0px;
+        }
+
+        .procesoIngreso label
+        {
+            width: 100px;
+            font-weight:bold;
+            display: inline-block;
+            text-align: right;
+            padding: 0px 10px 0px 0px;
+            vertical-align: top;
+        }
+
+
+        .procesoIngreso .sublist td {
+            font-size: 11px;
+        }
+
+        .procesoIngreso table.sublist2 td
+        {
+            padding: 5px 10px 5px 0px;
+            margin: 0px 0px 10px 0px;
+        }
+        .estado {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            padding: 3px;
+        }
+        h1 {
+            margin-top: 0px;
+        }
+        .info {
+            font-size: 10px;
+            text-align: right;
+        }
+
+        @@media all {
+	        .page-break	{ display: none; }
+        }
+
+        @@media print {
+	        .page-break	{ display: block; page-break-before: always; }
+        }
+    </style>
+</head>
+<body onload="window.print();">
+    @for (int page = 0; page < copies; page++)
+    {
+        <div>
+            <table width="100%">
+                <tr valign="top">
+                    <td>
+                        Empresas Agrotop
+                        <h1>@ViewBag.Title</h1>
+                    </td>
+                    <td class="info">@SYS_User.Current().UserName<br />@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            </table>
+            
+            @Html.Partial("IngresoMaiz", Model)
+        </div>
+        if (page < copies - 1)
+        {
+            <div class="page-break"></div>
+        }
+    }
+</body>
+</html>

@@ -1,0 +1,68 @@
+﻿@using AgroFichasWeb.Models
+@using AgroFichasWeb.Views
+
+@model Bodega
+
+@{
+    ViewBag.NombreSeccion = "Sucursales";
+    if (Model.IdBodega == 0)
+    {
+        ViewBag.Title = "Crear Bodega";
+    }
+    else
+    {
+        ViewBag.Title = "Editar Bodega";
+    }
+    var selectList = (IEnumerable<SelectListItem>)ViewData["sucursalesList"];
+}
+
+@section submenuSection {
+    @Html.Partial("Submenu")
+}
+
+<h2>@ViewBag.Title</h2>
+@Html.ValidationSummary("No fue posible procesar su solicitud. Por favor haga las siguientes correcciones:")
+
+@using (Html.BeginForm())
+{
+    <fieldset class="dataForm">
+        <p>
+            <label for="Titulo">Sucursal</label>
+            @Html.DropDownList("IdSucursal", selectList, "-- Seleccione --", new { @class = "heavy std" })
+            @Html.ValidationMessage("IdSucursal", " ")
+        </p>
+        <p>
+            <label for="Titulo">Nombre</label>
+            @Html.TextBox("Nombre", Model.Nombre, new { @class = "heavy std", maxlength = "50" })
+            @Html.ValidationMessage("Nombre", " ")
+        </p>
+        <p>
+            <label for="Titulo">Nombre Corto</label>
+            @Html.TextBox("NombreCorto", Model.NombreCorto, new { @class = "heavy std", maxlength = "20" })
+            @Html.ValidationMessage("NombreCorto", " ")
+        </p>
+        <p>
+            <label for="Titulo">¿Es Manga?</label>
+            @Html.CheckBox("EsManga", Model.EsManga, null)
+        </p>
+        <p>
+            <label for="Titulo">SAP Oleotop</label>
+            @Html.TextBox("IDOleotop", Model.IDOleotop, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">SAP Avenatop</label>
+            @Html.TextBox("IDAvenatop", Model.IDAvenatop, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">SAP Granotop</label>
+            @Html.TextBox("IDGranotop", Model.IDGranotop, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p>
+            <label for="Titulo">SAP Saprosem</label>
+            @Html.TextBox("IDSaprosem", Model.IDSaprosem, new { @class = "heavy std", maxlength = "50" })
+        </p>
+        <p class="okcancel">
+            <input type="submit" value="Guardar esta Bodega" /> o <a href="javascript:window.history.back();">Cancelar</a>
+        </p>
+    </fieldset>
+}

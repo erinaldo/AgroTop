@@ -1,0 +1,119 @@
+﻿@using AgroFichasWeb.Models
+
+@{
+    ViewBag.Title = "Parámetros de Microbiología para Fichas Técnicas";
+    Layout = "~/Views/Shared/_ResponsiveLayoutVertical.cshtml";
+    CAL_FT cAL_FT = (CAL_FT)ViewData["cAL_FT"];
+    List<CAL_ParametroMicrobiologia> parametroMicrobiologias = (List<CAL_ParametroMicrobiologia>)ViewData["parametroMicrobiologia"];
+    ViewBag.SubTitle = string.Format("Crear Parámetros de Microbiología para la Ficha Técnica {0}", cAL_FT.Codigo);
+}
+@section CustomScripts
+{
+<script>
+        $("#select_all").click(function () {
+            var isChecked = $(this).is(':checked') ? true : false;
+            console.log("isChecked= " + isChecked);
+            if (isChecked) {
+                SelectAll();
+            } else {
+                DeselectAll();
+            }
+        })
+
+        function SelectAll() {
+            @foreach (CAL_ParametroMicrobiologia parametroMicrobiologia in parametroMicrobiologias)
+            {
+                @:$('#NA_' + @parametroMicrobiologia.IdParametroMicrobiologia + '').prop('checked', true);
+                @:$('#NA_' + @parametroMicrobiologia.IdParametroMicrobiologia + '').val(true);
+                @:$('#HID_NA_' + @parametroMicrobiologia.IdParametroMicrobiologia + '').val(true);
+            }
+        }
+
+        function DeselectAll() {
+            @foreach (CAL_ParametroMicrobiologia parametroMicrobiologia in parametroMicrobiologias)
+            {
+                @:$('#NA_' + @parametroMicrobiologia.IdParametroMicrobiologia + '').prop('checked', false);
+                @:$('#NA_' + @parametroMicrobiologia.IdParametroMicrobiologia + '').val(false);
+                @:$('#HID_NA_' + @parametroMicrobiologia.IdParametroMicrobiologia + '').val(false);
+            }
+        }
+
+        function SetCheckBox(IdParametroMicrobiologia) {
+            var isChecked = $('#NA_' + IdParametroMicrobiologia + '').is(':checked') ? true : false;
+            console.log("isChecked= " + isChecked);
+            if (isChecked) {
+                $('#NA_' + IdParametroMicrobiologia + '').val(true);
+                $('#HID_NA_' + IdParametroMicrobiologia + '').val(true);
+            }
+            else {
+                $('#NA_' + IdParametroMicrobiologia + '').val(false);
+                $('#HID_NA_' + IdParametroMicrobiologia + '').val(false);
+            }
+        }
+</script>
+    <script>
+        $(document).ready(function () {
+            if ($(".field-validation-error").html() != "") {
+                $(".field-validation-error").show();
+            }
+        });
+    </script>
+}
+<!-- start: page -->
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">@ViewBag.SubTitle</h2>
+            </header>
+            @using (Html.BeginForm("Crear", "CALFTParametroMicrobiologia", FormMethod.Post))
+            {
+                <div class="panel-body">
+                    <div class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-3 control-label">Parámetros de Microbiología <span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <div class="col-sm-12" style="padding-top: 7px;">
+                                            <div class="col-sm-12 text-left" style="background-color: yellow">
+                                                <input type="checkbox" name="select_all" id="select_all" value="Seleccionar todo" /> <strong>Seleccionar todo</strong>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                @foreach (CAL_ParametroMicrobiologia cAL_FTParametroMicrobiologia in parametroMicrobiologias)
+                                                {
+                                                    <div class="col-sm-6" style="padding-left: 0;">
+                                                        <span>@cAL_FTParametroMicrobiologia.Nombre (@cAL_FTParametroMicrobiologia.UM)</span>
+                                                    </div>
+                                                    <div class="col-sm-2" style="padding-left: 0;">
+                                                        <input type="text" class="form-control" id="PARAM_min_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" name="PARAM_min_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" placeholder="Mín." value="0" />
+                                                    </div>
+                                                    <div class="col-sm-2" style="padding-left: 0;">
+                                                        <input type="text" class="form-control" id="PARAM_max_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" name="PARAM_max_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" placeholder="Máx." value="0" />
+                                                    </div>
+                                                    <div class="col-sm-2" style="padding-left: 0;">
+                                                        <input type="checkbox" id="NA_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" name="NA_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" value="false" onclick="SetCheckBox(@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia)" /> N/A
+                                                        <input type="hidden" id="HID_NA_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" name="HID_NA_@cAL_FTParametroMicrobiologia.IdParametroMicrobiologia" value="false" />
+                                                    </div>
+                                                    <div style="clear:both"></div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12 center">
+                            <input type="submit" class="btn btn-primary" value="Guardar estos Parámetros de Microbiología" />
+                        </div>
+                    </div>
+                </footer>
+            }
+        </section>
+    </div>
+</div>
+<!-- end: page -->
